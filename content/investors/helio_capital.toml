@@ -1,0 +1,50 @@
+# Anchor VC — hand-crafted tier
+# Role: boutique founder whisperer. Small, concentrated book; picks its
+# spots and goes deep. Best post-investment value-add in the game, the
+# most founder-favorable terms — but limited check size and high bar.
+
+[firm]
+id = "helio_capital"
+name = "Helio Capital"
+tier = "anchor"
+partner_name = "Marcus Vance"
+partner_title = "Founding Partner"
+hq = "San Francisco, CA"
+color = "#F2A93B"
+logo_glyph = "sun"
+
+[firm.identity]
+thesis = "Back a few exceptional founders per fund and be the most useful person on their cap table."
+reputation = 85
+trait_tags = ["Founder Whisperer", "Hands-On Builder", "Concentrated Bets"]
+narrative_hooks = [
+  "takes whatever valuation, insists on being useful",
+  "small fund, deep involvement",
+  "founders who worked with Helio come back",
+]
+
+[firm.personality]
+aggression = 28
+patience = 82
+conviction = 74
+founder_friendliness = 90
+network_strength = 88
+
+[firm.focus]
+primary_sector = "ai"
+secondary_sector = "mobility"
+primary_stage = "seed"
+stage_range = ["pre_seed", "series_a"]
+stretch_tolerance = 0.5
+
+[firm.fund]
+fund_name = "Fund II"
+fund_size = 320
+vintage_year = -1
+deployment_years = 3
+check_min = 1
+check_max = 25                   # boutique — can't lead big later rounds
+
+[firm.relationships]
+signature_portfolio = ["novamind", "ascent_aero"]
+rival_firms = []

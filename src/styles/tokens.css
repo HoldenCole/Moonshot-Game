@@ -1,0 +1,143 @@
+/* Design tokens — the newsroom-meets-Bloomberg system.
+   Dark, dense, legible. Tabular numerals for data; clean sans for prose. */
+
+:root {
+  /* Surfaces — near-black navy, layered up by elevation */
+  --bg: #090c12;
+  --panel: #10141d;
+  --panel-2: #151a25;
+  --panel-raised: #1b2230;
+  --panel-hover: #1f2735;
+
+  /* Lines */
+  --border: #222a39;
+  --border-strong: #303a4d;
+  --border-faint: #1a212d;
+
+  /* Text */
+  --text: #e7ecf4;
+  --text-dim: #93a0b4;
+  --text-faint: #65718a;
+  --text-ghost: #45506a;
+
+  /* Brand + data accents */
+  --accent: #5b82ff;
+  --accent-press: #3f68f0;
+  --accent-soft: rgba(91, 130, 255, 0.14);
+  --data: #46d6c8;
+  --data-soft: rgba(70, 214, 200, 0.14);
+
+  /* Semantic */
+  --up: #35d39a;
+  --down: #f47171;
+  --warn: #f5b945;
+  --info: #5b82ff;
+
+  /* Series palette for the cap table (stable order) */
+  --series-founder: #5b82ff;
+  --series-cofounder: #7e6bf0;
+  --series-pool: #4a5670;
+  --series-1: #46d6c8;
+  --series-2: #f5b945;
+  --series-3: #f47171;
+  --series-4: #9b8cff;
+  --series-5: #58c6f5;
+  --series-6: #e879b9;
+
+  /* Type */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+
+  /* Radii + spacing */
+  --r-sm: 4px;
+  --r: 7px;
+  --r-lg: 11px;
+  --r-pill: 999px;
+
+  /* Elevation */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 22px rgba(0, 0, 0, 0.45);
+  --shadow-pop: 0 18px 50px rgba(0, 0, 0, 0.55);
+
+  /* Frame metrics */
+  --topbar-h: 56px;
+  --navrail-w: 64px;
+  --narrative-w: 300px;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Tabular numerals everywhere a number could be read against another */
+.num,
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--r-pill);
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3c4860;
+}
+
+/* Subtle entrance for surfaced content */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.22s ease both;
+}

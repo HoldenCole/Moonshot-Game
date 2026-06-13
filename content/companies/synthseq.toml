@@ -1,0 +1,53 @@
+# Anchor — AI / Vertical AI SaaS
+# Posture: overhyped "vertical" that's really a thin wrapper. High growth
+# on paper, weak retention, valuation rides hype. Bubble-risk archetype.
+
+[company]
+id = "synthseq"
+name = "SynthSeq"
+tier = "anchor"
+industry = "ai"
+sub_industry = "vertical_ai_saas"
+founded_year = -2
+hq = "Austin, TX"
+color = "#E0A33E"
+logo_glyph = "wave"
+
+[company.identity]
+tagline = "AI copilots for every workflow." # the vagueness is the tell
+reputation = 66
+narrative_hooks = [
+  "spray-and-pray product strategy",
+  "growth funded by discounts",
+  "churn problem the deck doesn't mention",
+]
+
+[company.stage]
+status = "private"
+private_round = "c"
+ipo_year = 0
+
+[company.financials]
+revenue = 180
+revenue_growth = 1.10
+gross_margin = 0.59
+profitable = false
+burn_monthly = 14
+valuation = 4200
+shares_out = 0
+
+[company.quality]
+fundamentals = 54
+hype_exposure = 0.85
+moat = 38
+execution = 60
+
+[company.signature]
+benchmark_score = 0
+signature_notes = "Headline ARR growth masks NRR below 100% — expansion isn't real"
+
+[company.relationships]
+competitors = ["lexiq"]
+suppliers  = ["openmind"]
+customers  = []
+investors  = ["atlas_growth"]

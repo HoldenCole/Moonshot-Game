@@ -1,0 +1,53 @@
+# Anchor VC — hand-crafted tier
+# Role: flagship lead. The firm that anchors the biggest rounds across
+# every sector. High conviction, strong network, will pay up to lead a
+# deal it believes in — but its terms come with real governance weight.
+
+[firm]
+id = "frontier_partners"
+name = "Frontier Partners"
+tier = "anchor"                  # "anchor" | "procedural"
+partner_name = "Diane Okafor"
+partner_title = "Managing Partner"
+hq = "Menlo Park, CA"
+color = "#2E5BFF"
+logo_glyph = "compass"
+
+[firm.identity]
+thesis = "Lead the category-definer in every frontier industry, then back it for a decade."
+reputation = 92                  # 0-100 — signaling power; a Frontier term sheet de-risks a round
+trait_tags = ["Conviction Lead", "Category Maker", "Tough but Fair"]
+narrative_hooks = [
+  "a Frontier term sheet pulls in a syndicate",
+  "long memory, long loyalty",
+  "wants the board seat that matters",
+]
+
+[firm.personality]
+# Five hidden axes, 1-100. Drive negotiation counter-logic.
+aggression = 62                  # pushes on governance more than price
+patience = 70
+conviction = 95                  # will lead, rarely follows
+founder_friendliness = 58
+network_strength = 90
+
+[firm.focus]
+primary_sector = "ai"
+secondary_sector = "space"
+primary_stage = "series_a"       # pre_seed | seed | series_a | growth | late_stage
+stage_range = ["seed", "late_stage"]
+stretch_tolerance = 0.7          # 0-1 — how far outside lane for an exceptional deal
+
+[firm.fund]
+fund_name = "Fund IV"
+fund_size = 2400                 # $M
+vintage_year = -2                # relative to game start
+deployment_years = 4
+check_min = 8                    # $M
+check_max = 300                  # $M leads big later rounds
+
+[firm.relationships]
+# Portfolio is derived from company investor edges at world-gen, but
+# anchors may seed signature positions here for narrative continuity.
+signature_portfolio = ["openmind", "vector_dynamics", "lexiq"]
+rival_firms = ["atlas_growth"]   # competes hardest with the hype-chaser

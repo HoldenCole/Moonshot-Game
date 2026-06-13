@@ -1,0 +1,50 @@
+# Anchor VC — hand-crafted tier
+# Role: classic seed-stage first money. Warm, founder-aligned, writes the
+# early check before the metrics exist — bets on people. The firm a new
+# founder is most likely to meet first. Limited follow-on muscle.
+
+[firm]
+id = "redwood_ventures"
+name = "Redwood Ventures"
+tier = "anchor"
+partner_name = "Elena Cruz"
+partner_title = "Partner"
+hq = "Palo Alto, CA"
+color = "#B5483D"
+logo_glyph = "seedling"
+
+[firm.identity]
+thesis = "Be the first believer. Back the founder before anyone else will."
+reputation = 78
+trait_tags = ["First Believer", "Founder Friendly", "Seed Specialist"]
+narrative_hooks = [
+  "writes the check before the metrics",
+  "bets on the person, not the deck",
+  "great seed brand, thin growth muscle",
+]
+
+[firm.personality]
+aggression = 35
+patience = 78
+conviction = 82                  # high conviction at seed — leads early
+founder_friendliness = 84
+network_strength = 70
+
+[firm.focus]
+primary_sector = "ai"
+secondary_sector = "space"
+primary_stage = "seed"
+stage_range = ["pre_seed", "series_a"]
+stretch_tolerance = 0.5
+
+[firm.fund]
+fund_name = "Seed Fund V"
+fund_size = 280
+vintage_year = -2
+deployment_years = 3
+check_min = 0.5
+check_max = 12
+
+[firm.relationships]
+signature_portfolio = []
+rival_firms = []

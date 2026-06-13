@@ -1,0 +1,40 @@
+# Anchor (light) — Biotech / Therapeutics
+# Posture: profitable rare-disease franchise. Trial events move it more
+# than sector hype. Steady-compounder end of the spectrum.
+
+[company]
+id = "vertex_bio"
+name = "Vertex Bio"
+tier = "anchor"
+industry = "biotech"
+sub_industry = "therapeutics"
+founded_year = -12
+hq = "Boston, MA"
+color = "#2FA37C"
+logo_glyph = "dna"
+
+[company.identity]
+tagline = "Rare-disease franchise with a real pipeline."
+reputation = 80
+narrative_hooks = ["pipeline-driven", "FDA milestone swings", "cash-generative core franchise"]
+
+[company.stage]
+status = "public"
+ipo_year = -8
+
+[company.financials]
+revenue = 9800
+revenue_growth = 0.12
+gross_margin = 0.86
+profitable = true
+valuation = 110000
+shares_out = 260
+
+[company.quality]
+fundamentals = 78
+hype_exposure = 0.4
+moat = 82
+execution = 76
+
+[company.relationships]
+investors = ["evergreen_capital"]

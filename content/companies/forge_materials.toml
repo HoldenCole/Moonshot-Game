@@ -1,0 +1,40 @@
+# Anchor (light) — Advanced Mfg & Materials / Advanced Materials
+# Posture: B2B materials supplier sitting upstream of chips and aerospace.
+# Boring profit machine — high margin licensing, low hype-exposure.
+
+[company]
+id = "forge_materials"
+name = "Forge Materials"
+tier = "anchor"
+industry = "advanced_mfg"
+sub_industry = "advanced_materials"
+founded_year = -15
+hq = "Pittsburgh, PA"
+color = "#8C7B6B"
+logo_glyph = "lattice"
+
+[company.identity]
+tagline = "The materials inside everything that matters."
+reputation = 77
+narrative_hooks = ["picks-and-shovels supplier", "licensing-driven margins", "quietly indispensable upstream"]
+
+[company.stage]
+status = "public"
+ipo_year = -9
+
+[company.financials]
+revenue = 4300
+revenue_growth = 0.15
+gross_margin = 0.62
+profitable = true
+valuation = 38000
+shares_out = 410
+
+[company.quality]
+fundamentals = 80
+hype_exposure = 0.3
+moat = 78
+execution = 79
+
+[company.relationships]
+investors = ["evergreen_capital"]

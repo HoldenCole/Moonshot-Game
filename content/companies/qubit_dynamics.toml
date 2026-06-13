@@ -1,0 +1,40 @@
+# Anchor (light) — Quantum Computing / Quantum Hardware
+# Posture: milestone-gated hard-tech bet. Pre-revenue, lives and dies on
+# qubit/fidelity milestones. The longest-horizon, highest-variance ticket.
+
+[company]
+id = "qubit_dynamics"
+name = "Qubit Dynamics"
+tier = "anchor"
+industry = "quantum"
+sub_industry = "quantum_hardware"
+founded_year = -6
+hq = "Boulder, CO"
+color = "#5BC8D8"
+logo_glyph = "atom"
+
+[company.identity]
+tagline = "Logical qubits, one milestone at a time."
+reputation = 71
+narrative_hooks = ["milestone-gated funding", "decade-long horizon", "modality bet could win or strand it"]
+
+[company.stage]
+status = "public"
+ipo_year = -1
+
+[company.financials]
+revenue = 85
+revenue_growth = 0.30
+gross_margin = 0.40
+profitable = false
+valuation = 7200
+shares_out = 180
+
+[company.quality]
+fundamentals = 58
+hype_exposure = 0.8
+moat = 62
+execution = 60
+
+[company.relationships]
+investors = ["frontier_partners", "atlas_growth"]

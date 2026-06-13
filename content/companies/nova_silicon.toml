@@ -1,0 +1,54 @@
+# Anchor — AI / AI Chips & Silicon
+# Posture: dominant incumbent foundry-fabless. The supplier the frontier
+# labs depend on; customer concentration is its quiet risk. Compounder.
+
+[company]
+id = "nova_silicon"
+name = "Nova Silicon"
+tier = "anchor"
+industry = "ai"
+sub_industry = "ai_chips"
+founded_year = -11
+hq = "Santa Clara, CA"
+color = "#7A5BFF"
+logo_glyph = "chip"
+
+[company.identity]
+tagline = "The accelerator the frontier runs on."
+reputation = 86
+narrative_hooks = [
+  "allocation is power",
+  "every lab wants more than it can get",
+  "customer concentration risk",
+  "generational architecture lead",
+]
+
+[company.stage]
+status = "public"
+private_round = ""
+ipo_year = -6
+
+[company.financials]
+revenue = 12400
+revenue_growth = 0.62
+gross_margin = 0.74
+profitable = true
+burn_monthly = 0
+valuation = 410000
+shares_out = 1200
+
+[company.quality]
+fundamentals = 88
+hype_exposure = 0.75
+moat = 84
+execution = 81
+
+[company.signature]
+benchmark_score = 0
+signature_notes = "Architecture + software-stack lock-in is the moat; demand far exceeds fab allocation"
+
+[company.relationships]
+competitors = ["volt_logic"]
+suppliers  = ["forge_materials"]
+customers  = ["openmind", "novamind"]
+investors  = ["evergreen_capital", "atlas_growth"]

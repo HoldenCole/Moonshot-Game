@@ -1,0 +1,50 @@
+# Anchor VC — hand-crafted tier
+# Role: patient steward. Disciplined, valuation-sensitive, backs durable
+# compounders and holds for the long run. Won't chase hot rounds; will
+# quietly own the boring winner. Fair terms, slow yes, never panics.
+
+[firm]
+id = "evergreen_capital"
+name = "Evergreen Capital"
+tier = "anchor"
+partner_name = "Walter Renn"
+partner_title = "General Partner"
+hq = "Boston, MA"
+color = "#2F8F6B"
+logo_glyph = "tree"
+
+[firm.identity]
+thesis = "Pay a fair price for a durable business and compound alongside it for fifteen years."
+reputation = 87
+trait_tags = ["Patient Capital", "Valuation Disciplined", "Long Hold"]
+narrative_hooks = [
+  "won't pay the hot-round premium",
+  "slow to yes, almost never sells",
+  "the steady hand on a volatile cap table",
+]
+
+[firm.personality]
+aggression = 40                  # disciplined on price, light on structure
+patience = 92
+conviction = 80
+founder_friendliness = 72
+network_strength = 76
+
+[firm.focus]
+primary_sector = "advanced_mfg"
+secondary_sector = "energy"
+primary_stage = "series_a"
+stage_range = ["seed", "late_stage"]
+stretch_tolerance = 0.4          # rarely reaches outside its discipline
+
+[firm.fund]
+fund_name = "Fund VII"
+fund_size = 1800
+vintage_year = -3
+deployment_years = 5             # deploys slowly by design
+check_min = 10
+check_max = 250
+
+[firm.relationships]
+signature_portfolio = ["forge_materials", "vertex_bio", "meridian_orbital", "novamind"]
+rival_firms = ["atlas_growth"]

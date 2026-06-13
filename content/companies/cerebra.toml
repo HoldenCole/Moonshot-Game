@@ -1,0 +1,54 @@
+# Anchor — AI / Frontier Model Lab
+# Posture: hype-driven challenger. High growth, thinner fundamentals,
+# valuation swings hard with sector sentiment. The bubble-risk archetype.
+
+[company]
+id = "cerebra"
+name = "Cerebra"
+tier = "anchor"
+industry = "ai"
+sub_industry = "frontier_model_lab"
+founded_year = -3
+hq = "San Francisco, CA"
+color = "#FF6B6B"
+logo_glyph = "spark"
+
+[company.identity]
+tagline = "Moving fast at the frontier — burning fast too."
+reputation = 74
+narrative_hooks = [
+  "raises at eye-watering multiples",
+  "demo-driven hype machine",
+  "burned cash on a failed model",
+  "talent churn rumors",
+]
+
+[company.stage]
+status = "private"
+private_round = "d"
+ipo_year = 0
+
+[company.financials]
+revenue = 320
+revenue_growth = 1.40
+gross_margin = 0.41
+profitable = false
+burn_monthly = 75
+valuation = 19000
+shares_out = 0
+
+[company.quality]
+fundamentals = 62
+hype_exposure = 0.9
+moat = 48
+execution = 58
+
+[company.signature]
+benchmark_score = 71
+signature_notes = "Splashy demos, inconsistent eval results between releases"
+
+[company.relationships]
+competitors = ["openmind", "novamind"]
+suppliers  = ["volt_logic"]
+customers  = []
+investors  = ["frontier_partners", "atlas_growth"]

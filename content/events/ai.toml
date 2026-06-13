@@ -1,0 +1,605 @@
+# Events — AI INDUSTRY (15)
+# Fast, competitive, talent-and-compute-driven. Sub-industry-gated via
+# conditions: frontier_model_lab, vertical_ai_saas, ai_chips.
+# Slots ({rival}, {researcher}, {customer}, {supplier}) resolve from the
+# company graph; events are skipped when a required slot can't resolve.
+
+# ---------------------------------------------------------------------------
+# A1 — Talent poach attempt   (the schema's worked example)
+# ---------------------------------------------------------------------------
+[a1_talent_poach]
+id = "a1_talent_poach"
+category = "ai"
+weight = 10
+cooldown_weeks = 26
+one_shot = false
+
+[a1_talent_poach.trigger]
+type = "random"
+conditions = [
+  "company.industry == ai",
+  "company.stage >= series_a",
+  "company.has_key_researcher == true",
+  "company.has_competitor == true",
+]
+weight_mods = [
+  { when = "sector.hype > 70", factor = 1.5 },
+]
+
+[a1_talent_poach.framing]
+headline = "{rival} is trying to poach {researcher}"
+body = """{rival} has made {researcher} an offer: {offer_amount} and a senior \
+title. {researcher} is one of your strongest researchers, and word is they're \
+seriously considering it."""
+tone = "threat"
+# {rival} = competitor edge; {researcher} = key employee; {offer_amount} = comp benchmark × hype
+
+[[a1_talent_poach.choices]]
+label = "Counter aggressively"
+detail = "Match the offer plus 20% and a retention grant"
+effects = "Expensive. Likely keeps them. Sets a comp precedent others will notice."
+outcome_ref = "poach_counter"
+
+[[a1_talent_poach.choices]]
+label = "Make a personal appeal"
+detail = "No money — sell them on the mission and their growth here"
+effects = "Free. Works better if culture and your relationship are strong."
+outcome_ref = "poach_appeal"
+
+[[a1_talent_poach.choices]]
+label = "Let them go"
+detail = "Wish them well; backfill the role"
+effects = "Lose the researcher. Frees comp budget. Possible morale ripple."
+outcome_ref = "poach_release"
+
+# ---------------------------------------------------------------------------
+# A2 — Compute shortage
+# ---------------------------------------------------------------------------
+[a2_compute_shortage]
+id = "a2_compute_shortage"
+category = "ai"
+weight = 9
+cooldown_weeks = 39
+one_shot = false
+
+[a2_compute_shortage.trigger]
+type = "random"
+conditions = ["company.industry == ai", "company.compute_dependent == true", "company.has_supplier == true"]
+weight_mods = [
+  { when = "sector.hype > 80", factor = 1.5 },
+]
+
+[a2_compute_shortage.framing]
+headline = "GPUs are scarce and {supplier} can't fill your order"
+body = """The compute crunch has caught up with you. {supplier} has pushed your \
+allocation back, and your training and inference plans are bottlenecked behind \
+hardware you can't get. Everyone in the sector is fighting over the same chips."""
+tone = "threat"
+# {supplier} = chip-supplier edge (e.g. nova_silicon)
+# Ties: Frontier Lab signature (compute as a managed constraint)
+
+[[a2_compute_shortage.choices]]
+label = "Pay the premium"
+detail = "Buy allocation on the spot market at a brutal markup"
+effects = "Keeps you training. Burns cash fast and rewards the scalpers."
+outcome_ref = "compute_premium"
+
+[[a2_compute_shortage.choices]]
+label = "Wait it out"
+detail = "Hold for your scheduled allocation"
+effects = "Free. Cedes momentum to better-supplied rivals while you wait."
+outcome_ref = "compute_wait"
+
+[[a2_compute_shortage.choices]]
+label = "Switch provider"
+detail = "Re-platform onto a different compute source"
+effects = "Breaks the bottleneck if it works. Migration costs time and engineering pain."
+outcome_ref = "compute_switch"
+
+# ---------------------------------------------------------------------------
+# A3 — Foundation model leapfrog
+# ---------------------------------------------------------------------------
+[a3_foundation_leapfrog]
+id = "a3_foundation_leapfrog"
+category = "ai"
+weight = 8
+cooldown_weeks = 39
+one_shot = false
+
+[a3_foundation_leapfrog.trigger]
+type = "random"
+conditions = ["company.industry == ai"]
+weight_mods = [
+  { when = "company.sub_industry == vertical_ai_saas", factor = 2.0 },
+]
+
+[a3_foundation_leapfrog.framing]
+headline = "A new frontier model just absorbed your core feature"
+body = """{competitor_move} The latest foundation model now does, out of the box, \
+something that was a real part of your value. For a vertical built on top of \
+these models, this is the recurring nightmare: the platform you depend on keeps \
+eating up the stack toward you."""
+tone = "threat"
+# {competitor_move} = a recent NPC model release / capability jump
+
+[[a3_foundation_leapfrog.choices]]
+label = "Race to match"
+detail = "Rebuild on the new capability before customers notice"
+effects = "Keeps parity. A treadmill — you're sprinting to stay in place."
+outcome_ref = "leapfrog_match"
+
+[[a3_foundation_leapfrog.choices]]
+label = "Differentiate"
+detail = "Double down on workflow, data, and trust the model can't replicate"
+effects = "Builds something durable above the model layer. Slower; demands real depth."
+outcome_ref = "leapfrog_differentiate"
+
+[[a3_foundation_leapfrog.choices]]
+label = "Niche down"
+detail = "Retreat to the corner where you're still clearly best"
+effects = "Defensible immediately. Shrinks the addressable market."
+outcome_ref = "leapfrog_niche"
+
+# ---------------------------------------------------------------------------
+# A4 — Breakthrough training run
+# ---------------------------------------------------------------------------
+[a4_breakthrough_run]
+id = "a4_breakthrough_run"
+category = "ai"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[a4_breakthrough_run.trigger]
+type = "random"
+conditions = ["company.sub_industry == frontier_model_lab", "company.training_run_committed == true"]
+
+[a4_breakthrough_run.framing]
+headline = "The run beat expectations"
+body = """The training run you committed to came back ahead of target. The model \
+shows a real capability jump — the kind that moves benchmarks, draws press, and \
+makes top researchers return your calls. Moments like this are why you spent the \
+compute."""
+tone = "opportunity"
+# Ties: Frontier Lab signature
+
+[[a4_breakthrough_run.choices]]
+label = "Ship loud"
+detail = "Announce big and ride the hype"
+effects = "Maximizes hype, talent pull, and fundraising warmth. Invites scrutiny and raises expectations."
+outcome_ref = "breakthrough_ship_loud"
+
+[[a4_breakthrough_run.choices]]
+label = "Ship to enterprise quietly"
+detail = "Convert the capability into revenue before rivals react"
+effects = "Builds durable revenue and lead time. Less hype, less talent buzz."
+outcome_ref = "breakthrough_ship_quiet"
+
+# ---------------------------------------------------------------------------
+# A5 — Failed training run
+# ---------------------------------------------------------------------------
+[a5_failed_run]
+id = "a5_failed_run"
+category = "ai"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[a5_failed_run.trigger]
+type = "random"
+conditions = ["company.sub_industry == frontier_model_lab", "company.training_run_committed == true"]
+
+[a5_failed_run.framing]
+headline = "The run missed — and the money's gone"
+body = """The big training run came back short of target. The compute is spent, \
+the timeline's blown, and you have a decision about whether the approach was \
+wrong or just unlucky. Burning this much to learn a negative result is the part \
+of the frontier nobody puts in the pitch deck."""
+tone = "crisis"
+# Ties: Frontier Lab signature
+
+[[a5_failed_run.choices]]
+label = "Retry"
+detail = "Run it again with tuned settings"
+effects = "Your strongest shot at salvaging the bet. Doubles the spend on an uncertain outcome."
+outcome_ref = "failed_run_retry"
+
+[[a5_failed_run.choices]]
+label = "Pivot the approach"
+detail = "Change architecture or data strategy"
+effects = "Could unstick a real dead end. Throws away work and resets the timeline."
+outcome_ref = "failed_run_pivot"
+
+[[a5_failed_run.choices]]
+label = "Cut losses"
+detail = "Stop, preserve runway, regroup"
+effects = "Protects cash and optionality. Concedes the ground to rivals who pushed through."
+outcome_ref = "failed_run_cut"
+
+# ---------------------------------------------------------------------------
+# A6 — AI safety incident
+# ---------------------------------------------------------------------------
+[a6_safety_incident]
+id = "a6_safety_incident"
+category = "ai"
+weight = 4
+cooldown_weeks = 78
+one_shot = false
+
+[a6_safety_incident.trigger]
+type = "threshold"
+conditions = ["company.industry == ai", "company.has_public_model == true", "company.deployment_scale >= large"]
+
+[a6_safety_incident.framing]
+headline = "Your model did something it shouldn't have — in public"
+body = """A harmful, embarrassing output from your model is making the rounds. \
+Screenshots are spreading, reporters are calling, and how you respond will \
+matter more than the incident itself. The sector is watching to see whether \
+you're a responsible actor or a liability."""
+tone = "crisis"
+# Ties: ethics score
+
+[[a6_safety_incident.choices]]
+label = "Respond transparently"
+detail = "Own it publicly, explain the fix, invite scrutiny"
+effects = "Builds long-term trust and ethics standing. Short-term pain and a news cycle you don't control."
+outcome_ref = "safety_transparent"
+
+[[a6_safety_incident.choices]]
+label = "Fix it quietly"
+detail = "Patch fast, say little, hope it fades"
+effects = "Minimizes immediate noise. Risks a worse story if the quiet handling surfaces later."
+outcome_ref = "safety_quiet"
+
+[[a6_safety_incident.choices]]
+label = "Deflect"
+detail = "Downplay it, point at misuse or edge cases"
+effects = "Cheapest today. Erodes trust and ethics standing if people don't buy it."
+outcome_ref = "safety_deflect"
+
+# ---------------------------------------------------------------------------
+# A7 — Open-source release undercuts you
+# ---------------------------------------------------------------------------
+[a7_open_source_undercut]
+id = "a7_open_source_undercut"
+category = "ai"
+weight = 7
+cooldown_weeks = 39
+one_shot = false
+
+[a7_open_source_undercut.trigger]
+type = "random"
+conditions = ["company.industry == ai"]
+
+[a7_open_source_undercut.framing]
+headline = "A capable open model just commoditized part of what you sell"
+body = """A strong open-source release is now freely available, and it covers a \
+slice of your value that customers used to pay you for. The SOTA-decay clock \
+everyone in AI lives under just struck for you: what was proprietary is now a \
+free download."""
+tone = "threat"
+
+[[a7_open_source_undercut.choices]]
+label = "Go up-market"
+detail = "Move toward capabilities open models haven't reached"
+effects = "Stays ahead of the commoditization wave. Demands real R&D and a tolerance for the treadmill."
+outcome_ref = "oss_up_market"
+
+[[a7_open_source_undercut.choices]]
+label = "Embrace open"
+detail = "Build on the open model and sell service, tuning, and support"
+effects = "Turns the threat into a tailwind. Concedes that layer as a paid product."
+outcome_ref = "oss_embrace"
+
+[[a7_open_source_undercut.choices]]
+label = "Compete on service"
+detail = "Win on reliability, support, and integration instead of raw capability"
+effects = "Defensible with enterprise buyers. Caps the premium you can charge."
+outcome_ref = "oss_service"
+
+# ---------------------------------------------------------------------------
+# A8 — Enterprise mega-deal
+# ---------------------------------------------------------------------------
+[a8_enterprise_megadeal]
+id = "a8_enterprise_megadeal"
+category = "ai"
+weight = 5
+cooldown_weeks = 52
+one_shot = false
+
+[a8_enterprise_megadeal.trigger]
+type = "random"
+conditions = ["company.industry == ai", "company.stage >= series_a"]
+weight_mods = [
+  { when = "company.sub_industry == vertical_ai_saas", factor = 2.0 },
+]
+
+[a8_enterprise_megadeal.framing]
+headline = "{customer} wants to go big — if the terms are right"
+body = """{customer} is in play for a deal that would meaningfully move your \
+revenue. It's the kind of logo that anchors a category — but they know their \
+leverage, and they'll push on price and scope. How you handle the negotiation \
+sets the template for every enterprise deal after it."""
+tone = "opportunity"
+# {customer} = a real customer edge or procedural enterprise customer
+
+[[a8_enterprise_megadeal.choices]]
+label = "Discount aggressively"
+detail = "Win the logo now, optimize margin later"
+effects = "Likely to close, and a marquee reference. Sets a low price anchor others will expect."
+outcome_ref = "megadeal_discount"
+
+[[a8_enterprise_megadeal.choices]]
+label = "Custom build"
+detail = "Win it by committing to bespoke work"
+effects = "Lands a sticky deal. Ties up engineering and risks a one-off you can't resell."
+outcome_ref = "megadeal_custom"
+
+[[a8_enterprise_megadeal.choices]]
+label = "Hold your price"
+detail = "Sell the value; don't blink"
+effects = "Protects margin and pricing power. Real risk they walk to a hungrier rival."
+outcome_ref = "megadeal_hold"
+
+# ---------------------------------------------------------------------------
+# A9 — Regulatory inquiry (AI-specific)
+# ---------------------------------------------------------------------------
+[a9_ai_regulatory_inquiry]
+id = "a9_ai_regulatory_inquiry"
+category = "ai"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[a9_ai_regulatory_inquiry.trigger]
+type = "threshold"
+conditions = ["company.industry == ai", "company.stage >= series_a"]
+weight_mods = [
+  { when = "sector.hype > 85", factor = 1.5 },
+]
+
+[a9_ai_regulatory_inquiry.framing]
+headline = "Regulators are asking about your training data"
+body = """An inquiry has landed on questions of training data, safety, and bias. \
+It's not an accusation yet — but how you engage shapes whether you end up a \
+model citizen of the new rules or a target. The whole sector is about to be \
+regulated; the only question is who helps write it."""
+tone = "threat"
+# Ties: ethics score
+
+[[a9_ai_regulatory_inquiry.choices]]
+label = "Cooperate"
+detail = "Open the books, work with the regulators"
+effects = "Builds trust and ethics standing. Exposes practices you can't easily un-share."
+outcome_ref = "ai_reg_cooperate"
+
+[[a9_ai_regulatory_inquiry.choices]]
+label = "Fight it"
+detail = "Lawyer up and contest the scope"
+effects = "Protects proprietary practices. Costly, slow, and risky if it reads as stonewalling."
+outcome_ref = "ai_reg_fight"
+
+[[a9_ai_regulatory_inquiry.choices]]
+label = "Get ahead of it"
+detail = "Propose your own standards before they're imposed"
+effects = "Shapes the rules toward your strengths. Demands credibility and follow-through."
+outcome_ref = "ai_reg_preempt"
+
+# ---------------------------------------------------------------------------
+# A10 — Star researcher available
+# ---------------------------------------------------------------------------
+[a10_star_researcher]
+id = "a10_star_researcher"
+category = "ai"
+weight = 6
+cooldown_weeks = 39
+one_shot = false
+
+[a10_star_researcher.trigger]
+type = "random"
+conditions = ["company.industry == ai", "company.stage >= seed", "world.star_talent_available == true"]
+weight_mods = [
+  { when = "sector.hype > 75", factor = 1.4 },
+]
+
+[a10_star_researcher.framing]
+headline = "A famous researcher just hit the market"
+body = """{star_researcher} — a name that moves recruiting and press on its own — is \
+suddenly available. Landing them would mean a real capability boost and a halo \
+of credibility. It would also cost a fortune and reset what everyone else on \
+the team thinks they're worth."""
+tone = "opportunity"
+# {star_researcher} = a procedural star-talent name (not currently on your team)
+
+[[a10_star_researcher.choices]]
+label = "Pay up"
+detail = "Win them with a headline package"
+effects = "Capability and hype jump. Large cash and equity cost; comp expectations ratchet up."
+outcome_ref = "star_hire"
+
+[[a10_star_researcher.choices]]
+label = "Pass"
+detail = "Stay disciplined on comp"
+effects = "Preserves budget and pay structure. A rival may land them and the boost."
+outcome_ref = "star_pass"
+
+# ---------------------------------------------------------------------------
+# A11 — Chip architecture shift
+# ---------------------------------------------------------------------------
+[a11_chip_architecture_shift]
+id = "a11_chip_architecture_shift"
+category = "ai"
+weight = 4
+cooldown_weeks = 104
+one_shot = false
+
+[a11_chip_architecture_shift.trigger]
+type = "scheduled"
+conditions = ["company.sub_industry == ai_chips"]
+
+[a11_chip_architecture_shift.framing]
+headline = "A new compute paradigm is emerging — and your roadmap is exposed"
+body = """A shift in chip architecture is gathering momentum. If it wins, parts \
+of your current design go obsolete; if it fizzles, the companies that chased it \
+wasted years. This is the bet-the-company moment that defines silicon: commit to \
+the new paradigm, or ride the one you've already invested in."""
+tone = "threat"
+# Ties: AI Chips signature (generational technology bets)
+
+[[a11_chip_architecture_shift.choices]]
+label = "Commit to the new"
+detail = "Re-tool around the emerging paradigm"
+effects = "Generational lead if the bet's right. Years and capital lost if it isn't."
+outcome_ref = "chip_commit_new"
+
+[[a11_chip_architecture_shift.choices]]
+label = "Ride the current"
+detail = "Maximize the architecture you've already built"
+effects = "Safe near-term revenue. Risks obsolescence if the new paradigm takes hold."
+outcome_ref = "chip_ride_current"
+
+# ---------------------------------------------------------------------------
+# A12 — Data licensing crisis
+# ---------------------------------------------------------------------------
+[a12_data_licensing]
+id = "a12_data_licensing"
+category = "ai"
+weight = 5
+cooldown_weeks = 52
+one_shot = false
+
+[a12_data_licensing.trigger]
+type = "random"
+conditions = ["company.industry == ai", "company.trains_models == true"]
+
+[a12_data_licensing.framing]
+headline = "A key training-data source is suddenly off-limits"
+body = """One of the data sources your models depend on is being legally or \
+contractually challenged. Keep using it and you carry real exposure; replace it \
+and you take a capability and cost hit. The cheap-data era of model-building is \
+running into the law."""
+tone = "threat"
+# Ties: ethics score
+
+[[a12_data_licensing.choices]]
+label = "License it properly"
+detail = "Pay for clean, defensible rights"
+effects = "Removes the risk and the ethical cloud. Expensive and a margin hit."
+outcome_ref = "data_license"
+
+[[a12_data_licensing.choices]]
+label = "Find an alternative"
+detail = "Rebuild on data you clearly control"
+effects = "Durable fix. Costs engineering time and possibly some model quality."
+outcome_ref = "data_alternative"
+
+[[a12_data_licensing.choices]]
+label = "Risk it"
+detail = "Keep going and hope the challenge fizzles"
+effects = "Free and fast today. A serious liability if the challenge holds up."
+outcome_ref = "data_risk"
+
+# ---------------------------------------------------------------------------
+# A13 — Hype cycle peak (AI)
+# ---------------------------------------------------------------------------
+[a13_ai_hype_peak]
+id = "a13_ai_hype_peak"
+category = "ai"
+weight = 0
+cooldown_weeks = 78
+one_shot = false
+
+[a13_ai_hype_peak.trigger]
+type = "threshold"
+conditions = ["company.industry == ai", "sector.hype > 90"]
+
+[a13_ai_hype_peak.framing]
+headline = "AI euphoria is peaking"
+body = """Sector hype is running as hot as it gets. Money is chasing anything \
+with 'AI' in the deck, valuations are detached from fundamentals, and raising \
+right now would be trivially easy. Which is exactly the signal that a correction \
+is somewhere on the other side of this. The strategic question is timing."""
+tone = "opportunity"
+# Ties: master variables
+
+[[a13_ai_hype_peak.choices]]
+label = "Raise into the froth"
+detail = "Lock in cheap capital while the window's wide"
+effects = "Fills the war chest at a great price. Over-raising at peak sets up a painful reset."
+outcome_ref = "hype_raise"
+
+[[a13_ai_hype_peak.choices]]
+label = "Stay disciplined"
+detail = "Take only what you need; don't chase the number"
+effects = "Keeps the cap table clean and expectations sane. Leaves easy money on the table."
+outcome_ref = "hype_discipline"
+
+# ---------------------------------------------------------------------------
+# A14 — Model benchmark war
+# ---------------------------------------------------------------------------
+[a14_benchmark_war]
+id = "a14_benchmark_war"
+category = "ai"
+weight = 7
+cooldown_weeks = 39
+one_shot = false
+
+[a14_benchmark_war.trigger]
+type = "random"
+conditions = ["company.sub_industry == frontier_model_lab", "company.has_competitor == true"]
+
+[a14_benchmark_war.framing]
+headline = "{rival} just topped the leaderboard you used to lead"
+body = """{rival} posted benchmark numbers that knock you down the public \
+rankings. The press is writing the story as a race, and your standing in that \
+race shapes recruiting, fundraising, and customer confidence — even though \
+everyone privately knows benchmarks and real-world usefulness aren't the same \
+thing."""
+tone = "threat"
+# {rival} = competitor edge
+
+[[a14_benchmark_war.choices]]
+label = "Chase the benchmarks"
+detail = "Optimize hard to retake the top spot"
+effects = "Wins back the headline and the halo. Diverts effort from real product value."
+outcome_ref = "benchmark_chase"
+
+[[a14_benchmark_war.choices]]
+label = "Focus on real usage"
+detail = "Ignore the leaderboard; win on what customers actually feel"
+effects = "Builds durable advantage where it counts. Cedes the press narrative for now."
+outcome_ref = "benchmark_usage"
+
+[[a14_benchmark_war.choices]]
+label = "Reframe the narrative"
+detail = "Publicly redefine the metric that matters"
+effects = "Can flip the story if you're credible. Falls flat — or backfires — if you're not."
+outcome_ref = "benchmark_reframe"
+
+# ---------------------------------------------------------------------------
+# A15 — Inference cost collapse
+# ---------------------------------------------------------------------------
+[a15_inference_collapse]
+id = "a15_inference_collapse"
+category = "ai"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[a15_inference_collapse.trigger]
+type = "scheduled"
+conditions = ["company.industry == ai"]
+
+[a15_inference_collapse.framing]
+headline = "The cost to run models just fell off a cliff"
+body = """An industry-wide drop in inference costs is reshaping the economics. \
+Your margins on existing products just improved — but so did everyone else's, \
+and the barrier that kept smaller competitors out just got a lot lower. Cheaper \
+compute is a gift and a threat in the same envelope."""
+tone = "neutral"
+
+[[a15_inference_collapse.choices]]
+label = "Acknowledge"
+detail = "Bank the margin, brace for new competition"
+effects = "Margins improve industry-wide; competitive barriers fall. A double-edged reframe."
+outcome_ref = "inference_reframe"

@@ -1,0 +1,40 @@
+# Anchor (light) — Energy & Climate / Battery & Storage
+# Posture: project-finance-driven storage operator. Rate-sensitive,
+# policy-tailwind, steady margins once projects are operating.
+
+[company]
+id = "solaris_grid"
+name = "Solaris Grid"
+tier = "anchor"
+industry = "energy"
+sub_industry = "battery_storage"
+founded_year = -10
+hq = "Phoenix, AZ"
+color = "#E8B84B"
+logo_glyph = "battery"
+
+[company.identity]
+tagline = "Storing cheap power, selling it when it counts."
+reputation = 74
+narrative_hooks = ["project-finance economics", "interest-rate sensitive", "grid-services revenue stack"]
+
+[company.stage]
+status = "public"
+ipo_year = -4
+
+[company.financials]
+revenue = 2200
+revenue_growth = 0.24
+gross_margin = 0.38
+profitable = true
+valuation = 16000
+shares_out = 340
+
+[company.quality]
+fundamentals = 73
+hype_exposure = 0.5
+moat = 56
+execution = 75
+
+[company.relationships]
+investors = ["evergreen_capital", "atlas_growth"]

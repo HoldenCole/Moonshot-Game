@@ -1,0 +1,40 @@
+# Anchor (light) — Defense Tech / Autonomous Systems
+# Posture: fast-rising defense challenger winning programs of record.
+# Sticky contracts, geopolitics-reactive demand, reputation compounds.
+
+[company]
+id = "aegis_defense"
+name = "Aegis Defense"
+tier = "anchor"
+industry = "defense"
+sub_industry = "autonomous_systems"
+founded_year = -7
+hq = "Arlington, VA"
+color = "#4A5859"
+logo_glyph = "drone"
+
+[company.identity]
+tagline = "Autonomy for the modern battlefield."
+reputation = 82
+narrative_hooks = ["programs of record", "geopolitics drives demand", "DoD reputation compounds"]
+
+[company.stage]
+status = "private"
+private_round = "d"
+
+[company.financials]
+revenue = 1900
+revenue_growth = 0.58
+gross_margin = 0.49
+profitable = false
+valuation = 24000
+shares_out = 0
+
+[company.quality]
+fundamentals = 79
+hype_exposure = 0.6
+moat = 70
+execution = 80
+
+[company.relationships]
+investors = ["frontier_partners", "atlas_growth", "ironclad_capital"]

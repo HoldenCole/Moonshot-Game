@@ -1,0 +1,51 @@
+# Anchor VC — hand-crafted tier
+# Role: activist crossover. Late-stage and public-market firm that takes
+# big positions and pushes management hard — board fights, exit pressure,
+# strategy demands. The firm whose money comes with an agenda. Feeds the
+# late-game activist-pressure system.
+
+[firm]
+id = "meridian_crossing"
+name = "Meridian Crossing"
+tier = "anchor"
+partner_name = "Catherine Vos"
+partner_title = "Managing Director"
+hq = "New York, NY"
+color = "#6B4E9E"
+logo_glyph = "crosshair"
+
+[firm.identity]
+thesis = "Take a big late-stage position and actively shape the outcome — including the exit."
+reputation = 80
+trait_tags = ["Activist", "Exit-Driven", "Tough Negotiator"]
+narrative_hooks = [
+  "money comes with an agenda",
+  "pushes for the exit on its timeline",
+  "the board fight starts when Meridian arrives",
+]
+
+[firm.personality]
+aggression = 84
+patience = 44
+conviction = 86
+founder_friendliness = 26       # lowest in the hand-crafted set
+network_strength = 80
+
+[firm.focus]
+primary_sector = "ai"
+secondary_sector = "energy"
+primary_stage = "late_stage"
+stage_range = ["growth", "late_stage"]
+stretch_tolerance = 0.6
+
+[firm.fund]
+fund_name = "Crossover Fund II"
+fund_size = 4200
+vintage_year = -1
+deployment_years = 4
+check_min = 40
+check_max = 600                  # largest checks in the anchor set
+
+[firm.relationships]
+signature_portfolio = []
+rival_firms = ["helio_capital"]  # the founder-whisperer's natural antagonist

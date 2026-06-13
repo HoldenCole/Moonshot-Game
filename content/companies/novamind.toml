@@ -1,0 +1,54 @@
+# Anchor — AI / Frontier Model Lab
+# Posture: steady enterprise/safety player. Strong fundamentals, low
+# hype-exposure — a compounder that barely moves on sector sentiment.
+
+[company]
+id = "novamind"
+name = "NovaMind"
+tier = "anchor"
+industry = "ai"
+sub_industry = "frontier_model_lab"
+founded_year = -6
+hq = "Seattle, WA"
+color = "#3FB68B"
+logo_glyph = "shield-brain"
+
+[company.identity]
+tagline = "Reliable models for regulated industries."
+reputation = 80
+narrative_hooks = [
+  "enterprise trust anchor",
+  "slow but never misses ship dates",
+  "safety-first positioning",
+  "boring in the best way",
+]
+
+[company.stage]
+status = "public"
+private_round = ""
+ipo_year = -2
+
+[company.financials]
+revenue = 1450
+revenue_growth = 0.34
+gross_margin = 0.68
+profitable = true
+burn_monthly = 0
+valuation = 31000
+shares_out = 210
+
+[company.quality]
+fundamentals = 78
+hype_exposure = 0.4
+moat = 72
+execution = 84
+
+[company.signature]
+benchmark_score = 74
+signature_notes = "Trails on raw benchmarks, leads on deployment reliability and uptime SLAs"
+
+[company.relationships]
+competitors = ["openmind", "cerebra"]
+suppliers  = ["nova_silicon"]
+customers  = ["lexiq"]
+investors  = ["helio_capital", "evergreen_capital"]

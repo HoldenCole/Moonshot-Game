@@ -1,0 +1,53 @@
+# Anchor — AI / AI Chips & Silicon
+# Posture: capex-heavy challenger betting on a different architecture.
+# Bet-the-company tape-outs, thin margins until scale. High variance.
+
+[company]
+id = "volt_logic"
+name = "Volt Logic"
+tier = "anchor"
+industry = "ai"
+sub_industry = "ai_chips"
+founded_year = -4
+hq = "Austin, TX"
+color = "#FF8A3D"
+logo_glyph = "bolt"
+
+[company.identity]
+tagline = "A clean-sheet architecture for inference at scale."
+reputation = 70
+narrative_hooks = [
+  "betting the company on each tape-out",
+  "design wins but no volume yet",
+  "margin underwater until the next node",
+]
+
+[company.stage]
+status = "private"
+private_round = "c"
+ipo_year = 0
+
+[company.financials]
+revenue = 640
+revenue_growth = 0.95
+gross_margin = 0.22
+profitable = false
+burn_monthly = 55
+valuation = 9800
+shares_out = 0
+
+[company.quality]
+fundamentals = 64
+hype_exposure = 0.7
+moat = 52
+execution = 61
+
+[company.signature]
+benchmark_score = 0
+signature_notes = "Inference perf/watt edge on paper; yield and volume ramp unproven"
+
+[company.relationships]
+competitors = ["nova_silicon"]
+suppliers  = ["forge_materials"]
+customers  = ["cerebra"]
+investors  = ["atlas_growth", "frontier_partners"]

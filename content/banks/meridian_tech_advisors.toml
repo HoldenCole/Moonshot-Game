@@ -1,0 +1,48 @@
+# Anchor Bank — tech-focused boutique
+# Role: founder-friendly underwriter for tech IPOs. Deep sector expertise,
+# fairer fees, accessible at smaller scale than the bulge bracket — but
+# less institutional demand to pull into a marquee book. The natural
+# choice for a mid-size AI or Space IPO that wants a good partner.
+#
+# NOTE: distinct entity from the "Meridian Orbital" company and the
+# "Meridian Crossing" VC firm — shared surname flavor, different rosters.
+
+[bank]
+id = "meridian_tech_advisors"
+name = "Meridian Tech Advisors"
+tier = "anchor"
+founded_year = -22
+hq = "San Francisco, CA"
+color = "#2F7E8C"
+
+[bank.identity]
+tagline = "Frontier-tech bankers who actually understand the cap table."
+trait_tags = ["Tech Specialist", "Founder Friendly", "Boutique"]
+narrative_hooks = [
+  "the tech founder's banker",
+  "prices growth stories better than the generalists",
+  "smaller book, warmer relationship",
+]
+
+[bank.underwriting]
+available = true
+prestige = 74
+pricing_quality = 82            # strong on tech specifically; near bulge-bracket
+fee_pct = 0.055                 # cheaper than Granite
+min_raise = 60                  # accessible to mid-size IPOs
+selectivity = 55
+sectors = ["ai", "space", "quantum", "mobility"]
+
+[bank.debt]
+offers_debt = true
+max_loan_multiple = 2.0         # venture-debt flavor, not heavy lending
+base_rate_spread = 0.03
+covenant_strictness = 50        # founder-friendly terms here too
+prefers_profitable = false      # will extend venture debt to growth-stage burners
+
+[bank.financials]
+status = "public"
+revenue = 6200
+valuation = 21000
+fundamentals = 76
+hype_exposure = 0.35            # slightly more cyclical — tied to tech IPO volume

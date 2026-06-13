@@ -1,0 +1,50 @@
+# Anchor VC — hand-crafted tier
+# Role: defense & deep-tech specialist. Long-horizon, government-network
+# value-add, comfortable with programs-of-record timelines that scare off
+# generalists. Patient on revenue, demanding on mission alignment.
+
+[firm]
+id = "ironclad_capital"
+name = "Ironclad Capital"
+tier = "anchor"
+partner_name = "Gen. (Ret.) Sam Boone"
+partner_title = "Operating Partner"
+hq = "Arlington, VA"
+color = "#3F4A52"
+logo_glyph = "anchor"
+
+[firm.identity]
+thesis = "Fund the hard, slow, strategic bets that win government trust and never churn."
+reputation = 83
+trait_tags = ["Deep Tech", "Patient Capital", "Government Network"]
+narrative_hooks = [
+  "opens doors at the DoD",
+  "comfortable with a 7-year sales cycle",
+  "mission-fit matters as much as metrics",
+]
+
+[firm.personality]
+aggression = 50
+patience = 90
+conviction = 78
+founder_friendliness = 60
+network_strength = 84
+
+[firm.focus]
+primary_sector = "defense"
+secondary_sector = "space"
+primary_stage = "series_a"
+stage_range = ["seed", "late_stage"]
+stretch_tolerance = 0.5
+
+[firm.fund]
+fund_name = "Fund III"
+fund_size = 950
+vintage_year = -2
+deployment_years = 5
+check_min = 5
+check_max = 180
+
+[firm.relationships]
+signature_portfolio = ["aegis_defense"]
+rival_firms = []

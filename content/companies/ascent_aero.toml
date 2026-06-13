@@ -1,0 +1,53 @@
+# Anchor — Space / Launch Services
+# Posture: nimble small-launch challenger moving up to medium-lift.
+# Higher hype-exposure, decent execution, one bad launch hurts badly.
+
+[company]
+id = "ascent_aero"
+name = "Ascent Aerospace"
+tier = "anchor"
+industry = "space"
+sub_industry = "launch_services"
+founded_year = -8
+hq = "Long Beach, CA"
+color = "#C84B4B"
+logo_glyph = "rocket-small"
+
+[company.identity]
+tagline = "Dedicated rides to orbit, on your schedule."
+reputation = 78
+narrative_hooks = [
+  "dominates dedicated small-lift",
+  "climbing the lift-class ladder",
+  "a single RUD dents the stock",
+]
+
+[company.stage]
+status = "public"
+private_round = ""
+ipo_year = -3
+
+[company.financials]
+revenue = 980
+revenue_growth = 0.52
+gross_margin = 0.34
+profitable = false
+burn_monthly = 18
+valuation = 7400
+shares_out = 480
+
+[company.quality]
+fundamentals = 71
+hype_exposure = 0.8
+moat = 58
+execution = 74
+
+[company.signature]
+benchmark_score = 72
+signature_notes = "Proven small-lift reliability; medium-lift vehicle is the make-or-break next step"
+
+[company.relationships]
+competitors = ["vector_dynamics"]
+suppliers  = ["forge_materials"]
+customers  = ["lumen_skies", "meridian_orbital"]
+investors  = ["atlas_growth", "helio_capital"]

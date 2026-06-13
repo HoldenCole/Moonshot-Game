@@ -1,0 +1,45 @@
+# Anchor Bank — commercial bank
+# Role: the lender. The natural debt provider for profitable / cash-flowing
+# companies and capital-intensive Space plays — the non-dilutive financing
+# path that pairs with bootstrapped-to-IPO. Not a prestige underwriter;
+# it will underwrite small deals but adds no signal. Defensive bank stock.
+
+[bank]
+id = "continental_trust"
+name = "Continental Trust"
+tier = "anchor"
+founded_year = -110
+hq = "Chicago, IL"
+color = "#5C5043"
+
+[bank.identity]
+tagline = "Steady money for companies that make money."
+trait_tags = ["Commercial Lender", "Conservative", "Relationship Bank"]
+narrative_hooks = [
+  "lends against cash flow, not hype",
+  "where profitable companies bank",
+  "the credit line that funds the build-out",
+]
+
+[bank.underwriting]
+available = true
+prestige = 48                   # underwrites, but adds little signal
+pricing_quality = 60
+fee_pct = 0.045                 # cheap, because the name doesn't sell the book
+min_raise = 20                  # accessible to small IPOs
+selectivity = 30                # low bar — almost anyone can use them
+sectors = ["all"]
+
+[bank.debt]
+offers_debt = true
+max_loan_multiple = 4.0         # the real lender — highest leverage on offer
+base_rate_spread = 0.015        # best rate for qualifying borrowers
+covenant_strictness = 70        # the cost: restrictions come with the loan
+prefers_profitable = true       # strongly favors cash-flowing borrowers
+
+[bank.financials]
+status = "public"
+revenue = 31000
+valuation = 95000
+fundamentals = 78
+hype_exposure = 0.15            # lowest-hype, most rate-sensitive — defensive stock

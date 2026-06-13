@@ -1,0 +1,51 @@
+# Anchor VC — hand-crafted tier
+# Role: momentum money. Big growth fund that chases hype, pays up at the
+# peak, and pushes hard on terms to protect the downside. Fast to move,
+# first to leave. The "hot round" firm — and the one that prices a
+# down round ruthlessly when sentiment turns.
+
+[firm]
+id = "atlas_growth"
+name = "Atlas Growth"
+tier = "anchor"
+partner_name = "Priya Sharma"
+partner_title = "Partner"
+hq = "New York, NY"
+color = "#E0483C"
+logo_glyph = "trend-up"
+
+[firm.identity]
+thesis = "Deploy fast into the hottest sector, ride the multiple, and structure for protection."
+reputation = 81
+trait_tags = ["Momentum Money", "Tough Negotiator", "Structured Downside"]
+narrative_hooks = [
+  "shows up when the sector is hot",
+  "loves a liquidation preference",
+  "first to push for a recap when things wobble",
+]
+
+[firm.personality]
+aggression = 88                  # pushes hard on price AND structure
+patience = 34
+conviction = 66
+founder_friendliness = 30
+network_strength = 72
+
+[firm.focus]
+primary_sector = "ai"
+secondary_sector = "mobility"
+primary_stage = "growth"
+stage_range = ["series_a", "late_stage"]
+stretch_tolerance = 0.8          # will chase a unicorn anywhere if it's hot
+
+[firm.fund]
+fund_name = "Growth Fund III"
+fund_size = 3100
+vintage_year = -1
+deployment_years = 4
+check_min = 20
+check_max = 400
+
+[firm.relationships]
+signature_portfolio = ["cerebra", "synthseq", "lumen_skies", "axion_mobility"]
+rival_firms = ["frontier_partners", "evergreen_capital"]

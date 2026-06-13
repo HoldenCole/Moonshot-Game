@@ -1,0 +1,197 @@
+# Events — PERSONAL (5)
+# The founder as a human. These make it more than a spreadsheet.
+# All wellbeing-aware: choosing life, rest, or family is never punished
+# mechanically. Tone is gentle; no shown dice; no guilt framing.
+
+# ---------------------------------------------------------------------------
+# P1 — Burnout risk
+# ---------------------------------------------------------------------------
+[p1_burnout_risk]
+id = "p1_burnout_risk"
+category = "personal"
+weight = 0
+cooldown_weeks = 39
+one_shot = false
+
+[p1_burnout_risk.trigger]
+type = "threshold"
+conditions = ["founder.sustained_intensity >= high", "founder.recent_crisis_density >= elevated"]
+
+[p1_burnout_risk.framing]
+headline = "You're running hot"
+body = """It's been a relentless stretch — long weeks, back-to-back crises, not \
+much rest. You can feel it in the decisions starting to come slower. There's no \
+medal for grinding yourself down, and the company doesn't actually benefit from \
+a depleted founder. Something has to give, and it's worth choosing what."""
+tone = "neutral"
+# Ties: delegation system, wellbeing tone
+
+[[p1_burnout_risk.choices]]
+label = "Take a real break"
+detail = "Step back, recharge, trust the team to hold things"
+effects = "Costs some time. Restores your capacity and tends to improve later judgment. A healthy choice."
+outcome_ref = "burnout_rest"
+
+[[p1_burnout_risk.choices]]
+label = "Delegate more"
+detail = "Hand real ownership to your executives"
+effects = "Lightens your load durably and grows your team. Means letting go of some control."
+outcome_ref = "burnout_delegate"
+
+[[p1_burnout_risk.choices]]
+label = "Push through"
+detail = "Keep going at this pace for now"
+effects = "Keeps your hands on everything. Running depleted tends to catch up with you."
+outcome_ref = "burnout_push"
+
+# ---------------------------------------------------------------------------
+# P2 — Co-founder conflict
+# ---------------------------------------------------------------------------
+[p2_cofounder_conflict]
+id = "p2_cofounder_conflict"
+category = "personal"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[p2_cofounder_conflict.trigger]
+type = "random"
+conditions = ["company.has_cofounder == true", "company.stage <= series_b"]
+
+[p2_cofounder_conflict.framing]
+headline = "You and {cofounder} aren't aligned anymore"
+body = """The tension with {cofounder} has been building, and it's now affecting \
+the company — direction, equity, who decides what. These things rarely resolve \
+themselves, and the team can feel the friction at the top. How you handle it \
+shapes both the cap table and the culture."""
+tone = "threat"
+# {cofounder} = the named co-founder; affects cap table + morale
+
+[[p2_cofounder_conflict.choices]]
+label = "Find a compromise"
+detail = "Work it out and realign on roles and direction"
+effects = "Preserves the partnership and the team's stability. Requires real give on both sides."
+outcome_ref = "cofounder_compromise"
+
+[[p2_cofounder_conflict.choices]]
+label = "Buy them out"
+detail = "Restructure equity and take fuller control"
+effects = "Resolves the deadlock and cleans up decision-making. Costs cash or dilution, and a relationship."
+outcome_ref = "cofounder_buyout"
+
+[[p2_cofounder_conflict.choices]]
+label = "Part ways"
+detail = "Agree to an exit for one of you"
+effects = "Ends the conflict decisively. Cap-table and morale ripples, and a hard personal cost."
+outcome_ref = "cofounder_part"
+
+# ---------------------------------------------------------------------------
+# P3 — Public profile moment
+# ---------------------------------------------------------------------------
+[p3_public_profile]
+id = "p3_public_profile"
+category = "personal"
+weight = 0
+cooldown_weeks = 78
+one_shot = false
+
+[p3_public_profile.trigger]
+type = "threshold"
+conditions = ["founder.reputation >= milestone"]
+
+[p3_public_profile.framing]
+headline = "The spotlight is offering you a turn"
+body = """A magazine cover, a marquee podcast, a keynote slot — the kind of \
+platform that turns a founder into a public figure. It would raise your profile \
+and the company's, and it would also invite the scrutiny that comes with being \
+known. This is how the magnate persona gets built, if you want it."""
+tone = "opportunity"
+# Builds the magnate persona
+
+[[p3_public_profile.choices]]
+label = "Embrace the spotlight"
+detail = "Step out front as the face of the company"
+effects = "Boosts hype, recruiting pull, and your personal brand. Invites scrutiny on everything you do next."
+outcome_ref = "profile_embrace"
+
+[[p3_public_profile.choices]]
+label = "Stay heads-down"
+detail = "Let the work speak; keep a low profile"
+effects = "Keeps focus and avoids the scrutiny. Forgoes the visibility and the persona-building."
+outcome_ref = "profile_decline"
+
+# ---------------------------------------------------------------------------
+# P4 — Personal investment opportunity
+# ---------------------------------------------------------------------------
+[p4_personal_investment]
+id = "p4_personal_investment"
+category = "personal"
+weight = 5
+cooldown_weeks = 52
+one_shot = false
+
+[p4_personal_investment.trigger]
+type = "random"
+conditions = ["founder.personal_wealth >= milestone"]
+
+[p4_personal_investment.framing]
+headline = "A chance to put your own money to work"
+body = """Something has come across your desk that's outside the company — a \
+friend's startup, a piece of property, a fund looking for anchors. It's your \
+capital, your call, and it's the first taste of the role you may grow into: not \
+just a founder, but an allocator deciding where money goes."""
+tone = "opportunity"
+# Seeds the capital-allocator arc
+
+[[p4_personal_investment.choices]]
+label = "Invest"
+detail = "Put personal capital into the opportunity"
+effects = "Plants a seed outside the company and starts your investor track record. Personal capital at risk."
+outcome_ref = "personal_invest"
+
+[[p4_personal_investment.choices]]
+label = "Pass"
+detail = "Keep your focus and capital on the company"
+effects = "Stays disciplined and concentrated. Forgoes a potential outside return and some learning."
+outcome_ref = "personal_pass"
+
+# ---------------------------------------------------------------------------
+# P5 — Family / life milestone
+# ---------------------------------------------------------------------------
+[p5_life_milestone]
+id = "p5_life_milestone"
+category = "personal"
+weight = 4
+cooldown_weeks = 104
+one_shot = false
+
+[p5_life_milestone.trigger]
+type = "random"
+conditions = ["game.year >= 1"]
+
+[p5_life_milestone.framing]
+headline = "Life is asking for your attention"
+body = """Something important is happening outside the company — the kind of \
+moment that doesn't wait for a good quarter. The work will still be here. How \
+you weigh this against the company is a real choice, and there's no wrong answer \
+that a healthy person would judge you for."""
+tone = "neutral"
+# Character-building, wellbeing-aware, no punishment for choosing life
+
+[[p5_life_milestone.choices]]
+label = "Be present for it"
+detail = "Give the moment the time it deserves"
+effects = "Costs a little time. The kind of choice that sustains a person for the long run — never penalized."
+outcome_ref = "life_present"
+
+[[p5_life_milestone.choices]]
+label = "Find a balance"
+detail = "Make room for both without dropping either"
+effects = "Splits your attention thoughtfully. A reasonable middle that asks more of your energy."
+outcome_ref = "life_balance"
+
+[[p5_life_milestone.choices]]
+label = "Stay focused on work"
+detail = "Keep your head down through this stretch"
+effects = "Keeps momentum. A choice you're free to make — the game won't punish either direction."
+outcome_ref = "life_work_focus"

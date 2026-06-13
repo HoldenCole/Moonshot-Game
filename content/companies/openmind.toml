@@ -1,0 +1,54 @@
+# Anchor — AI / Frontier Model Lab
+# Posture: dominant incumbent. Proven, so valuation rides fundamentals
+# more than hype. The bar the player's lab is measured against.
+
+[company]
+id = "openmind"
+name = "OpenMind"
+tier = "anchor"
+industry = "ai"
+sub_industry = "frontier_model_lab"
+founded_year = -7
+hq = "San Francisco, CA"
+color = "#5B6CFF"
+logo_glyph = "brain"
+
+[company.identity]
+tagline = "The lab that productized reasoning."
+reputation = 88
+narrative_hooks = [
+  "frontier safety leader",
+  "aggressive on compute",
+  "poaches aggressively",
+  "the benchmark everyone chases",
+]
+
+[company.stage]
+status = "public"
+private_round = ""
+ipo_year = -1
+
+[company.financials]
+revenue = 1800
+revenue_growth = 0.55
+gross_margin = 0.62
+profitable = false
+burn_monthly = 90
+valuation = 42000
+shares_out = 240
+
+[company.quality]
+fundamentals = 82
+hype_exposure = 0.7
+moat = 75
+execution = 80
+
+[company.signature]
+benchmark_score = 80
+signature_notes = "Helio-class models, 2 gens ahead on reasoning benchmarks"
+
+[company.relationships]
+competitors = ["cerebra", "novamind"]
+suppliers  = ["nova_silicon"]
+customers  = ["lexiq", "synthseq"]
+investors  = ["frontier_partners", "helio_capital"]

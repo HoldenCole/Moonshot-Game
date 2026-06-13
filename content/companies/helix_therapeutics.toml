@@ -1,0 +1,40 @@
+# Anchor (light) — Biotech / Gene Therapeutics
+# Posture: clinical-stage, pre-revenue, binary on a Phase III readout.
+# The lottery-ticket end — huge upside, can be wiped out by one trial.
+
+[company]
+id = "helix_therapeutics"
+name = "Helix Therapeutics"
+tier = "anchor"
+industry = "biotech"
+sub_industry = "gene_therapeutics"
+founded_year = -5
+hq = "Cambridge, MA"
+color = "#9B59B6"
+logo_glyph = "helix"
+
+[company.identity]
+tagline = "One edit away from a cure — or a cliff."
+reputation = 67
+narrative_hooks = ["binary Phase III readout", "pre-revenue cash burn", "platform with multiple shots on goal"]
+
+[company.stage]
+status = "public"
+ipo_year = -2
+
+[company.financials]
+revenue = 40
+revenue_growth = 0.0
+gross_margin = 0.0
+profitable = false
+valuation = 6400
+shares_out = 140
+
+[company.quality]
+fundamentals = 55
+hype_exposure = 0.7
+moat = 60
+execution = 58
+
+[company.relationships]
+investors = ["atlas_growth", "frontier_partners"]

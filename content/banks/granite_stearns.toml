@@ -1,0 +1,44 @@
+# Anchor Bank — prestige bulge-bracket
+# Role: the marquee underwriter. Best pricing and signal value, highest
+# fee, won't touch a small deal. Access is a progression marker — a
+# seed-stage player can't get Granite Stearns to take them public.
+
+[bank]
+id = "granite_stearns"
+name = "Granite Stearns"
+tier = "anchor"
+founded_year = -80
+hq = "New York, NY"
+color = "#3A4A6B"
+
+[bank.identity]
+tagline = "The bulge-bracket name on the biggest deals."
+trait_tags = ["Prestige", "Expensive", "Selective"]
+narrative_hooks = [
+  "leads marquee IPOs",
+  "won't touch small deals",
+  "their name on the cover moves the book",
+]
+
+[bank.underwriting]
+available = true
+prestige = 92
+pricing_quality = 85
+fee_pct = 0.07
+min_raise = 200
+selectivity = 80
+sectors = ["all"]
+
+[bank.debt]
+offers_debt = true
+max_loan_multiple = 2.5         # lends, but it's not their focus — equity is
+base_rate_spread = 0.018
+covenant_strictness = 65
+prefers_profitable = true
+
+[bank.financials]
+status = "public"
+revenue = 48000
+valuation = 180000
+fundamentals = 80
+hype_exposure = 0.2

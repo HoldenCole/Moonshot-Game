@@ -1,0 +1,572 @@
+# Events — SPACE INDUSTRY (15)
+# Binary, dramatic, capital-heavy. Sub-industry-gated via conditions:
+# launch_services, satellite_constellations, space_stations.
+# Launch outcomes (S1/S2) fire after a committed launch and resolve the
+# Launch signature's probabilistic moment. Slots resolve from the graph.
+
+# ---------------------------------------------------------------------------
+# S1 — Launch success
+# ---------------------------------------------------------------------------
+[s1_launch_success]
+id = "s1_launch_success"
+category = "space"
+weight = 0
+cooldown_weeks = 4
+one_shot = false
+
+[s1_launch_success.trigger]
+type = "random"
+conditions = ["company.sub_industry == launch_services", "company.launch_committed == true", "company.launch_outcome == success"]
+
+[s1_launch_success.framing]
+headline = "Liftoff — clean flight, payload delivered"
+body = """The vehicle flew, the payload reached orbit, and the customer is \
+thrilled. This is the triumphant binary moment the whole business is built \
+around: reputation climbs, cadence confidence builds, and customers waiting on \
+the fence start signing. Nights like this are why the hard ones are worth it."""
+tone = "opportunity"
+# Ties: Launch signature
+
+[[s1_launch_success.choices]]
+label = "Acknowledge"
+detail = "Bank the win and the momentum"
+effects = "Reputation and cadence confidence rise; customer pipeline warms. Earned momentum."
+outcome_ref = "launch_success_resolve"
+
+# ---------------------------------------------------------------------------
+# S2 — Launch failure (RUD)
+# ---------------------------------------------------------------------------
+[s2_launch_failure]
+id = "s2_launch_failure"
+category = "space"
+weight = 0
+cooldown_weeks = 4
+one_shot = false
+
+[s2_launch_failure.trigger]
+type = "random"
+conditions = ["company.sub_industry == launch_services", "company.launch_committed == true", "company.launch_outcome == failure"]
+
+[s2_launch_failure.framing]
+headline = "Vehicle lost shortly after launch"
+body = """The rocket — and the customer's payload — is gone. The catastrophic \
+binary moment every launch company dreads: an investigation is now mandatory, \
+the customer is reeling, and the rest of your manifest is watching to decide \
+whether they still trust you. How you handle the next few days defines the \
+company more than the failure does."""
+tone = "crisis"
+# Ties: Launch signature, ethics score
+
+[[s2_launch_failure.choices]]
+label = "Transparent investigation"
+detail = "Public root-cause analysis, share findings, ground until fixed"
+effects = "Rebuilds trust over time and protects ethics standing. Slow and publicly painful."
+outcome_ref = "rud_transparent"
+
+[[s2_launch_failure.choices]]
+label = "Minimize it"
+detail = "Downplay scope, return to flight fast"
+effects = "Limits the immediate narrative damage. A repeat failure becomes far more costly."
+outcome_ref = "rud_minimize"
+
+[[s2_launch_failure.choices]]
+label = "Blame the supplier"
+detail = "Point at {supplier}'s component"
+effects = "Deflects heat short-term. Damages the supplier relationship and risks looking evasive."
+outcome_ref = "rud_blame_supplier"
+condition = "company.has_supplier == true"   # choice hidden if no supplier to name
+# {supplier} = a real propulsion/materials supplier edge (e.g. forge_materials)
+
+# ---------------------------------------------------------------------------
+# S3 — Anchor customer win
+# ---------------------------------------------------------------------------
+[s3_anchor_customer_win]
+id = "s3_anchor_customer_win"
+category = "space"
+weight = 5
+cooldown_weeks = 52
+one_shot = false
+
+[s3_anchor_customer_win.trigger]
+type = "random"
+conditions = ["company.industry == space", "company.stage >= series_a"]
+
+[s3_anchor_customer_win.framing]
+headline = "A {customer} contract is up for grabs"
+body = """{customer} is putting a major contract out — the kind of anchor deal \
+that underwrites years of revenue and tells the whole market you're real. \
+Winning it changes your financing conversations entirely. So everyone serious \
+is bidding, and how you bid is the whole game."""
+tone = "opportunity"
+# {customer} = government or major commercial customer
+
+[[s3_anchor_customer_win.choices]]
+label = "Bid aggressively"
+detail = "Win on price; accept thin margins for the anchor"
+effects = "Strong chance to win, and revenue stability. Locks in low margins on a long contract."
+outcome_ref = "anchor_bid_aggressive"
+
+[[s3_anchor_customer_win.choices]]
+label = "Bid at a premium"
+detail = "Price for your reliability and let them pay for it"
+effects = "Protects margin and signals confidence. Real risk a hungrier rival takes it."
+outcome_ref = "anchor_bid_premium"
+
+[[s3_anchor_customer_win.choices]]
+label = "Partner on the bid"
+detail = "Team with another firm to de-risk delivery"
+effects = "Improves your chances on a hard contract. Shares the revenue and some control."
+outcome_ref = "anchor_bid_partner"
+
+# ---------------------------------------------------------------------------
+# S4 — Anchor customer loss
+# ---------------------------------------------------------------------------
+[s4_anchor_customer_loss]
+id = "s4_anchor_customer_loss"
+category = "space"
+weight = 4
+cooldown_weeks = 52
+one_shot = false
+
+[s4_anchor_customer_loss.trigger]
+type = "random"
+conditions = ["company.industry == space", "company.has_anchor_customer == true", "company.has_competitor == true"]
+
+[s4_anchor_customer_loss.framing]
+headline = "{customer} is walking — possibly to {rival}"
+body = """A key contract is slipping away. {customer} is signaling they'll cancel \
+or move the business, and word is {rival} is circling. This leaves a real hole \
+in the revenue base, and how fast you respond determines whether it's a setback \
+or a spiral."""
+tone = "crisis"
+# {customer} = the at-risk anchor; {rival} = competitor edge
+
+[[s4_anchor_customer_loss.choices]]
+label = "Replace it"
+detail = "Throw resources at filling the pipeline now"
+effects = "Best path to stabilizing revenue. Costly and not guaranteed to land in time."
+outcome_ref = "anchor_loss_replace"
+
+[[s4_anchor_customer_loss.choices]]
+label = "Restructure the deal"
+detail = "Renegotiate terms to keep them on board"
+effects = "May save the relationship. Likely on worse economics than before."
+outcome_ref = "anchor_loss_restructure"
+
+[[s4_anchor_customer_loss.choices]]
+label = "Litigate"
+detail = "Enforce the contract you signed"
+effects = "Can recover value if you're in the right. Slow, expensive, and burns the relationship for good."
+outcome_ref = "anchor_loss_litigate"
+
+# ---------------------------------------------------------------------------
+# S5 — Launch license delay
+# ---------------------------------------------------------------------------
+[s5_license_delay]
+id = "s5_license_delay"
+category = "space"
+weight = 6
+cooldown_weeks = 39
+one_shot = false
+
+[s5_license_delay.trigger]
+type = "random"
+conditions = ["company.sub_industry == launch_services"]
+
+[s5_license_delay.framing]
+headline = "Regulators ground your next launch"
+body = """Your launch license is held up. The vehicle's ready, the customer's \
+waiting, and the clock is burning money while the paperwork sits. Every week of \
+slip is cost you don't recover — and a manifest that starts eyeing the calendar \
+nervously."""
+tone = "threat"
+
+[[s5_license_delay.choices]]
+label = "Expedite"
+detail = "Spend to accelerate the review"
+effects = "Shortens the slip. Costs cash and political capital with the regulator."
+outcome_ref = "license_expedite"
+
+[[s5_license_delay.choices]]
+label = "Wait it out"
+detail = "Let the process run its course"
+effects = "Free. The timeline slips and costs accrue while you wait."
+outcome_ref = "license_wait"
+
+[[s5_license_delay.choices]]
+label = "Relocate the launch"
+detail = "Move to a site with a clearer path"
+effects = "Can unblock the manifest. Logistics and setup costs, plus operational disruption."
+outcome_ref = "license_relocate"
+
+# ---------------------------------------------------------------------------
+# S6 — Constellation deployment milestone
+# ---------------------------------------------------------------------------
+[s6_constellation_milestone]
+id = "s6_constellation_milestone"
+category = "space"
+weight = 0
+cooldown_weeks = 26
+one_shot = false
+
+[s6_constellation_milestone.trigger]
+type = "scheduled"
+conditions = ["company.sub_industry == satellite_constellations", "company.deployment_batch_ready == true"]
+
+[s6_constellation_milestone.framing]
+headline = "A new batch is on orbit — coverage just expanded"
+body = """Another tranche of satellites deployed successfully. Your coverage map \
+filled in, more customers are now addressable, and the recurring revenue curve \
+steps up. This is the buildout paying off, one batch at a time — the slow climb \
+toward the constellation actually being whole."""
+tone = "opportunity"
+# Ties: Constellation signature
+
+[[s6_constellation_milestone.choices]]
+label = "Acknowledge"
+detail = "Bank the coverage and the revenue step-up"
+effects = "Addressable market and recurring revenue grow. A progress beat in the buildout curve."
+outcome_ref = "constellation_milestone_resolve"
+
+# ---------------------------------------------------------------------------
+# S7 — Satellite failure / debris event
+# ---------------------------------------------------------------------------
+[s7_satellite_failure]
+id = "s7_satellite_failure"
+category = "space"
+weight = 5
+cooldown_weeks = 39
+one_shot = false
+
+[s7_satellite_failure.trigger]
+type = "random"
+conditions = ["company.sub_industry == satellite_constellations", "company.fleet_on_orbit == true"]
+
+[s7_satellite_failure.framing]
+headline = "A satellite has failed — and there's debris to worry about"
+body = """One of your on-orbit assets has gone dark, and the debris question is \
+now live: risk to the rest of your fleet, and scrutiny from everyone else \
+sharing those orbits. Coverage has a gap, and you have to decide how hard to \
+respond."""
+tone = "crisis"
+
+[[s7_satellite_failure.choices]]
+label = "Replace it"
+detail = "Bump a replacement up the manifest"
+effects = "Restores coverage fastest. Pulls forward capex and a launch slot."
+outcome_ref = "sat_replace"
+
+[[s7_satellite_failure.choices]]
+label = "File an insurance claim"
+detail = "Recover the asset value through coverage"
+effects = "Recoups capital. Raises your future premiums and takes time to settle."
+outcome_ref = "sat_insurance"
+
+[[s7_satellite_failure.choices]]
+label = "Redesign"
+detail = "Treat it as a fleet-wide reliability fix"
+effects = "Prevents repeats if it's a systemic flaw. Delays deployment and adds engineering cost."
+outcome_ref = "sat_redesign"
+
+# ---------------------------------------------------------------------------
+# S8 — Reusability breakthrough
+# ---------------------------------------------------------------------------
+[s8_reusability_breakthrough]
+id = "s8_reusability_breakthrough"
+category = "space"
+weight = 4
+cooldown_weeks = 78
+one_shot = false
+
+[s8_reusability_breakthrough.trigger]
+type = "random"
+conditions = ["company.sub_industry == launch_services", "company.reusability_program == true"]
+
+[s8_reusability_breakthrough.framing]
+headline = "You cracked the reuse milestone"
+body = """A hard cost-reduction milestone just fell. Recovering and reflying \
+hardware that used to be thrown away changes your cost-per-kilogram \
+structurally — the kind of advantage rivals can't match by trying harder, only \
+by catching up on the same curve years later. This is a moat forming in real \
+time."""
+tone = "opportunity"
+# Ties: Launch signature
+
+[[s8_reusability_breakthrough.choices]]
+label = "Cut prices and take share"
+detail = "Pass the savings on and win the manifest"
+effects = "Grabs market share and pressures rivals. Leaves near-term margin on the table."
+outcome_ref = "reuse_price_down"
+
+[[s8_reusability_breakthrough.choices]]
+label = "Hold price, bank the margin"
+detail = "Keep prices steady and pocket the cost advantage"
+effects = "Maximizes profit per launch. Invites rivals to close the gap before you've taken share."
+outcome_ref = "reuse_hold_price"
+
+# ---------------------------------------------------------------------------
+# S9 — Space station tenant signing
+# ---------------------------------------------------------------------------
+[s9_station_tenant_signing]
+id = "s9_station_tenant_signing"
+category = "space"
+weight = 5
+cooldown_weeks = 39
+one_shot = false
+
+[s9_station_tenant_signing.trigger]
+type = "random"
+conditions = ["company.sub_industry == space_stations"]
+
+[s9_station_tenant_signing.framing]
+headline = "A major tenant wants modules"
+body = """{customer} wants to lease space on the station — research, tourism, or \
+in-space manufacturing at a scale that validates the whole model. The terms and \
+the tenant mix you accept now shape what the station becomes and how steady the \
+revenue is."""
+tone = "opportunity"
+# {customer} = prospective tenant; Ties: Station signature
+
+[[s9_station_tenant_signing.choices]]
+label = "Lock in a long lease"
+detail = "Prioritize revenue stability with a multi-year anchor"
+effects = "Steady, bankable income and validation. Commits capacity at today's rates."
+outcome_ref = "tenant_long_lease"
+
+[[s9_station_tenant_signing.choices]]
+label = "Keep the mix flexible"
+detail = "Take shorter terms to stay open to better tenants"
+effects = "Preserves optionality and upside. Lumpier, less predictable revenue."
+outcome_ref = "tenant_flexible"
+
+# ---------------------------------------------------------------------------
+# S10 — Space station tenant loss
+# ---------------------------------------------------------------------------
+[s10_station_tenant_loss]
+id = "s10_station_tenant_loss"
+category = "space"
+weight = 4
+cooldown_weeks = 39
+one_shot = false
+
+[s10_station_tenant_loss.trigger]
+type = "random"
+conditions = ["company.sub_industry == space_stations", "company.has_tenant == true"]
+
+[s10_station_tenant_loss.framing]
+headline = "A tenant is pulling out"
+body = """{customer} is vacating their modules. Occupancy drops, and station \
+economics are lumpy enough that one departure leaves a visible dent in revenue. \
+Empty modules don't pay — you need a plan for the gap."""
+tone = "threat"
+# {customer} = the departing tenant
+
+[[s10_station_tenant_loss.choices]]
+label = "Backfill"
+detail = "Push hard to re-lease the modules"
+effects = "Restores occupancy if you can find a tenant. Sales effort and possible downtime."
+outcome_ref = "tenant_backfill"
+
+[[s10_station_tenant_loss.choices]]
+label = "Repurpose the modules"
+detail = "Convert the space to a different, in-demand use"
+effects = "Can open a stronger revenue line. Conversion cost and time."
+outcome_ref = "tenant_repurpose"
+
+[[s10_station_tenant_loss.choices]]
+label = "Renegotiate to keep them"
+detail = "Offer terms to stop the departure"
+effects = "May retain the revenue. Likely at a discount that resets your pricing."
+outcome_ref = "tenant_renegotiate"
+
+# ---------------------------------------------------------------------------
+# S11 — Government program shift
+# ---------------------------------------------------------------------------
+[s11_gov_program_shift]
+id = "s11_gov_program_shift"
+category = "space"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[s11_gov_program_shift.trigger]
+type = "scheduled"
+conditions = ["company.industry == space"]
+
+[s11_gov_program_shift.framing]
+headline = "A major government space program just {program_direction}"
+body = """A flagship national space initiative is {program_direction}, and it \
+reshapes demand across the sector. {program_summary} Companies aligned to the \
+new priorities are about to do very well; companies pointed the wrong way need \
+to adjust. Government demand moves slowly and then all at once."""
+tone = "threat"
+# {program_direction} = "launching" | "being canceled"
+# {program_summary}   = templated from direction
+
+[[s11_gov_program_shift.choices]]
+label = "Align to it"
+detail = "Reorient toward the new government priority"
+effects = "Captures a large, sticky demand source. Concentrates you on one customer's whims."
+outcome_ref = "gov_program_align"
+
+[[s11_gov_program_shift.choices]]
+label = "Diversify away"
+detail = "Reduce reliance on government cycles"
+effects = "Insulates you from the next reversal. Forgoes the near-term government tailwind."
+outcome_ref = "gov_program_diversify"
+
+# ---------------------------------------------------------------------------
+# S12 — Launch cadence pressure
+# ---------------------------------------------------------------------------
+[s12_cadence_pressure]
+id = "s12_cadence_pressure"
+category = "space"
+weight = 5
+cooldown_weeks = 39
+one_shot = false
+
+[s12_cadence_pressure.trigger]
+type = "threshold"
+conditions = ["company.sub_industry == launch_services", "company.demand_exceeds_capacity == true"]
+
+[s12_cadence_pressure.framing]
+headline = "Demand is outrunning your launch capacity"
+body = """You have more customers than launch slots. The manifest is backing up, \
+customers are waiting, and a few are eyeing rivals who can fly them sooner. \
+Too much demand is a good problem — but only if you solve it before the backlog \
+becomes someone else's customer base."""
+tone = "opportunity"
+# Ties: Launch signature
+
+[[s12_cadence_pressure.choices]]
+label = "Scale up capacity"
+detail = "Invest in throughput — pads, vehicles, people"
+effects = "Captures the demand durably. Heavy capex and ramp risk."
+outcome_ref = "cadence_scale"
+
+[[s12_cadence_pressure.choices]]
+label = "Prioritize the manifest"
+detail = "Sequence customers by value and strategic fit"
+effects = "Capital-light; keeps your best customers happy. Lower-priority ones may walk."
+outcome_ref = "cadence_prioritize"
+
+[[s12_cadence_pressure.choices]]
+label = "Raise prices"
+detail = "Let price clear the backlog"
+effects = "Improves margin and rations slots. Risks pushing price-sensitive customers to rivals."
+outcome_ref = "cadence_raise_price"
+
+# ---------------------------------------------------------------------------
+# S13 — Supply chain: propulsion / materials
+# ---------------------------------------------------------------------------
+[s13_propulsion_supply]
+id = "s13_propulsion_supply"
+category = "space"
+weight = 6
+cooldown_weeks = 39
+one_shot = false
+
+[s13_propulsion_supply.trigger]
+type = "random"
+conditions = ["company.industry == space", "company.has_supplier == true"]
+
+[s13_propulsion_supply.framing]
+headline = "{supplier} can't deliver a critical component on time"
+body = """A key part from {supplier} — propulsion or structural materials your \
+hardware can't fly without — is delayed. The integration schedule slips behind \
+it, and your launch or build timeline is now hostage to someone else's factory. \
+Single-source dependencies feel cheap until exactly this happens."""
+tone = "threat"
+# {supplier} = a real supplier edge (e.g. forge_materials)
+
+[[s13_propulsion_supply.choices]]
+label = "Qualify an alternative supplier"
+detail = "Stand up a second source"
+effects = "Reduces future fragility. Qualification takes time and money up front."
+outcome_ref = "propulsion_alternative"
+
+[[s13_propulsion_supply.choices]]
+label = "Absorb the delay"
+detail = "Hold the schedule and wait for the part"
+effects = "Cheapest path. Timeline slips and downstream costs accrue."
+outcome_ref = "propulsion_absorb"
+
+# ---------------------------------------------------------------------------
+# S14 — Insurance / risk premium spike
+# ---------------------------------------------------------------------------
+[s14_insurance_spike]
+id = "s14_insurance_spike"
+category = "space"
+weight = 5
+cooldown_weeks = 52
+one_shot = false
+
+[s14_insurance_spike.trigger]
+type = "threshold"
+conditions = ["company.industry == space", "sector.recent_failure_density >= elevated"]
+
+[s14_insurance_spike.framing]
+headline = "Launch insurance costs just jumped"
+body = """After a run of sector failures, underwriters have repriced space risk \
+and your premiums are climbing. It's a direct hit to per-launch and per-asset \
+margins, and it forces a question every space operator eventually faces: how \
+much risk do you carry yourself?"""
+tone = "threat"
+
+[[s14_insurance_spike.choices]]
+label = "Self-insure"
+detail = "Carry more risk on your own balance sheet"
+effects = "Avoids the premium spike. Exposes you to a brutal hit if something goes wrong."
+outcome_ref = "insurance_self"
+
+[[s14_insurance_spike.choices]]
+label = "Pass the cost on"
+detail = "Build higher premiums into customer pricing"
+effects = "Protects your margin. Makes you less price-competitive on bids."
+outcome_ref = "insurance_pass"
+
+[[s14_insurance_spike.choices]]
+label = "Reduce cadence"
+detail = "Fly less until premiums normalize"
+effects = "Limits exposure and cost. Slows revenue and cedes manifest to rivals."
+outcome_ref = "insurance_reduce_cadence"
+
+# ---------------------------------------------------------------------------
+# S15 — International competition
+# ---------------------------------------------------------------------------
+[s15_international_competition]
+id = "s15_international_competition"
+category = "space"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[s15_international_competition.trigger]
+type = "scheduled"
+conditions = ["company.industry == space", "company.stage >= series_a"]
+
+[s15_international_competition.framing]
+headline = "A state-backed foreign competitor is undercutting the market"
+body = """A foreign, government-subsidized rival is pricing below what \
+commercial economics can match. They don't need to make money the way you do, \
+which makes price a losing fight. You'll have to decide what game to play \
+instead."""
+tone = "threat"
+
+[[s15_international_competition.choices]]
+label = "Compete on price"
+detail = "Match them and protect share"
+effects = "Holds volume in the near term. Bleeds margin against a subsidized balance sheet."
+outcome_ref = "intl_price"
+
+[[s15_international_competition.choices]]
+label = "Differentiate on reliability"
+detail = "Win on track record and trust, not cost"
+effects = "Defensible with quality-sensitive customers. Concedes price-driven business."
+outcome_ref = "intl_reliability"
+
+[[s15_international_competition.choices]]
+label = "Seek government support"
+detail = "Pursue domestic contracts and policy backing"
+effects = "Levels the field if it lands. Slow, political, and not guaranteed."
+outcome_ref = "intl_gov_support"

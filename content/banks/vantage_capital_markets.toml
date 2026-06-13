@@ -1,0 +1,45 @@
+# Anchor Bank — aggressive challenger
+# Role: the cheap, high-variance underwriter. Lowest fees, will chase deals
+# the bigger banks pass on, prices aggressively — sometimes nails it,
+# sometimes misprices (flat first day, or money left on the table). The
+# gamble: save on fees and take the variance, or pay up for certainty.
+
+[bank]
+id = "vantage_capital_markets"
+name = "Vantage Capital Markets"
+tier = "anchor"
+founded_year = -14
+hq = "New York, NY"
+color = "#B5562F"
+
+[bank.identity]
+tagline = "Hungry, cheap, and willing to swing big."
+trait_tags = ["Challenger", "Aggressive Pricing", "High Variance"]
+narrative_hooks = [
+  "takes the deals the bulge bracket won't",
+  "prices aggressively — feast or famine",
+  "cheap fees, no guarantees",
+]
+
+[bank.underwriting]
+available = true
+prestige = 58
+pricing_quality = 50            # the variance lives here — wide outcome band
+fee_pct = 0.035                 # cheapest underwriting on offer
+min_raise = 30
+selectivity = 35                # will take chancier companies
+sectors = ["all"]
+
+[bank.debt]
+offers_debt = true
+max_loan_multiple = 2.5
+base_rate_spread = 0.04         # pricier debt — they're not a balance-sheet bank
+covenant_strictness = 55
+prefers_profitable = false
+
+[bank.financials]
+status = "public"
+revenue = 4100
+valuation = 12000
+fundamentals = 64
+hype_exposure = 0.45            # most cyclical bank stock — rides deal-flow volume

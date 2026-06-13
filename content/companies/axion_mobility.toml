@@ -1,0 +1,40 @@
+# Anchor (light) — Mobility & Autonomy / Electric Vehicles
+# Posture: brand-driven EV maker mid-factory-ramp. High hype-exposure,
+# make-or-break on production scaling. Volatile story stock.
+
+[company]
+id = "axion_mobility"
+name = "Axion Mobility"
+tier = "anchor"
+industry = "mobility"
+sub_industry = "electric_vehicles"
+founded_year = -8
+hq = "Fremont, CA"
+color = "#D64550"
+logo_glyph = "car"
+
+[company.identity]
+tagline = "The brand people line up for — if the factory holds."
+reputation = 76
+narrative_hooks = ["factory ramp is make-or-break", "brand-driven demand", "cash burn until volume"]
+
+[company.stage]
+status = "public"
+ipo_year = -3
+
+[company.financials]
+revenue = 5600
+revenue_growth = 0.44
+gross_margin = 0.18
+profitable = false
+valuation = 52000
+shares_out = 900
+
+[company.quality]
+fundamentals = 64
+hype_exposure = 0.85
+moat = 55
+execution = 62
+
+[company.relationships]
+investors = ["atlas_growth", "helio_capital"]

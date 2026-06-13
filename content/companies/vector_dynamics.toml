@@ -1,0 +1,54 @@
+# Anchor — Space / Launch Services
+# Posture: dominant incumbent. Reusability cost advantage, govt anchor
+# customer, reliability moat. Launches are binary public events.
+
+[company]
+id = "vector_dynamics"
+name = "Vector Dynamics"
+tier = "anchor"
+industry = "space"
+sub_industry = "launch_services"
+founded_year = -14
+hq = "Hawthorne, CA"
+color = "#2B3A67"
+logo_glyph = "rocket"
+
+[company.identity]
+tagline = "Reusable, relentless, the cadence king."
+reputation = 91
+narrative_hooks = [
+  "owns the cadence advantage",
+  "government anchor customer",
+  "reusability cost moat",
+  "founder is a public lightning rod",
+]
+
+[company.stage]
+status = "private"
+private_round = "d"
+ipo_year = 0
+
+[company.financials]
+revenue = 6800
+revenue_growth = 0.40
+gross_margin = 0.51
+profitable = true
+burn_monthly = 0
+valuation = 180000
+shares_out = 0
+
+[company.quality]
+fundamentals = 87
+hype_exposure = 0.6
+moat = 86
+execution = 88
+
+[company.signature]
+benchmark_score = 86
+signature_notes = "Launch cadence + reuse drives a structural cost-per-kg lead rivals can't match yet"
+
+[company.relationships]
+competitors = ["ascent_aero"]
+suppliers  = ["forge_materials"]
+customers  = ["meridian_orbital", "lumen_skies", "apex_station", "aegis_defense"]
+investors  = ["frontier_partners", "evergreen_capital"]

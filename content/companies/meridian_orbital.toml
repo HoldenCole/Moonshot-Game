@@ -1,0 +1,53 @@
+# Anchor — Space / Satellite Constellations
+# Posture: proven comms constellation past the capex hump, now harvesting
+# recurring subscription revenue. Steady compounder, low hype-exposure.
+
+[company]
+id = "meridian_orbital"
+name = "Meridian Orbital"
+tier = "anchor"
+industry = "space"
+sub_industry = "satellite_constellations"
+founded_year = -9
+hq = "Denver, CO"
+color = "#3C7DC4"
+logo_glyph = "satellite"
+
+[company.identity]
+tagline = "Always-on connectivity from low Earth orbit."
+reputation = 83
+narrative_hooks = [
+  "capex hump is behind it",
+  "recurring subscription cash flows",
+  "depends on cheap launch to refresh the fleet",
+]
+
+[company.stage]
+status = "public"
+private_round = ""
+ipo_year = -2
+
+[company.financials]
+revenue = 3100
+revenue_growth = 0.29
+gross_margin = 0.64
+profitable = true
+burn_monthly = 0
+valuation = 28000
+shares_out = 620
+
+[company.quality]
+fundamentals = 81
+hype_exposure = 0.45
+moat = 73
+execution = 79
+
+[company.signature]
+benchmark_score = 78
+signature_notes = "Subscriber base + spectrum rights are the moat; fleet-refresh cost rides launch prices"
+
+[company.relationships]
+competitors = ["lumen_skies"]
+suppliers  = ["vector_dynamics", "ascent_aero"]
+customers  = []
+investors  = ["evergreen_capital", "frontier_partners"]

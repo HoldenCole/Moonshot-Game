@@ -1,0 +1,53 @@
+# Anchor — AI / Vertical AI SaaS (legal)
+# Posture: proven SaaS compounder. Clean ARR metrics, real retention,
+# valuation rides fundamentals. The "good business" archetype.
+
+[company]
+id = "lexiq"
+name = "Lexiq"
+tier = "anchor"
+industry = "ai"
+sub_industry = "vertical_ai_saas"
+founded_year = -5
+hq = "New York, NY"
+color = "#4C5FD5"
+logo_glyph = "gavel"
+
+[company.identity]
+tagline = "The associate that never sleeps — AI for legal work."
+reputation = 79
+narrative_hooks = [
+  "best-in-class net revenue retention",
+  "land-and-expand into the Am Law 100",
+  "quietly profitable",
+]
+
+[company.stage]
+status = "public"
+private_round = ""
+ipo_year = -1
+
+[company.financials]
+revenue = 410
+revenue_growth = 0.48
+gross_margin = 0.81
+profitable = true
+burn_monthly = 0
+valuation = 8600
+shares_out = 95
+
+[company.quality]
+fundamentals = 80
+hype_exposure = 0.45
+moat = 70
+execution = 82
+
+[company.signature]
+benchmark_score = 0
+signature_notes = "NRR 128%, gross retention 94% — SaaS fundamentals are the story here, not model benchmarks"
+
+[company.relationships]
+competitors = ["synthseq"]
+suppliers  = ["openmind", "novamind"]
+customers  = []
+investors  = ["frontier_partners", "evergreen_capital"]

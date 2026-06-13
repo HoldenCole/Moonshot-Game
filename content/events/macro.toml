@@ -1,0 +1,523 @@
+# Events — MACRO / CROSS-INDUSTRY (15)
+# The world happening to the player. Fire regardless of industry.
+# Many are pure-information condition shifts (no choices) that recolor
+# every later decision; the rest are crisis/threat decisions.
+# Slots resolve at fire time; events with unresolvable slots are skipped.
+
+# ---------------------------------------------------------------------------
+# M1 — Recession onset
+# ---------------------------------------------------------------------------
+[m1_recession_onset]
+id = "m1_recession_onset"
+category = "macro"
+weight = 0
+cooldown_weeks = 156
+one_shot = false
+
+[m1_recession_onset.trigger]
+type = "scheduled"
+conditions = ["macro.cycle_phase == contraction", "macro.entered_phase_this_tick == true"]
+
+[m1_recession_onset.framing]
+headline = "The downturn is here"
+body = """The macro cycle has turned. VC climate is freezing, valuations are \
+compressing across the board, and customers are cutting discretionary spend. \
+This isn't a single decision — it's the new weather. Every raise, hire, and \
+bet from here gets harder."""
+tone = "crisis"
+
+[[m1_recession_onset.choices]]
+label = "Acknowledge"
+detail = "Brace for tighter conditions"
+effects = "Conditions shift. Fundraising, hiring, and exits all get harder until the cycle turns."
+outcome_ref = "macro_reframe_contraction"
+
+# ---------------------------------------------------------------------------
+# M2 — Boom / froth peak
+# ---------------------------------------------------------------------------
+[m2_froth_peak]
+id = "m2_froth_peak"
+category = "macro"
+weight = 0
+cooldown_weeks = 156
+one_shot = false
+
+[m2_froth_peak.trigger]
+type = "scheduled"
+conditions = ["macro.cycle_phase == frothy", "macro.entered_phase_this_tick == true"]
+
+[m2_froth_peak.framing]
+headline = "Money is cheap and everyone knows it"
+body = """Valuations are soaring, capital is abundant, and hype is running hot \
+across the market. Raising now would be easy — maybe too easy. The companies \
+that over-raise at the top regret it when the music stops. The window is open. \
+The question is whether you trust it."""
+tone = "opportunity"
+
+[[m2_froth_peak.choices]]
+label = "Acknowledge"
+detail = "Note the froth — and the trap inside it"
+effects = "Raising is unusually easy right now. Over-raising at peak sets up a hard down round later."
+outcome_ref = "macro_reframe_frothy"
+
+# ---------------------------------------------------------------------------
+# M3 — Interest rate shock
+# ---------------------------------------------------------------------------
+[m3_rate_shock]
+id = "m3_rate_shock"
+category = "macro"
+weight = 0
+cooldown_weeks = 26
+one_shot = false
+
+[m3_rate_shock.trigger]
+type = "threshold"
+conditions = ["macro.rate_move_qtr_abs > 0.5"]
+
+[m3_rate_shock.framing]
+headline = "Rates jump {rate_move} points"
+body = """A sharp move in interest rates just reset the math. Debt is now \
+{rate_direction} expensive, burn economics have shifted, and growth-stock \
+valuations are repricing in real time. Anyone carrying a loan or planning one \
+should re-run the numbers."""
+tone = "neutral"
+# {rate_move}      = absolute quarterly rate move
+# {rate_direction} = "more" | "less"
+
+[[m3_rate_shock.choices]]
+label = "Acknowledge"
+detail = "Re-evaluate debt vs. equity"
+effects = "Debt costs and growth valuations shift. Reframes the financing decision."
+outcome_ref = "macro_reframe_rates"
+
+# ---------------------------------------------------------------------------
+# M4 — Black swan: pandemic
+# ---------------------------------------------------------------------------
+[m4_pandemic]
+id = "m4_pandemic"
+category = "macro"
+weight = 2
+cooldown_weeks = 520
+one_shot = true
+
+[m4_pandemic.trigger]
+type = "random"
+conditions = ["game.year >= 1"]
+weight_mods = [
+  { when = "macro.cycle_phase == frothy", factor = 1.4 },
+]
+
+[m4_pandemic.framing]
+headline = "A global health crisis upends everything"
+body = """A pandemic is sweeping across markets. Some sectors are about to boom \
+on the dislocation; others will crater. Supply chains are seizing, offices are \
+emptying, and demand is lurching in directions no model predicted. How you move \
+in the first weeks matters more than usual."""
+tone = "crisis"
+
+[[m4_pandemic.choices]]
+label = "Hunker down"
+detail = "Cut burn, extend runway, weather it"
+effects = "Defensive. Protects runway, sacrifices upside if your sector is a winner."
+outcome_ref = "pandemic_defensive"
+
+[[m4_pandemic.choices]]
+label = "Press the advantage"
+detail = "Lean in if the shock favors your sector"
+effects = "Aggressive. Big upside in a winning sector; painful if you misread which way demand breaks."
+outcome_ref = "pandemic_aggressive"
+
+[[m4_pandemic.choices]]
+label = "Pivot to the moment"
+detail = "Redirect product toward crisis-driven demand"
+effects = "Opportunistic. Can open a new market; distracts from the core if it doesn't land."
+outcome_ref = "pandemic_pivot"
+
+# ---------------------------------------------------------------------------
+# M5 — Black swan: geopolitical crisis
+# ---------------------------------------------------------------------------
+[m5_geopolitical_crisis]
+id = "m5_geopolitical_crisis"
+category = "macro"
+weight = 3
+cooldown_weeks = 260
+one_shot = false
+
+[m5_geopolitical_crisis.trigger]
+type = "random"
+conditions = ["game.year >= 1"]
+
+[m5_geopolitical_crisis.framing]
+headline = "Geopolitical shock rattles the markets"
+body = """A major international crisis is reshaping demand overnight. Defense and \
+government-space budgets are spiking, energy prices are swinging, and anyone \
+exposed to global supply chains is suddenly nervous. The effect on you depends \
+entirely on which side of this your business sits."""
+tone = "crisis"
+
+[[m5_geopolitical_crisis.choices]]
+label = "Align to the new demand"
+detail = "Reorient toward where the money is flowing"
+effects = "Big upside if you can credibly serve surging defense/space/energy demand. Slower if you're far from it."
+outcome_ref = "geo_align"
+
+[[m5_geopolitical_crisis.choices]]
+label = "De-risk exposure"
+detail = "Reduce reliance on affected supply chains and markets"
+effects = "Protective. Trades growth for resilience while the shock plays out."
+outcome_ref = "geo_derisk"
+
+[[m5_geopolitical_crisis.choices]]
+label = "Hold steady"
+detail = "Don't overreact to a fast-moving situation"
+effects = "Cheap and calm. Fine if the shock misses you; costly if it doesn't."
+outcome_ref = "geo_hold"
+
+# ---------------------------------------------------------------------------
+# M6 — Banking crisis / credit crunch
+# ---------------------------------------------------------------------------
+[m6_banking_crisis]
+id = "m6_banking_crisis"
+category = "macro"
+weight = 2
+cooldown_weeks = 260
+one_shot = false
+
+[m6_banking_crisis.trigger]
+type = "random"
+conditions = ["game.year >= 2"]
+weight_mods = [
+  { when = "macro.cycle_phase == contraction", factor = 2.0 },
+]
+
+[m6_banking_crisis.framing]
+headline = "Credit freezes as {bank} wobbles"
+body = """A credit crunch is spreading. {bank} is under pressure, debt is drying \
+up market-wide, and where your cash actually sits suddenly matters a great deal. \
+Companies leaning on credit lines are scrambling; companies sitting on cash are \
+about to look very smart."""
+tone = "crisis"
+# {bank} = a real bank entity (prefer the player's lender if any)
+
+[[m6_banking_crisis.choices]]
+label = "De-risk cash now"
+detail = "Move deposits, draw down committed credit before it's pulled"
+effects = "Prudent. Secures liquidity; may cost a little and signals caution to partners."
+outcome_ref = "credit_derisk"
+
+[[m6_banking_crisis.choices]]
+label = "Ride it out"
+detail = "Hold positions; assume the system stabilizes"
+effects = "Does nothing if it blows over. Exposed if your bank or credit line is among the casualties."
+outcome_ref = "credit_ride"
+
+# ---------------------------------------------------------------------------
+# M7 — Regulatory crackdown (cross-sector)
+# ---------------------------------------------------------------------------
+[m7_regulatory_crackdown]
+id = "m7_regulatory_crackdown"
+category = "macro"
+weight = 6
+cooldown_weeks = 78
+one_shot = false
+
+[m7_regulatory_crackdown.trigger]
+type = "threshold"
+conditions = ["sector.hype > 80"]
+weight_mods = [
+  { when = "sector.hype > 92", factor = 1.6 },
+]
+
+[m7_regulatory_crackdown.framing]
+headline = "Regulators move on the {sector} boom"
+body = """Your sector has run hot enough to draw Washington's attention. New \
+rules are coming, compliance costs are about to rise, and the companies that \
+handle this well will turn it into a moat against the flood of newcomers. The \
+ones that fight it clumsily become the cautionary headline."""
+tone = "threat"
+# {sector} = the player's industry display name
+
+[[m7_regulatory_crackdown.choices]]
+label = "Lobby"
+detail = "Spend to shape the rules in your favor"
+effects = "Costs cash and attention. Can soften the rules; risks looking self-serving if it leaks."
+outcome_ref = "crackdown_lobby"
+
+[[m7_regulatory_crackdown.choices]]
+label = "Comply early"
+detail = "Get ahead of the rules and make compliance a selling point"
+effects = "Higher near-term cost. Turns regulation into trust and a barrier for smaller rivals."
+outcome_ref = "crackdown_comply"
+
+[[m7_regulatory_crackdown.choices]]
+label = "Relocate"
+detail = "Move the regulated activity to a friendlier jurisdiction"
+effects = "Sidesteps the rules at the cost of disruption and some reputational risk."
+outcome_ref = "crackdown_relocate"
+
+# ---------------------------------------------------------------------------
+# M8 — Tax policy change
+# ---------------------------------------------------------------------------
+[m8_tax_policy]
+id = "m8_tax_policy"
+category = "macro"
+weight = 4
+cooldown_weeks = 104
+one_shot = false
+
+[m8_tax_policy.trigger]
+type = "scheduled"
+conditions = ["macro.tax_review_due == true"]
+
+[m8_tax_policy.framing]
+headline = "New tax regime shifts the exit math"
+body = """A change to {tax_target} is moving through. It reshapes the arithmetic \
+on exits and on how long you can afford to burn. Nothing to do today — but it \
+quietly changes what the right move looks like a few years out."""
+tone = "neutral"
+# {tax_target} = "capital gains" | "the corporate rate"
+
+[[m8_tax_policy.choices]]
+label = "Acknowledge"
+detail = "Factor it into long-term planning"
+effects = "Adjusts exit and burn economics. A planning input, not an immediate decision."
+outcome_ref = "macro_reframe_tax"
+
+# ---------------------------------------------------------------------------
+# M9 — Talent market shift
+# ---------------------------------------------------------------------------
+[m9_talent_market_shift]
+id = "m9_talent_market_shift"
+category = "macro"
+weight = 5
+cooldown_weeks = 52
+one_shot = false
+
+[m9_talent_market_shift.trigger]
+type = "threshold"
+conditions = ["sector.hype_moved_band == true"]
+
+[m9_talent_market_shift.framing]
+headline = "Talent costs are {talent_direction} in {sector}"
+body = """The market for people in your sector just moved. {talent_summary} Hiring \
+plans built on last quarter's comp assumptions need a second look."""
+tone = "neutral"
+# {talent_direction} = "spiking" | "cooling"
+# {talent_summary}   = templated from hype direction
+
+[[m9_talent_market_shift.choices]]
+label = "Acknowledge"
+detail = "Reprice your hiring plan"
+effects = "Comp expectations shift industry-wide. Reframes the cost of every open role."
+outcome_ref = "macro_reframe_talent"
+
+# ---------------------------------------------------------------------------
+# M10 — Market correction
+# ---------------------------------------------------------------------------
+[m10_market_correction]
+id = "m10_market_correction"
+category = "macro"
+weight = 0
+cooldown_weeks = 104
+one_shot = false
+
+[m10_market_correction.trigger]
+type = "scheduled"
+conditions = ["macro.correction_triggered == true"]
+
+[m10_market_correction.framing]
+headline = "The correction arrives"
+body = """Public valuations are snapping back to earth after the froth. If you're \
+public, your stock is feeling it. If you're private, your next round just got \
+harder and cheaper. This is the hype lesson arriving on schedule: what ran up \
+on sentiment comes down on it too."""
+tone = "threat"
+
+[[m10_market_correction.choices]]
+label = "Acknowledge"
+detail = "Absorb the reset"
+effects = "Valuations compress. Public stock drops; private next-round expectations reset lower."
+outcome_ref = "macro_reframe_correction"
+
+# ---------------------------------------------------------------------------
+# M11 — Supply chain disruption
+# ---------------------------------------------------------------------------
+[m11_supply_chain]
+id = "m11_supply_chain"
+category = "macro"
+weight = 7
+cooldown_weeks = 39
+one_shot = false
+
+[m11_supply_chain.trigger]
+type = "random"
+conditions = ["company.has_supplier == true"]
+weight_mods = [
+  { when = "macro.cycle_phase == contraction", factor = 1.3 },
+]
+
+[m11_supply_chain.framing]
+headline = "{supplier} has a problem — and you depend on them"
+body = """Your supplier {supplier} just hit a serious snag. Component costs are \
+rising and timelines are slipping down the chain to you. You can scramble for \
+an alternative, eat the disruption, or push the pain onto your own customers — \
+each has a price."""
+tone = "threat"
+# {supplier} = a real supplier edge from the company graph
+
+[[m11_supply_chain.choices]]
+label = "Find an alternative"
+detail = "Qualify a new supplier fast"
+effects = "Restores supply over time. Switching costs money and a qualification delay."
+outcome_ref = "supply_alternative"
+
+[[m11_supply_chain.choices]]
+label = "Absorb it"
+detail = "Eat the cost and delay to protect customers"
+effects = "Protects relationships and price. Hits your margin and timeline."
+outcome_ref = "supply_absorb"
+
+[[m11_supply_chain.choices]]
+label = "Pass the cost on"
+detail = "Raise prices or extend customer timelines"
+effects = "Protects your margin. Risks customer goodwill, more so if rivals aren't affected."
+outcome_ref = "supply_pass"
+
+# ---------------------------------------------------------------------------
+# M12 — Industry consolidation wave
+# ---------------------------------------------------------------------------
+[m12_consolidation]
+id = "m12_consolidation"
+category = "macro"
+weight = 4
+cooldown_weeks = 104
+one_shot = false
+
+[m12_consolidation.trigger]
+type = "scheduled"
+conditions = ["sector.maturity >= mature"]
+
+[m12_consolidation.framing]
+headline = "Consolidation pressure builds in {sector}"
+body = """The sector is maturing and scale is starting to win. Larger players are \
+setting the terms, and the squeeze on mid-size companies is real — even without \
+anyone buying you outright. You can carve out a defensible niche, push hard to \
+reach scale yourself, or find a partner before the choice is made for you."""
+tone = "threat"
+# {sector} = player's industry display name
+
+[[m12_consolidation.choices]]
+label = "Carve a niche"
+detail = "Retreat to a segment you can own"
+effects = "Defensible and capital-light. Caps your ceiling."
+outcome_ref = "consolidation_niche"
+
+[[m12_consolidation.choices]]
+label = "Scale aggressively"
+detail = "Spend to reach the size that survives"
+effects = "Keeps you in the top tier if it works. Capital-hungry and risky if growth stalls."
+outcome_ref = "consolidation_scale"
+
+[[m12_consolidation.choices]]
+label = "Seek a partner"
+detail = "Pursue an alliance or deeper commercial tie-up"
+effects = "Shares the load and de-risks. Cedes some independence and upside."
+outcome_ref = "consolidation_partner"
+
+# ---------------------------------------------------------------------------
+# M13 — New entrant flood
+# ---------------------------------------------------------------------------
+[m13_new_entrant_flood]
+id = "m13_new_entrant_flood"
+category = "macro"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[m13_new_entrant_flood.trigger]
+type = "threshold"
+conditions = ["sector.hype > 85"]
+
+[m13_new_entrant_flood.framing]
+headline = "Everyone is starting a {sector} company now"
+body = """Capital is flooding into your sector and new competitors are multiplying \
+weekly. Talent and customers are getting more expensive as the newcomers bid \
+them up. This is the tax on being in a hot space — and it rewards whoever has a \
+real reason to exist."""
+tone = "threat"
+# {sector} = player's sub-industry display name
+
+[[m13_new_entrant_flood.choices]]
+label = "Defend your share"
+detail = "Lock in customers and key talent before they're poached"
+effects = "Protects the base. Costs cash now to hold what you have."
+outcome_ref = "flood_defend"
+
+[[m13_new_entrant_flood.choices]]
+label = "Differentiate"
+detail = "Lean into what the newcomers can't copy"
+effects = "Builds durable separation. Slower, and only works if the difference is real."
+outcome_ref = "flood_differentiate"
+
+[[m13_new_entrant_flood.choices]]
+label = "Cut prices"
+detail = "Use scale to undercut the new money"
+effects = "Squeezes weaker entrants out. Compresses your own margins in the process."
+outcome_ref = "flood_price"
+
+# ---------------------------------------------------------------------------
+# M14 — Capital market window
+# ---------------------------------------------------------------------------
+[m14_capital_window]
+id = "m14_capital_window"
+category = "macro"
+weight = 0
+cooldown_weeks = 52
+one_shot = false
+
+[m14_capital_window.trigger]
+type = "scheduled"
+conditions = ["macro.ipo_window_changed == true"]
+
+[m14_capital_window.framing]
+headline = "The IPO window {window_direction}"
+body = """The public-market window just {window_direction}. {window_summary} For \
+anyone weighing an exit, the timing calculus has shifted — and windows like \
+this don't stay where they are for long."""
+tone = "opportunity"
+# {window_direction} = "cracks open" | "slams shut"
+# {window_summary}   = templated from new window state
+
+[[m14_capital_window.choices]]
+label = "Acknowledge"
+detail = "Re-weigh exit timing"
+effects = "Directly changes IPO feasibility and pricing. A real act-now-or-wait signal."
+outcome_ref = "macro_reframe_window"
+
+# ---------------------------------------------------------------------------
+# M15 — Macro recovery
+# ---------------------------------------------------------------------------
+[m15_macro_recovery]
+id = "m15_macro_recovery"
+category = "macro"
+weight = 0
+cooldown_weeks = 156
+one_shot = false
+
+[m15_macro_recovery.trigger]
+type = "scheduled"
+conditions = ["macro.cycle_phase == expansion", "macro.entered_phase_this_tick == true", "macro.prev_phase == contraction"]
+
+[m15_macro_recovery.framing]
+headline = "The worst is over"
+body = """The cycle has turned up from the trough. Conditions are improving — \
+capital is loosening, customers are spending again, and the companies that \
+survived the downturn are about to be rewarded for it. Surviving was the whole \
+game; now you get to grow into the recovery."""
+tone = "opportunity"
+
+[[m15_macro_recovery.choices]]
+label = "Acknowledge"
+detail = "Shift from survival to growth"
+effects = "Conditions ease across the board. Rewards companies that made it through intact."
+outcome_ref = "macro_reframe_recovery"

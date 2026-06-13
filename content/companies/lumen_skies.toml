@@ -1,0 +1,53 @@
+# Anchor — Space / Satellite Constellations
+# Posture: hype-driven earth-observation play. Still climbing the capex
+# hump, story-stock valuation, AI-analytics narrative. Bubble-risk.
+
+[company]
+id = "lumen_skies"
+name = "Lumen Skies"
+tier = "anchor"
+industry = "space"
+sub_industry = "satellite_constellations"
+founded_year = -4
+hq = "Palo Alto, CA"
+color = "#E58F3A"
+logo_glyph = "globe-scan"
+
+[company.identity]
+tagline = "Imaging the whole planet, every day, in AI-ready layers."
+reputation = 69
+narrative_hooks = [
+  "rides the AI-plus-imagery narrative",
+  "still pre-recurring-revenue at scale",
+  "every launch slip resets the story",
+]
+
+[company.stage]
+status = "private"
+private_round = "c"
+ipo_year = 0
+
+[company.financials]
+revenue = 290
+revenue_growth = 0.88
+gross_margin = 0.47
+profitable = false
+burn_monthly = 22
+valuation = 5600
+shares_out = 0
+
+[company.quality]
+fundamentals = 60
+hype_exposure = 0.85
+moat = 49
+execution = 63
+
+[company.signature]
+benchmark_score = 64
+signature_notes = "Daily-revisit coverage is real; the analytics-revenue story is mostly still a deck"
+
+[company.relationships]
+competitors = ["meridian_orbital"]
+suppliers  = ["vector_dynamics", "ascent_aero"]
+customers  = []
+investors  = ["atlas_growth"]
