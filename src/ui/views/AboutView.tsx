@@ -11,8 +11,9 @@ export function AboutView() {
         <PanelHeader title="Moonshot Inc" sub="Build status — what's playable, what's next" />
         <p className="about__lede">
           Found a frontier-tech company, raise venture capital, and build from a garage to an IPO.
-          This is the V1 foundation: the four-zone frame, the <strong>cap table</strong> hero
-          feature, and the <strong>Advance heartbeat</strong> — wired to the real authored content.
+          This is the V1 foundation: the four-zone frame, the two hero features — the{" "}
+          <strong>cap table</strong> and the <strong>fundraising negotiation</strong> — and the{" "}
+          <strong>Advance heartbeat</strong>, wired to the real authored content.
         </p>
 
         <div className="about__cols">
@@ -22,17 +23,17 @@ export function AboutView() {
               <li><Tag tone="up">Done</Tag> Four-zone operating frame (top bar, nav, workspace, narrative rail)</li>
               <li><Tag tone="up">Done</Tag> Cap table: Overview, Holders, Round History, Exit Scenarios</li>
               <li><Tag tone="up">Done</Tag> Priced-round engine (pre-money option pool, dilution, exit waterfall)</li>
-              <li><Tag tone="up">Done</Tag> Live fundraising negotiation preview against real VC firms</li>
-              <li><Tag tone="up">Done</Tag> Advance heartbeat — Week / Month / Next Decision, deterministic ticks</li>
-              <li><Tag tone="up">Done</Tag> World drift, runway alerts, net-worth milestones, live timeline</li>
+              <li><Tag tone="up">Done</Tag> 3-round fundraising negotiation with axis-driven counters &amp; soft signals</li>
+              <li><Tag tone="up">Done</Tag> Eval help: color-coded terms, Comparable Rounds, live preview, relationship memory</li>
+              <li><Tag tone="up">Done</Tag> Advance heartbeat — deterministic ticks, world drift, runway alerts, milestones</li>
             </ul>
           </div>
           <div>
             <h4 className="about__h">Next phases</h4>
             <ul className="about__list">
-              <li><Tag tone="warn">Next</Tag> 3-round negotiation flow &amp; soft signals (Phase 4)</li>
-              <li><Tag>Later</Tag> Full master-variable world engines (Phase 5)</li>
-              <li><Tag>Later</Tag> Company relationship graph &amp; events (Phases 6–7)</li>
+              <li><Tag tone="warn">Next</Tag> Full master-variable world engines (Phase 5)</li>
+              <li><Tag>Later</Tag> Public market: ~70 companies &amp; relationship graph (Phase 6)</li>
+              <li><Tag>Later</Tag> Events engine &amp; the 50 templates (Phase 7)</li>
               <li><Tag>Later</Tag> Signature mechanics, delegation (Phase 9)</li>
               <li><Tag>Later</Tag> 3-act IPO, exits, achievements (Phase 10)</li>
             </ul>

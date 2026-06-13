@@ -3,14 +3,14 @@ import { STAGE_LABELS, industryLabel } from "@/domain/ids";
 import { formatMoney } from "@/engine/format";
 import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Tag } from "@/ui/components/controls";
-import { RaiseRoundPanel } from "@/ui/captable/RaiseRoundPanel";
+import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
 
 export function FundraisingView() {
   const content = useGame((s) => s.content);
 
   return (
     <div className="workspace-scroll">
-      <RaiseRoundPanel />
+      <NegotiationPanel />
 
       <Panel className="investors" flush>
         <PanelHeader

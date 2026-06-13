@@ -15,6 +15,16 @@ export interface FounderState {
   personalCash: Money;
 }
 
+/** Two-tier investor memory: a numeric score plus, for hand-crafted firms, an
+ *  event history. Burning a firm colors future negotiations (decision G). */
+export interface FirmRelationship {
+  /** 0–100, 50 neutral. Feeds deal appetite in the next negotiation. */
+  score: number;
+  history: { week: number; note: string }[];
+}
+
+export const NEUTRAL_RELATIONSHIP = 50;
+
 /** The player's company — the operating entity at the center of the board. */
 export interface PlayerCompany {
   name: string;
@@ -81,4 +91,6 @@ export interface GameState {
   lastRunwayBand: RunwayBand;
   /** Net-worth milestones already crossed ($M), so each fires once. */
   achievedMilestones: number[];
+  /** Per-firm relationship memory, keyed by firm id. */
+  relationships: Record<string, FirmRelationship>;
 }

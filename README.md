@@ -14,18 +14,19 @@ This repository is the V1 build. See [`docs/`](docs/) for the full design:
 
 ## Status
 
-The **Foundation**, the **Cap Table** hero feature, and the **Advance
-heartbeat** are in place (Roadmap Phases 1–3), wired to the real authored
-content.
+The **Foundation**, the **Cap Table** and **Fundraising Negotiation** hero
+features, and the **Advance heartbeat** are in place (Roadmap Phases 1–4),
+wired to the real authored content.
 
 | Area | State |
 |---|---|
 | Four-zone operating frame (top bar · nav rail · workspace · narrative rail) | ✅ |
 | New-game founding flow (Industry → Focus → Identity) | ✅ |
-| Cap table: Overview · Holders · Round History · Exit Scenarios | ✅ |
+| Cap table: Overview · Holders · Round History · Exit Scenarios | ✅ (pure + unit-tested) |
 | Priced-round engine — pre-money option pool, dilution, exit waterfall | ✅ (pure + unit-tested) |
-| Live fundraising negotiation preview vs. real VC firms | ✅ |
-| Content loader for all authored TOML, cross-references validated | ✅ |
+| 3-round fundraising negotiation — axis-driven counters, soft signals | ✅ (pure + unit-tested) |
+| Eval-help: color-coded terms · Comparable Rounds · live cap-table preview | ✅ |
+| Investor relationship memory · `'self'` type architected · Hot Deal | ✅ |
 | Advance heartbeat — Week / Month / Next Decision, deterministic tick pipeline | ✅ (pure + unit-tested) |
 | Light world drift · runway alerts · net-worth milestones · live timeline | ✅ |
 | Master-variable engines (full) · relationship graph · events · IPO | ▫ later phases |
@@ -68,8 +69,10 @@ src/
     rng.ts          Seeded PRNG (deterministic ticks)
     world.ts        Light master-variable drift (the Phase 5 seam)
     tick.ts         The Advance heartbeat: week resolution + advance modes
+    negotiation.ts  3-round negotiation counter-logic (axis-driven)
   state/            New-game construction + the Zustand store
   ui/
+    fundraising/    The negotiation flow (term sheet, reaction, counter, comps)
     frame/          The four persistent zones + view router
     captable/       The cap-table hero feature (tabs, fundraising panel)
     charts/         Hand-rolled SVG charts (stacked bar, dual line, payout curve)

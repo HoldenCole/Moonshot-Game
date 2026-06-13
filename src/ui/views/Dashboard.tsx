@@ -5,7 +5,7 @@ import { formatMoney } from "@/engine/format";
 import { Panel } from "@/ui/components/Panel";
 import { Stat, Tag } from "@/ui/components/controls";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
-import { RaiseRoundPanel } from "@/ui/captable/RaiseRoundPanel";
+import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
 import type { View } from "@/ui/frame/types";
 
@@ -44,7 +44,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
       <ActiveDecisions onNavigate={onNavigate} />
       <FinancialBand company={game.company} />
       <CapTablePanel capTable={game.company.capTable} />
-      <RaiseRoundPanel />
+      <NegotiationPanel />
     </div>
   );
 }

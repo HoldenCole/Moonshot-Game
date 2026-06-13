@@ -80,6 +80,7 @@ export function createNewGame(choices: FoundingChoices, createdAt: string): Game
     alerts: [],
     lastRunwayBand: "ok",
     achievedMilestones: [],
+    relationships: {},
   };
 }
 
