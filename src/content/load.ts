@@ -10,6 +10,7 @@ import type {
   EventFile,
   InvestorContent,
 } from "@/domain/content";
+import type { Tuning } from "@/domain/tuning";
 
 // Convenience aliases for the unwrapped inner records.
 export type Company = CompanyContent["company"];
@@ -22,6 +23,7 @@ export interface ContentDB {
   investors: Investor[];
   banks: Bank[];
   events: GameEvent[];
+  tuning: Tuning;
   companyById: Map<string, Company>;
   investorById: Map<string, Investor>;
   bankById: Map<string, Bank>;
@@ -65,6 +67,36 @@ const eventGlob = import.meta.glob("/content/events/*.toml", {
   import: "default",
   eager: true,
 }) as Record<string, string>;
+
+const worldGlob = import.meta.glob("/content/world/*.toml", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+/** Map the snake_case tuning TOML into the camelCase `Tuning` shape. */
+function loadTuning(glob: Record<string, string>): Tuning {
+  const entry = Object.entries(glob).find(([p]) => p.endsWith("tuning.toml"));
+  if (!entry) throw new Error("content/world/tuning.toml not found");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = parse(entry[1]) as any;
+  return {
+    runway: { lowMonths: t.runway.low_months, criticalMonths: t.runway.critical_months },
+    world: {
+      hypeReversion: t.world.hype_reversion,
+      hypeNoise: t.world.hype_noise,
+      hypeBaseline: t.world.hype_baseline ?? {},
+      climateReversion: t.world.climate_reversion,
+      climateBaseline: t.world.climate_baseline,
+      climateNoise: t.world.climate_noise,
+      rateNoise: t.world.rate_noise,
+      macroTransitionWeeklyProb: t.world.macro_transition_weekly_prob,
+      ipoWindowTransitionWeeklyProb: t.world.ipo_window_transition_weekly_prob,
+    },
+    advance: { nextDecisionCapWeeks: t.advance.next_decision_cap_weeks },
+    milestones: { netWorth: t.milestones.net_worth },
+  };
+}
 
 function indexBy<T extends { id: string }>(items: T[]): Map<string, T> {
   const m = new Map<string, T>();
@@ -146,6 +178,7 @@ export function loadContent(): ContentDB {
     investors,
     banks,
     events,
+    tuning: loadTuning(worldGlob),
     companyById: indexBy(companies),
     investorById: indexBy(investors),
     bankById: indexBy(banks),

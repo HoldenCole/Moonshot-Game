@@ -6,6 +6,8 @@ import { Panel } from "@/ui/components/Panel";
 import { Stat, Tag } from "@/ui/components/controls";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { RaiseRoundPanel } from "@/ui/captable/RaiseRoundPanel";
+import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
+import type { View } from "@/ui/frame/types";
 
 function FinancialBand({ company }: { company: PlayerCompany }) {
   const f = company.financials;
@@ -34,11 +36,12 @@ function FinancialBand({ company }: { company: PlayerCompany }) {
   );
 }
 
-export function Dashboard() {
+export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
   const game = useGame((s) => s.game);
   if (!game) return null;
   return (
     <div className="workspace-scroll">
+      <ActiveDecisions onNavigate={onNavigate} />
       <FinancialBand company={game.company} />
       <CapTablePanel capTable={game.company.capTable} />
       <RaiseRoundPanel />

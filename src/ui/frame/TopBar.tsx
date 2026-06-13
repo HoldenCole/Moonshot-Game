@@ -1,5 +1,7 @@
 import { useGame } from "@/state/store";
-import { founderOwnership, latestPostMoney } from "@/engine/captable";
+import { latestPostMoney, founderOwnership } from "@/engine/captable";
+import { runwayMonths } from "@/engine/finance";
+import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
 import { industryLabel } from "@/domain/ids";
 import { Icon } from "@/ui/components/Icon";
@@ -31,25 +33,32 @@ function Gauge({ label, value, tone }: { label: string; value: string; tone?: "u
 
 export function TopBar() {
   const game = useGame((s) => s.game);
-  const advanceWeeks = useGame((s) => s.advanceWeeks);
+  const tuning = useGame((s) => s.content.tuning);
+  const advance = useGame((s) => s.advance);
   if (!game) return null;
 
   const { world, company, founder, clock } = game;
   const post = latestPostMoney(company.capTable);
-  const stakeValue = founderOwnership(company.capTable) * post;
-  const netWorth = stakeValue + founder.personalCash;
+  const nw = founderOwnership(company.capTable) * post + founder.personalCash;
   const hype = world.hype[company.industry] ?? 50;
+  const runway = runwayMonths(company);
 
   const ipoTone = world.ipoWindow === "open" ? "up" : world.ipoWindow === "closed" ? "down" : "warn";
-  const runwayMonths =
-    company.financials.burnMonthly > company.financials.revenue / 12
-      ? company.financials.cash / (company.financials.burnMonthly - company.financials.revenue / 12)
-      : Infinity;
+
+  const pendingDecision = game.alerts.length > 0;
+  const wksCritical = weeksToCritical(game, tuning);
+  const hint = pendingDecision
+    ? "Decision pending"
+    : runway === Infinity
+      ? "Cash-flow positive"
+      : wksCritical > tuning.advance.nextDecisionCapWeeks
+        ? "Runway healthy"
+        : `~${wksCritical} wks to runway pressure`;
 
   return (
     <header className="topbar">
       <div className="topbar__brand">
-        <div className="topbar__company" style={{ ["--brand" as string]: company.color }}>
+        <div className="topbar__company">
           <span className="topbar__dot" style={{ background: company.color }} />
           <div>
             <div className="topbar__company-name">{company.name}</div>
@@ -59,16 +68,25 @@ export function TopBar() {
       </div>
 
       <div className="topbar__time">
-        <button className="time-btn" onClick={() => advanceWeeks(1)}>
+        <button className="time-btn" onClick={() => advance({ type: "weeks", weeks: 1 })}>
           <Icon name="chevron-right" size={15} /> Week
         </button>
-        <button className="time-btn" onClick={() => advanceWeeks(Math.round(13 / 3))}>
+        <button className="time-btn" onClick={() => advance({ type: "weeks", weeks: Math.round(WEEKS_PER_MONTH) })}>
           <Icon name="chevron-right" size={15} /> Month
+        </button>
+        <button
+          className={`time-btn time-btn--primary${pendingDecision ? " is-blocked" : ""}`}
+          onClick={() => advance({ type: "nextDecision" })}
+          disabled={pendingDecision}
+          title={pendingDecision ? "Resolve the open decision first" : "Skip quiet weeks to the next decision"}
+        >
+          <Icon name="chevron-right" size={15} /> Next decision
         </button>
         <div className="time-clock num" title="Weeks since founding">
           <Icon name="clock" size={14} />
           W{clock.week}
         </div>
+        <span className={`time-hint${pendingDecision ? " time-hint--alert" : ""}`}>{hint}</span>
       </div>
 
       <div className="topbar__gauges">
@@ -82,12 +100,12 @@ export function TopBar() {
       <div className="topbar__right">
         <div className="topbar__networth">
           <span className="topbar__networth-label">Net worth</span>
-          <span className="topbar__networth-value num">{netWorth > 0 ? formatMoney(netWorth) : "—"}</span>
+          <span className="topbar__networth-value num">{nw > 0 ? formatMoney(nw) : "—"}</span>
         </div>
         <div className="topbar__runway">
           <span className="topbar__networth-label">Runway</span>
-          <span className="topbar__networth-value num">
-            {runwayMonths === Infinity ? "∞" : `${Math.max(0, Math.floor(runwayMonths))}mo`}
+          <span className={`topbar__networth-value num${runway !== Infinity && runway <= tuning.runway.criticalMonths ? " gauge__value--down" : ""}`}>
+            {runway === Infinity ? "∞" : `${Math.max(0, Math.floor(runway))}mo`}
           </span>
         </div>
         <button className="cmdk" title="Command palette (coming soon)">

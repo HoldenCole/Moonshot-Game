@@ -1,62 +1,70 @@
 import { useGame } from "@/state/store";
 import { founderOwnership, latestPostMoney } from "@/engine/captable";
+import { runwayMonths } from "@/engine/finance";
 import { formatMoney, formatPct } from "@/engine/format";
-import { industryLabel, subIndustryLabel } from "@/domain/ids";
+import { subIndustryLabel } from "@/domain/ids";
+import type { LogEntry, LogTone } from "@/domain/log";
 
-/** The narrative layer (decision E/O): CEO log + relational news, text-only and
- *  generated from live state and the loaded world. Skippable by design. */
+const TONE_COLOR: Record<LogTone, string> = {
+  neutral: "var(--text-faint)",
+  up: "var(--up)",
+  down: "var(--down)",
+  warn: "var(--warn)",
+  crisis: "var(--down)",
+  opportunity: "var(--data)",
+};
+
+/** The narrative layer (decision E/O): a live "This Week" standing plus the
+ *  timeline of notable events. Text-only, generated from state and the world.
+ *  The news ticker is load-bearing (the WSR lesson). */
 export function NarrativeRail() {
   const game = useGame((s) => s.game);
-  const content = useGame((s) => s.content);
   if (!game) return null;
 
-  const { company } = game;
+  const { company, clock } = game;
   const rounds = company.capTable.rounds.filter((r) => r.postMoney > 0);
   const last = rounds[rounds.length - 1];
   const founderPct = founderOwnership(company.capTable);
   const post = latestPostMoney(company.capTable);
+  const runway = runwayMonths(company);
 
-  // Relational news: same-industry anchors, framed from their narrative hooks.
-  const peers = content.companies
-    .filter((c) => c.industry === company.industry && c.tier === "anchor")
-    .slice(0, 3);
+  // Newest notable entries first.
+  const timeline: LogEntry[] = [...game.log].slice(-14).reverse();
 
   return (
     <aside className="narrative">
       <section className="narrative__section">
-        <h4 className="narrative__title">This Week</h4>
+        <h4 className="narrative__title">This Week · W{clock.week}</h4>
         <div className="ceo-log">
           {last ? (
             <p>
-              Closed the <strong>{last.name}</strong> with {last.leadInvestorName} at{" "}
-              <strong>{formatMoney(last.postMoney)}</strong> post. You hold{" "}
-              <strong>{formatPct(founderPct)}</strong> — a stake worth{" "}
-              {formatMoney(founderPct * post)}.
+              You hold <strong>{formatPct(founderPct)}</strong> of {company.name} after the{" "}
+              <strong>{last.name}</strong> — a stake worth {formatMoney(founderPct * post)}.
             </p>
           ) : (
             <p>
-              You founded <strong>{company.name}</strong> in {subIndustryLabel(company.subIndustry)}.
-              The cap table is clean: <strong>{formatPct(founderPct)}</strong> yours. Time to find
-              your first lead.
+              <strong>{company.name}</strong> is in {subIndustryLabel(company.subIndustry)}. The cap
+              table is clean: <strong>{formatPct(founderPct)}</strong> yours.
             </p>
           )}
           <p className="ceo-log__meta">
-            {company.financials.headcount} on the team · {formatMoney(company.financials.cash)} in the bank
+            {formatMoney(company.financials.cash)} in the bank ·{" "}
+            {runway === Infinity ? "cash-flow positive" : `${Math.max(0, Math.floor(runway))} mo runway`} ·{" "}
+            {company.financials.headcount} on the team
           </p>
         </div>
       </section>
 
       <section className="narrative__section">
-        <h4 className="narrative__title">The Street</h4>
-        <ul className="news">
-          {peers.map((c) => (
-            <li key={c.id} className="news__item">
-              <span className="news__dot" style={{ background: c.color }} />
-              <div>
-                <div className="news__headline">{streetHeadline(c.name, c.identity.narrative_hooks)}</div>
-                <div className="news__sub">
-                  {c.name} · {industryLabel(c.industry)}
-                </div>
+        <h4 className="narrative__title">Timeline</h4>
+        <ul className="timeline">
+          {timeline.map((e) => (
+            <li key={e.id} className="timeline__item">
+              <span className="timeline__dot" style={{ background: TONE_COLOR[e.tone] }} />
+              <div className="timeline__content">
+                <div className="timeline__headline">{e.headline}</div>
+                {e.detail && <div className="timeline__detail">{e.detail}</div>}
+                <div className="timeline__week">Week {e.week}</div>
               </div>
             </li>
           ))}
@@ -66,17 +74,9 @@ export function NarrativeRail() {
       <section className="narrative__section narrative__section--quiet">
         <h4 className="narrative__title">Team Activity</h4>
         <p className="narrative__placeholder">
-          The activity feed, executives, and delegation reports arrive with the operating loop
-          (Phase 9).
+          Executives, delegation reports, and the team feed arrive with the operating loop (Phase 9).
         </p>
       </section>
     </aside>
   );
-}
-
-function streetHeadline(name: string, hooks: string[]): string {
-  const hook = hooks[0] ?? "is making moves";
-  // Capitalize the hook into a newsroom-style line.
-  const h = hook.charAt(0).toUpperCase() + hook.slice(1);
-  return `${name}: ${h}`;
 }

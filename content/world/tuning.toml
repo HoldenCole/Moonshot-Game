@@ -1,0 +1,31 @@
+# Tick / simulation tuning. All values are starting points for playtest
+# balancing. The engine reads these — nothing here is hardcoded in code.
+
+[runway]
+low_months = 9          # below this, nudge the founder to raise
+critical_months = 4     # below this, flag runway as critical
+
+[world]
+# Industry hype mean-reverts toward its baseline with a little weekly noise.
+hype_reversion = 0.035
+hype_noise = 1.1
+# VC climate (0-100) drifts toward a baseline.
+climate_reversion = 0.02
+climate_baseline = 60
+climate_noise = 1.4
+# Policy rate wobble per week (percentage points).
+rate_noise = 0.03
+# Per-week probability of a macro-cycle phase change / IPO-window shift.
+macro_transition_weekly_prob = 0.014
+ipo_window_transition_weekly_prob = 0.010
+
+[world.hype_baseline]
+ai = 72
+space = 60
+
+[advance]
+next_decision_cap_weeks = 104   # a single "advance to decision" caps at ~2 years
+
+[milestones]
+# Net-worth milestones, $M — the "why" the spine is built around.
+net_worth = [1, 10, 100, 1000, 10000]

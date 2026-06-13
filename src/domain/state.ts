@@ -3,6 +3,7 @@
 
 import type { Industry, Stage, SubIndustry } from "./ids";
 import type { CapTable, Money } from "./captable";
+import type { Alert, LogEntry, RunwayBand } from "./log";
 
 export const SCHEMA_VERSION = 1;
 
@@ -59,6 +60,8 @@ export interface GameMeta {
   schemaVersion: number;
   /** PRNG seed; world generation and rolls derive from it for determinism. */
   seed: number;
+  /** Current PRNG generator state, carried in the save for deterministic ticks. */
+  rngState: number;
   createdAt: string;
   /** Bumped whenever the player names/renames the run. */
   runName: string;
@@ -70,4 +73,12 @@ export interface GameState {
   founder: FounderState;
   company: PlayerCompany;
   world: WorldState;
+  /** The world's running record — notable events shown in the narrative rail. */
+  log: LogEntry[];
+  /** Active, unacknowledged alerts surfaced as in-context decisions. */
+  alerts: Alert[];
+  /** Last runway band seen, so alerts fire on worsening rather than every week. */
+  lastRunwayBand: RunwayBand;
+  /** Net-worth milestones already crossed ($M), so each fires once. */
+  achievedMilestones: number[];
 }

@@ -34,6 +34,7 @@ export function createNewGame(choices: FoundingChoices, createdAt: string): Game
     meta: {
       schemaVersion: SCHEMA_VERSION,
       seed: choices.seed,
+      rngState: choices.seed >>> 0,
       createdAt,
       runName: choices.companyName,
     },
@@ -51,7 +52,7 @@ export function createNewGame(choices: FoundingChoices, createdAt: string): Game
       foundedWeek: 0,
       color: choices.color,
       financials: {
-        cash: 0.25, // $250K of founder / friends-and-family capital
+        cash: 0.75, // ~$750K of founder / friends-and-family capital (~9mo runway)
         revenue: 0,
         burnMonthly: 0.08,
         headcount: choices.cofounder ? 3 : 2,
@@ -66,6 +67,19 @@ export function createNewGame(choices: FoundingChoices, createdAt: string): Game
       ipoWindow: "open",
       hype: { ai: 78, space: 64 },
     },
+    log: [
+      {
+        id: "founded",
+        week: 0,
+        kind: "milestone",
+        tone: "opportunity",
+        headline: `${choices.companyName} is founded`,
+        detail: "Day one. An idea, a little capital, and everything to build.",
+      },
+    ],
+    alerts: [],
+    lastRunwayBand: "ok",
+    achievedMilestones: [],
   };
 }
 

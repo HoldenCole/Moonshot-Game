@@ -83,6 +83,21 @@
   color: var(--text);
   border-color: var(--accent);
 }
+.time-btn--primary {
+  border-color: var(--accent-press);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.time-btn--primary:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  filter: brightness(1.2);
+}
+.time-btn:disabled,
+.time-btn.is-blocked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .time-clock {
   display: flex;
   align-items: center;
@@ -90,6 +105,16 @@
   color: var(--text-faint);
   font-size: 12px;
   padding-left: 4px;
+}
+.time-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+  padding-left: 6px;
+  white-space: nowrap;
+}
+.time-hint--alert {
+  color: var(--warn);
+  font-weight: 600;
 }
 .topbar__gauges {
   display: flex;
@@ -840,6 +865,124 @@
 .exit-take__sub {
   font-size: 11.5px;
   color: var(--text-faint);
+}
+
+/* ── Active decisions (in-context alerts) ──────────────────────────────────── */
+
+.decisions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.decision {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+  animation: rise 0.22s ease both;
+}
+.decision__bar {
+  width: 4px;
+  flex: none;
+  background: var(--text-faint);
+}
+.decision--crisis .decision__bar {
+  background: var(--down);
+}
+.decision--warn .decision__bar {
+  background: var(--warn);
+}
+.decision--opportunity .decision__bar {
+  background: var(--data);
+}
+.decision--up .decision__bar {
+  background: var(--up);
+}
+.decision__body {
+  flex: 1;
+  padding: 13px 16px;
+}
+.decision__headline {
+  font-size: 14px;
+  font-weight: 660;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.decision--crisis .decision__headline {
+  color: var(--down);
+}
+.decision__text {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+.decision__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+}
+
+/* ── Timeline (narrative rail) ─────────────────────────────────────────────── */
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.timeline__item {
+  display: flex;
+  gap: 10px;
+  padding-bottom: 13px;
+  position: relative;
+}
+.timeline__item::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 12px;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.timeline__item:last-child {
+  padding-bottom: 0;
+}
+.timeline__item:last-child::before {
+  display: none;
+}
+.timeline__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex: none;
+  z-index: 1;
+  box-shadow: 0 0 0 3px var(--bg);
+}
+.timeline__headline {
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.timeline__detail {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+.timeline__week {
+  font-size: 10px;
+  color: var(--text-ghost);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 3px;
 }
 
 /* ── Financial band ────────────────────────────────────────────────────────── */

@@ -31,7 +31,7 @@ export function GameShell() {
       <div className="shell__body">
         <NavRail view={view} onChange={setView} />
         <main className="workspace">
-          {view === "dashboard" && <Dashboard />}
+          {view === "dashboard" && <Dashboard onNavigate={setView} />}
           {view === "captable" && <CapTableView />}
           {view === "fundraising" && <FundraisingView />}
           {view === "market" && <MarketView />}

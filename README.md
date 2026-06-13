@@ -14,8 +14,9 @@ This repository is the V1 build. See [`docs/`](docs/) for the full design:
 
 ## Status
 
-The **Foundation** and the **Cap Table** hero feature are in place (Roadmap
-Phases 1–2), wired to the real authored content.
+The **Foundation**, the **Cap Table** hero feature, and the **Advance
+heartbeat** are in place (Roadmap Phases 1–3), wired to the real authored
+content.
 
 | Area | State |
 |---|---|
@@ -25,8 +26,9 @@ Phases 1–2), wired to the real authored content.
 | Priced-round engine — pre-money option pool, dilution, exit waterfall | ✅ (pure + unit-tested) |
 | Live fundraising negotiation preview vs. real VC firms | ✅ |
 | Content loader for all authored TOML, cross-references validated | ✅ |
-| Time advancement & tick resolution | ▫ next (Phase 3) |
-| Master variables · relationship graph · events · IPO | ▫ later phases |
+| Advance heartbeat — Week / Month / Next Decision, deterministic tick pipeline | ✅ (pure + unit-tested) |
+| Light world drift · runway alerts · net-worth milestones · live timeline | ✅ |
+| Master-variable engines (full) · relationship graph · events · IPO | ▫ later phases |
 
 ## Running it
 
@@ -63,6 +65,9 @@ src/
   domain/           Types: ids, content schema, cap table, game state
   engine/           Pure functions — cap table math, formatting (unit-tested)
   content/          TOML loader + cross-reference validation
+    rng.ts          Seeded PRNG (deterministic ticks)
+    world.ts        Light master-variable drift (the Phase 5 seam)
+    tick.ts         The Advance heartbeat: week resolution + advance modes
   state/            New-game construction + the Zustand store
   ui/
     frame/          The four persistent zones + view router
