@@ -71,7 +71,7 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="topbar__time">
+      <div className="topbar__time" data-coach="advance">
         <button className="time-btn" onClick={() => advance({ type: "weeks", weeks: 1 })}>
           <Icon name="chevron-right" size={15} /> Week
         </button>
@@ -103,7 +103,7 @@ export function TopBar() {
 
       <div className="topbar__right">
         <Wealth nw={nw} />
-        <div className="topbar__runway">
+        <div className="topbar__runway" data-coach="runway">
           <span className="topbar__networth-label">Runway</span>
           <span className={`topbar__networth-value num${runway !== Infinity && runway <= tuning.runway.criticalMonths ? " gauge__value--down" : ""}`}>
             {runway === Infinity ? "∞" : `${Math.max(0, Math.floor(runway))}mo`}
@@ -136,8 +136,11 @@ function Wealth({ nw }: { nw: number }) {
 function Settings() {
   const theme = usePrefs((s) => s.theme);
   const reduceMotion = usePrefs((s) => s.reduceMotion);
+  const tutorialOn = usePrefs((s) => s.tutorialEnabled);
   const toggleTheme = usePrefs((s) => s.toggleTheme);
   const setReduceMotion = usePrefs((s) => s.setReduceMotion);
+  const setTutorialEnabled = usePrefs((s) => s.setTutorialEnabled);
+  const resetHints = usePrefs((s) => s.resetHints);
   return (
     <div className="topbar__settings">
       <button
@@ -155,6 +158,14 @@ function Settings() {
         aria-label="Toggle reduced motion"
       >
         <Icon name="motion" size={16} />
+      </button>
+      <button
+        className={`iconbtn${tutorialOn ? " is-on" : ""}`}
+        onClick={() => (tutorialOn ? setTutorialEnabled(false) : resetHints())}
+        title={tutorialOn ? "Tips on — click to turn off" : "Tips off — click to replay them"}
+        aria-label="Toggle onboarding tips"
+      >
+        <Icon name="info" size={16} />
       </button>
     </div>
   );

@@ -12,7 +12,7 @@ export function FundraisingView() {
     <div className="workspace-scroll">
       <NegotiationPanel />
 
-      <Panel className="investors" flush>
+      <Panel className="investors" flush coach="fundraising">
         <PanelHeader
           title="Investor Directory"
           sub={`${content.investors.length} firms — the counterparties you'll negotiate against`}

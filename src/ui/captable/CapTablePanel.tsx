@@ -23,7 +23,7 @@ export function CapTablePanel({ capTable }: { capTable: CapTable }) {
   const founderPct = founderOwnership(capTable);
 
   return (
-    <Panel className="captable">
+    <Panel className="captable" coach="captable">
       <PanelHeader
         title="Cap Table"
         sub="Who owns the company, and what it's worth to them"

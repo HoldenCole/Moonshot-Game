@@ -17,7 +17,7 @@ export function EventModal() {
 
   return (
     <div className="event-overlay">
-      <div className={`event-modal event-modal--${event.tone} rise`}>
+      <div className={`event-modal event-modal--${event.tone} rise`} data-coach="event">
         <div className="event-modal__cat">
           {TONE_LABEL[event.tone]} · {cap(event.category)} · Week {event.week}
         </div>

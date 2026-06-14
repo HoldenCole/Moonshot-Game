@@ -3060,3 +3060,137 @@
   font-weight: 600;
   margin-top: 2px;
 }
+
+/* ── Onboarding coachmarks (CK3-style contextual tips) ─────────────────────────
+   A hairline ring draws the eye to the real element; a small borderless callout
+   explains it. Fire-once, one at a time, dismissible — never a modal wall. */
+.coach-ring {
+  position: fixed;
+  z-index: 199;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--r-sm);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  pointer-events: none;
+  animation: coach-ring-pulse 1.9s ease-in-out infinite;
+}
+@keyframes coach-ring-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--accent-soft); }
+  50% { box-shadow: 0 0 0 7px transparent; }
+}
+[data-reduce-motion="on"] .coach-ring { animation: none; }
+
+.coachmark {
+  position: fixed;
+  z-index: 200;
+  width: 320px;
+  max-width: calc(100vw - 20px);
+  background: var(--panel-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-pop);
+  padding: 13px 14px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  animation: coach-in 0.18s ease-out;
+}
+[data-reduce-motion="on"] .coachmark { animation: none; }
+@keyframes coach-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.coachmark__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.coachmark__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.coachmark__x {
+  border: none;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: var(--r-sm);
+}
+.coachmark__x:hover {
+  color: var(--text);
+}
+.coachmark__title {
+  font-size: 14px;
+  font-weight: 650;
+  margin: 0;
+  color: var(--text);
+}
+.coachmark__body {
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-dim);
+}
+.coachmark__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3px;
+}
+.coachmark__dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.coachmark__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.coachmark__dot.is-done {
+  background: var(--text-faint);
+}
+.coachmark__dot.is-active {
+  background: var(--accent);
+}
+.coachmark__actions {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.coachmark__off {
+  border: none;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 6px;
+}
+.coachmark__off:hover {
+  color: var(--text-dim);
+}
+.coachmark__ok {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: white;
+  border-radius: var(--r-pill);
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.coachmark__ok:hover {
+  filter: brightness(1.08);
+}
+.coachmark__ok:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

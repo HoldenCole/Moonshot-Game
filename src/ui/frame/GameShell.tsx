@@ -14,6 +14,7 @@ import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { EventModal } from "@/ui/events/EventModal";
 import { ExitFlow } from "@/ui/exit/ExitFlow";
 import { AchievementToast } from "@/ui/achievements/AchievementToast";
+import { TutorialLayer } from "@/ui/tutorial/TutorialLayer";
 import { useGame } from "@/state/store";
 
 function CapTableView() {
@@ -51,6 +52,7 @@ export function GameShell() {
       <EventModal />
       <ExitFlow />
       <AchievementToast />
+      <TutorialLayer view={view} />
     </div>
   );
 }

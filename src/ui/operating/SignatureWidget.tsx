@@ -21,7 +21,7 @@ export function SignatureWidget() {
     const progress = processProgress(sig, week);
     const weeksLeft = Math.max(0, sig.endWeek - week);
     return (
-      <Panel className="sigwidget">
+      <Panel className="sigwidget" coach="signature">
         <div className="sigwidget__head">
           <div className="sigwidget__title">
             {sig.name} <span className="live-dot" />

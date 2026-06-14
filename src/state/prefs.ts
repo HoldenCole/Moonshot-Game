@@ -1,6 +1,8 @@
-// App-level presentation preferences (theme + reduced motion). Separate from
-// the game save: these are device settings, persisted to localStorage and
-// applied to the document root so the CSS themes/motion switch instantly.
+// App-level presentation preferences (theme + reduced motion + onboarding
+// progress). Separate from the game save: these are device settings, persisted
+// to localStorage and applied to the document root so the CSS themes/motion
+// switch instantly. Tutorial "seen" hints live here too, so the player learns
+// the game once across all their runs (CK3-style), not once per save.
 
 import { create } from "zustand";
 
@@ -9,8 +11,16 @@ export type Theme = "dark" | "light";
 interface Prefs {
   theme: Theme;
   reduceMotion: boolean;
+  /** Master switch for the contextual onboarding hints. */
+  tutorialEnabled: boolean;
+  /** Hint ids the player has already dismissed (fire-once). */
+  seenHints: string[];
   toggleTheme: () => void;
   setReduceMotion: (b: boolean) => void;
+  markHintSeen: (id: string) => void;
+  setTutorialEnabled: (b: boolean) => void;
+  /** Re-arm every hint (and ensure tips are on) — "replay the tutorial". */
+  resetHints: () => void;
 }
 
 const KEY = "moonshot.prefs";
@@ -18,6 +28,8 @@ const KEY = "moonshot.prefs";
 interface Stored {
   theme: Theme;
   reduceMotion: boolean;
+  tutorialEnabled: boolean;
+  seenHints: string[];
 }
 
 function osReduceMotion(): boolean {
@@ -27,7 +39,7 @@ function osReduceMotion(): boolean {
 function load(): Stored {
   // Default to the OS reduced-motion preference (UI_LANGUAGE §2), so the JS
   // motion layer (market tape, count tweens) honors it like the CSS does.
-  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion() };
+  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion(), tutorialEnabled: true, seenHints: [] };
   if (typeof localStorage === "undefined") return fallback;
   try {
     return { ...fallback, ...(JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<Stored>) };
@@ -51,16 +63,27 @@ function persist(p: Stored): void {
 const initial = load();
 apply(initial); // set the default (dark) before first paint
 
-export const usePrefs = create<Prefs>((set, get) => ({
-  theme: initial.theme,
-  reduceMotion: initial.reduceMotion,
-  toggleTheme: () => {
-    const theme: Theme = get().theme === "dark" ? "light" : "dark";
-    persist({ theme, reduceMotion: get().reduceMotion });
-    set({ theme });
-  },
-  setReduceMotion: (reduceMotion) => {
-    persist({ theme: get().theme, reduceMotion });
-    set({ reduceMotion });
-  },
-}));
+export const usePrefs = create<Prefs>((set, get) => {
+  const snapshot = (): Stored => {
+    const s = get();
+    return { theme: s.theme, reduceMotion: s.reduceMotion, tutorialEnabled: s.tutorialEnabled, seenHints: s.seenHints };
+  };
+  const commit = (patch: Partial<Stored>) => {
+    persist({ ...snapshot(), ...patch });
+    set(patch);
+  };
+  return {
+    theme: initial.theme,
+    reduceMotion: initial.reduceMotion,
+    tutorialEnabled: initial.tutorialEnabled,
+    seenHints: initial.seenHints,
+    toggleTheme: () => commit({ theme: get().theme === "dark" ? "light" : "dark" }),
+    setReduceMotion: (reduceMotion) => commit({ reduceMotion }),
+    markHintSeen: (id) => {
+      if (get().seenHints.includes(id)) return;
+      commit({ seenHints: [...get().seenHints, id] });
+    },
+    setTutorialEnabled: (tutorialEnabled) => commit({ tutorialEnabled }),
+    resetHints: () => commit({ seenHints: [], tutorialEnabled: true }),
+  };
+});

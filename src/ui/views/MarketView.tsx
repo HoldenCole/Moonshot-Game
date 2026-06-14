@@ -71,7 +71,7 @@ export function MarketView() {
 
   return (
     <div className="workspace-scroll market-view">
-      <div className="market-head">
+      <div className="market-head" data-coach="market">
         <div>
           <h3 className="panel__title">
             The Market <span className="live-dot" />
