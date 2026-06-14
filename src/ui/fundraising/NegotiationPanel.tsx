@@ -7,7 +7,7 @@ import { NEUTRAL_RELATIONSHIP } from "@/domain/state";
 import { STAGE_LABELS, type Stage } from "@/domain/ids";
 import type { RoundTerms } from "@/domain/captable";
 import type { Investor } from "@/content/load";
-import { Panel, PanelHeader } from "@/ui/components/Panel";
+import { Panel } from "@/ui/components/Panel";
 import { Button, Tag } from "@/ui/components/controls";
 import { TermSheetEditor } from "./TermSheetEditor";
 import { LivePreview } from "./LivePreview";
@@ -55,20 +55,32 @@ export function NegotiationPanel() {
 
   return (
     <Panel className="negotiation">
-      <PanelHeader
-        title={negotiation ? `Negotiating your ${STAGE_LABELS[stage]}` : `Raise your ${STAGE_LABELS[stage]}`}
-        sub={
-          negotiation
-            ? `Round ${Math.min(negotiation.round, MAX_ROUNDS)} of ${MAX_ROUNDS} · ${negotiation.partnerName}, ${firm.name}`
-            : "Compose a term sheet and send it to a lead. They'll counter."
-        }
-        right={
-          <div className="negotiation__head-right">
-            <Tag tone={relTone(relScore)}>{relLabel(relScore)}</Tag>
-            <Tag tone="accent">{STAGE_LABELS[stage]}</Tag>
+      <header className="neg-header">
+        <div className="avatar">{initials(firm.partner_name)}</div>
+        <div className="neg-header__id">
+          <div className="neg-header__name">{firm.name}</div>
+          <div className="neg-header__sub">
+            {firm.partner_name} · {firm.partner_title ?? "Partner"} ·{" "}
+            {negotiation ? `negotiating your ${STAGE_LABELS[stage]}` : `your ${STAGE_LABELS[stage]} lead`}
           </div>
-        }
-      />
+        </div>
+        <div className="neg-header__tags">
+          {firm.identity.trait_tags.map((t) => (
+            <span key={t} className="neg-header__tag">
+              {t}
+            </span>
+          ))}
+        </div>
+        <div className="neg-header__meta">
+          <Tag tone={relTone(relScore)}>{relLabel(relScore)}</Tag>
+          <div className="neg-header__round">
+            <span className="neg-header__round-label">{negotiation ? "Round" : "Stage"}</span>
+            <span className="neg-header__round-val">
+              {negotiation ? `${Math.min(negotiation.round, MAX_ROUNDS)} of ${MAX_ROUNDS}` : STAGE_LABELS[stage]}
+            </span>
+          </div>
+        </div>
+      </header>
 
       {/* SETUP */}
       {!negotiation && (
@@ -185,13 +197,17 @@ function FirmReadout({ firm }: { firm: Investor }) {
   return (
     <div className="firm-readout">
       <div className="firm-readout__thesis">“{firm.identity.thesis}”</div>
-      <div className="firm-tags">
-        {firm.identity.trait_tags.map((t) => (
-          <Tag key={t}>{t}</Tag>
-        ))}
-      </div>
+      <div className="firm-readout__partner">— {firm.partner_name}</div>
     </div>
   );
+}
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
 }
 
 function relLabel(score: number): string {
