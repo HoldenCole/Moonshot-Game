@@ -8,6 +8,7 @@ import { FlashNum } from "@/ui/components/FlashNum";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
 import { SignatureWidget } from "@/ui/operating/SignatureWidget";
+import { ExitActions } from "@/ui/exit/ExitActions";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
 import type { View } from "@/ui/frame/types";
 
@@ -51,6 +52,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
   return (
     <div className="workspace-scroll">
       <ActiveDecisions onNavigate={onNavigate} />
+      <ExitActions />
       <FinancialBand company={game.company} />
       <SignatureWidget />
       <CapTablePanel capTable={game.company.capTable} />

@@ -18,6 +18,19 @@ import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import type { Autonomy, Exec, ExecArea } from "@/domain/state";
 import {
+  acquisitionOffer,
+  applyAcquisition,
+  applyIpo,
+  revealIpo,
+  type AcquisitionOffer,
+  type IpoResult,
+} from "@/engine/exit";
+
+export type ExitFlow =
+  | { kind: "ipo"; act: "underwriter" | "pricing" | "reveal"; bankId?: string; result?: IpoResult }
+  | { kind: "acquisition"; offer: AcquisitionOffer }
+  | null;
+import {
   agentFromFirm,
   counterOffer as engineCounter,
   openNegotiation,
@@ -38,6 +51,10 @@ interface GameStore {
   lastAdvance: AdvanceSummary | null;
   /** The in-progress fundraising negotiation, if any (ephemeral). */
   negotiation: NegotiationState | null;
+  /** The in-progress exit flow (IPO acts / acquisition offer), if any. */
+  exitFlow: ExitFlow;
+  /** New Game Plus carry-over staged between runs. */
+  carryOver: { reputation: number; personalCash: number } | null;
 
   newGame: (choices: FoundingChoices) => void;
   advance: (mode: AdvanceMode) => void;
@@ -57,6 +74,17 @@ interface GameStore {
   walkAway: () => void;
   dismissNegotiation: () => void;
 
+  // Exits & the arc.
+  openIpo: () => void;
+  ipoSelectBank: (bankId: string) => void;
+  ipoPrice: (pricedValuation: number) => void;
+  ipoList: () => void;
+  exploreSale: () => void;
+  acceptAcquisition: () => void;
+  cancelExit: () => void;
+  /** Start a new company after an exit, carrying reputation + wealth forward. */
+  foundAgain: () => void;
+
   resetGame: () => void;
 }
 
@@ -67,11 +95,15 @@ export const useGame = create<GameStore>((set, get) => ({
   game: null,
   lastAdvance: null,
   negotiation: null,
+  exitFlow: null,
+  carryOver: null,
 
   newGame: (choices) =>
     set((s) => ({
+      carryOver: null,
+      exitFlow: null,
       game: createNewGame(
-        choices,
+        { ...choices, carryOver: s.carryOver ?? undefined },
         new Date().toISOString(),
         s.content.companies,
         s.content.investors.map((i) => i.id),
@@ -199,7 +231,71 @@ export const useGame = create<GameStore>((set, get) => ({
 
   dismissNegotiation: () => set({ negotiation: null }),
 
-  resetGame: () => set({ game: null, lastAdvance: null, negotiation: null }),
+  openIpo: () => set({ exitFlow: { kind: "ipo", act: "underwriter" } }),
+
+  ipoSelectBank: (bankId) =>
+    set((s) =>
+      s.exitFlow?.kind === "ipo" ? { exitFlow: { ...s.exitFlow, bankId, act: "pricing" } } : s,
+    ),
+
+  ipoPrice: (pricedValuation) =>
+    set((s) => {
+      if (!s.game || s.exitFlow?.kind !== "ipo" || !s.exitFlow.bankId) return s;
+      const bank = s.content.bankById.get(s.exitFlow.bankId);
+      if (!bank) return s;
+      const rng = makeRng((s.game.meta.rngState ^ 0x1a2b3c4d) >>> 0);
+      const result = revealIpo(s.game, bank, pricedValuation, rng);
+      return { exitFlow: { ...s.exitFlow, act: "reveal", result } };
+    }),
+
+  ipoList: () =>
+    set((s) => {
+      if (!s.game || s.exitFlow?.kind !== "ipo" || !s.exitFlow.bankId || !s.exitFlow.result) return s;
+      const bank = s.content.bankById.get(s.exitFlow.bankId)!;
+      const result = s.exitFlow.result;
+      const after = applyIpo(s.game, bank, result);
+      const entry: LogEntry = {
+        id: `ipo-${s.game.clock.week}`,
+        week: s.game.clock.week,
+        kind: "milestone",
+        tone: "opportunity",
+        headline: `${s.game.company.name} rang the bell — public at ${formatMoney(result.publicValuation)}`,
+        detail: `Led by ${bank.name}. First day ${result.firstDayPop >= 0 ? "+" : ""}${Math.round(result.firstDayPop * 100)}%.`,
+      };
+      return { game: { ...after, log: [...after.log, entry] }, exitFlow: null };
+    }),
+
+  exploreSale: () =>
+    set((s) => {
+      if (!s.game) return s;
+      const rng = makeRng((s.game.meta.rngState ^ 0x55aa55aa) >>> 0);
+      const market = [...s.content.companies, ...s.game.market.companies];
+      return { exitFlow: { kind: "acquisition", offer: acquisitionOffer(s.game, market, rng) } };
+    }),
+
+  acceptAcquisition: () =>
+    set((s) => {
+      if (!s.game || s.exitFlow?.kind !== "acquisition") return s;
+      const { state, outcome } = applyAcquisition(s.game, s.exitFlow.offer);
+      return { game: { ...state, runOutcome: outcome }, exitFlow: null };
+    }),
+
+  cancelExit: () => set({ exitFlow: null }),
+
+  foundAgain: () =>
+    set((s) =>
+      s.game
+        ? {
+            carryOver: { reputation: s.game.founder.reputation, personalCash: s.game.founder.personalCash },
+            game: null,
+            negotiation: null,
+            exitFlow: null,
+            lastAdvance: null,
+          }
+        : s,
+    ),
+
+  resetGame: () => set({ game: null, lastAdvance: null, negotiation: null, exitFlow: null, carryOver: null }),
 }));
 
 /** The stage a player's next priced round would open. */

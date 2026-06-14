@@ -135,6 +135,17 @@ export interface GameClock {
   week: number;
 }
 
+/** The outcome that ends a run (acquisition, or a chosen post-IPO cash-out). */
+export interface RunOutcome {
+  kind: "ipo" | "acquisition";
+  company: string;
+  exitValue: Money;
+  founderProceeds: Money;
+  finalNetWorth: Money;
+  week: number;
+  headline: string;
+}
+
 export interface GameMeta {
   schemaVersion: number;
   /** PRNG seed; world generation and rolls derive from it for determinism. */
@@ -171,4 +182,6 @@ export interface GameState {
   eventState: EventState;
   /** The event currently awaiting the player's choice (blocks advance). */
   pendingEvent: ResolvedEvent | null;
+  /** Set when the run has ended (drives the between-companies screen). */
+  runOutcome: RunOutcome | null;
 }

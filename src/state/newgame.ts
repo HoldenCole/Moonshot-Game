@@ -20,6 +20,8 @@ export interface FoundingChoices {
   color: string;
   seed: number;
   cofounder?: { name: string; sharePct: number };
+  /** New Game Plus: reputation + personal wealth carried from a prior run. */
+  carryOver?: { reputation: number; personalCash: number };
 }
 
 /** Build the genesis save from founding choices. The company starts pre-seed
@@ -78,8 +80,9 @@ export function createNewGame(
     clock: { week: 0 },
     founder: {
       name: choices.founderName,
-      reputation: 30,
-      personalCash: 0,
+      // A proven serial founder carries reputation (and exit wealth) forward.
+      reputation: choices.carryOver?.reputation ?? 30,
+      personalCash: choices.carryOver?.personalCash ?? 0,
       ethics: 60,
     },
     company: {
@@ -120,6 +123,7 @@ export function createNewGame(
     relationships: {},
     eventState: INITIAL_EVENT_STATE,
     pendingEvent: null,
+    runOutcome: null,
   };
 }
 

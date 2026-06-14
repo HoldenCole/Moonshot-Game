@@ -2735,3 +2735,201 @@
   font-size: 13.5px;
   font-weight: 600;
 }
+
+/* ── Exits (Phase 10) ──────────────────────────────────────────────────────── */
+
+.exit-actions__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.exit-actions__note {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin: 5px 0 0;
+  max-width: 56ch;
+}
+.exit-actions__btns {
+  display: flex;
+  gap: 10px;
+  flex: none;
+}
+
+.exit-modal {
+  width: min(580px, 94vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg);
+  border-top: 3px solid var(--accent);
+  padding: 22px 26px 24px;
+}
+.exit-modal__cat {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 600;
+}
+.exit-modal__headline {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 8px 0 12px;
+  line-height: 1.25;
+}
+.exit-modal__body {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin: 0 0 16px;
+  max-width: 60ch;
+}
+.exit-modal__body strong {
+  color: var(--text);
+}
+.exit-modal__body strong.up {
+  color: var(--up);
+}
+.exit-modal__body strong.down {
+  color: var(--down);
+}
+.exit-modal__note {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin: 0 0 14px;
+}
+.exit-modal__cta {
+  width: 100%;
+  justify-content: center;
+}
+.exit-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.bank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 16px;
+}
+.bank-card {
+  appearance: none;
+  text-align: left;
+  border: none;
+  background: var(--bg);
+  padding: 13px 15px;
+  cursor: pointer;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+.bank-card:hover {
+  background: var(--panel-2);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.bank-card__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+.bank-card__tag {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-top: 2px;
+}
+.bank-card__meta {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 5px;
+}
+.exit-reveal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 14px;
+}
+.exit-stat__v {
+  font-size: 17px;
+  font-weight: 680;
+  margin-top: 3px;
+}
+.exit-stat__v.up {
+  color: var(--up);
+}
+
+/* Between companies */
+.between {
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  background: var(--bg);
+}
+.between__inner {
+  width: min(620px, 92vw);
+  padding: 80px 0;
+}
+.between__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 17px;
+  margin-bottom: 36px;
+}
+.between__brand span {
+  color: var(--text);
+}
+.between__kicker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--up);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.between__title {
+  font-size: 30px;
+  font-weight: 720;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.between__lede {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 58ch;
+  margin: 0 0 28px;
+}
+.between__lede strong {
+  color: var(--text);
+}
+.between__stats {
+  display: flex;
+  gap: 40px;
+  padding: 20px 0;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 24px;
+}
+.between__stat-v {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 3px;
+}
+.between__stat-v.up {
+  color: var(--up);
+}
+.between__prompt {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 58ch;
+  margin: 0 0 24px;
+}
