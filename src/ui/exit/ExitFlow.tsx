@@ -1,17 +1,33 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useGame } from "@/state/store";
 import { eligibleBanks, ipoPricing, ipoTargetRaise, firstDayWord } from "@/engine/exit";
 import { founderOwnership, latestPostMoney } from "@/engine/captable";
 import { formatMoney, formatPct } from "@/engine/format";
 import { Button, Slider, Tag } from "@/ui/components/controls";
+import { useModalA11y } from "@/ui/components/useModalA11y";
 
 /** The exit flow — a 3-act IPO or an acquisition offer — over the modal scrim. */
 export function ExitFlow() {
   const flow = useGame((s) => s.exitFlow);
-  if (!flow) return null;
+  return flow ? <ExitModal kind={flow.kind} /> : null;
+}
+
+function ExitModal({ kind }: { kind: "ipo" | "acquisition" }) {
+  const cancel = useGame((s) => s.cancelExit);
+  const ref = useRef<HTMLDivElement>(null);
+  useModalA11y(ref, { onClose: cancel });
   return (
     <div className="event-overlay">
-      <div className="exit-modal rise">{flow.kind === "ipo" ? <Ipo /> : <Acquisition />}</div>
+      <div
+        ref={ref}
+        className="exit-modal rise"
+        role="dialog"
+        aria-modal="true"
+        aria-label={kind === "ipo" ? "Initial public offering" : "Acquisition offer"}
+        tabIndex={-1}
+      >
+        {kind === "ipo" ? <Ipo /> : <Acquisition />}
+      </div>
     </div>
   );
 }

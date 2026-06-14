@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGame } from "@/state/store";
+import { useUi } from "@/state/ui";
 import { WealthPopover } from "./WealthPopover";
 import { latestPostMoney, founderOwnership } from "@/engine/captable";
 import { runwayMonths } from "@/engine/finance";
@@ -40,6 +41,7 @@ export function TopBar() {
   const game = useGame((s) => s.game);
   const tuning = useGame((s) => s.content.tuning);
   const advance = useGame((s) => s.advance);
+  const openPalette = useUi((s) => s.setPaletteOpen);
   if (!game) return null;
 
   const { world, company, founder, clock } = game;
@@ -115,7 +117,7 @@ export function TopBar() {
           </span>
         </div>
         <Settings />
-        <button className="cmdk" title="Command palette (coming soon)">
+        <button className="cmdk" title="Command palette (⌘K)" onClick={() => openPalette(true)} aria-label="Open command palette">
           <Icon name="command" size={14} />K
         </button>
       </div>

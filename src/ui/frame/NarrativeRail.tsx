@@ -1,4 +1,5 @@
 import { useGame } from "@/state/store";
+import { usePrefs } from "@/state/prefs";
 import { founderOwnership, latestPostMoney } from "@/engine/captable";
 import { runwayMonths } from "@/engine/finance";
 import { generateNarrative } from "@/engine/narrative";
@@ -23,6 +24,7 @@ const TONE_COLOR: Record<LogTone, string> = {
 export function NarrativeRail() {
   const game = useGame((s) => s.game);
   const content = useGame((s) => s.content);
+  const toggleRail = usePrefs((s) => s.toggleRail);
   if (!game) return null;
 
   const { company, clock } = game;
@@ -40,7 +42,9 @@ export function NarrativeRail() {
       <section className="narrative__section">
         <div className="narrative__head">
           <h4 className="narrative__title">This week</h4>
-          <span className="narrative__skip">skip ›</span>
+          <button className="narrative__skip" onClick={toggleRail} title="Hide the narrative rail" aria-label="Hide the narrative rail">
+            hide ›
+          </button>
         </div>
         <p className="narrative__date">Week {clock.week}</p>
         <p className="ceo-log__body">

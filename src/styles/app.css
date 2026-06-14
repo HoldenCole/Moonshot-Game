@@ -1844,6 +1844,120 @@
   margin-top: 10px;
 }
 
+/* ── Command palette (⌘K) ─────────────────────────────────────────────────── */
+.palette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 12vh;
+}
+.palette {
+  width: 560px;
+  max-width: calc(100vw - 32px);
+  max-height: 64vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+  animation: coach-in 0.16s ease-out;
+}
+[data-reduce-motion="on"] .palette {
+  animation: none;
+}
+.palette__input {
+  border: none;
+  border-bottom: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  padding: 15px 18px;
+  outline: none;
+}
+.palette__input::placeholder {
+  color: var(--text-ghost);
+}
+.palette__list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+}
+.palette__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: var(--r);
+  text-align: left;
+}
+.palette__item.is-sel {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.palette__cmd-label {
+  flex: 1;
+  font-size: 13.5px;
+}
+.palette__group {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-ghost);
+}
+.palette__empty {
+  padding: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+.palette__foot {
+  display: flex;
+  gap: 16px;
+  padding: 9px 16px;
+  border-top: 0.5px solid var(--border-faint);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+.palette__foot kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 5px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-sm);
+  margin-right: 3px;
+  color: var(--text-dim);
+}
+
+/* The slim tab that brings the narrative rail back after it's hidden. */
+.rail-reopen {
+  flex: none;
+  width: 16px;
+  background: transparent;
+  border: none;
+  border-left: 0.5px solid var(--border-faint);
+  color: var(--text-ghost);
+  cursor: pointer;
+  font-size: 13px;
+  writing-mode: vertical-rl;
+}
+.rail-reopen:hover {
+  color: var(--text-dim);
+  background: var(--panel-2);
+}
+
 /* ── Responsive guards ─────────────────────────────────────────────────────── */
 
 @media (max-width: 1180px) {
@@ -2242,6 +2356,14 @@
 .narrative__skip {
   font-size: 10px;
   color: var(--text-ghost);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 3px;
+  font-family: inherit;
+}
+.narrative__skip:hover {
+  color: var(--text-dim);
 }
 .narrative__date {
   font-size: 10px;
