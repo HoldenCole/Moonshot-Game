@@ -56,13 +56,14 @@ export function AboutView() {
               <li><Tag tone="up">Done</Tag> Personal wealth &amp; the net-worth ladder (Phase 8)</li>
               <li><Tag tone="up">Done</Tag> Signature mechanics + light delegation / auto-decisions (Phase 9)</li>
               <li><Tag tone="up">Done</Tag> Exits: 3-act IPO + acquisition, the arc close, achievements (Phase 10)</li>
+              <li><Tag tone="up">Done</Tag> Save / load with schema versioning + migration (Phase 11)</li>
             </ul>
           </div>
           <div>
             <h4 className="about__h">Next</h4>
             <ul className="about__list">
-              <li><Tag tone="up">Core loop complete</Tag> found → raise → run → exit → found again</li>
-              <li><Tag tone="warn">Next</Tag> Steam playtest prep: save/version migration, polish (Phase 11)</li>
+              <li><Tag tone="up">V1 loop complete</Tag> found → raise → run → exit → found again, persisted</li>
+              <li><Tag tone="warn">Next</Tag> Wrap the Tauri desktop shell + Steam Cloud (the save layer is ready)</li>
               <li><Tag>Later</Tag> Post-IPO earnings management, tutorial, the visual office layer</li>
             </ul>
           </div>

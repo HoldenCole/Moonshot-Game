@@ -3026,3 +3026,37 @@
   line-height: 1.4;
   margin-top: 1px;
 }
+
+/* ── Continue / save (Phase 11) ────────────────────────────────────────────── */
+
+.continue-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  background: var(--accent-soft);
+  border: none;
+  box-shadow: inset 3px 0 0 var(--accent);
+  color: var(--text);
+  padding: 14px 18px;
+  margin-bottom: 28px;
+  cursor: pointer;
+  transition: filter 0.12s ease;
+}
+.continue-banner:hover {
+  filter: brightness(1.08);
+}
+.continue-banner__k {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 600;
+}
+.continue-banner__v {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 2px;
+}

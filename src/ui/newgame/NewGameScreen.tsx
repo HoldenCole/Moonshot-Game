@@ -9,6 +9,8 @@ import {
 } from "@/domain/ids";
 import { Icon } from "@/ui/components/Icon";
 import { Button } from "@/ui/components/controls";
+import { saveSummary } from "@/state/persist";
+import { formatMoney } from "@/engine/format";
 
 const SUBS: Record<Industry, PlayableSubIndustry[]> = {
   ai: ["frontier_model_lab", "vertical_ai_saas", "ai_chips"],
@@ -50,6 +52,8 @@ const NAME_SUGGESTIONS: Record<PlayableSubIndustry, string> = {
 
 export function NewGameScreen() {
   const newGame = useGame((s) => s.newGame);
+  const continueGame = useGame((s) => s.continueGame);
+  const saved = useMemo(() => saveSummary(), []);
   const [industry, setIndustry] = useState<Industry | null>(null);
   const [sub, setSub] = useState<PlayableSubIndustry | null>(null);
   const [founderName, setFounderName] = useState("");
@@ -81,6 +85,19 @@ export function NewGameScreen() {
           <Icon name="rocket" size={30} />
           <span>Moonshot Inc</span>
         </div>
+        {saved && (
+          <button className="continue-banner" onClick={continueGame}>
+            <div>
+              <div className="continue-banner__k">Continue your run</div>
+              <div className="continue-banner__v">
+                {saved.company} · Week {saved.week}
+                {saved.netWorth > 0 ? ` · ${formatMoney(saved.netWorth)} net worth` : ""}
+              </div>
+            </div>
+            <Icon name="chevron-right" size={18} />
+          </button>
+        )}
+
         <h1 className="newgame__title">Found your company</h1>
         <p className="newgame__lede">
           Pick a frontier and a focus. You'll start in a garage with your idea and a little capital —

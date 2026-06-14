@@ -39,6 +39,7 @@ import {
 import { formatMoney } from "@/engine/format";
 import { loadContent, type ContentDB } from "@/content/load";
 import { createNewGame, suggestedTerms, type FoundingChoices } from "./newgame";
+import { loadGame, saveGame } from "./persist";
 
 export interface AdvanceSummary {
   weeks: number;
@@ -60,6 +61,8 @@ interface GameStore {
   achievementToast: string[] | null;
 
   newGame: (choices: FoundingChoices) => void;
+  /** Resume the saved run, if any. */
+  continueGame: () => void;
   advance: (mode: AdvanceMode) => void;
   dismissAlert: (id: string) => void;
   /** Resolve the pending event by choosing one of its options. */
@@ -125,6 +128,8 @@ export const useGame = create<GameStore>((set, get) => ({
       lastAdvance: null,
       negotiation: null,
     })),
+
+  continueGame: () => set({ game: loadGame(), negotiation: null, exitFlow: null, lastAdvance: null }),
 
   advance: (mode) =>
     set((s) => {
@@ -324,6 +329,16 @@ export const useGame = create<GameStore>((set, get) => ({
 export function upcomingStage(current: Stage): Stage {
   return nextStage(current);
 }
+
+// Autosave: persist the run shortly after it changes (debounced).
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
+useGame.subscribe((state, prev) => {
+  if (state.game && state.game !== prev.game) {
+    clearTimeout(saveTimer);
+    const game = state.game;
+    saveTimer = setTimeout(() => saveGame(game), 700);
+  }
+});
 
 // ── internals ────────────────────────────────────────────────────────────────
 
