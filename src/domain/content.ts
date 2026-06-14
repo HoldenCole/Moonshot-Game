@@ -51,7 +51,8 @@ export interface CompanyContent {
       moat: number;
       execution: number;
     };
-    signature: {
+    // Investment-grade (light) companies omit the signature block.
+    signature?: {
       benchmark_score: number;
       signature_notes: string;
     };

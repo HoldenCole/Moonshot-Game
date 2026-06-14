@@ -4,6 +4,7 @@
 import type { Industry, Stage, SubIndustry } from "./ids";
 import type { CapTable, Money } from "./captable";
 import type { Alert, LogEntry, RunwayBand } from "./log";
+import type { CompanyContent } from "./content";
 
 export const SCHEMA_VERSION = 1;
 
@@ -110,6 +111,9 @@ export interface GameState {
   founder: FounderState;
   company: PlayerCompany;
   world: WorldState;
+  /** The procedurally generated market — the long tail beyond the authored
+   *  anchors. Generated once from the seed; the full market is anchors + these. */
+  market: { companies: CompanyContent["company"][] };
   /** Recent world samples (capped ring) powering the World view's sparklines. */
   worldHistory: WorldSnapshot[];
   /** The world's running record — notable events shown in the narrative rail. */

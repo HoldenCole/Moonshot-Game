@@ -57,7 +57,16 @@ export const useGame = create<GameStore>((set, get) => ({
   negotiation: null,
 
   newGame: (choices) =>
-    set({ game: createNewGame(choices, new Date().toISOString()), lastAdvance: null, negotiation: null }),
+    set((s) => ({
+      game: createNewGame(
+        choices,
+        new Date().toISOString(),
+        s.content.companies,
+        s.content.investors.map((i) => i.id),
+      ),
+      lastAdvance: null,
+      negotiation: null,
+    })),
 
   advance: (mode) =>
     set((s) => {

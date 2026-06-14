@@ -5,8 +5,10 @@ import type { Industry, Stage, SubIndustry } from "@/domain/ids";
 import type { GameState, WorldState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
 import type { RoundTerms } from "@/domain/captable";
+import type { CompanyContent } from "@/domain/content";
 import { foundCompany } from "@/engine/captable";
 import { snapshotWorld } from "@/engine/world";
+import { generateMarket } from "@/engine/worldgen";
 
 export interface FoundingChoices {
   founderName: string;
@@ -19,8 +21,14 @@ export interface FoundingChoices {
 }
 
 /** Build the genesis save from founding choices. The company starts pre-seed
- *  with a little founder capital and a cap table the founder wholly owns. */
-export function createNewGame(choices: FoundingChoices, createdAt: string): GameState {
+ *  with a little founder capital and a cap table the founder wholly owns. The
+ *  procedural market is generated from the seed (anchors as templates). */
+export function createNewGame(
+  choices: FoundingChoices,
+  createdAt: string,
+  anchors: CompanyContent["company"][] = [],
+  firmIds: string[] = [],
+): GameState {
   const capTable = foundCompany({
     founderId: "you",
     founderName: choices.founderName,
@@ -88,6 +96,7 @@ export function createNewGame(choices: FoundingChoices, createdAt: string): Game
       capTable,
     },
     world,
+    market: { companies: generateMarket(choices.seed, anchors, firmIds) },
     worldHistory: [snapshotWorld(world, 0)],
     log: [
       {

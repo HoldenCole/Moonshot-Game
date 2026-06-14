@@ -28,6 +28,11 @@ export function nextNoise(rng: Rng, mag: number): number {
   return nextRange(rng, -mag, mag);
 }
 
+/** Integer in [min, max] inclusive. */
+export function nextInt(rng: Rng, min: number, max: number): number {
+  return min + Math.floor(nextFloat(rng) * (max - min + 1));
+}
+
 /** True with probability p. */
 export function chance(rng: Rng, p: number): boolean {
   return nextFloat(rng) < p;

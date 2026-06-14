@@ -26,14 +26,15 @@ export function AboutView() {
               <li><Tag tone="up">Done</Tag> 3-round fundraising negotiation with axis-driven counters &amp; soft signals</li>
               <li><Tag tone="up">Done</Tag> Eval help: color-coded terms, Comparable Rounds, live preview, relationship memory</li>
               <li><Tag tone="up">Done</Tag> Advance heartbeat — deterministic ticks, world drift, runway alerts, milestones</li>
+              <li><Tag tone="up">Done</Tag> Six master-variable world engines + the World view (Phase 5)</li>
+              <li><Tag tone="up">Done</Tag> Public market — ~70 companies, live pricing, relationship graph (Phase 6)</li>
             </ul>
           </div>
           <div>
             <h4 className="about__h">Next phases</h4>
             <ul className="about__list">
-              <li><Tag tone="warn">Next</Tag> Full master-variable world engines (Phase 5)</li>
-              <li><Tag>Later</Tag> Public market: ~70 companies &amp; relationship graph (Phase 6)</li>
-              <li><Tag>Later</Tag> Events engine &amp; the 50 templates (Phase 7)</li>
+              <li><Tag tone="warn">Next</Tag> Events engine &amp; the 50 templates (Phase 7)</li>
+              <li><Tag>Later</Tag> Personal wealth &amp; net-worth surfaces (Phase 8)</li>
               <li><Tag>Later</Tag> Signature mechanics, delegation (Phase 9)</li>
               <li><Tag>Later</Tag> 3-act IPO, exits, achievements (Phase 10)</li>
             </ul>
