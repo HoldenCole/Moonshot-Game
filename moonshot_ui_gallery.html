@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moonshot Inc — UI Gallery</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+  :root{
+    --bg:#ffffff; --bg2:#F6F5F1; --bg3:#EFEEE8;
+    --bgInfo:#E6F1FB; --bgSuccess:#E1F5EE; --bgDanger:#FCEBEB; --bgWarn:#FAEEDA;
+    --tx:#23221F; --tx2:#6B6A64; --tx3:#9A988F;
+    --txInfo:#185FA5; --txSuccess:#0F6E56; --txDanger:#A32D2D; --txWarn:#854F0B;
+    --bd:rgba(0,0,0,0.10); --bd2:rgba(0,0,0,0.18);
+    --rmd:8px; --rlg:12px;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg3);color:var(--tx);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+  .page{max-width:1920px;margin:0 auto;padding:0 0 80px;}
+
+  .ghead{padding:48px 56px 36px;border-bottom:0.5px solid var(--bd);background:var(--bg);}
+  .ghead h1{font-size:30px;font-weight:600;margin:0 0 8px;letter-spacing:-0.01em;}
+  .ghead .sub{font-size:15px;color:var(--tx2);margin:0 0 20px;max-width:70ch;line-height:1.6;}
+  .ghead .meta{display:flex;gap:28px;flex-wrap:wrap;font-size:12px;color:var(--tx2);}
+  .ghead .meta b{color:var(--tx);font-weight:500;}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:18px;}
+  .lg{font-size:12px;color:var(--tx2);display:flex;align-items:center;gap:7px;}
+  .lgd{width:8px;height:8px;border-radius:50%;}
+
+  .section{padding:44px 56px 8px;}
+  .section h2{font-size:21px;font-weight:600;margin:0 0 4px;}
+  .section .scap{font-size:13px;color:var(--tx2);margin:0 0 22px;max-width:78ch;line-height:1.6;}
+  .section .scap b{color:var(--tx);font-weight:500;}
+  .framewrap{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rlg);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+
+  .nlist{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;}
+  .nlist li{font-size:12px;color:var(--tx2);padding-left:18px;position:relative;line-height:1.5;}
+  .nlist li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--txInfo);}
+  .nlist li b{color:var(--tx);font-weight:500;}
+
+  /* ===== shared mock primitives ===== */
+  .m{font-family:var(--sans);color:var(--tx);}
+  .m .tabnum{font-variant-numeric:tabular-nums;}
+
+  /* top bar */
+  .mtop{display:flex;align-items:center;height:46px;border-bottom:0.5px solid var(--bd);}
+  .mlogo{font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;padding:0 14px;height:100%;border-right:0.5px solid var(--bd);}
+  .mtime{display:flex;align-items:center;gap:9px;padding:0 14px;height:100%;border-right:0.5px solid var(--bd);}
+  .mdate{font-size:12px;font-variant-numeric:tabular-nums;}
+  .madv{font-size:11px;padding:5px 11px;background:var(--bgInfo);color:var(--txInfo);border:none;border-radius:var(--rmd);font-weight:500;cursor:pointer;}
+  .madv2{font-size:10px;color:var(--tx2);}
+  .mgauges{display:flex;gap:14px;padding:0 14px;height:100%;align-items:center;}
+  .mg{font-size:10px;display:flex;align-items:center;gap:4px;color:var(--tx2);}
+  .mg b{color:var(--tx);font-weight:500;}
+  .mgd{width:5px;height:5px;border-radius:50%;}
+  .msp{flex:1;}
+  .mstat{padding:0 13px;text-align:right;}
+  .mstat .l{font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.03em;}
+  .mstat .v{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;}
+  .mcmdk{font-size:10px;padding:5px 9px;margin:0 12px;border:0.5px solid var(--bd);border-radius:var(--rmd);color:var(--tx2);}
+
+  /* ticker */
+  .mticker{display:flex;align-items:center;height:28px;border-bottom:0.5px solid var(--bd);overflow:hidden;}
+  .mtt{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;color:var(--txInfo);padding:0 12px;flex-shrink:0;}
+  .mstream{display:flex;gap:26px;font-size:11px;white-space:nowrap;animation:scroll 44s linear infinite;}
+  @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .tiq{display:flex;align-items:center;gap:6px;color:var(--tx2);}
+  .up{color:var(--txSuccess);font-variant-numeric:tabular-nums;}
+  .down{color:var(--txDanger);font-variant-numeric:tabular-nums;}
+
+  /* body frame */
+  .mbody{display:flex;min-height:560px;}
+  .mnav{width:50px;flex-shrink:0;border-right:0.5px solid var(--bd);display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:3px;}
+  .mni{width:36px;height:36px;border-radius:var(--rmd);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);}
+  .mni.on{background:var(--bgInfo);color:var(--txInfo);}
+  .mmain{flex:1;min-width:0;}
+  .mrail{width:340px;flex-shrink:0;border-left:0.5px solid var(--bd);}
+
+  .live{width:6px;height:6px;border-radius:50%;background:var(--txSuccess);animation:breathe 2s ease-in-out infinite;display:inline-block;}
+  @keyframes breathe{0%,100%{opacity:0.35;}50%{opacity:1;}}
+
+  .mfin{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:0.5px solid var(--bd);}
+  .mfc{padding:12px 15px;border-right:0.5px solid var(--bd);}
+  .mfc:last-child{border-right:none;}
+  .mfl{font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;margin:0;}
+  .mfv{font-size:18px;font-weight:500;margin:4px 0 0;font-variant-numeric:tabular-nums;}
+  .mfd{font-size:10px;margin:1px 0 0;font-variant-numeric:tabular-nums;color:var(--tx2);}
+  .mfd.u{color:var(--txSuccess);}
+
+  .msec{padding:15px;border-bottom:0.5px solid var(--bd);}
+  .mhh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .mht{font-size:13px;font-weight:500;margin:0;display:flex;align-items:center;gap:7px;}
+  .mmeta{font-size:11px;color:var(--tx2);font-variant-numeric:tabular-nums;}
+  .mprog{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;margin:4px 0 5px;}
+  .mpf{height:100%;background:#534AB7;border-radius:4px;}
+  .mpl{display:flex;justify-content:space-between;font-size:10px;color:var(--tx2);}
+  .mnote{font-size:11px;color:var(--tx2);line-height:1.5;margin:9px 0 0;max-width:62ch;}
+  .msubh{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;color:var(--tx2);margin:0 0 9px;}
+
+  .mtri{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:0.5px solid var(--bd);}
+  .mtri>div{padding:15px;border-right:0.5px solid var(--bd);}
+  .mtri>div:last-child{border-right:none;}
+  .mbench{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .mbn{font-size:11px;width:64px;flex-shrink:0;color:var(--tx2);}
+  .mbn.you{color:var(--txInfo);font-weight:500;}
+  .mbt{flex:1;height:8px;background:var(--bg2);border-radius:3px;overflow:hidden;}
+  .mbf{height:100%;border-radius:3px;}
+  .mbv{font-size:10px;width:20px;text-align:right;color:var(--tx3);flex-shrink:0;}
+  .mmini{display:flex;flex-direction:column;gap:9px;}
+  .mmr{display:flex;justify-content:space-between;font-size:12px;}
+  .mmr .l{color:var(--tx2);}
+  .mmr .v{font-weight:500;font-variant-numeric:tabular-nums;}
+
+  .mmktrow{display:flex;align-items:center;gap:10px;padding:7px 15px;border-bottom:0.5px solid var(--bd);}
+  .mmtk{font-size:11px;font-weight:500;width:100px;flex-shrink:0;}
+  .mmtk s{font-size:9px;color:var(--tx3);font-weight:400;text-decoration:none;display:block;}
+  .mmspark{flex:1;height:18px;min-width:40px;}
+  .mmp{font-size:12px;font-variant-numeric:tabular-nums;width:64px;text-align:right;padding:1px 4px;border-radius:3px;transition:background 0.25s;}
+  .mmc{font-size:10px;font-variant-numeric:tabular-nums;width:52px;text-align:right;}
+  .mmcap{font-size:10px;color:var(--tx3);width:60px;text-align:right;}
+  .flashU{background:var(--bgSuccess);}
+  .flashD{background:var(--bgDanger);}
+
+  .mdec{display:flex;align-items:center;gap:11px;padding:11px 15px;border-bottom:0.5px solid var(--bd);cursor:pointer;}
+  .mdec.hot{box-shadow:inset 3px 0 0 var(--txInfo);border-radius:0;}
+  .mdi{font-size:16px;color:var(--tx2);flex-shrink:0;}
+  .mdec.hot .mdi{color:var(--txInfo);}
+  .mdt{flex:1;font-size:12px;}
+  .mdt .t{font-weight:500;}
+  .mdt .s{color:var(--tx2);}
+  .mdg{font-size:14px;color:var(--tx3);}
+
+  .mrsec{padding:14px 15px;border-bottom:0.5px solid var(--bd);}
+  .mlh{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+  .mlt{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;color:var(--tx2);margin:0;display:flex;align-items:center;gap:6px;}
+  .mskip{font-size:10px;color:var(--tx3);}
+  .mldate{font-size:10px;color:var(--tx3);font-style:italic;margin:0 0 5px;}
+  .mlb{font-size:12px;line-height:1.65;margin:0;max-width:52ch;}
+  .mlb .who{font-weight:500;}
+  .mfh{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;color:var(--tx2);margin:0 0 8px;display:flex;align-items:center;gap:6px;}
+  .mfi{display:flex;gap:10px;padding:8px 0;}
+  .mfi+.mfi{border-top:0.5px solid var(--bd);}
+  .mfic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:var(--tx2);}
+  .mft{font-size:12px;line-height:1.4;}
+  .mft .who{font-weight:500;}
+  .fmark{color:var(--txInfo);font-weight:500;}
+  .mftime{font-size:10px;color:var(--tx3);margin-top:2px;}
+  .mquote{font-size:12px;line-height:1.5;font-style:italic;color:var(--tx2);margin:3px 0 0;}
+
+  .foot{padding:40px 56px;color:var(--tx3);font-size:12px;border-top:0.5px solid var(--bd);margin-top:40px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="ghead">
+    <h1>Moonshot Inc — UI Gallery</h1>
+    <p class="sub">The visual companion to <b>UI_LANGUAGE.md</b>. Every key screen in the locked visual language: borderless &amp; flat, selectively alive, narrative load-bearing, desktop-sized with no dead space. Open this full-width in a browser — the motion is live (ticker scrolls, prices micro-tick, processes creep, values flash). This is the target the build matches.</p>
+    <div class="meta">
+      <span><b>Visual:</b> borderless — hairlines + whitespace, no card boxes</span>
+      <span><b>Motion:</b> continuous on live surfaces · flash on change</span>
+      <span><b>Narrative:</b> voiced &amp; continuous, echoes across surfaces</span>
+      <span><b>Sizing:</b> 1920 baseline · reflow to fill · no dead space</span>
+    </div>
+    <div class="legend">
+      <span class="lg"><span class="lgd" style="background:#1D9E75;"></span>continuous motion (always-running surfaces)</span>
+      <span class="lg"><span class="lgd" style="background:#185FA5;"></span>on-change flash (when values update)</span>
+      <span class="lg"><span class="lgd" style="background:#9A988F;"></span>static (read, not watched)</span>
+    </div>
+  </div>
+
+  <!-- ============ OPERATING HOME ============ -->
+  <div class="section">
+    <h2>1 · Operating home</h2>
+    <p class="scap">The screen the player looks at most. Borderless workspace, live ticker + market + training-run, voiced narrative rail. At true desktop width the workspace reflows to show <b>more</b> — 6 stat columns, a 3-up analysis row, a fuller market table — rather than stretching.</p>
+    <div class="framewrap">
+      <div class="m">
+
+        <div class="mtop">
+          <span class="mlogo"><i class="ti ti-rocket" style="font-size:15px;color:var(--txInfo);"></i> Moonshot</span>
+          <div class="mtime"><span class="mdate">Y3 W44</span><button class="madv">Advance week →</button><span class="madv2">Next decision</span></div>
+          <div class="mgauges">
+            <span class="mg"><span class="mgd" style="background:#1D9E75;"></span>Macro <b>Mid</b></span>
+            <span class="mg"><span class="mgd" style="background:#EF9F27;"></span>VC <b>Hot</b></span>
+            <span class="mg"><span class="mgd" style="background:#1D9E75;"></span>IPO <b>Open</b></span>
+            <span class="mg">Fed <b>4.25%</b></span>
+            <span class="mg"><span class="mgd" style="background:#EF9F27;"></span>AI hype <b>72</b></span>
+          </div>
+          <div class="msp"></div>
+          <div class="mstat"><div class="l">Net worth</div><div class="v">$142.3M</div></div>
+          <div class="mstat"><div class="l">News</div><div class="v" style="color:var(--txInfo);">3</div></div>
+          <div class="mstat"><div class="l">Market</div><div class="v" style="color:var(--txSuccess);">+0.8%</div></div>
+          <span class="mcmdk">⌘K</span>
+        </div>
+
+        <div class="mticker">
+          <span class="mtt">Live</span>
+          <div class="mstream" id="stream1"></div>
+        </div>
+
+        <div class="mbody">
+          <div class="mnav">
+            <div class="mni on"><i class="ti ti-layout-dashboard"></i></div>
+            <div class="mni"><i class="ti ti-building-skyscraper"></i></div>
+            <div class="mni"><i class="ti ti-chart-candle"></i></div>
+            <div class="mni"><i class="ti ti-user"></i></div>
+            <div class="mni"><i class="ti ti-world"></i></div>
+          </div>
+
+          <div class="mmain">
+            <div class="mfin">
+              <div class="mfc"><p class="mfl">API revenue</p><p class="mfv">$2.4M</p><p class="mfd u">+18% MoM</p></div>
+              <div class="mfc"><p class="mfl">Burn</p><p class="mfv">$4.2M</p><p class="mfd">18mo runway</p></div>
+              <div class="mfc"><p class="mfl">Headcount</p><p class="mfv">38</p><p class="mfd u">+3 qtr</p></div>
+              <div class="mfc"><p class="mfl">Valuation</p><p class="mfv">$340M</p><p class="mfd">Series B</p></div>
+              <div class="mfc"><p class="mfl">Your stake</p><p class="mfv">$106M</p><p class="mfd">31.2%</p></div>
+              <div class="mfc"><p class="mfl">Cash</p><p class="mfv">$76M</p><p class="mfd">raised to date</p></div>
+            </div>
+
+            <div class="msec">
+              <div class="mhh"><p class="mht"><i class="ti ti-bolt" style="font-size:15px;color:var(--txInfo);"></i> Helio-3 training run <span class="live"></span></p><span class="mmeta" id="runMeta1">72.0% · loss 1.842 · resolves ~3 weeks</span></div>
+              <div class="mprog"><div class="mpf" id="runFill1" style="width:72%;"></div></div>
+              <div class="mpl"><span id="runPct1">72% complete</span><span>final epochs ahead</span></div>
+              <p class="mnote">Loss curve tracking ahead of projection. Dr. Lin Wei flagged it's "looking like our best yet" — but the final epochs are where capability targets are won or lost.</p>
+            </div>
+
+            <div class="mtri">
+              <div>
+                <p class="msubh">Revenue vs burn · 12 mo</p>
+                <svg viewBox="0 0 240 96" style="width:100%;height:88px;display:block;">
+                  <line x1="18" y1="6" x2="18" y2="80" stroke="#ccc" stroke-width="0.5"/><line x1="18" y1="80" x2="236" y2="80" stroke="#ccc" stroke-width="0.5"/>
+                  <polyline points="26,75 46,72 66,68 86,63 106,57 126,51 146,44 166,37 186,30 206,23 226,17 236,15" fill="none" stroke="#378ADD" stroke-width="2"/>
+                  <polyline points="26,58 46,57 66,56 86,54 106,52 126,50 146,48 166,40 186,37 206,34 226,31 236,30" fill="none" stroke="#E24B4A" stroke-width="2" stroke-dasharray="3,2"/>
+                  <text x="234" y="11" font-size="9" fill="#185FA5" text-anchor="end" font-weight="500">rev</text><text x="210" y="40" font-size="9" fill="#A32D2D" text-anchor="end">burn</text>
+                </svg>
+              </div>
+              <div>
+                <p class="msubh">Benchmark vs frontier labs</p>
+                <div class="mbench"><span class="mbn">OpenMind</span><div class="mbt"><div class="mbf" style="width:100%;background:#888;"></div></div><span class="mbv">94</span></div>
+                <div class="mbench"><span class="mbn">Cerebra</span><div class="mbt"><div class="mbf" style="width:94%;background:#888;"></div></div><span class="mbv">88</span></div>
+                <div class="mbench"><span class="mbn">NovaMind</span><div class="mbt"><div class="mbf" style="width:89%;background:#888;"></div></div><span class="mbv">84</span></div>
+                <div class="mbench"><span class="mbn you">Helio · you</span><div class="mbt"><div class="mbf" style="width:85%;background:#378ADD;"></div></div><span class="mbv">80</span></div>
+              </div>
+              <div>
+                <p class="msubh">This quarter</p>
+                <div class="mmini">
+                  <div class="mmr"><span class="l">API customers</span><span class="v">412</span></div>
+                  <div class="mmr"><span class="l">Enterprise licenses</span><span class="v">7</span></div>
+                  <div class="mmr"><span class="l">Net revenue retention</span><span class="v">128%</span></div>
+                  <div class="mmr"><span class="l">Gross margin</span><span class="v">62%</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="padding:14px 15px 4px;"><p class="msubh" style="margin:0;">Market · live <span class="live"></span></p></div>
+            <div id="market1"></div>
+
+            <div style="padding:14px 15px 4px;"><p class="msubh" style="margin:0;">Needs your call</p></div>
+            <div class="mdec hot"><i class="ti ti-user-exclamation mdi"></i><div class="mdt"><span class="t">Dr. Okafor retention</span> · <span class="s">rival offer on the table, wants to talk Thursday</span></div><i class="ti ti-chevron-right mdg"></i></div>
+            <div class="mdec"><i class="ti ti-trending-up mdi"></i><div class="mdt"><span class="t">Series C timing</span> · <span class="s">window open, Marcus at Frontier is keen, est. $1.2B post</span></div><i class="ti ti-chevron-right mdg"></i></div>
+            <div class="mdec"><i class="ti ti-cpu mdi"></i><div class="mdt"><span class="t">Compute contract renewal</span> · <span class="s">Nova Silicon Q4 delays — lock alternative capacity?</span></div><i class="ti ti-chevron-right mdg"></i></div>
+          </div>
+
+          <div class="mrail">
+            <div class="mrsec">
+              <div class="mlh"><p class="mlt"><i class="ti ti-notebook" style="font-size:13px;"></i> This week</p><span class="mskip">skip ›</span></div>
+              <p class="mldate">Week of Sep 22, Y3</p>
+              <p class="mlb">API revenue crossed <span class="who">$2.4M</span> — inference demand keeps climbing. Helio-3 is two-thirds trained and looking strong. The thing on your mind: <span class="who">Dr. Okafor</span> came back from her recruiter meeting still undecided. She asked to talk Thursday. And Frontier's Marcus left a message about Series C timing.</p>
+            </div>
+            <div class="mrsec">
+              <p class="mfh"><span class="live"></span> Team activity</p>
+              <div class="mfi"><div class="mfic"><i class="ti ti-phone"></i></div><div><p class="mft"><span class="who">Dr. Okafor</span> wants to talk Thursday <span class="fmark">· new</span></p><p class="mquote">"I'm not unhappy. I just want to know where this is going."</p><p class="mftime">just now</p></div></div>
+              <div class="mfi"><div class="mfic"><i class="ti ti-git-merge"></i></div><div><p class="mft"><span class="who">Dr. Lin Wei</span> shipped Helio-2.4 to eval</p><p class="mftime">2 days ago</p></div></div>
+              <div class="mfi"><div class="mfic"><i class="ti ti-user-plus"></i></div><div><p class="mft">Hired <span class="who">2 ML engineers</span> from a rival</p><p class="mftime">5 days ago</p></div></div>
+            </div>
+            <div class="mrsec">
+              <p class="mfh"><i class="ti ti-news" style="font-size:12px;"></i> Sector news</p>
+              <div class="mfi"><div class="mfic"><i class="ti ti-trending-up"></i></div><div><p class="mft"><span class="who">Cerebra</span> raises $200M Series C</p><p class="mquote">"The talent war just got more expensive." — The Information</p><p class="mftime">competitor · 1 day ago</p></div></div>
+              <div class="mfi"><div class="mfic"><i class="ti ti-alert-triangle"></i></div><div><p class="mft"><span class="who">Nova Silicon</span> warns of Q4 GPU delays</p><p class="mftime">your supplier · 2 days ago</p></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <ul class="nlist">
+      <li><b>Borderless:</b> every region separated by hairlines, no card boxes; the "hot" decision uses an inset left edge-bar, not a fill.</li>
+      <li><b>Alive:</b> ticker scrolls, market prices micro-tick + flash, training run creeps — all continuous; values flash on Advance.</li>
+      <li><b>Narrative:</b> the Okafor thread echoes across the CEO log, team feed (with her quote), and the decisions strip — one story, many lenses.</li>
+    </ul>
+  </div>
+
+  <!-- ============ CAP TABLE ============ -->
+  <div class="section">
+    <h2>2 · Cap table — the hero feature</h2>
+    <p class="scap">The most-polished surface in the game. Borderless even as a dense data grid. Stacked bars only (never donuts). Founder row marked by an inset edge-bar. Two tabs shown: <b>Overview</b> (glance) and <b>Full table</b> (the dense stress test).</p>
+    <div class="framewrap" style="margin-bottom:28px;">
+      <div class="m">
+        <div style="display:flex;border-bottom:0.5px solid var(--bd);">
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Glance</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx);font-weight:500;border-bottom:2px solid var(--txInfo);margin-bottom:-0.5px;">Overview</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Full table</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Rounds</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Vesting</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Exit scenarios</span>
+        </div>
+        <div style="padding:16px;border-bottom:0.5px solid var(--bd);display:flex;justify-content:space-between;align-items:baseline;">
+          <div><p style="font-size:15px;font-weight:500;margin:0;">Helio AI · capitalization</p><p style="font-size:12px;color:var(--tx2);margin:3px 0 0;">Series B · 5 shareholders · 12.4M shares outstanding</p></div>
+          <div style="text-align:right;"><div style="font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;">Post-money</div><div style="font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;">$340M</div></div>
+        </div>
+        <div style="padding:16px;border-bottom:0.5px solid var(--bd);">
+          <p class="msubh">Ownership</p>
+          <div style="display:flex;height:34px;border-radius:var(--rmd);overflow:hidden;margin-bottom:12px;">
+            <div style="width:31.2%;background:#378ADD;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">31.2%</div>
+            <div style="width:24.5%;background:#1D9E75;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">24.5%</div>
+            <div style="width:18%;background:#7F77DD;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">18.0%</div>
+            <div style="width:14.3%;background:#EF9F27;color:#633806;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">14.3%</div>
+            <div style="width:12%;background:#B4B2A9;color:#2C2C2A;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">ESOP</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px 24px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:9px;height:9px;border-radius:2px;background:#378ADD;"></span><span style="flex:1;">You (founder)</span><span style="color:var(--tx2);font-variant-numeric:tabular-nums;">31.2%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;"></span><span style="flex:1;">Frontier Partners</span><span style="color:var(--tx2);font-variant-numeric:tabular-nums;">24.5%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:9px;height:9px;border-radius:2px;background:#7F77DD;"></span><span style="flex:1;">Helio Capital</span><span style="color:var(--tx2);font-variant-numeric:tabular-nums;">18.0%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:9px;height:9px;border-radius:2px;background:#EF9F27;"></span><span style="flex:1;">Atlas Growth</span><span style="color:var(--tx2);font-variant-numeric:tabular-nums;">14.3%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:9px;height:9px;border-radius:2px;background:#B4B2A9;"></span><span style="flex:1;">Option pool (ESOP)</span><span style="color:var(--tx2);font-variant-numeric:tabular-nums;">12.0%</span></div>
+          </div>
+        </div>
+        <p class="msubh" style="padding:12px 16px 8px;margin:0;">Top shareholders</p>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--bd);box-shadow:inset 3px 0 0 var(--txInfo);">
+          <div style="width:30px;height:30px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">AR</div>
+          <div style="flex:1;"><p style="font-size:13px;font-weight:500;margin:0;">Alex Rivera</p><p style="font-size:11px;color:var(--tx2);margin:1px 0 0;">Founder &amp; CEO · common</p></div>
+          <div style="text-align:right;"><p style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;margin:0;">31.2%</p><p style="font-size:11px;color:var(--tx2);font-variant-numeric:tabular-nums;margin:1px 0 0;">$106.0M</p></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--bd);">
+          <div style="width:30px;height:30px;border-radius:50%;background:#E1F5EE;color:#085041;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">FP</div>
+          <div style="flex:1;"><p style="font-size:13px;font-weight:500;margin:0;">Frontier Partners</p><p style="font-size:11px;color:var(--tx2);margin:1px 0 0;">Lead · Series A + B · preferred</p></div>
+          <div style="text-align:right;"><p style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;margin:0;">24.5%</p><p style="font-size:11px;color:var(--tx2);font-variant-numeric:tabular-nums;margin:1px 0 0;">$83.3M</p></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:#EEEDFE;color:#3C3489;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;">HC</div>
+          <div style="flex:1;"><p style="font-size:13px;font-weight:500;margin:0;">Helio Capital</p><p style="font-size:11px;color:var(--tx2);margin:1px 0 0;">Series A · preferred</p></div>
+          <div style="text-align:right;"><p style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;margin:0;">18.0%</p><p style="font-size:11px;color:var(--tx2);font-variant-numeric:tabular-nums;margin:1px 0 0;">$61.2M</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="framewrap">
+      <div class="m">
+        <div style="display:flex;border-bottom:0.5px solid var(--bd);">
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Glance</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Overview</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx);font-weight:500;border-bottom:2px solid var(--txInfo);margin-bottom:-0.5px;">Full table</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Rounds</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Vesting</span>
+          <span style="font-size:12px;padding:11px 16px;color:var(--tx2);">Exit scenarios</span>
+        </div>
+        <div style="padding:14px 16px;border-bottom:0.5px solid var(--bd);display:flex;justify-content:space-between;align-items:baseline;">
+          <div><p style="font-size:14px;font-weight:500;margin:0;">Full capitalization</p><p style="font-size:11px;color:var(--tx2);margin:2px 0 0;">As of Y3 W44 · fully diluted</p></div>
+          <div style="font-size:11px;color:var(--tx2);display:flex;gap:14px;"><span style="color:var(--txInfo);font-weight:500;">All</span><span>Common</span><span>Preferred</span><span>Pool</span></div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr>
+            <th style="text-align:left;padding:9px 12px 9px 18px;font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;font-weight:500;border-bottom:0.5px solid var(--bd2);">Holder</th>
+            <th style="text-align:right;padding:9px 12px;font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;font-weight:500;border-bottom:0.5px solid var(--bd2);">Shares</th>
+            <th style="text-align:right;padding:9px 12px;font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;font-weight:500;border-bottom:0.5px solid var(--bd2);">%</th>
+            <th style="text-align:right;padding:9px 12px;font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;font-weight:500;border-bottom:0.5px solid var(--bd2);">Voting%</th>
+            <th style="text-align:right;padding:9px 12px;font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;font-weight:500;border-bottom:0.5px solid var(--bd2);">Invested</th>
+            <th style="text-align:right;padding:9px 12px;font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;font-weight:500;border-bottom:0.5px solid var(--bd2);">Value</th>
+            <th style="text-align:right;padding:9px 12px;font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;font-weight:500;border-bottom:0.5px solid var(--bd2);">Multiple</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="text-align:left;padding:11px 12px 11px 18px;border-bottom:0.5px solid var(--bd);box-shadow:inset 3px 0 0 var(--txInfo);"><span style="font-weight:500;">Alex Rivera</span><span style="font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;background:var(--bgInfo);color:var(--txInfo);">common</span><span style="font-size:10px;color:var(--tx2);display:block;margin-top:1px;">Founder &amp; CEO</span></td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">3,870,000</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">31.2%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">38.4%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;color:var(--tx2);">—</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">$106.0M</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;color:var(--tx2);">—</td></tr>
+            <tr><td style="text-align:left;padding:11px 12px 11px 18px;border-bottom:0.5px solid var(--bd);"><span style="font-weight:500;">Frontier Partners</span><span style="font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;background:var(--bg2);color:var(--tx2);">pref</span><span style="font-size:10px;color:var(--tx2);display:block;margin-top:1px;">Series A + B lead</span></td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">3,038,000</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">24.5%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">23.1%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">$22.0M</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">$83.3M</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">3.8×</td></tr>
+            <tr><td style="text-align:left;padding:11px 12px 11px 18px;border-bottom:0.5px solid var(--bd);"><span style="font-weight:500;">Helio Capital</span><span style="font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;background:var(--bg2);color:var(--tx2);">pref</span><span style="font-size:10px;color:var(--tx2);display:block;margin-top:1px;">Series A</span></td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">2,232,000</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">18.0%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">17.0%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">$12.0M</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">$61.2M</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">5.1×</td></tr>
+            <tr><td style="text-align:left;padding:11px 12px 11px 18px;border-bottom:0.5px solid var(--bd);"><span style="font-weight:500;">Atlas Growth</span><span style="font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;background:var(--bg2);color:var(--tx2);">pref</span><span style="font-size:10px;color:var(--tx2);display:block;margin-top:1px;">Series B lead</span></td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">1,774,000</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">14.3%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">13.5%</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">$40.0M</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">$48.6M</td><td style="padding:11px 12px;border-bottom:0.5px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;">1.2×</td></tr>
+            <tr><td style="text-align:left;padding:11px 12px 11px 18px;"><span style="font-weight:500;">Option pool</span><span style="font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;background:var(--bg2);color:var(--tx2);">ESOP</span><span style="font-size:10px;color:var(--tx2);display:block;margin-top:1px;">Unallocated</span></td><td style="padding:11px 12px;text-align:right;font-variant-numeric:tabular-nums;">1,488,000</td><td style="padding:11px 12px;text-align:right;font-variant-numeric:tabular-nums;">12.0%</td><td style="padding:11px 12px;text-align:right;color:var(--tx2);">—</td><td style="padding:11px 12px;text-align:right;color:var(--tx2);">—</td><td style="padding:11px 12px;text-align:right;font-variant-numeric:tabular-nums;">$40.8M</td><td style="padding:11px 12px;text-align:right;color:var(--tx2);">—</td></tr>
+            <tr><td style="text-align:left;padding:11px 12px 11px 18px;border-top:0.5px solid var(--bd2);font-weight:500;">Total · fully diluted</td><td style="padding:11px 12px;border-top:0.5px solid var(--bd2);text-align:right;font-variant-numeric:tabular-nums;font-weight:500;">12,402,000</td><td style="padding:11px 12px;border-top:0.5px solid var(--bd2);text-align:right;font-weight:500;">100%</td><td style="padding:11px 12px;border-top:0.5px solid var(--bd2);text-align:right;font-weight:500;">100%</td><td style="padding:11px 12px;border-top:0.5px solid var(--bd2);text-align:right;font-variant-numeric:tabular-nums;font-weight:500;">$74.0M</td><td style="padding:11px 12px;border-top:0.5px solid var(--bd2);text-align:right;font-variant-numeric:tabular-nums;font-weight:500;">$340.0M</td><td style="padding:11px 12px;border-top:0.5px solid var(--bd2);text-align:right;">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ul class="nlist">
+      <li><b>Dense data, still borderless:</b> 7-column grid organized by horizontal hairlines + right-aligned tabular numbers — no vertical column borders, no row boxes.</li>
+      <li><b>Founder row</b> marked with an inset edge-bar on the first cell only; class tags are inline markers, not boxes.</li>
+      <li><b>Stacked bar</b> is the one correct filled shape — it's a data viz, not a container.</li>
+    </ul>
+  </div>
+
+  <!-- ============ FUNDRAISING ============ -->
+  <div class="section">
+    <h2>3 · Fundraising negotiation — the second hero feature</h2>
+    <p class="scap">The investor is a voiced character, not a form. Soft reaction signals (colored dots + plain language), never probabilities. Three eval-help layers: color-coded terms, Comparable Rounds, and a live cap-table preview that flashes as you move sliders.</p>
+    <div class="framewrap">
+      <div class="m">
+        <div style="padding:14px 16px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;gap:13px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#E1F5EE;color:#085041;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;">DO</div>
+          <div style="flex:1;"><p style="font-size:14px;font-weight:500;margin:0;">Frontier Partners</p><p style="font-size:11px;color:var(--tx2);margin:1px 0 0;">Diane Okafor · Managing Partner · leading your Series C</p></div>
+          <div style="display:flex;gap:6px;margin-right:16px;font-size:10px;color:var(--tx2);"><span>Conviction lead</span><span>·</span><span>Tough but fair</span></div>
+          <div style="text-align:right;"><div style="font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;">Round</div><div style="font-size:13px;font-weight:500;">2 of 3</div></div>
+        </div>
+        <div style="padding:14px 16px;border-bottom:0.5px solid var(--bd);">
+          <p style="font-size:13px;line-height:1.55;font-style:italic;margin:0;">"We're in on the vision, Alex — Helio-3 changes the story. But $1.4B is rich for where the metrics are today. Meet me closer to twelve and I'll lead the whole round myself."</p>
+          <p style="font-size:11px;color:var(--tx2);margin:6px 0 0;">Diane is pushing on valuation but signaling strong commitment. She's done this dance before.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 286px;">
+          <div style="border-right:0.5px solid var(--bd);">
+            <p class="msubh" style="padding:13px 16px 4px;">Your terms</p>
+            <div style="padding:12px 16px;border-bottom:0.5px solid var(--bd);">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;"><span style="font-size:13px;font-weight:500;">Valuation (post-money)</span><span style="font-size:11px;display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27;"></span>pushing back</span></div>
+              <div style="display:flex;align-items:center;gap:12px;"><div style="flex:1;height:5px;background:var(--bg2);border-radius:3px;position:relative;"><div style="height:100%;width:64%;background:#EF9F27;border-radius:3px;"></div><div style="position:absolute;top:-4px;left:60%;width:13px;height:13px;border-radius:50%;background:#EF9F27;border:2px solid var(--bg);"></div></div><span style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;width:92px;text-align:right;">$1.35B</span></div>
+              <p style="font-size:10px;color:var(--tx3);margin:5px 0 0;">She's signaling ~$1.2B. You're asking high.</p>
+            </div>
+            <div style="padding:12px 16px;border-bottom:0.5px solid var(--bd);">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;"><span style="font-size:13px;font-weight:500;">Round size</span><span style="font-size:11px;display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#1D9E75;"></span>comfortable</span></div>
+              <div style="display:flex;align-items:center;gap:12px;"><div style="flex:1;height:5px;background:var(--bg2);border-radius:3px;position:relative;"><div style="height:100%;width:50%;background:#1D9E75;border-radius:3px;"></div><div style="position:absolute;top:-4px;left:47%;width:13px;height:13px;border-radius:50%;background:#1D9E75;border:2px solid var(--bg);"></div></div><span style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;width:92px;text-align:right;">$110M</span></div>
+              <p style="font-size:10px;color:var(--tx3);margin:5px 0 0;">Within the range she proposed.</p>
+            </div>
+            <div style="padding:12px 16px;border-bottom:0.5px solid var(--bd);">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;"><span style="font-size:13px;font-weight:500;">Board seats</span><span style="font-size:11px;display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#E24B4A;"></span>firm on this</span></div>
+              <div style="display:flex;align-items:center;gap:12px;"><div style="flex:1;height:5px;background:var(--bg2);border-radius:3px;position:relative;"><div style="height:100%;width:66%;background:#E24B4A;border-radius:3px;"></div><div style="position:absolute;top:-4px;left:62%;width:13px;height:13px;border-radius:50%;background:#E24B4A;border:2px solid var(--bg);"></div></div><span style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;width:92px;text-align:right;">2 of 5</span></div>
+              <p style="font-size:10px;color:var(--tx3);margin:5px 0 0;">She wants two. You'd keep control at one.</p>
+            </div>
+            <div style="padding:12px 16px;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;"><span style="font-size:13px;font-weight:500;">Option pool top-up</span><span style="font-size:11px;display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27;"></span>wants more</span></div>
+              <div style="display:flex;align-items:center;gap:12px;"><div style="flex:1;height:5px;background:var(--bg2);border-radius:3px;position:relative;"><div style="height:100%;width:42%;background:#EF9F27;border-radius:3px;"></div><div style="position:absolute;top:-4px;left:39%;width:13px;height:13px;border-radius:50%;background:#EF9F27;border:2px solid var(--bg);"></div></div><span style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;width:92px;text-align:right;">+3.0%</span></div>
+              <p style="font-size:10px;color:var(--tx3);margin:5px 0 0;">She'd like 5% to fund hiring. Dilutes you.</p>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;">
+            <div style="padding:13px 16px;border-bottom:0.5px solid var(--bd);">
+              <p class="msubh" style="padding:0 0 8px;">Comparable rounds</p>
+              <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;"><span style="color:var(--tx2);">Cerebra · Series C</span><span style="font-variant-numeric:tabular-nums;font-weight:500;">$1.2B</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;"><span style="color:var(--tx2);">NovaMind · Series C</span><span style="font-variant-numeric:tabular-nums;font-weight:500;">$1.05B</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;"><span style="color:var(--tx2);">Sector median</span><span style="font-variant-numeric:tabular-nums;font-weight:500;">$1.18B</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;"><span style="color:var(--txInfo);">Your ask</span><span style="font-variant-numeric:tabular-nums;font-weight:500;color:var(--txInfo);">$1.35B</span></div>
+            </div>
+            <div style="padding:13px 16px;border-bottom:0.5px solid var(--bd);">
+              <p class="msubh" style="padding:0 0 8px;">After this round</p>
+              <div style="display:flex;height:26px;border-radius:var(--rmd);overflow:hidden;margin:8px 0 6px;">
+                <div style="width:27%;background:#378ADD;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;">27%</div>
+                <div style="width:21%;background:#1D9E75;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;">21%</div>
+                <div style="width:8%;background:#9FE1CB;"></div>
+                <div style="width:30%;background:#B4B2A9;color:#2C2C2A;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;">others</div>
+                <div style="width:14%;background:#D3D1C7;color:#444441;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;">pool</div>
+              </div>
+              <p style="font-size:11px;color:var(--tx2);line-height:1.4;margin:0;">You'd drop from 31.2% to <b style="font-weight:500;">~27%</b> — still your company, still control with one board seat.</p>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="padding:14px 16px;display:flex;flex-direction:column;gap:9px;border-top:0.5px solid var(--bd);">
+              <button style="font-size:12px;padding:9px 12px;border-radius:var(--rmd);background:var(--bgInfo);color:var(--txInfo);border:none;font-weight:500;cursor:pointer;">Send counter →</button>
+              <div style="display:flex;gap:9px;">
+                <button style="flex:1;font-size:12px;padding:9px 12px;border-radius:var(--rmd);border:0.5px solid var(--bd2);background:transparent;font-weight:500;cursor:pointer;">Accept her terms</button>
+                <button style="flex:1;font-size:12px;padding:9px 12px;border-radius:var(--rmd);border:0.5px solid var(--bd2);background:transparent;color:var(--tx2);cursor:pointer;">Walk away</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="nlist">
+      <li><b>Investor as character:</b> Diane leads with an avatar + voiced quote that references Helio-3 (continuity from the home screen).</li>
+      <li><b>Soft signals:</b> colored reaction dots + plain-language reads ("pushing back", "firm on this") — never a percentage.</li>
+      <li><b>Live preview:</b> the founder's segment in "After this round" flashes as the valuation slider moves — you watch ownership respond.</li>
+    </ul>
+  </div>
+
+  <!-- ============ IPO SEQUENCE ============ -->
+  <div class="section">
+    <h2>4 · IPO day — the lived earned-moment sequence</h2>
+    <p class="scap">The climax of a playthrough, lived as a 6-beat sequence (pre-market → optional interviews → ring the bell → the open → watch it move → settle). Three beats shown. Every interactive beat is optional; the celebration always plays. This template is reused for all earned moments.</p>
+
+    <p class="msubh" style="margin:0 0 10px;">Beat 2 · Interview (optional) — what you say has impact, scaled by a "sway" setting tied to difficulty</p>
+    <div class="framewrap" style="margin-bottom:28px;">
+      <div class="m">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid var(--bd);">
+          <div style="display:flex;align-items:center;gap:8px;"><div style="display:flex;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--txInfo);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--txInfo);box-shadow:0 0 0 3px var(--bgInfo);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--bg2);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--bg2);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--bg2);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--bg2);"></span></div><span style="font-size:11px;color:var(--tx2);">IPO day · the interviews</span></div>
+          <span style="font-size:11px;color:var(--tx2);">Skip interviews <i class="ti ti-player-skip-forward" style="font-size:13px;"></i></span>
+        </div>
+        <div style="padding:14px 16px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:var(--rmd);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);flex-shrink:0;"><i class="ti ti-video"></i></div>
+          <div><p style="font-size:13px;font-weight:500;margin:0;">Bloomberg Technology · live from the exchange floor</p><p style="font-size:11px;color:var(--tx2);margin:1px 0 0;">2 of 3 outlets want a word before the open</p></div>
+          <div style="margin-left:auto;text-align:right;"><div style="font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;">Your words sway</div><div style="font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px;justify-content:flex-end;margin-top:2px;"><span style="display:inline-flex;gap:2px;"><span style="width:3px;height:11px;border-radius:1px;background:var(--txWarn);"></span><span style="width:3px;height:11px;border-radius:1px;background:var(--txWarn);"></span><span style="width:3px;height:11px;border-radius:1px;background:var(--bg2);"></span></span>Medium</div></div>
+        </div>
+        <div style="padding:16px;border-bottom:0.5px solid var(--bd);">
+          <p class="msubh" style="margin:0 0 8px;">Question</p>
+          <p style="font-size:16px;line-height:1.5;margin:0;"><span style="color:var(--tx2);font-style:italic;font-size:13px;display:block;margin-bottom:6px;">The anchor leans in, the floor noise rising behind her:</span>"Helio priced at the top of the range. Some say it's already expensive for a lab that's only #4 on the benchmarks. What do you tell investors buying at the open?"</p>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:0.5px solid var(--bd);cursor:pointer;">
+          <span style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;width:78px;flex-shrink:0;padding-top:2px;color:#A32D2D;">Confident</span>
+          <div style="flex:1;"><p style="font-size:13px;line-height:1.5;margin:0;">"Expensive is what they said about every company that went on to define its category. We're not #4 for long — Helio-3 already changed that conversation."</p><p style="font-size:11px;color:var(--tx3);margin:5px 0 0;display:flex;align-items:center;gap:6px;"><i class="ti ti-trending-up" style="font-size:13px;color:#A32D2D;"></i> Likely lifts the open · but raises the bar you'll be judged against at Q1 earnings</p></div>
+          <i class="ti ti-chevron-right" style="font-size:14px;color:var(--tx3);padding-top:2px;"></i>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:0.5px solid var(--bd);cursor:pointer;">
+          <span style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;width:78px;flex-shrink:0;padding-top:2px;color:#085041;">Grounded</span>
+          <div style="flex:1;"><p style="font-size:13px;line-height:1.5;margin:0;">"The price is the market's call, not mine. My job is to keep shipping and let the results speak. We've got real revenue and a team that delivers."</p><p style="font-size:11px;color:var(--tx3);margin:5px 0 0;display:flex;align-items:center;gap:6px;"><i class="ti ti-minus" style="font-size:13px;color:#085041;"></i> Steadier open · sets expectations you can comfortably beat later</p></div>
+          <i class="ti ti-chevron-right" style="font-size:14px;color:var(--tx3);padding-top:2px;"></i>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;cursor:pointer;">
+          <span style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;width:78px;flex-shrink:0;padding-top:2px;color:#3C3489;">Visionary</span>
+          <div style="flex:1;"><p style="font-size:13px;line-height:1.5;margin:0;">"Benchmarks measure yesterday. We're building the reasoning layer the whole industry runs on in five years. If you're buying today, you're buying that."</p><p style="font-size:11px;color:var(--tx3);margin:5px 0 0;display:flex;align-items:center;gap:6px;"><i class="ti ti-flame" style="font-size:13px;color:#3C3489;"></i> Big sentiment swing either way · boosts profile, attracts scrutiny</p></div>
+          <i class="ti ti-chevron-right" style="font-size:14px;color:var(--tx3);padding-top:2px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <p class="msubh" style="margin:0 0 10px;">Beats 3–4 · Ring the bell → the open (the price discovers itself live)</p>
+    <div class="framewrap">
+      <div class="m">
+        <div style="padding:24px 24px 20px;text-align:center;border-bottom:0.5px solid var(--bd);position:relative;overflow:hidden;">
+          <div id="confetti" style="position:absolute;top:0;left:0;right:0;height:100%;pointer-events:none;"></div>
+          <p style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--txInfo);margin:0 0 12px;">Helio AI · NASDAQ: HELO · the bell has rung</p>
+          <div style="font-size:30px;margin-bottom:6px;display:inline-block;" id="bellGlyph">🔔</div>
+          <div style="font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.05em;margin:8px 0 6px;" id="discLabel">Opening print</div>
+          <div style="font-size:50px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-0.02em;color:var(--txSuccess);" id="ipoPrice">$58.00</div>
+          <p style="font-size:12px;color:var(--tx2);margin:12px 0 0;">opened at <b style="font-weight:500;">$58.00</b> vs $42 offer — <span style="color:var(--txSuccess);font-weight:500;">+38% first-day pop</span></p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:0.5px solid var(--bd);">
+          <div style="padding:14px 16px;border-right:0.5px solid var(--bd);text-align:center;"><p style="font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;margin:0;">Market cap</p><p style="font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;margin:4px 0 0;">$4.1B</p><p style="font-size:10px;color:var(--tx3);margin:1px 0 0;">at open</p></div>
+          <div style="padding:14px 16px;border-right:0.5px solid var(--bd);text-align:center;"><p style="font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;margin:0;">Raised</p><p style="font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;margin:4px 0 0;">$520M</p><p style="font-size:10px;color:var(--tx3);margin:1px 0 0;">primary + secondary</p></div>
+          <div style="padding:14px 16px;border-right:0.5px solid var(--bd);text-align:center;"><p style="font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;margin:0;">Your stake</p><p style="font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;margin:4px 0 0;color:var(--txSuccess);">$1.02B</p><p style="font-size:10px;color:var(--tx3);margin:1px 0 0;">24.8% · locked 180d</p></div>
+          <div style="padding:14px 16px;text-align:center;"><p style="font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:0.04em;margin:0;">Net worth</p><p style="font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;margin:4px 0 0;color:var(--txSuccess);">$1.16B</p><p style="font-size:10px;color:var(--tx3);margin:1px 0 0;">you're a billionaire</p></div>
+        </div>
+        <div style="padding:12px 16px;border-bottom:0.5px solid var(--bd);">
+          <p class="msubh" style="margin:0 0 6px;"><span class="live"></span> First-day trading · live</p>
+          <svg viewBox="0 0 600 80" style="width:100%;height:76px;display:block;" preserveAspectRatio="none">
+            <line x1="0" y1="60" x2="600" y2="60" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,4"/><text x="4" y="56" font-size="9" fill="#999">offer $42</text>
+            <polyline id="ipoLine" points="" fill="none" stroke="#1D9E75" stroke-width="2" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;">
+          <p style="font-size:13px;line-height:1.55;font-style:italic;margin:0;">"Four years ago this was you and a borrowed idea. Today the market said it's worth four billion dollars. Diane Okafor was on the floor when the bell rang — she didn't say anything, just shook your hand a beat too long."</p>
+          <p style="font-size:11px;color:var(--tx2);margin:6px 0 0;">A 180-day lockup begins today. Your shares are real — but not yet liquid.</p>
+        </div>
+      </div>
+    </div>
+    <ul class="nlist">
+      <li><b>Optional + scaled:</b> the interview can be skipped (auto-news covers the IPO instead), and a "sway" meter tied to difficulty sets how much answers move the open + future earnings bar.</li>
+      <li><b>Lived, not revealed:</b> you ring the bell yourself, then the price discovers itself live (wobble → settle) before the hero number locks in.</li>
+      <li><b>Ends on consequence:</b> euphoric, but the lockup reminder points forward — the story continues. Narrative carries the emotion, text-only.</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    Moonshot Inc — UI Gallery · companion to UI_LANGUAGE.md · borderless · selectively alive · narrative load-bearing · desktop-sized, no dead space.<br>
+    Mockups are reference fidelity; the build matches these at true 1920px width. Motion shown is illustrative of the two-kinds-of-motion rule.
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var streamItems = [
+    ['OpenMind','▲ 2.4%','u'],['Cerebra','▼ 1.1%','d'],['AI hype 72','▲','u'],
+    ['Nova Silicon warns of Q4 GPU delays','',''],['Vector Dynamics','▲ 3.8%','u'],
+    ['VC climate: Hot','',''],['Meridian Orbital','▼ 0.6%','d']
+  ];
+  var s = document.getElementById('stream1');
+  if(s){ var h=''; for(var r=0;r<2;r++){ streamItems.forEach(function(it){ h+='<span class="tiq">'+it[0]+(it[1]?' <span class="'+(it[2]==='u'?'up':it[2]==='d'?'down':'')+'">'+it[1]+'</span>':'')+'</span>'; }); } s.innerHTML=h; }
+
+  var stocks=[{t:'OpenMind',s:'frontier lab',p:412.40,b:412,cap:'$42.0B',u:true,sp:'0,14 15,12 30,13 45,9 60,10 75,6 90,7 100,4'},
+    {t:'Cerebra',s:'frontier lab',p:188.10,b:188,cap:'$18.8B',u:false,sp:'0,7 15,9 30,8 45,11 60,10 75,13 90,12 100,14'},
+    {t:'Nova Silicon',s:'AI chips',p:296.50,b:296,cap:'$31.2B',u:true,sp:'0,11 15,10 30,8 45,9 60,6 75,7 90,5 100,6'},
+    {t:'Vector Dyn.',s:'launch',p:154.20,b:154,cap:'$15.4B',u:true,sp:'0,13 15,11 30,12 45,8 60,7 75,5 90,6 100,3'}];
+  var mk=document.getElementById('market1');
+  if(mk){ stocks.forEach(function(st,i){
+    var row=document.createElement('div'); row.className='mmktrow';
+    row.innerHTML='<div class="mmtk">'+st.t+'<s>'+st.s+'</s></div><svg class="mmspark" viewBox="0 0 100 18" preserveAspectRatio="none"><polyline points="'+st.sp+'" fill="none" stroke="'+(st.u?'#1D9E75':'#E24B4A')+'" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg><div class="mmp" id="mp'+i+'">$'+st.p.toFixed(2)+'</div><div class="mmc '+(st.u?'up':'down')+'" id="mc'+i+'">'+(st.u?'▲':'▼')+' '+(Math.random()*2+0.3).toFixed(1)+'%</div><div class="mmcap">'+st.cap+'</div>';
+    mk.appendChild(row);
+  });
+  setInterval(function(){ var i=Math.floor(Math.random()*stocks.length); var st=stocks[i]; var d=(Math.random()-0.48)*st.b*0.004; st.p=Math.max(1,st.p+d); var up=d>=0; var pe=document.getElementById('mp'+i); var ce=document.getElementById('mc'+i); if(!pe)return; pe.textContent='$'+st.p.toFixed(2); pe.classList.remove('flashU','flashD'); void pe.offsetWidth; pe.classList.add(up?'flashU':'flashD'); setTimeout(function(){pe.classList.remove('flashU','flashD');},260); var pct=(st.p-st.b)/st.b*100; ce.className='mmc '+(pct>=0?'up':'down'); ce.textContent=(pct>=0?'▲':'▼')+' '+Math.abs(pct).toFixed(1)+'%'; }, 700);
+  }
+
+  var pct=72;
+  setInterval(function(){ if(pct>=99.5)return; pct+=0.2; var loss=Math.max(0.9,Math.exp(-pct*0.018)*4.5+0.95); var f=document.getElementById('runFill1'); if(!f)return; f.style.width=pct.toFixed(1)+'%'; document.getElementById('runMeta1').textContent=pct.toFixed(1)+'% · loss '+loss.toFixed(3)+' · resolves ~3 weeks'; document.getElementById('runPct1').textContent=Math.round(pct)+'% complete'; }, 850);
+
+  var line=document.getElementById('ipoLine');
+  if(line){ var seq=[42,45,49,47,53,56,54,58,57,60,59,62,61,63,62,64]; var pts=[]; function y(p){return 72-((p-40)/(68-40))*64;} for(var k=0;k<seq.length;k++){ pts.push([(k/(seq.length-1)*600).toFixed(1), y(seq[k]).toFixed(1)]); } line.setAttribute('points', pts.map(function(q){return q.join(',');}).join(' ')); }
+
+  var cc=document.getElementById('confetti');
+  if(cc){ var cols=['#378ADD','#1D9E75','#EF9F27','#7F77DD','#E24B4A']; for(var i=0;i<24;i++){ var c=document.createElement('div'); c.style.cssText='position:absolute;width:7px;height:10px;top:-12px;left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+';opacity:0;animation:fall '+(2.4+Math.random())+'s ease-in '+(Math.random()*1.2)+'s infinite;'; cc.appendChild(c); } var st=document.createElement('style'); st.textContent='@keyframes fall{0%{opacity:0;transform:translateY(0) rotate(0);}15%{opacity:1;}100%{opacity:0;transform:translateY(200px) rotate(360deg);}}'; document.head.appendChild(st); }
+})();
+</script>
+</body>
+</html>
