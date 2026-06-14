@@ -5,6 +5,7 @@ import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
 import { industryLabel } from "@/domain/ids";
 import { Icon } from "@/ui/components/Icon";
+import { usePrefs } from "@/state/prefs";
 
 const MACRO_LABEL: Record<string, string> = {
   expansion: "Expansion",
@@ -108,11 +109,39 @@ export function TopBar() {
             {runway === Infinity ? "∞" : `${Math.max(0, Math.floor(runway))}mo`}
           </span>
         </div>
+        <Settings />
         <button className="cmdk" title="Command palette (coming soon)">
           <Icon name="command" size={14} />K
         </button>
       </div>
     </header>
+  );
+}
+
+function Settings() {
+  const theme = usePrefs((s) => s.theme);
+  const reduceMotion = usePrefs((s) => s.reduceMotion);
+  const toggleTheme = usePrefs((s) => s.toggleTheme);
+  const setReduceMotion = usePrefs((s) => s.setReduceMotion);
+  return (
+    <div className="topbar__settings">
+      <button
+        className="iconbtn"
+        onClick={toggleTheme}
+        title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+        aria-label="Toggle theme"
+      >
+        <Icon name={theme === "dark" ? "sun" : "moon"} size={16} />
+      </button>
+      <button
+        className={`iconbtn${reduceMotion ? " is-on" : ""}`}
+        onClick={() => setReduceMotion(!reduceMotion)}
+        title={reduceMotion ? "Motion reduced — click to enable" : "Reduce motion"}
+        aria-label="Toggle reduced motion"
+      >
+        <Icon name="motion" size={16} />
+      </button>
+    </div>
   );
 }
 

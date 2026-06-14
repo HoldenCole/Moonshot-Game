@@ -1,70 +1,119 @@
-/* Design tokens — the newsroom-meets-Bloomberg system.
-   Dark, dense, legible. Tabular numerals for data; clean sans for prose. */
+/* Design tokens — the borderless, flat "instrument" system (UI_LANGUAGE.md).
+   Two themes share one set of variable names: dark is the default; light is a
+   settings toggle. Structure comes from hairlines + whitespace, never cards. */
 
-:root {
-  /* Surfaces — near-black navy, layered up by elevation */
-  --bg: #090c12;
-  --panel: #10141d;
-  --panel-2: #151a25;
-  --panel-raised: #1b2230;
-  --panel-hover: #1f2735;
+:root,
+:root[data-theme="dark"] {
+  /* Surfaces — one continuous dark surface; tints only where grouping needs it */
+  --bg: #0b0e14;
+  --panel: #0e121a;
+  --panel-2: #12161f;
+  --panel-raised: #171c27;
+  --panel-hover: #161b26;
 
-  /* Lines */
-  --border: #222a39;
-  --border-strong: #303a4d;
-  --border-faint: #1a212d;
+  /* Hairlines — the primary structural tool */
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.17);
+  --border-faint: rgba(255, 255, 255, 0.055);
 
-  /* Text */
+  /* Text tiers */
   --text: #e7ecf4;
-  --text-dim: #93a0b4;
-  --text-faint: #65718a;
-  --text-ghost: #45506a;
+  --text-dim: #97a2b4;
+  --text-faint: #69748a;
+  --text-ghost: #4b566b;
 
   /* Brand + data accents */
-  --accent: #5b82ff;
-  --accent-press: #3f68f0;
-  --accent-soft: rgba(91, 130, 255, 0.14);
+  --accent: #6f9cff;
+  --accent-press: #5680f5;
+  --accent-soft: rgba(111, 156, 255, 0.16);
   --data: #46d6c8;
-  --data-soft: rgba(70, 214, 200, 0.14);
+  --data-soft: rgba(70, 214, 200, 0.16);
 
-  /* Semantic */
-  --up: #35d39a;
-  --down: #f47171;
-  --warn: #f5b945;
-  --info: #5b82ff;
+  /* Semantic + their flash/marker tints */
+  --up: #3ad29a;
+  --up-bg: rgba(58, 210, 154, 0.16);
+  --down: #f4716f;
+  --down-bg: rgba(244, 113, 111, 0.16);
+  --warn: #f0b54e;
+  --warn-bg: rgba(240, 181, 78, 0.16);
+  --info: #6f9cff;
+  --info-bg: rgba(111, 156, 255, 0.16);
 
-  /* Series palette for the cap table (stable order) */
+  /* Cap-table series (stable order) */
   --series-founder: #5b82ff;
-  --series-cofounder: #7e6bf0;
-  --series-pool: #4a5670;
-  --series-1: #46d6c8;
+  --series-cofounder: #9b8cff;
+  --series-pool: #5b6678;
+  --series-1: #35d39a;
   --series-2: #f5b945;
-  --series-3: #f47171;
+  --series-3: #f4716f;
   --series-4: #9b8cff;
   --series-5: #58c6f5;
   --series-6: #e879b9;
+}
 
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --panel: #fbfaf7;
+  --panel-2: #f6f5f1;
+  --panel-raised: #efeee8;
+  --panel-hover: #f1f0eb;
+
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --border-faint: rgba(0, 0, 0, 0.06);
+
+  --text: #23221f;
+  --text-dim: #6b6a64;
+  --text-faint: #9a988f;
+  --text-ghost: #b3b1a8;
+
+  --accent: #185fa5;
+  --accent-press: #124a82;
+  --accent-soft: #e6f1fb;
+  --data: #0f6e56;
+  --data-soft: #e1f5ee;
+
+  --up: #0f6e56;
+  --up-bg: #e1f5ee;
+  --down: #a32d2d;
+  --down-bg: #fcebeb;
+  --warn: #854f0b;
+  --warn-bg: #faeeda;
+  --info: #185fa5;
+  --info-bg: #e6f1fb;
+
+  --series-founder: #378add;
+  --series-cofounder: #7f77dd;
+  --series-pool: #b4b2a9;
+  --series-1: #1d9e75;
+  --series-2: #ef9f27;
+  --series-3: #e24b4a;
+  --series-4: #7f77dd;
+  --series-5: #4fa8d8;
+  --series-6: #c77dbb;
+}
+
+:root {
   /* Type */
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
 
-  /* Radii + spacing */
+  /* Radii — used only on data viz + small markers, never section containers */
   --r-sm: 4px;
   --r: 7px;
   --r-lg: 11px;
   --r-pill: 999px;
 
-  /* Elevation */
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-2: 0 6px 22px rgba(0, 0, 0, 0.45);
-  --shadow-pop: 0 18px 50px rgba(0, 0, 0, 0.55);
+  /* Frame metrics (UI_LANGUAGE §4) */
+  --topbar-h: 46px;
+  --ticker-h: 28px;
+  --navrail-w: 50px;
+  --narrative-w: 322px;
 
-  /* Frame metrics */
-  --topbar-h: 56px;
-  --navrail-w: 64px;
-  --narrative-w: 300px;
-
-  color-scheme: dark;
+  /* Flat: no elevation anywhere. */
+  --shadow-1: none;
+  --shadow-2: none;
+  --shadow-pop: none;
 }
 
 * {
@@ -123,15 +172,56 @@ button {
   border-radius: var(--r-pill);
   border: 2px solid var(--bg);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #3c4860;
+
+/* ── Motion (selective; UI_LANGUAGE §2) ─────────────────────────────────────── */
+
+/* A breathing "live" dot for always-running surfaces. */
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--up);
+  animation: breathe 2s ease-in-out infinite;
 }
 
-/* Subtle entrance for surfaced content */
+/* On-change flash for values that update on advance. */
+@keyframes flash-up {
+  from {
+    background: var(--up-bg);
+  }
+  to {
+    background: transparent;
+  }
+}
+@keyframes flash-down {
+  from {
+    background: var(--down-bg);
+  }
+  to {
+    background: transparent;
+  }
+}
+.flash-up {
+  animation: flash-up 0.6s ease-out;
+}
+.flash-down {
+  animation: flash-down 0.6s ease-out;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(5px);
   }
   to {
     opacity: 1;
@@ -139,5 +229,17 @@ button {
   }
 }
 .rise {
-  animation: rise 0.22s ease both;
+  animation: rise 0.2s ease both;
+}
+
+/* Reduce-motion: freeze continuous motion, keep informative on-change flashes. */
+:root[data-reduce-motion="on"] .live-dot,
+:root[data-reduce-motion="on"] .ticker__stream {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot,
+  .ticker__stream {
+    animation: none !important;
+  }
 }

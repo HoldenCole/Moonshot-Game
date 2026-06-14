@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TopBar } from "./TopBar";
+import { Ticker } from "./Ticker";
 import { NavRail } from "./NavRail";
 import { NarrativeRail } from "./NarrativeRail";
 import type { View } from "./types";
@@ -28,6 +29,7 @@ export function GameShell() {
   return (
     <div className="shell">
       <TopBar />
+      <Ticker />
       <div className="shell__body">
         <NavRail view={view} onChange={setView} />
         <main className="workspace">

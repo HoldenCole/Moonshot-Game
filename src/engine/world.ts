@@ -105,11 +105,13 @@ export function stepWorld(
       next += tuning.hype.waveMagnitude;
       news.push({ tone: "opportunity", headline: `A hype wave lifts ${industryLabel(ind)}` });
     }
+    // Routine hype drift stays off the timeline (it lives in the gauge + ticker);
+    // only a real swing in the player's own sector is worth a log line.
     next = clamp(next, 0, 100);
-    if (ind === playerIndustry && Math.round(next / 10) !== Math.round(cur / 10)) {
+    if (ind === playerIndustry && Math.abs(Math.round(next / 10) - Math.round(cur / 10)) >= 2) {
       news.push({
         tone: next > cur ? "opportunity" : "warn",
-        headline: `${industryLabel(ind)} hype ${next > cur ? "climbs into the" : "cools into the"} ${Math.round(next / 10) * 10}s`,
+        headline: `${industryLabel(ind)} hype ${next > cur ? "surges" : "slides"} to ${Math.round(next)}`,
       });
     }
     hype[ind] = next;

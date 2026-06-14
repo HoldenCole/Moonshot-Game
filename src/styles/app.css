@@ -15,15 +15,14 @@
   flex: 1;
   min-width: 0;
   overflow: hidden;
-  background: radial-gradient(120% 90% at 50% -10%, #0d1119 0%, var(--bg) 60%);
+  background: var(--bg);
 }
+/* Borderless: sections stack on one surface, separated by their own hairlines. */
 .workspace-scroll {
   height: 100%;
   overflow-y: auto;
-  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 /* ── Top bar ───────────────────────────────────────────────────────────────── */
@@ -35,8 +34,8 @@
   align-items: center;
   gap: 18px;
   padding: 0 16px;
-  background: linear-gradient(180deg, #0f131c, #0b0e15);
-  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--border);
 }
 .topbar__company {
   display: flex;
@@ -47,7 +46,6 @@
   width: 10px;
   height: 10px;
   border-radius: 3px;
-  box-shadow: 0 0 12px currentColor;
 }
 .topbar__company-name {
   font-weight: 650;
@@ -195,8 +193,8 @@
   align-items: center;
   gap: 10px;
   padding: 12px 0;
-  background: #0b0e15;
-  border-right: 1px solid var(--border);
+  background: var(--bg);
+  border-right: 0.5px solid var(--border);
 }
 .navrail__logo {
   width: 40px;
@@ -269,8 +267,8 @@
   width: var(--narrative-w);
   flex: none;
   overflow-y: auto;
-  background: #0b0e15;
-  border-left: 1px solid var(--border);
+  background: var(--bg);
+  border-left: 0.5px solid var(--border);
   padding: 16px 16px 24px;
   display: flex;
   flex-direction: column;
@@ -338,16 +336,18 @@
 
 /* ── Panels ────────────────────────────────────────────────────────────────── */
 
+/* Borderless section — a continuous surface region, divided by a bottom
+   hairline, never an enclosing card. */
 .panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 16px 18px;
-  box-shadow: var(--shadow-1);
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid var(--border);
+  border-radius: 0;
+  padding: 16px 20px;
+  box-shadow: none;
 }
 .panel--flush {
   padding: 0;
-  overflow: hidden;
 }
 .panel__head {
   display: flex;
@@ -357,12 +357,12 @@
   margin-bottom: 14px;
 }
 .panel--flush .panel__head {
-  padding: 16px 18px 0;
+  padding: 16px 20px 0;
   margin-bottom: 12px;
 }
 .panel__title {
-  font-size: 15px;
-  font-weight: 640;
+  font-size: 14px;
+  font-weight: 600;
 }
 .panel__sub {
   font-size: 12px;
@@ -397,10 +397,9 @@
   font-size: 13.5px;
 }
 .btn--primary {
-  background: linear-gradient(180deg, var(--accent), var(--accent-press));
+  background: var(--accent);
   border-color: var(--accent-press);
   color: white;
-  box-shadow: 0 2px 12px rgba(91, 130, 255, 0.3);
 }
 .btn--primary:hover {
   filter: brightness(1.08);
@@ -424,40 +423,42 @@
   filter: none;
 }
 
+/* Borderless underline tabs — text on the surface, 2px accent on active. */
 .segmented {
   display: inline-flex;
-  background: var(--panel-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 3px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   gap: 2px;
 }
 .segmented__opt {
   border: none;
   background: transparent;
   color: var(--text-faint);
-  border-radius: var(--r-sm);
-  font-weight: 560;
-  transition: all 0.12s ease;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  transition: color 0.12s ease;
   white-space: nowrap;
 }
 .segmented--sm .segmented__opt {
-  height: 26px;
+  height: 28px;
   padding: 0 11px;
   font-size: 12px;
 }
 .segmented--md .segmented__opt {
   height: 32px;
-  padding: 0 14px;
+  padding: 0 13px;
   font-size: 13px;
 }
 .segmented__opt:hover {
   color: var(--text);
 }
 .segmented__opt.is-active {
-  background: var(--panel-raised);
+  background: transparent;
   color: var(--text);
-  box-shadow: var(--shadow-1);
+  border-bottom-color: var(--accent);
+  box-shadow: none;
 }
 
 .tag {
@@ -484,17 +485,17 @@
   border-color: transparent;
 }
 .tag--up {
-  background: rgba(53, 211, 154, 0.13);
+  background: var(--up-bg);
   color: var(--up);
   border-color: transparent;
 }
 .tag--down {
-  background: rgba(244, 113, 113, 0.13);
+  background: var(--down-bg);
   color: var(--down);
   border-color: transparent;
 }
 .tag--warn {
-  background: rgba(245, 185, 69, 0.13);
+  background: var(--warn-bg);
   color: var(--warn);
   border-color: transparent;
 }
@@ -678,7 +679,7 @@
 .hypebar__fill {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, var(--data), var(--warn));
+  background: var(--warn);
   border-radius: var(--r-pill);
 }
 
@@ -780,8 +781,8 @@
 }
 .glance {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 16px 24px;
   padding: 4px 0 4px;
 }
 .ownership-bar {
@@ -848,7 +849,7 @@
 .exit-take {
   text-align: right;
   padding-left: 24px;
-  border-left: 1px solid var(--border);
+  border-left: 0.5px solid var(--border);
 }
 .exit-take__label {
   font-size: 10.5px;
@@ -997,14 +998,13 @@
   align-items: center;
   gap: 12px;
   padding-right: 24px;
-  border-right: 1px solid var(--border);
+  border-right: 0.5px solid var(--border);
   min-width: 220px;
 }
 .finband__dot {
   width: 14px;
   height: 14px;
   border-radius: 4px;
-  box-shadow: 0 0 14px currentColor;
 }
 .finband__name {
   font-size: 17px;
@@ -1017,8 +1017,8 @@
 }
 .finband__stats {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
+  gap: 18px 24px;
   flex: 1;
 }
 
@@ -1107,21 +1107,21 @@
   color: var(--text-faint);
 }
 .term-chip--up {
-  background: rgba(53, 211, 154, 0.13);
+  background: var(--up-bg);
   color: var(--up);
 }
 .term-chip--warn {
-  background: rgba(245, 185, 69, 0.13);
+  background: var(--warn-bg);
   color: var(--warn);
 }
 .term-chip--down {
-  background: rgba(244, 113, 113, 0.13);
+  background: var(--down-bg);
   color: var(--down);
 }
 
 /* live preview card */
 .live-preview {
-  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  background: var(--panel-2);
   border: 1px solid var(--border-strong);
   border-radius: var(--r-lg);
   padding: 16px;
@@ -1168,7 +1168,7 @@
   flex: 1;
   height: 5px;
   border-radius: var(--r-pill);
-  background: linear-gradient(90deg, var(--border-strong), var(--accent-soft), var(--border-strong));
+  background: var(--panel-2);
   position: relative;
 }
 .comps__median {
@@ -1242,21 +1242,21 @@
   flex: none;
 }
 .reaction--up {
-  background: rgba(53, 211, 154, 0.1);
+  background: var(--up-bg);
   color: var(--up);
 }
 .reaction--up .reaction__dot {
   background: var(--up);
 }
 .reaction--warn {
-  background: rgba(245, 185, 69, 0.1);
+  background: var(--warn-bg);
   color: var(--warn);
 }
 .reaction--warn .reaction__dot {
   background: var(--warn);
 }
 .reaction--down {
-  background: rgba(244, 113, 113, 0.1);
+  background: var(--down-bg);
   color: var(--down);
 }
 .reaction--down .reaction__dot {
@@ -1270,7 +1270,7 @@
   font-weight: 600;
   color: var(--data);
   background: var(--data-soft);
-  border: 1px solid rgba(70, 214, 200, 0.3);
+  border: 1px solid var(--border-strong);
   padding: 9px 12px;
   border-radius: var(--r);
 }
@@ -1292,15 +1292,15 @@
   color: var(--text-faint);
 }
 .stance-chip--up {
-  background: rgba(53, 211, 154, 0.13);
+  background: var(--up-bg);
   color: var(--up);
 }
 .stance-chip--warn {
-  background: rgba(245, 185, 69, 0.13);
+  background: var(--warn-bg);
   color: var(--warn);
 }
 .stance-chip--down {
-  background: rgba(244, 113, 113, 0.13);
+  background: var(--down-bg);
   color: var(--down);
 }
 
@@ -1367,8 +1367,8 @@
   border: 1px solid var(--border-strong);
 }
 .deal-banner--win {
-  background: rgba(53, 211, 154, 0.08);
-  border-color: rgba(53, 211, 154, 0.35);
+  background: var(--up-bg);
+  border-color: var(--up);
 }
 .deal-banner--lose {
   background: var(--panel-2);
@@ -1542,7 +1542,7 @@
   overflow-y: auto;
   display: flex;
   justify-content: center;
-  background: radial-gradient(130% 80% at 50% -20%, #131a2b 0%, var(--bg) 55%);
+  background: var(--bg);
 }
 .newgame__inner {
   width: min(760px, 92vw);
@@ -1674,4 +1674,168 @@
   .negotiation__right {
     position: static;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Borderless migration — live ticker, settings, and de-card overrides
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Live ticker (continuous scroll) */
+.ticker {
+  height: var(--ticker-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  border-bottom: 0.5px solid var(--border);
+  overflow: hidden;
+  background: var(--bg);
+}
+.ticker__label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  padding: 0 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ticker__viewport {
+  flex: 1;
+  overflow: hidden;
+}
+.ticker__stream {
+  display: inline-flex;
+  gap: 28px;
+  white-space: nowrap;
+  animation: ticker-scroll 60s linear infinite;
+  will-change: transform;
+}
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.ticker__item .num {
+  font-size: 11px;
+}
+.ticker__tick--up {
+  color: var(--up);
+}
+.ticker__tick--down {
+  color: var(--down);
+}
+.ticker__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* Settings cluster in the top bar */
+.iconbtn {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  border-radius: var(--r-sm);
+  transition: color 0.12s ease, background 0.12s ease;
+}
+.iconbtn:hover {
+  color: var(--text);
+  background: var(--panel-2);
+}
+.iconbtn.is-on {
+  color: var(--accent);
+}
+
+/* De-card: former card containers become tint zones or hairline regions */
+.live-preview,
+.comps,
+.counter-card,
+.firm-readout {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: var(--panel-2);
+}
+.deal-banner,
+.empty-note,
+.count-chip {
+  border: none !important;
+  box-shadow: none !important;
+}
+.count-chip {
+  background: var(--panel-2);
+  border-radius: 0;
+}
+.deal-banner {
+  border-radius: 0;
+}
+.deal-banner--win {
+  border-left: 3px solid var(--up) !important;
+}
+.investor-card {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent;
+  border-bottom: 0.5px solid var(--border) !important;
+}
+.firm-readout {
+  border-left: 3px solid var(--border-strong);
+}
+
+/* Decision rows: borderless with an inset edge-bar on the hot/critical one */
+.decision {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border-bottom: 0.5px solid var(--border) !important;
+  background: transparent;
+}
+.decision__bar {
+  display: none;
+}
+.decision--crisis {
+  box-shadow: inset 3px 0 0 var(--down) !important;
+}
+.decision--warn {
+  box-shadow: inset 3px 0 0 var(--warn) !important;
+}
+.decision--opportunity {
+  box-shadow: inset 3px 0 0 var(--data) !important;
+}
+
+/* Section header label helper (small uppercase on the surface) */
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.topbar__settings {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
