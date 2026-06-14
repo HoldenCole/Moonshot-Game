@@ -99,10 +99,18 @@ test("slots resolve from the real market; missing required slot skips", () => {
 test("a costly choice spends cash; a transparent one lifts ethics", () => {
   const g = game();
   g.company.financials.cash = 10;
-  const counter = resolveOutcome({ label: "", detail: "", effects: "", outcomeRef: "poach_counter" }, g);
+  // Outcomes read the AUTHORED consequence text (label + detail + effects), the
+  // way real content expresses stakes — not the outcome_ref stem.
+  const counter = resolveOutcome(
+    { label: "Counter aggressively", detail: "Match the offer with a premium retention grant", effects: "Expensive — burns cash.", outcomeRef: "poach_counter" },
+    g,
+  );
   assert.ok(counter.cash < 0, "counter should cost cash");
 
-  const transparent = resolveOutcome({ label: "", detail: "", effects: "", outcomeRef: "safety_transparent" }, g);
+  const transparent = resolveOutcome(
+    { label: "Disclose it openly", detail: "Publish a transparent post-mortem and cooperate fully", effects: "Builds trust and integrity.", outcomeRef: "safety_transparent" },
+    g,
+  );
   assert.ok(transparent.ethics > 0, "transparent should raise ethics");
 
   const after = applyOutcome(g, counter);

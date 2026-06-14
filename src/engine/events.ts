@@ -11,6 +11,8 @@ import { type Rng, chance, nextFloat } from "./rng";
 import { buildEventContext, conditionsPass, evalCondition, type CtxValue } from "./eventConditions";
 import { resolveSlots } from "./eventSlots";
 
+type Ctx = Record<string, CtxValue>;
+
 /** Base per-week probability that an eligible event fires. */
 const BASE_FIRE_CHANCE = 0.2;
 /** Minimum weeks between events, so they don't cluster. */
@@ -56,7 +58,7 @@ export function evaluateEvents(
   for (let attempt = 0; attempt < 4 && pool.length > 0; attempt++) {
     const idx = weightedIndex(rng, pool);
     const ev = pool[idx]!.ev;
-    const resolved = resolveEvent(ev, state, market, rng);
+    const resolved = resolveEvent(ev, state, market, rng, ctx);
     if (resolved) {
       const eventState: EventState = {
         cooldowns: { ...es.cooldowns, [ev.id]: week },
@@ -71,13 +73,19 @@ export function evaluateEvents(
   return { event: null, eventState: es };
 }
 
-function resolveEvent(ev: EventContent, state: GameState, market: Company[], rng: Rng): ResolvedEvent | null {
-  const slots = resolveSlots([ev.framing.headline, ev.framing.body], state, market, rng);
+function resolveEvent(ev: EventContent, state: GameState, market: Company[], rng: Rng, ctx: Ctx): ResolvedEvent | null {
+  // Only choices whose gate passes are offered.
+  const choiceList = ev.choices.filter((c) => !c.condition || conditionsPass([c.condition], ctx));
+  if (choiceList.length === 0) return null;
+  // Scan headline + body + every offered choice for slots, so a {slot} in a
+  // choice's detail/effects is filled too.
+  const templates = [ev.framing.headline, ev.framing.body, ...choiceList.flatMap((c) => [c.label, c.detail, c.effects])];
+  const slots = resolveSlots(templates, state, market, rng);
   if (!slots) return null;
-  const choices: ResolvedChoice[] = ev.choices.map((c) => ({
-    label: c.label,
-    detail: c.detail,
-    effects: c.effects,
+  const choices: ResolvedChoice[] = choiceList.map((c) => ({
+    label: slots.fill(c.label),
+    detail: slots.fill(c.detail),
+    effects: slots.fill(c.effects),
     outcomeRef: c.outcome_ref,
   }));
   return {
@@ -94,9 +102,10 @@ function resolveEvent(ev: EventContent, state: GameState, market: Company[], rng
 /** Authored weight × applicable weight-mods. Threshold/scheduled events with a
  *  zero authored weight get a baseline so they can fire when conditions hold. */
 function effectiveWeight(ev: EventContent, ctx: Record<string, CtxValue>): number {
-  let base = ev.weight;
-  if (base <= 0) base = ev.trigger.type === "random" ? 0 : 7;
-  if (base <= 0) return 0;
+  // A zero authored weight means "fire when conditions hold" (threshold-style),
+  // not "never" — give it a baseline so weight-0 events (incl. the binary launch
+  // moments) aren't silently disabled.
+  let base = ev.weight > 0 ? ev.weight : 7;
   for (const mod of ev.trigger.weight_mods ?? []) {
     if (evalCondition(mod.when, ctx)) base *= mod.factor;
   }

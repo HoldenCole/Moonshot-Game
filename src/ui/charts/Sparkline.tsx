@@ -19,8 +19,8 @@ export function Sparkline({
   const innerW = Math.max(0, width - pad * 2);
   const innerH = height - pad * 2;
 
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  const min = data.length ? Math.min(...data) : 0;
+  const max = data.length ? Math.max(...data) : 1;
   const span = max - min || 1;
   const n = data.length;
 

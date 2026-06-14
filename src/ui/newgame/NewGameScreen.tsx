@@ -32,7 +32,7 @@ const SIGNATURE: Record<PlayableSubIndustry, string> = {
   space_stations: "Orchestrate a tenant mix in orbit — research, manufacturing, and tourism.",
 };
 
-const INDUSTRY_COLOR: Record<string, string> = {
+const INDUSTRY_COLOR: Record<PlayableSubIndustry, string> = {
   frontier_model_lab: "#5b82ff",
   vertical_ai_saas: "#4c5fd5",
   ai_chips: "#7a5bff",

@@ -30,7 +30,9 @@ test("a saved run round-trips losslessly", () => {
   const loaded = loadGame()!;
   assert.equal(loaded.company.name, "Helion Labs");
   assert.equal(loaded.clock.week, 42);
-  assert.equal(JSON.stringify(loaded), JSON.stringify(g));
+  // Lossless = deep-equal. (loadGame backfills defaults, which can reorder object
+  // keys without changing any value, so a byte-for-byte JSON compare is too strict.)
+  assert.deepEqual(loaded, g);
 });
 
 test("the save summary reads back the headline facts", () => {

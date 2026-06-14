@@ -1406,7 +1406,7 @@
 /* Market — a grid-list whose rows flex to fill the height (no dead space) and
    whose "Known for" column absorbs horizontal width (no mid-row gap). */
 .market-view {
-  --mcols: minmax(160px, 1.3fr) minmax(170px, 2.4fr) 150px 96px 110px 72px 100px 66px 66px;
+  --mcols: minmax(160px, 1.3fr) minmax(170px, 2.4fr) 150px 96px 110px 72px 100px 66px;
 }
 .market-move {
   padding: 1px 5px;

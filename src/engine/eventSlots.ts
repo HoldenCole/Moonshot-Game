@@ -87,7 +87,8 @@ function resolveSlot(slot: string, state: GameState, market: Company[], rng: Rng
     case "competitor_move":
       return pick(rng, COMPETITOR_MOVES) ?? null;
     default:
-      // Unknown slot → resolve to a neutral filler rather than failing.
-      return "";
+      // An unhandled slot fails the resolution → the event is skipped, rather
+      // than rendering a literal "{slot}" or a blank (decision M).
+      return null;
   }
 }

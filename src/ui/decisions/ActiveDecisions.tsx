@@ -1,12 +1,16 @@
 import { useGame } from "@/state/store";
 import { Button } from "@/ui/components/controls";
+import type { Alert } from "@/domain/log";
 import type { View } from "@/ui/frame/types";
+
+// Stable empty reference so the selector never allocates (avoids re-render loops).
+const NO_ALERTS: Alert[] = [];
 
 /** Active alerts surfaced as in-context decision cards (decision E: decisions
  *  surface in-context, not in a separate queue). Phase 3 alerts are runway
  *  pressure + raise nudges; the branching event system layers on in Phase 7. */
 export function ActiveDecisions({ onNavigate }: { onNavigate: (v: View) => void }) {
-  const alerts = useGame((s) => s.game?.alerts ?? []);
+  const alerts = useGame((s) => s.game?.alerts) ?? NO_ALERTS;
   const dismiss = useGame((s) => s.dismissAlert);
   if (alerts.length === 0) return null;
 

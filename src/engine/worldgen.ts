@@ -107,10 +107,12 @@ function generateFrom(rng: Rng, base: Company, used: Set<string>, idx: number, f
     stage: { status: isPublic ? "public" : "private", private_round: "", ipo_year: isPublic ? -nextInt(rng, 1, 5) : 0 },
     financials: {
       revenue,
-      revenue_growth: clamp(base.financials.revenue_growth + nextRange(rng, -0.2, 0.25), -0.1, 1.2),
-      gross_margin: clamp(base.financials.gross_margin + nextRange(rng, -0.15, 0.15), 0.1, 0.92),
+      // Light/investment-grade anchors omit growth/margin/burn — derive defaults
+      // so procedural children never inherit NaN.
+      revenue_growth: clamp((base.financials.revenue_growth ?? 0.2) + nextRange(rng, -0.2, 0.25), -0.1, 1.2),
+      gross_margin: clamp((base.financials.gross_margin ?? 0.5) + nextRange(rng, -0.15, 0.15), 0.1, 0.92),
       profitable,
-      burn_monthly: profitable ? 0 : Math.max(0, Math.round(base.financials.burn_monthly * nextRange(rng, 0.3, 1.3))),
+      burn_monthly: profitable ? 0 : Math.max(0, Math.round((base.financials.burn_monthly ?? revenue * 0.04) * nextRange(rng, 0.3, 1.3))),
       valuation,
       shares_out: Math.max(10, Math.round(base.financials.shares_out * nextRange(rng, 0.5, 1.5))),
     },

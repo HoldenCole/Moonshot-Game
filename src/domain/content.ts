@@ -41,7 +41,8 @@ export interface CompanyContent {
       revenue_growth: number;
       gross_margin: number;
       profitable: boolean;
-      burn_monthly: number;
+      /** Omitted by light/investment-grade anchors (derived in worldgen). */
+      burn_monthly?: number;
       valuation: number;
       shares_out: number;
     };
@@ -163,6 +164,8 @@ export interface EventChoice {
   detail: string;
   effects: string;
   outcome_ref: string;
+  /** Optional gate — the choice is hidden when this condition is false. */
+  condition?: string;
 }
 
 export interface EventContent {

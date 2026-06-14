@@ -28,7 +28,14 @@ export function MarketView() {
 
   const world = game?.world;
   const week = game?.clock.week ?? 0;
-  const priceOf = (c: Company) => (world ? marketPrice(c, world, week) : c.financials.valuation);
+  // Price every company once per render (sorting + each row cell read this),
+  // instead of recomputing marketPrice on every comparison.
+  const priceById = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const c of companies) m.set(c.id, world ? marketPrice(c, world, week) : c.financials.valuation);
+    return m;
+  }, [companies, world, week]);
+  const priceOf = (c: Company) => priceById.get(c.id) ?? c.financials.valuation;
 
   const playerInvestorIds = useMemo(() => {
     const set = new Set<string>();

@@ -5,7 +5,9 @@
 
 import type { GameState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
+import { INITIAL_EVENT_STATE } from "@/domain/events";
 import { founderOwnership, latestPostMoney } from "@/engine/captable";
+import { IDLE_SIGNATURE } from "@/engine/signature";
 
 const KEY = "moonshot.save";
 
@@ -87,5 +89,37 @@ function migrate(env: SaveEnvelope): GameState | null {
     version += 1;
   }
   // A save from a newer build than this one can't be safely loaded.
-  return version === SCHEMA_VERSION ? game : null;
+  if (version !== SCHEMA_VERSION) return null;
+  // Backfill any fields added since this save was written, so an older v1 save
+  // (fields added in place without a version bump) can't crash on a missing
+  // array/object the engine spreads or maps.
+  return withDefaults(game);
+}
+
+/** Defensive default-fill for a loaded save, covering every field added across
+ *  phases. Existing values always win. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function withDefaults(g: any): GameState {
+  const company = g.company ?? {};
+  return {
+    ...g,
+    founder: { reputation: 30, personalCash: 0, ethics: 60, ...g.founder },
+    world: g.world,
+    market: g.market ?? { companies: [] },
+    worldHistory: g.worldHistory ?? [],
+    log: g.log ?? [],
+    alerts: g.alerts ?? [],
+    achievedMilestones: g.achievedMilestones ?? [],
+    relationships: g.relationships ?? {},
+    eventState: g.eventState ?? INITIAL_EVENT_STATE,
+    pendingEvent: g.pendingEvent ?? null,
+    runOutcome: g.runOutcome ?? null,
+    achievements: g.achievements ?? [],
+    company: {
+      ...company,
+      signature: company.signature ?? IDLE_SIGNATURE,
+      executives: company.executives ?? {},
+      delegation: company.delegation ?? { finance: "decide", operations: "decide", revenue: "decide", technical: "decide" },
+    },
+  };
 }

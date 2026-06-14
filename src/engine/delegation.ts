@@ -33,6 +33,9 @@ const LAST = ["Okafor", "Cho", "Renn", "Vance", "Sato", "Boone", "Adler", "Cruz"
 export function eventArea(ev: { id: string; category: string }): ExecArea | null {
   if (ev.category === "personal") return null;
   const id = ev.id;
+  // Ethics-laden calls (safety incidents, regulatory inquiries) are the founder's
+  // conscience to weigh — never an exec's to silently auto-handle on advance.
+  if (/safety|regulat|ethics|scandal|whistleblow|privacy|breach|cover_?up/.test(id)) return null;
   if (/megadeal|customer|enterprise|deal|undercut|oss|leapfrog|niche/.test(id)) return "revenue";
   if (/hype_peak|macro|rate|ipo|window|regulat|fund|capital/.test(id)) return "finance";
   if (/train|run|benchmark|chip|architecture|launch|safety|star|model|breakthrough|talent|poach|research/.test(id)) return "technical";

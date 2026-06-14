@@ -13,7 +13,7 @@ import { industryLabel } from "@/domain/ids";
 import type { IpoWindow, MacroPhase, WorldSnapshot, WorldState } from "@/domain/state";
 import type { LogTone } from "@/domain/log";
 import type { WorldTuning } from "@/domain/tuning";
-import { type Rng, chance, nextNoise } from "./rng";
+import { type Rng, chance, nextNoise, pick } from "./rng";
 
 export interface WorldNews {
   tone: LogTone;
@@ -44,7 +44,10 @@ export function stepWorld(
     strength -= tuning.macro.shockMagnitude;
     news.push({ tone: "crisis", headline: "A shock rattles the economy", detail: "Markets reprice risk sharply." });
   }
-  strength = clamp(strength, -1.2, 1.2);
+  // Clamp once to the canonical range and use that value everywhere this step
+  // (phase, sentiment, rates, IPO openness), so the stored strength matches what
+  // actually drove the week.
+  strength = clamp(strength, -1, 1);
   const slope = Math.cos(position);
   const macroPhase = phaseFrom(strength, slope);
   if (macroPhase !== world.macroPhase) {
@@ -94,7 +97,7 @@ export function stepWorld(
   const hype: Partial<Record<Industry, number>> = { ...world.hype };
   let wave: Industry | null = null;
   if (chance(rng, tuning.hype.waveWeeklyProb * vol)) {
-    wave = industries[Math.floor((rng.state >>> 8) % industries.length)] ?? null;
+    wave = pick(rng, industries) ?? null;
   }
   for (const ind of industries) {
     const baseline = tuning.hype.baseline[ind] ?? 50;
@@ -156,7 +159,7 @@ export function stepWorld(
     world: {
       macroPhase,
       macroPosition: position % TAU,
-      macroStrength: clamp(strength, -1, 1),
+      macroStrength: strength,
       interestRate,
       rateTarget,
       weeksSinceRateReview,

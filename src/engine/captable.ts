@@ -135,8 +135,12 @@ export function computeRound(capTable: CapTable, terms: RoundTerms): RoundComput
   const inv = Math.max(0, terms.roundSize);
   const post = pre + inv;
 
-  const investorOwnership = post > 0 ? inv / post : 0;
-  const poolPct = clamp01(terms.optionPoolPct);
+  // Keep the dilution math well-posed: the new money + pool top-up cannot take
+  // ≥100% of the company. A degenerate valuation (≤0) would otherwise fabricate
+  // ownership; realistic negotiated terms never approach this cap.
+  const poolPct = Math.min(0.9, clamp01(terms.optionPoolPct));
+  const rawInvestorOwnership = post > 0 ? inv / post : 0;
+  const investorOwnership = Math.min(rawInvestorOwnership, Math.max(0, 0.97 - poolPct));
 
   // T·(1 − investorPct − poolPct) = nonPool   ⇒   solve for post-round total T.
   const denom = 1 - investorOwnership - poolPct;
@@ -176,7 +180,8 @@ export function applyRound(capTable: CapTable, params: RoundParams): CapTable {
     holderId: params.leadInvestorId,
     holderName: params.leadInvestorName,
     holderType: "investor",
-    shareClass: "preferred",
+    // A zero-preference raise (the IPO public float) is common, not preferred.
+    shareClass: params.terms.liquidationPref > 0 ? "preferred" : "common",
     shares: Math.round(c.investorShares),
     investedAmount: params.terms.roundSize,
     pricePerShare: c.pricePerShare,

@@ -20,8 +20,14 @@ interface Stored {
   reduceMotion: boolean;
 }
 
+function osReduceMotion(): boolean {
+  return typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function load(): Stored {
-  const fallback: Stored = { theme: "dark", reduceMotion: false };
+  // Default to the OS reduced-motion preference (UI_LANGUAGE §2), so the JS
+  // motion layer (market tape, count tweens) honors it like the CSS does.
+  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion() };
   if (typeof localStorage === "undefined") return fallback;
   try {
     return { ...fallback, ...(JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<Stored>) };

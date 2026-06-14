@@ -6,7 +6,7 @@
 import type { GameState, SignatureState } from "@/domain/state";
 import type { Money } from "@/domain/captable";
 import type { LogEntry } from "@/domain/log";
-import type { SubIndustry } from "@/domain/ids";
+import { stageRank, type SubIndustry } from "@/domain/ids";
 import { type Rng, nextFloat, nextInt } from "./rng";
 
 export interface SignatureConfig {
@@ -226,9 +226,11 @@ function applyResolution(state: GameState, cfg: SignatureConfig, kind: "success"
 }
 
 function companyExecution(state: GameState): number {
-  // Proxy: stage maturity + how much runway you can sustain. 0–1.
-  const stageBoost = Math.min(0.5, state.company.financials.headcount / 40);
-  return 0.3 + stageBoost;
+  // Proxy for execution quality, 0–1: a maturer company with a bigger team
+  // lands its big bets more reliably.
+  const stageBoost = Math.min(0.35, stageRank(state.company.stage) / 22);
+  const teamBoost = Math.min(0.2, state.company.financials.headcount / 80);
+  return Math.min(0.85, 0.28 + stageBoost + teamBoost);
 }
 
 function processName(company: string, cfg: SignatureConfig, gen: number): string {
