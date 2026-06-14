@@ -6,6 +6,7 @@
 
 import type { GameState } from "@/domain/state";
 import type { Company } from "@/content/load";
+import { industryLabel } from "@/domain/ids";
 import { type Rng, nextRange, pick } from "./rng";
 import { generateTeam } from "./narrative";
 import { formatMoney } from "./format";
@@ -17,6 +18,28 @@ const COMPETITOR_MOVES = [
   "A rival just shipped a capability jump.",
   "A new model release has reset expectations across the field.",
   "A competitor quietly leapfrogged the public benchmark.",
+];
+
+// Short, headline-friendly sector names for the {sector} slot (the full
+// industryLabel — "Artificial Intelligence" — reads clumsily inline).
+const SECTOR_SHORT: Record<string, string> = {
+  ai: "AI",
+  space: "space",
+  biotech: "biotech",
+  energy: "energy",
+  defense: "defense",
+  advanced_mfg: "advanced manufacturing",
+  mobility: "mobility",
+  quantum: "quantum",
+};
+
+// Flavor pools for macro/world slots (no mechanical link — they name the moment).
+const BANKS = ["Meridian Capital", "Atlas Trust", "Sterling & Co.", "Calloway Brothers", "Granite Financial"];
+const TAX_TARGETS = ["capital-gains treatment", "the R&D credit", "corporate tax rates", "stock-comp deductions", "carried interest"];
+const PROGRAM_SUMMARIES = [
+  "Budgets and priorities are being redrawn, and the contracts will follow.",
+  "Procurement is reopening — and the incumbents aren't guaranteed a seat.",
+  "It resets which capabilities get funded for the next decade.",
 ];
 
 const BASE_COMP: Record<string, number> = {
@@ -86,9 +109,66 @@ function resolveSlot(slot: string, state: GameState, market: Company[], rng: Rng
     }
     case "competitor_move":
       return pick(rng, COMPETITOR_MOVES) ?? null;
+
+    // ── Macro / world slots (the m-series economic events) ──
+    case "sector":
+      return SECTOR_SHORT[c.industry] ?? industryLabel(c.industry);
+    case "bank":
+      return pick(rng, BANKS) ?? null;
+    case "rate_move":
+      return Math.max(0.25, Math.abs(rateMoveQtr(state))).toFixed(2);
+    case "rate_direction":
+      return rateMoveQtr(state) < 0 ? "lower" : "higher";
+    case "tax_target":
+      return pick(rng, TAX_TARGETS) ?? null;
+    case "talent_direction":
+      return hypeRising(state) ? "rising" : "easing";
+    case "talent_summary":
+      return hypeRising(state)
+        ? "Comp expectations are spiking and recruiters are circling your best people."
+        : "Talent that was untouchable a year ago is suddenly answering calls.";
+    case "window_direction": {
+      const wnd = state.world.ipoWindow;
+      return wnd === "open" ? "swung open" : wnd === "closed" ? "slammed shut" : "started to crack";
+    }
+    case "window_summary": {
+      const wnd = state.world.ipoWindow;
+      return wnd === "open"
+        ? "Bankers are calling and comparables are rich."
+        : wnd === "closed"
+          ? "Listings are being pulled and pricing has gone hostile."
+          : "Sentiment is wobbling and underwriters are hedging.";
+    }
+    case "program_direction":
+      return pick(rng, ["expanded", "realigned", "scaled back"]) ?? null;
+    case "program_summary":
+      return pick(rng, PROGRAM_SUMMARIES) ?? null;
+
     default:
       // An unhandled slot fails the resolution → the event is skipped, rather
       // than rendering a literal "{slot}" or a blank (decision M).
       return null;
   }
+}
+
+/** Signed change in the policy rate over roughly the last quarter, read off the
+ *  world-history tape (0 when history is too short). */
+function rateMoveQtr(state: GameState): number {
+  const snap = snapAgo(state, 13);
+  return snap ? state.world.interestRate - snap.interestRate : 0;
+}
+
+/** Whether the player sector's hype is higher than ~a month ago (talent demand). */
+function hypeRising(state: GameState): boolean {
+  const ind = state.company.industry;
+  const now = state.world.hype[ind] ?? 50;
+  const then = snapAgo(state, 4)?.hype[ind] ?? now;
+  return now >= then;
+}
+
+function snapAgo(state: GameState, weeksBack: number) {
+  const h = state.worldHistory;
+  const target = state.clock.week - weeksBack;
+  for (let i = h.length - 1; i >= 0; i--) if (h[i]!.week <= target) return h[i]!;
+  return null;
 }

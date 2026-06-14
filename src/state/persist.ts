@@ -101,10 +101,13 @@ function migrate(env: SaveEnvelope): GameState | null {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function withDefaults(g: any): GameState {
   const company = g.company ?? {};
+  const world = g.world ?? {};
   return {
     ...g,
     founder: { reputation: 30, personalCash: 0, ethics: 60, ...g.founder },
-    world: g.world,
+    // Regime-transition memory (added for the macro event wiring) — backfill so
+    // an older save reads as "settled" until the next real transition.
+    world: { ...world, weeksInPhase: world.weeksInPhase ?? 12, macroPrevPhase: world.macroPrevPhase ?? world.macroPhase ?? "expansion" },
     market: g.market ?? { companies: [] },
     worldHistory: g.worldHistory ?? [],
     log: g.log ?? [],

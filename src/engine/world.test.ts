@@ -33,6 +33,8 @@ export const TEST_TUNING: Tuning = {
 function world(): WorldState {
   return {
     macroPhase: "expansion",
+    weeksInPhase: 12,
+    macroPrevPhase: "recovery",
     macroPosition: 0.6,
     macroStrength: 0.45,
     interestRate: 4.5,

@@ -72,7 +72,7 @@ one_shot = false
 
 [m3_rate_shock.trigger]
 type = "threshold"
-conditions = ["macro.rate_move_qtr_abs > 0.5"]
+conditions = ["macro.rate_move_qtr_abs > 0.4"]
 
 [m3_rate_shock.framing]
 headline = "Rates jump {rate_move} points"
@@ -439,7 +439,7 @@ type = "threshold"
 conditions = ["sector.hype > 85"]
 
 [m13_new_entrant_flood.framing]
-headline = "Everyone is starting a {sector} company now"
+headline = "Everyone is piling into {sector} now"
 body = """Capital is flooding into your sector and new competitors are multiplying \
 weekly. Talent and customers are getting more expensive as the newcomers bid \
 them up. This is the tax on being in a hot space — and it rewards whoever has a \
@@ -506,7 +506,7 @@ one_shot = false
 
 [m15_macro_recovery.trigger]
 type = "scheduled"
-conditions = ["macro.cycle_phase == expansion", "macro.entered_phase_this_tick == true", "macro.prev_phase == contraction"]
+conditions = ["macro.cycle_phase == recovery", "macro.entered_phase_this_tick == true"]
 
 [m15_macro_recovery.framing]
 headline = "The worst is over"

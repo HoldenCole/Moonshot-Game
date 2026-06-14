@@ -91,12 +91,21 @@ export interface PlayerCompany {
 }
 
 export type MacroPhase = "expansion" | "peak" | "contraction" | "trough" | "recovery";
+/** The macro phase plus a "frothy" overlay (euphoric sentiment / hot VC climate),
+ *  used as the market regime the event system reads. */
+export type MacroRegime = MacroPhase | "frothy";
 export type IpoWindow = "open" | "cracking" | "closed";
 
 /** The six master-variable engines' live state (three-layer world model). */
 export interface WorldState {
   // ── Universal layer ──
   macroPhase: MacroPhase;
+  /** Weeks the current market regime (phase incl. "frothy") has held — 0 on the
+   *  transition tick. Gives regime-transition events a short, reliable window. */
+  weeksInPhase: number;
+  /** The regime that preceded the current one (for "recovery out of contraction"
+   *  style triggers). */
+  macroPrevPhase: MacroRegime;
   /** Economic-cycle oscillator phase, radians. */
   macroPosition: number;
   /** Cycle strength, −1 (deep trough) … +1 (peak). */

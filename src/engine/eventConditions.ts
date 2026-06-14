@@ -4,16 +4,21 @@
 // then compare. Paths whose systems don't exist yet resolve to safe defaults so
 // their events simply don't fire.
 
-import type { GameState } from "@/domain/state";
+import type { GameState, WorldSnapshot } from "@/domain/state";
 import type { Company } from "@/content/load";
 import { stageRank } from "@/domain/ids";
 import { netWorth } from "./finance";
+import { regimeOf } from "./world";
 
 export type CtxValue = string | number | boolean;
 
 /** Ordinal enums used by `>=` / `<=` comparisons beyond stages. */
 const SCALE = ["small", "medium", "large"];
 const INTENSITY = ["low", "elevated", "high"];
+const MATURITY = ["nascent", "growing", "mature"];
+
+/** Weeks a freshly-entered regime / window stays "just changed" for triggers. */
+const TRANSITION_WINDOW = 3;
 
 /** Per-path "milestone" thresholds (rhs literal `milestone`). */
 const MILESTONE: Record<string, number> = {
@@ -31,12 +36,35 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
   const suppliers = market.filter((m) => isSupplierSector(ind, sub, m));
   const customers = market.filter((m) => isCustomerSector(ind, sub, m));
   const hasCofounder = c.capTable.lots.some((l) => l.holderType === "cofounder");
+  const w = state.world;
+  const year = Math.floor(state.clock.week / 52);
+
+  // ── World transitions, derived from regime memory + the world-history tape so
+  //    events keyed to "the cycle just turned" fire within a short window ──
+  const regime = regimeOf(w);
+  const enteredPhase = w.weeksInPhase <= TRANSITION_WINDOW;
+  const qtrAgo = historyAgo(state, 13);
+  const rateMoveAbs = qtrAgo ? Math.abs(w.interestRate - qtrAgo.interestRate) : 0;
+  const monthAgo = historyAgo(state, 4);
+  const sentimentDrop = monthAgo ? monthAgo.marketSentiment - w.marketSentiment : 0;
+  const hypeNow = w.hype[ind] ?? 50;
+  const hypeThen = monthAgo?.hype[ind] ?? hypeNow;
+  const hypeBandMoved = Math.floor(hypeNow / 10) !== Math.floor(hypeThen / 10);
+
+  // ── Sector maturity + recent-failure pressure (proxies for systems the Mogul
+  //    DLC will deepen) ──
+  const maturity = year >= 3 ? "mature" : year >= 1 ? "growing" : "nascent";
+  const lastSig = c.signature.lastOutcome;
+  const sinceFailure = lastSig && lastSig.kind === "failure" ? state.clock.week - lastSig.week : Infinity;
+  const failureDensity = sinceFailure <= 6 ? "high" : sinceFailure <= 16 ? "elevated" : "low";
+
+  const isSpace = ind === "space";
 
   return {
     "company.industry": ind,
     "company.sub_industry": sub,
     "company.stage": c.stage,
-    "sector.hype": state.world.hype[ind] ?? 50,
+    "sector.hype": hypeNow,
     "company.has_competitor": sameSubPeers.length > 0,
     "company.has_supplier": suppliers.length > 0,
     "company.has_customer": customers.length > 0,
@@ -54,8 +82,41 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
     // Burnout/intensity tracking arrives with delegation (Phase 9).
     "founder.sustained_intensity": "low",
     "founder.recent_crisis_density": "normal",
-    "game.year": Math.floor(state.clock.week / 52),
+    "game.year": year,
+
+    // ── Macro regime + transitions (the m-series economic events) ──
+    "macro.cycle_phase": regime,
+    "macro.entered_phase_this_tick": enteredPhase,
+    "macro.prev_phase": w.macroPrevPhase,
+    "macro.rate_move_qtr_abs": rateMoveAbs,
+    "macro.ipo_window_changed": w.weeksInIpoWindow <= TRANSITION_WINDOW,
+    "macro.correction_triggered": sentimentDrop >= 6,
+    "macro.tax_review_due": state.clock.week > 8 && state.clock.week % 52 < 4,
+
+    // ── Sector state ──
+    "sector.hype_moved_band": hypeBandMoved,
+    "sector.maturity": maturity,
+    "sector.recent_failure_density": failureDensity,
+
+    // ── Space-business facts (persistent proxies that light up the s-series) ──
+    "company.has_anchor_customer": isSpace && customers.length > 0 && stageR >= stageRank("series_a"),
+    "company.fleet_on_orbit": sub === "satellite_constellations" && stageR >= stageRank("seed"),
+    "company.reusability_program": sub === "launch_services" && stageR >= stageRank("seed"),
+    "company.has_tenant": sub === "space_stations" && stageR >= stageRank("seed"),
+    "company.demand_exceeds_capacity": sub === "launch_services" && (hypeNow >= 65 || stageR >= stageRank("series_b")),
   };
+}
+
+/** The latest world snapshot at or before `weeksBack` weeks ago (or null when
+ *  history is too short). Snapshots are appended in week order. */
+function historyAgo(state: GameState, weeksBack: number): WorldSnapshot | null {
+  const h = state.worldHistory;
+  if (h.length === 0) return null;
+  const target = state.clock.week - weeksBack;
+  for (let i = h.length - 1; i >= 0; i--) {
+    if (h[i]!.week <= target) return h[i]!;
+  }
+  return null;
 }
 
 /** True when every condition holds in the given context. */
@@ -111,6 +172,7 @@ function rankOf(path: string, v: CtxValue): number {
   // ordinal enums
   if (SCALE.includes(v)) return SCALE.indexOf(v);
   if (INTENSITY.includes(v)) return INTENSITY.indexOf(v);
+  if (MATURITY.includes(v)) return MATURITY.indexOf(v);
   // stage names
   const sr = stageRank(v as never);
   if (sr >= 0) return sr;

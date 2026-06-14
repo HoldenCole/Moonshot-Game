@@ -47,6 +47,8 @@ export function createNewGame(
   // at their hype baselines so the public market (Phase 6) reads from them.
   const world: WorldState = {
     macroPhase: "expansion",
+    weeksInPhase: 12,
+    macroPrevPhase: "recovery",
     macroPosition: 0.6,
     macroStrength: 0.45,
     interestRate: 4.5,

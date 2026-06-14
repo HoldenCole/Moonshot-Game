@@ -10,7 +10,7 @@
 
 import type { Industry } from "@/domain/ids";
 import { industryLabel } from "@/domain/ids";
-import type { IpoWindow, MacroPhase, WorldSnapshot, WorldState } from "@/domain/state";
+import type { IpoWindow, MacroPhase, MacroRegime, WorldSnapshot, WorldState } from "@/domain/state";
 import type { LogTone } from "@/domain/log";
 import type { WorldTuning } from "@/domain/tuning";
 import { type Rng, chance, nextNoise, pick } from "./rng";
@@ -155,9 +155,19 @@ export function stepWorld(
     });
   }
 
+  // Market regime (phase + "frothy" overlay) and its transition memory: reset
+  // the counter and remember the prior regime whenever it turns.
+  const prevRegime = regimeOf(world);
+  const nextRegime = regimeFrom(macroPhase, marketSentiment, vcClimate);
+  const regimeChanged = nextRegime !== prevRegime;
+  const weeksInPhase = regimeChanged ? 0 : world.weeksInPhase + 1;
+  const macroPrevPhase = regimeChanged ? prevRegime : world.macroPrevPhase;
+
   return {
     world: {
       macroPhase,
+      weeksInPhase,
+      macroPrevPhase,
       macroPosition: position % TAU,
       macroStrength: strength,
       interestRate,
@@ -172,6 +182,20 @@ export function stepWorld(
     },
     news,
   };
+}
+
+/** The market regime: the macro phase, overlaid with "frothy" when sentiment is
+ *  euphoric or the VC climate runs hot. This is what event conditions read as
+ *  `macro.cycle_phase`. */
+export function regimeOf(world: WorldState): MacroRegime {
+  return regimeFrom(world.macroPhase, world.marketSentiment, world.vcClimate);
+}
+
+function regimeFrom(phase: MacroPhase, sentiment: number, _vcClimate: number): MacroRegime {
+  // Froth = the euphoric top of the achievable sentiment band (~mid-80s ceiling
+  // under the rate-damped tuning), so the "money is cheap" beat lands at peaks.
+  if (sentiment >= 80) return "frothy";
+  return phase;
 }
 
 export function snapshotWorld(world: WorldState, week: number): WorldSnapshot {

@@ -57,6 +57,8 @@ function co(
 
 const world = (over: Partial<WorldState> = {}): WorldState => ({
   macroPhase: "expansion",
+  weeksInPhase: 12,
+  macroPrevPhase: "recovery",
   macroPosition: 0.5,
   macroStrength: 0.3,
   interestRate: 4,
