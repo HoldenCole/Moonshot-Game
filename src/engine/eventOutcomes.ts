@@ -8,6 +8,7 @@
 import type { GameState } from "@/domain/state";
 import type { ResolvedChoice } from "@/domain/events";
 import type { Money } from "@/domain/captable";
+import { biteFor } from "./difficulty";
 import { formatMoney } from "./format";
 
 export interface OutcomeEffects {
@@ -49,15 +50,19 @@ export function applyOutcome(state: GameState, fx: OutcomeEffects): GameState {
   const f = state.company.financials;
   const hype = { ...state.world.hype };
   const ind = state.company.industry;
+  // Difficulty's event-severity lever amplifies the bad side of an outcome.
+  const cash = biteFor(state.difficulty, fx.cash);
+  const reputation = biteFor(state.difficulty, fx.reputation);
+  const ethics = biteFor(state.difficulty, fx.ethics);
   hype[ind] = clamp((hype[ind] ?? 50) + fx.hypeSelf, 0, 100);
 
   return {
     ...state,
-    company: { ...state.company, financials: { ...f, cash: f.cash + fx.cash } },
+    company: { ...state.company, financials: { ...f, cash: f.cash + cash } },
     founder: {
       ...state.founder,
-      reputation: clamp(state.founder.reputation + fx.reputation, 0, 100),
-      ethics: clamp(state.founder.ethics + fx.ethics, 0, 100),
+      reputation: clamp(state.founder.reputation + reputation, 0, 100),
+      ethics: clamp(state.founder.ethics + ethics, 0, 100),
     },
     world: { ...state.world, hype },
   };

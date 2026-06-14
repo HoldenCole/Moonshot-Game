@@ -7,8 +7,10 @@ import {
   type Industry,
   type PlayableSubIndustry,
 } from "@/domain/ids";
+import type { DifficultyPreset, NewsCycle } from "@/domain/state";
+import { NEWS_CYCLES, PRESETS, previewBars } from "@/engine/difficulty";
 import { Icon } from "@/ui/components/Icon";
-import { Button } from "@/ui/components/controls";
+import { Button, Segmented } from "@/ui/components/controls";
 import { saveSummary } from "@/state/persist";
 import { formatMoney } from "@/engine/format";
 
@@ -59,6 +61,8 @@ export function NewGameScreen() {
   const [founderName, setFounderName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [companyTouched, setCompanyTouched] = useState(false);
+  const [preset, setPreset] = useState<DifficultyPreset>("realistic");
+  const [newsCycle, setNewsCycle] = useState<NewsCycle>("medium");
 
   const suggestedCompany = sub ? NAME_SUGGESTIONS[sub] : "";
   const effectiveCompany = companyTouched ? companyName : suggestedCompany;
@@ -75,6 +79,7 @@ export function NewGameScreen() {
       subIndustry: sub,
       color: INDUSTRY_COLOR[sub] ?? "#5b82ff",
       seed: Math.floor(Math.random() * 2 ** 31),
+      difficulty: { preset, newsCycle },
     });
   };
 
@@ -173,6 +178,49 @@ export function NewGameScreen() {
                   }}
                 />
               </label>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4 — Difficulty */}
+        {sub && (
+          <div className="newgame__step rise">
+            <div className="newgame__step-label">4 · Difficulty</div>
+            <div className="difficulty-cards">
+              {PRESETS.map((p) => (
+                <button
+                  key={p.id}
+                  className={`difficulty-card${preset === p.id ? " is-active" : ""}`}
+                  onClick={() => setPreset(p.id)}
+                >
+                  <div className="difficulty-card__name">{p.label}</div>
+                  <div className="difficulty-card__tag">{p.tagline}</div>
+                </button>
+              ))}
+            </div>
+
+            <div className="difficulty-preview">
+              <div className="difficulty-preview__bars">
+                <div className="difficulty-preview__cap">The world this builds</div>
+                {previewBars(preset).map((b) => (
+                  <div key={b.label} className="profilebar" title={b.hint}>
+                    <span className="profilebar__label">{b.label}</span>
+                    <span className="profilebar__track">
+                      <span className="profilebar__fill" style={{ width: `${Math.round(b.fill * 100)}%` }} />
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="difficulty-news">
+                <div className="difficulty-news__label">News cycle</div>
+                <Segmented
+                  size="sm"
+                  value={newsCycle}
+                  onChange={(v) => setNewsCycle(v as NewsCycle)}
+                  options={NEWS_CYCLES.map((n) => ({ value: n.id, label: n.label }))}
+                />
+                <div className="difficulty-news__blurb">{NEWS_CYCLES.find((n) => n.id === newsCycle)?.blurb}</div>
+              </div>
             </div>
           </div>
         )}

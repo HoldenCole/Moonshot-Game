@@ -6,6 +6,7 @@ import { runwayMonths } from "@/engine/finance";
 import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
 import { industryLabel } from "@/domain/ids";
+import { showsRunwayForecast } from "@/engine/difficulty";
 import { Icon } from "@/ui/components/Icon";
 import { FlashNum } from "@/ui/components/FlashNum";
 import { usePrefs } from "@/state/prefs";
@@ -51,13 +52,17 @@ export function TopBar() {
 
   const pendingDecision = game.alerts.length > 0 || game.pendingEvent != null;
   const wksCritical = weeksToCritical(game, tuning);
+  // News Cycle governs how much foresight you get: the exact week forecast is an
+  // "Easy" affordance; otherwise you get a qualitative read.
   const hint = pendingDecision
     ? "Decision pending"
     : runway === Infinity
       ? "Cash-flow positive"
       : wksCritical > tuning.advance.nextDecisionCapWeeks
         ? "Runway healthy"
-        : `~${wksCritical} wks to runway pressure`;
+        : showsRunwayForecast(game.difficulty)
+          ? `~${wksCritical} wks to runway pressure`
+          : "Runway tightening";
 
   return (
     <header className="topbar">

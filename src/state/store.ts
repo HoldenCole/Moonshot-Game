@@ -13,6 +13,7 @@ import { applyRound } from "@/engine/captable";
 import { advance as engineAdvance, checkMilestones, type AdvanceMode } from "@/engine/tick";
 import { runwayBand } from "@/engine/finance";
 import { valuationMultiplier } from "@/engine/world";
+import { applyWorldDifficulty, difficultyProfile } from "@/engine/difficulty";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
@@ -138,7 +139,9 @@ export const useGame = create<GameStore>((set, get) => ({
         events: s.content.events,
         market: [...s.content.companies, ...s.game.market.companies],
       };
-      const r = engineAdvance(s.game, s.content.tuning, mode, env);
+      // Difficulty bends the world's volatility before the tick reads it.
+      const tuning = applyWorldDifficulty(s.content.tuning, s.game.difficulty);
+      const r = engineAdvance(s.game, tuning, mode, env);
       const a = withAch(r.state);
       return {
         game: a.game,
@@ -345,8 +348,9 @@ useGame.subscribe((state, prev) => {
 function buildCtx(game: GameState, leadId: string): NegotiationContext {
   const stage = upcomingStage(game.company.stage);
   // The world's "weather" sets the market price: a hot climate / high hype
-  // lifts the baseline valuation, a cold one cuts it.
-  const heat = valuationMultiplier(game.world, game.company.industry);
+  // lifts the baseline valuation, a cold one cuts it. Difficulty's capital
+  // climate then makes rounds across the board more or less generous.
+  const heat = valuationMultiplier(game.world, game.company.industry) * difficultyProfile(game.difficulty).capitalClimate;
   const base = suggestedTerms(stage);
   const market = { ...base, valuation: Math.round(base.valuation * heat * 10) / 10 };
   return {

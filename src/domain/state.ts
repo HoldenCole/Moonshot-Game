@@ -155,6 +155,15 @@ export interface RunOutcome {
   headline: string;
 }
 
+/** Locked-at-start difficulty: a preset (which derives the engine multipliers)
+ *  plus a separate News Cycle that governs how much the UI tells you. */
+export type DifficultyPreset = "forgiving" | "realistic" | "brutal";
+export type NewsCycle = "easy" | "medium" | "hard";
+export interface Difficulty {
+  preset: DifficultyPreset;
+  newsCycle: NewsCycle;
+}
+
 export interface GameMeta {
   schemaVersion: number;
   /** PRNG seed; world generation and rolls derive from it for determinism. */
@@ -168,6 +177,8 @@ export interface GameMeta {
 
 export interface GameState {
   meta: GameMeta;
+  /** Difficulty chosen at founding; locked for the run. */
+  difficulty: Difficulty;
   clock: GameClock;
   founder: FounderState;
   company: PlayerCompany;

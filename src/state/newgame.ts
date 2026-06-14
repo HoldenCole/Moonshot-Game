@@ -2,11 +2,12 @@
 // Pure — the store calls this; tests can too.
 
 import type { Industry, Stage, SubIndustry } from "@/domain/ids";
-import type { GameState, WorldState } from "@/domain/state";
+import type { Difficulty, GameState, WorldState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
 import type { RoundTerms } from "@/domain/captable";
 import type { CompanyContent } from "@/domain/content";
 import { INITIAL_EVENT_STATE } from "@/domain/events";
+import { DEFAULT_DIFFICULTY, difficultyProfile } from "@/engine/difficulty";
 import { foundCompany } from "@/engine/captable";
 import { IDLE_SIGNATURE } from "@/engine/signature";
 import { snapshotWorld } from "@/engine/world";
@@ -20,6 +21,8 @@ export interface FoundingChoices {
   color: string;
   seed: number;
   cofounder?: { name: string; sharePct: number };
+  /** Difficulty chosen on the setup screen (defaults to Realistic / Medium). */
+  difficulty?: Difficulty;
   /** New Game Plus: reputation + personal wealth carried from a prior run. */
   carryOver?: { reputation: number; personalCash: number };
 }
@@ -42,6 +45,11 @@ export function createNewGame(
       ? { id: "cofounder", name: choices.cofounder.name, sharePct: choices.cofounder.sharePct }
       : undefined,
   });
+
+  const difficulty = choices.difficulty ?? DEFAULT_DIFFICULTY;
+  // Founding capital scales with difficulty — more cushion on Forgiving, a
+  // tighter garage on Brutal.
+  const startingCash = Math.round(0.75 * difficultyProfile(difficulty).startingCapital * 100) / 100;
 
   // Opening "weather": a healthy late-expansion, all eight industries seeded
   // at their hype baselines so the public market (Phase 6) reads from them.
@@ -79,6 +87,7 @@ export function createNewGame(
       createdAt,
       runName: choices.companyName,
     },
+    difficulty,
     clock: { week: 0 },
     founder: {
       name: choices.founderName,
@@ -95,7 +104,7 @@ export function createNewGame(
       foundedWeek: 0,
       color: choices.color,
       financials: {
-        cash: 0.75, // ~$750K of founder / friends-and-family capital (~9mo runway)
+        cash: startingCash, // base ~$750K of founder / F&F capital, scaled by difficulty
         revenue: 0,
         burnMonthly: 0.08,
         headcount: choices.cofounder ? 3 : 2,
