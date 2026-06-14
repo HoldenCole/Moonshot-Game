@@ -6,6 +6,7 @@ import type { GameState, WorldState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
 import type { RoundTerms } from "@/domain/captable";
 import type { CompanyContent } from "@/domain/content";
+import { INITIAL_EVENT_STATE } from "@/domain/events";
 import { foundCompany } from "@/engine/captable";
 import { snapshotWorld } from "@/engine/world";
 import { generateMarket } from "@/engine/worldgen";
@@ -78,6 +79,7 @@ export function createNewGame(
       name: choices.founderName,
       reputation: 30,
       personalCash: 0,
+      ethics: 60,
     },
     company: {
       name: choices.companyName,
@@ -112,6 +114,8 @@ export function createNewGame(
     lastRunwayBand: "ok",
     achievedMilestones: [],
     relationships: {},
+    eventState: INITIAL_EVENT_STATE,
+    pendingEvent: null,
   };
 }
 

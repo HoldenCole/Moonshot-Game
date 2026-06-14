@@ -5,6 +5,7 @@ import type { Industry, Stage, SubIndustry } from "./ids";
 import type { CapTable, Money } from "./captable";
 import type { Alert, LogEntry, RunwayBand } from "./log";
 import type { CompanyContent } from "./content";
+import type { EventState, ResolvedEvent } from "./events";
 
 export const SCHEMA_VERSION = 1;
 
@@ -14,6 +15,9 @@ export interface FounderState {
   reputation: number;
   /** Personal liquid wealth, $M (separate from company equity). */
   personalCash: Money;
+  /** Integrity score, 0–100 (decision L/M). Nudged by event choices; mostly a
+   *  hidden risk meter in V1, deepened by scandals/activists in DLCs. */
+  ethics: number;
 }
 
 /** Two-tier investor memory: a numeric score plus, for hand-crafted firms, an
@@ -126,4 +130,8 @@ export interface GameState {
   achievedMilestones: number[];
   /** Per-firm relationship memory, keyed by firm id. */
   relationships: Record<string, FirmRelationship>;
+  /** Cooldown / one-shot bookkeeping for the events engine. */
+  eventState: EventState;
+  /** The event currently awaiting the player's choice (blocks advance). */
+  pendingEvent: ResolvedEvent | null;
 }

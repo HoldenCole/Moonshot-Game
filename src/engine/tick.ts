@@ -6,9 +6,25 @@
 import type { GameState } from "@/domain/state";
 import type { Alert, LogEntry, RunwayBand, StopReason } from "@/domain/log";
 import type { Tuning } from "@/domain/tuning";
+import type { EventContent, EventTone } from "@/domain/content";
+import type { Company } from "@/content/load";
 import { makeRng } from "./rng";
 import { snapshotWorld, stepWorld } from "./world";
 import { bandWorsened, netWorth, runwayBand, runwayMonths } from "./finance";
+import { evaluateEvents } from "./events";
+
+/** What the events engine needs to run inside a tick. */
+export interface EventEnv {
+  events: EventContent[];
+  market: Company[];
+}
+
+const EVENT_TONE: Record<EventTone, LogEntry["tone"]> = {
+  opportunity: "opportunity",
+  threat: "warn",
+  crisis: "crisis",
+  neutral: "neutral",
+};
 
 export const WEEKS_PER_MONTH = 13 / 3; // ≈ 4.333
 
@@ -38,10 +54,12 @@ interface WeekResult {
   /** A decision-worthy alert fired this week (stops "next decision"). */
   decision: boolean;
   outOfCash: boolean;
+  /** An event surfaced this week (a hard stop — blocks advance until resolved). */
+  eventFired: boolean;
 }
 
 /** Resolve exactly one week. Pure: same input state + tuning → same output. */
-export function tickWeek(state: GameState, tuning: Tuning): WeekResult {
+export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): WeekResult {
   const week = state.clock.week + 1;
   const rng = makeRng(state.meta.rngState);
   const entries: LogEntry[] = [];
@@ -88,12 +106,26 @@ export function tickWeek(state: GameState, tuning: Tuning): WeekResult {
   next = milestone.state;
   entries.push(...milestone.entries);
 
+  // 5 — Events evaluate (the connective tissue). At most one surfaces; it's a
+  //     hard stop that blocks advance until the player resolves it.
+  let eventFired = false;
+  if (env && !next.pendingEvent) {
+    const et = evaluateEvents(next, env.events, env.market, rng);
+    next = { ...next, eventState: et.eventState };
+    if (et.event) {
+      next = { ...next, pendingEvent: et.event };
+      entries.push({ id: `w${week}-event-${et.event.id}`, week, kind: "company", tone: EVENT_TONE[et.event.tone], headline: et.event.headline });
+      eventFired = true;
+      decision = true;
+    }
+  }
+
   next = { ...next, log: [...next.log, ...entries], alerts: mergeAlerts(next.alerts, alerts) };
-  return { state: next, entries, alerts, decision, outOfCash: newBand === "empty" };
+  return { state: next, entries, alerts, decision, outOfCash: newBand === "empty", eventFired };
 }
 
 /** Advance multiple weeks or until the next decision. */
-export function advance(state: GameState, tuning: Tuning, mode: AdvanceMode): AdvanceResult {
+export function advance(state: GameState, tuning: Tuning, mode: AdvanceMode, env?: EventEnv): AdvanceResult {
   const produced: LogEntry[] = [];
   const newAlerts: Alert[] = [];
   let cur = state;
@@ -103,7 +135,7 @@ export function advance(state: GameState, tuning: Tuning, mode: AdvanceMode): Ad
   const cap = mode.type === "nextDecision" ? tuning.advance.nextDecisionCapWeeks : mode.weeks ?? 1;
 
   for (let i = 0; i < cap; i++) {
-    const r = tickWeek(cur, tuning);
+    const r = tickWeek(cur, tuning, env);
     cur = r.state;
     weeks++;
     produced.push(...r.entries);
@@ -111,6 +143,11 @@ export function advance(state: GameState, tuning: Tuning, mode: AdvanceMode): Ad
 
     if (r.outOfCash) {
       stopReason = "out_of_cash";
+      break;
+    }
+    // A surfaced event is a hard stop for any advance mode.
+    if (r.eventFired) {
+      stopReason = "decision";
       break;
     }
     if (mode.type === "nextDecision") {

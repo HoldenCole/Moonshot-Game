@@ -13,6 +13,7 @@ import { applyRound } from "@/engine/captable";
 import { advance as engineAdvance, checkMilestones, type AdvanceMode } from "@/engine/tick";
 import { runwayBand } from "@/engine/finance";
 import { valuationMultiplier } from "@/engine/world";
+import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
 import {
   agentFromFirm,
   counterOffer as engineCounter,
@@ -38,6 +39,8 @@ interface GameStore {
   newGame: (choices: FoundingChoices) => void;
   advance: (mode: AdvanceMode) => void;
   dismissAlert: (id: string) => void;
+  /** Resolve the pending event by choosing one of its options. */
+  resolveEvent: (choiceIndex: number) => void;
 
   startNegotiation: (leadInvestorId: string, openingTerms: RoundTerms) => void;
   counterOffer: (terms: RoundTerms) => void;
@@ -71,7 +74,11 @@ export const useGame = create<GameStore>((set, get) => ({
   advance: (mode) =>
     set((s) => {
       if (!s.game) return s;
-      const r = engineAdvance(s.game, s.content.tuning, mode);
+      const env = {
+        events: s.content.events,
+        market: [...s.content.companies, ...s.game.market.companies],
+      };
+      const r = engineAdvance(s.game, s.content.tuning, mode, env);
       return {
         game: r.state,
         lastAdvance: { weeks: r.weeks, stopReason: r.stopReason, atWeek: r.state.clock.week },
@@ -82,6 +89,25 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) =>
       s.game ? { game: { ...s.game, alerts: s.game.alerts.filter((a) => a.id !== id) } } : s,
     ),
+
+  resolveEvent: (choiceIndex) =>
+    set((s) => {
+      if (!s.game || !s.game.pendingEvent) return s;
+      const ev = s.game.pendingEvent;
+      const choice = ev.choices[choiceIndex];
+      if (!choice) return s;
+      const fx = resolveOutcome(choice, s.game);
+      const after = applyEventOutcome(s.game, fx);
+      const entry: LogEntry = {
+        id: `evres-${ev.id}-${s.game.clock.week}`,
+        week: s.game.clock.week,
+        kind: "company",
+        tone: fx.cash < 0 || fx.ethics < 0 ? "warn" : "up",
+        headline: `${ev.headline.replace(/\{.*?\}/g, "").trim()} — ${choice.label}`,
+        detail: fx.result,
+      };
+      return { game: { ...after, pendingEvent: null, log: [...after.log, entry] } };
+    }),
 
   startNegotiation: (leadInvestorId, openingTerms) => {
     const s = get();

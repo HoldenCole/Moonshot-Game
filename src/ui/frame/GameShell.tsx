@@ -10,6 +10,7 @@ import { FundraisingView } from "@/ui/views/FundraisingView";
 import { WorldView } from "@/ui/views/WorldView";
 import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
+import { EventModal } from "@/ui/events/EventModal";
 import { useGame } from "@/state/store";
 
 function CapTableView() {
@@ -43,6 +44,7 @@ export function GameShell() {
         </main>
         {view !== "market" && view !== "world" && <NarrativeRail />}
       </div>
+      <EventModal />
     </div>
   );
 }

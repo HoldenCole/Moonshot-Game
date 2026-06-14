@@ -2378,3 +2378,101 @@
   color: var(--accent);
   font-weight: 600;
 }
+
+/* ── Event modal (the connective-tissue decision) ──────────────────────────── */
+
+.event-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 24px;
+}
+.event-modal {
+  width: min(560px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--bg);
+  border-top: 3px solid var(--accent);
+  padding: 22px 26px 24px;
+}
+.event-modal--crisis {
+  border-top-color: var(--down);
+}
+.event-modal--threat {
+  border-top-color: var(--warn);
+}
+.event-modal--opportunity {
+  border-top-color: var(--up);
+}
+.event-modal--neutral {
+  border-top-color: var(--accent);
+}
+.event-modal__cat {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+.event-modal--crisis .event-modal__cat {
+  color: var(--down);
+}
+.event-modal--threat .event-modal__cat {
+  color: var(--warn);
+}
+.event-modal--opportunity .event-modal__cat {
+  color: var(--up);
+}
+.event-modal__headline {
+  font-size: 20px;
+  font-weight: 680;
+  letter-spacing: -0.01em;
+  margin: 8px 0 12px;
+  line-height: 1.25;
+}
+.event-modal__body {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin: 0 0 18px;
+  max-width: 60ch;
+}
+.event-modal__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+}
+.event-choice {
+  appearance: none;
+  text-align: left;
+  border: none;
+  background: var(--bg);
+  padding: 13px 15px;
+  cursor: pointer;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+.event-choice:hover {
+  background: var(--panel-2);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.event-choice__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.event-choice__detail {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.event-choice__effects {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  font-style: italic;
+  margin-top: 5px;
+  line-height: 1.4;
+}

@@ -47,7 +47,7 @@ export function TopBar() {
 
   const ipoTone = world.ipoWindow === "open" ? "up" : world.ipoWindow === "closed" ? "down" : "warn";
 
-  const pendingDecision = game.alerts.length > 0;
+  const pendingDecision = game.alerts.length > 0 || game.pendingEvent != null;
   const wksCritical = weeksToCritical(game, tuning);
   const hint = pendingDecision
     ? "Decision pending"
