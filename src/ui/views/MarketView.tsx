@@ -3,7 +3,6 @@ import { useGame } from "@/state/store";
 import type { Company } from "@/content/load";
 import { industryLabel, subIndustryLabel, type Industry } from "@/domain/ids";
 import { formatMoney, formatPct } from "@/engine/format";
-import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Segmented, Tag } from "@/ui/components/controls";
 
 type Sort = "valuation" | "revenue" | "fundamentals" | "growth";
@@ -32,75 +31,77 @@ export function MarketView() {
   }, [content.companies, industry, sort]);
 
   return (
-    <div className="workspace-scroll">
-      <Panel className="market" flush>
-        <PanelHeader
-          title="The Market"
-          sub={`${content.companies.length} companies across the frontier — your investment universe and competitive web`}
-          right={
-            <Segmented
-              size="sm"
-              value={sort}
-              onChange={(v) => setSort(v as Sort)}
-              options={[
-                { value: "valuation", label: "Valuation" },
-                { value: "revenue", label: "Revenue" },
-                { value: "growth", label: "Growth" },
-                { value: "fundamentals", label: "Quality" },
-              ]}
-            />
-          }
+    <div className="workspace-scroll market-view">
+      <div className="market-head">
+        <div>
+          <h3 className="panel__title">The Market</h3>
+          <div className="panel__sub">
+            {content.companies.length} companies across the frontier — your investment universe and
+            competitive web
+          </div>
+        </div>
+        <Segmented
+          size="sm"
+          value={sort}
+          onChange={(v) => setSort(v as Sort)}
+          options={[
+            { value: "valuation", label: "Valuation" },
+            { value: "revenue", label: "Revenue" },
+            { value: "growth", label: "Growth" },
+            { value: "fundamentals", label: "Quality" },
+          ]}
         />
-        <div className="market__filters">
-          {industries.map((ind) => (
-            <button
-              key={ind}
-              className={`chip${industry === ind ? " is-active" : ""}`}
-              onClick={() => setIndustry(ind)}
-            >
-              {ind === "all" ? "All sectors" : industryLabel(ind)}
-            </button>
+      </div>
+
+      <div className="market-filters">
+        {industries.map((ind) => (
+          <button
+            key={ind}
+            className={`chip${industry === ind ? " is-active" : ""}`}
+            onClick={() => setIndustry(ind)}
+          >
+            {ind === "all" ? "All sectors" : industryLabel(ind)}
+          </button>
+        ))}
+      </div>
+
+      <div className="market-grid">
+        <div className="market-grid__head market-grid__row">
+          <span>Company</span>
+          <span>Known for</span>
+          <span>Sub-industry</span>
+          <span>Stage</span>
+          <span className="ar">Valuation</span>
+          <span className="ar">Revenue</span>
+          <span className="ar">Growth</span>
+          <span className="ar">Fund.</span>
+          <span className="ar">Hype</span>
+        </div>
+        <div className="market-grid__rows">
+          {rows.map((c) => (
+            <div key={c.id} className="market-grid__row market-grid__data">
+              <span className="market-cell-name">
+                <span className="swatch swatch--sm" style={{ background: c.color }} />
+                <span className="strong">{c.name}</span>
+                {c.tier === "anchor" && <Tag>Anchor</Tag>}
+              </span>
+              <span className="market-cell-tag dim">{c.identity.tagline}</span>
+              <span className="dim">{subIndustryLabel(c.sub_industry)}</span>
+              <span>
+                <span className={`status-dot status-dot--${c.stage.status}`} />
+                {cap(c.stage.status)}
+              </span>
+              <span className="ar num strong">{formatMoney(c.financials.valuation)}</span>
+              <span className="ar num">{c.financials.revenue > 0 ? formatMoney(c.financials.revenue) : "—"}</span>
+              <span className="ar num">{formatPct(c.financials.revenue_growth, 0)}</span>
+              <span className="ar num dim">{c.quality.fundamentals}</span>
+              <span className="ar">
+                <HypeBar value={c.quality.hype_exposure} />
+              </span>
+            </div>
           ))}
         </div>
-
-        <table className="data-table market__table">
-          <thead>
-            <tr>
-              <th>Company</th>
-              <th>Sub-industry</th>
-              <th>Stage</th>
-              <th className="ar">Valuation</th>
-              <th className="ar">Revenue</th>
-              <th className="ar">Growth</th>
-              <th className="ar">Fund.</th>
-              <th className="ar">Hype</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((c) => (
-              <tr key={c.id}>
-                <td>
-                  <span className="swatch swatch--sm" style={{ background: c.color }} />
-                  <span className="strong">{c.name}</span>
-                  {c.tier === "anchor" && <Tag>Anchor</Tag>}
-                </td>
-                <td className="dim">{subIndustryLabel(c.sub_industry)}</td>
-                <td>
-                  <span className={`status-dot status-dot--${c.stage.status}`} />
-                  {cap(c.stage.status)}
-                </td>
-                <td className="ar num strong">{formatMoney(c.financials.valuation)}</td>
-                <td className="ar num">{c.financials.revenue > 0 ? formatMoney(c.financials.revenue) : "—"}</td>
-                <td className="ar num">{formatPct(c.financials.revenue_growth, 0)}</td>
-                <td className="ar num dim">{c.quality.fundamentals}</td>
-                <td className="ar">
-                  <HypeBar value={c.quality.hype_exposure} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Panel>
+      </div>
     </div>
   );
 }
