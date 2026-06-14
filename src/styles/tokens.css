@@ -38,17 +38,6 @@
   --warn-bg: rgba(240, 181, 78, 0.16);
   --info: #6f9cff;
   --info-bg: rgba(111, 156, 255, 0.16);
-
-  /* Cap-table series (stable order) */
-  --series-founder: #5b82ff;
-  --series-cofounder: #9b8cff;
-  --series-pool: #5b6678;
-  --series-1: #35d39a;
-  --series-2: #f5b945;
-  --series-3: #f4716f;
-  --series-4: #9b8cff;
-  --series-5: #58c6f5;
-  --series-6: #e879b9;
 }
 
 :root[data-theme="light"] {
@@ -81,19 +70,21 @@
   --warn-bg: #faeeda;
   --info: #185fa5;
   --info-bg: #e6f1fb;
-
-  --series-founder: #378add;
-  --series-cofounder: #7f77dd;
-  --series-pool: #b4b2a9;
-  --series-1: #1d9e75;
-  --series-2: #ef9f27;
-  --series-3: #e24b4a;
-  --series-4: #7f77dd;
-  --series-5: #4fa8d8;
-  --series-6: #c77dbb;
 }
 
 :root {
+  /* Cap-table series — one theme-independent palette so each segment's inline
+     label has predictable contrast. These mid-tones read on dark and light. */
+  --series-founder: #4f86e8;
+  --series-cofounder: #8b7be8;
+  --series-pool: #8a93a6;
+  --series-1: #1fa67e;
+  --series-2: #e59a33;
+  --series-3: #e0615f;
+  --series-4: #8b7be8;
+  --series-5: #46a8dc;
+  --series-6: #d27bb6;
+
   /* Type */
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;

@@ -30,3 +30,10 @@ export function holderColors(rows: Pick<OwnershipRow, "holderId" | "holderType">
 export function lotColors(lots: ShareLot[]): Map<string, string> {
   return holderColors(lots.map((l) => ({ holderId: l.holderId, holderType: l.holderType })));
 }
+
+/** Light-valued series that need dark label text on the ownership bar. */
+const LIGHT_SERIES = new Set(["var(--series-pool)", "var(--series-2)", "var(--series-5)"]);
+
+export function isLightSeries(color: string): boolean {
+  return LIGHT_SERIES.has(color);
+}

@@ -8,7 +8,7 @@ import {
 import { formatMoney, formatPct, formatShares } from "@/engine/format";
 import { StackedBar } from "@/ui/charts/StackedBar";
 import { Stat } from "@/ui/components/controls";
-import { holderColors } from "./colors";
+import { holderColors, isLightSeries } from "./colors";
 
 export function OverviewTab({ capTable }: { capTable: CapTable }) {
   const post = latestPostMoney(capTable);
@@ -19,12 +19,16 @@ export function OverviewTab({ capTable }: { capTable: CapTable }) {
   const totalRaised = capTable.rounds.reduce((s, r) => s + r.amountRaised, 0);
   const pricedRounds = capTable.rounds.filter((r) => r.postMoney > 0).length;
 
-  const segments = rows.map((r) => ({
-    key: r.holderId,
-    label: r.holderName,
-    value: r.ownership,
-    color: colors.get(r.holderId)!,
-  }));
+  const segments = rows.map((r) => {
+    const color = colors.get(r.holderId)!;
+    return {
+      key: r.holderId,
+      label: r.holderName,
+      value: r.ownership,
+      color,
+      labelDark: isLightSeries(color),
+    };
+  });
 
   return (
     <div className="captable-tab rise">

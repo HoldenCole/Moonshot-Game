@@ -758,10 +758,24 @@
   fill: var(--text-dim);
   font-size: 11px;
 }
-.stacked-bar {
-  display: block;
-  border-radius: 7px;
+/* Ownership bar — proportioned segments with inline labels, modest radius. */
+.ownbar {
+  display: flex;
+  width: 100%;
+  border-radius: var(--r);
   overflow: hidden;
+}
+.ownbar__seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+}
+.ownbar__lbl {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ── Cap table ─────────────────────────────────────────────────────────────── */
