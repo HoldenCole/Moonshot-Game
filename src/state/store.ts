@@ -16,6 +16,7 @@ import { valuationMultiplier } from "@/engine/world";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
+import { newlyUnlocked } from "@/engine/achievements";
 import type { Autonomy, Exec, ExecArea } from "@/domain/state";
 import {
   acquisitionOffer,
@@ -55,6 +56,8 @@ interface GameStore {
   exitFlow: ExitFlow;
   /** New Game Plus carry-over staged between runs. */
   carryOver: { reputation: number; personalCash: number } | null;
+  /** Newly-unlocked achievement ids to toast (cleared by the UI). */
+  achievementToast: string[] | null;
 
   newGame: (choices: FoundingChoices) => void;
   advance: (mode: AdvanceMode) => void;
@@ -85,10 +88,20 @@ interface GameStore {
   /** Start a new company after an exit, carrying reputation + wealth forward. */
   foundAgain: () => void;
 
+  /** Dismiss the achievement toast. */
+  clearAchievementToast: () => void;
+
   resetGame: () => void;
 }
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
+
+/** Record any newly-unlocked achievements and stage them for a toast. */
+function withAch(game: GameState): { game: GameState; achievementToast?: string[] } {
+  const newly = newlyUnlocked(game);
+  if (newly.length === 0) return { game };
+  return { game: { ...game, achievements: [...game.achievements, ...newly] }, achievementToast: newly };
+}
 
 export const useGame = create<GameStore>((set, get) => ({
   content: loadContent(),
@@ -97,6 +110,7 @@ export const useGame = create<GameStore>((set, get) => ({
   negotiation: null,
   exitFlow: null,
   carryOver: null,
+  achievementToast: null,
 
   newGame: (choices) =>
     set((s) => ({
@@ -120,9 +134,11 @@ export const useGame = create<GameStore>((set, get) => ({
         market: [...s.content.companies, ...s.game.market.companies],
       };
       const r = engineAdvance(s.game, s.content.tuning, mode, env);
+      const a = withAch(r.state);
       return {
-        game: r.state,
+        game: a.game,
         lastAdvance: { weeks: r.weeks, stopReason: r.stopReason, atWeek: r.state.clock.week },
+        ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}),
       };
     }),
 
@@ -147,7 +163,8 @@ export const useGame = create<GameStore>((set, get) => ({
         headline: `${ev.headline.replace(/\{.*?\}/g, "").trim()} — ${choice.label}`,
         detail: fx.result,
       };
-      return { game: { ...after, pendingEvent: null, log: [...after.log, entry] } };
+      const a = withAch({ ...after, pendingEvent: null, log: [...after.log, entry] });
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
   commitSignature: () =>
@@ -155,33 +172,33 @@ export const useGame = create<GameStore>((set, get) => ({
       if (!s.game || s.game.company.signature.status === "running") return s;
       // A one-off RNG draw seeded off the save's state — deterministic per commit.
       const rng = makeRng((s.game.meta.rngState ^ (s.game.clock.week << 8)) >>> 0);
-      return { game: commitProcess(s.game, rng) };
+      const a = withAch(commitProcess(s.game, rng));
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
   hireExec: (exec, cost) =>
     set((s) => {
       if (!s.game || s.game.company.financials.cash < cost) return s;
       const company = s.game.company;
-      return {
-        game: {
-          ...s.game,
-          company: {
-            ...company,
-            financials: { ...company.financials, cash: company.financials.cash - cost, headcount: company.financials.headcount + 1 },
-            executives: { ...company.executives, [exec.area]: exec },
-            // Hiring an exec opens that area up to delegation.
-            delegation: { ...company.delegation, [exec.area]: "recommend" as Autonomy },
-          },
+      const a = withAch({
+        ...s.game,
+        company: {
+          ...company,
+          financials: { ...company.financials, cash: company.financials.cash - cost, headcount: company.financials.headcount + 1 },
+          executives: { ...company.executives, [exec.area]: exec },
+          // Hiring an exec opens that area up to delegation.
+          delegation: { ...company.delegation, [exec.area]: "recommend" as Autonomy },
         },
-      };
+      });
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
   setAutonomy: (area, autonomy) =>
-    set((s) =>
-      s.game
-        ? { game: { ...s.game, company: { ...s.game.company, delegation: { ...s.game.company.delegation, [area]: autonomy } } } }
-        : s,
-    ),
+    set((s) => {
+      if (!s.game) return s;
+      const a = withAch({ ...s.game, company: { ...s.game.company, delegation: { ...s.game.company.delegation, [area]: autonomy } } });
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
 
   startNegotiation: (leadInvestorId, openingTerms) => {
     const s = get();
@@ -211,7 +228,8 @@ export const useGame = create<GameStore>((set, get) => ({
     if (!s.game || !neg) return;
     const terms = neg.status === "agreed" ? neg.agreedTerms : neg.currentCounter;
     if (!terms) return;
-    set({ game: closeRound(s.game, s.content, neg, terms), negotiation: null });
+    const a = withAch(closeRound(s.game, s.content, neg, terms));
+    set({ game: a.game, negotiation: null, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) });
   },
 
   walkAway: () =>
@@ -262,7 +280,8 @@ export const useGame = create<GameStore>((set, get) => ({
         headline: `${s.game.company.name} rang the bell — public at ${formatMoney(result.publicValuation)}`,
         detail: `Led by ${bank.name}. First day ${result.firstDayPop >= 0 ? "+" : ""}${Math.round(result.firstDayPop * 100)}%.`,
       };
-      return { game: { ...after, log: [...after.log, entry] }, exitFlow: null };
+      const a = withAch({ ...after, log: [...after.log, entry] });
+      return { game: a.game, exitFlow: null, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
   exploreSale: () =>
@@ -277,10 +296,13 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       if (!s.game || s.exitFlow?.kind !== "acquisition") return s;
       const { state, outcome } = applyAcquisition(s.game, s.exitFlow.offer);
-      return { game: { ...state, runOutcome: outcome }, exitFlow: null };
+      const a = withAch({ ...state, runOutcome: outcome });
+      return { game: a.game, exitFlow: null, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
   cancelExit: () => set({ exitFlow: null }),
+
+  clearAchievementToast: () => set({ achievementToast: null }),
 
   foundAgain: () =>
     set((s) =>

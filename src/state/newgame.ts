@@ -124,6 +124,7 @@ export function createNewGame(
     eventState: INITIAL_EVENT_STATE,
     pendingEvent: null,
     runOutcome: null,
+    achievements: [],
   };
 }
 

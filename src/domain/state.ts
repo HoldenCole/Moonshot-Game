@@ -184,4 +184,6 @@ export interface GameState {
   pendingEvent: ResolvedEvent | null;
   /** Set when the run has ended (drives the between-companies screen). */
   runOutcome: RunOutcome | null;
+  /** Unlocked achievement ids (persist across the run). */
+  achievements: string[];
 }

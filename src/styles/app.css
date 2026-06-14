@@ -2933,3 +2933,96 @@
   max-width: 58ch;
   margin: 0 0 24px;
 }
+
+/* ── Achievements (Phase 10b) ──────────────────────────────────────────────── */
+
+.ach-toasts {
+  position: fixed;
+  top: calc(var(--topbar-h) + var(--ticker-h) + 12px);
+  right: 16px;
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ach-toast {
+  display: flex;
+  gap: 11px;
+  width: 290px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 0.5px solid var(--border-strong);
+  border-left: 3px solid var(--warn);
+}
+.ach-toast--gold {
+  border-left-color: #e8b923;
+}
+.ach-toast--silver {
+  border-left-color: #b8c0cc;
+}
+.ach-toast--bronze {
+  border-left-color: #c8893d;
+}
+.ach-toast__medal {
+  font-size: 20px;
+  color: var(--warn);
+}
+.ach-toast--gold .ach-toast__medal {
+  color: #e8b923;
+}
+.ach-toast__kicker {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-faint);
+}
+.ach-toast__name {
+  font-size: 14px;
+  font-weight: 680;
+  margin: 1px 0;
+}
+.ach-toast__desc {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1px;
+  background: var(--border);
+}
+.ach-cell {
+  display: flex;
+  gap: 11px;
+  padding: 12px 14px;
+  background: var(--bg);
+  opacity: 0.5;
+}
+.ach-cell.is-on {
+  opacity: 1;
+}
+.ach-cell__medal {
+  font-size: 18px;
+  color: var(--text-ghost);
+}
+.ach-cell.is-on.ach-cell--gold .ach-cell__medal {
+  color: #e8b923;
+}
+.ach-cell.is-on.ach-cell--silver .ach-cell__medal {
+  color: #b8c0cc;
+}
+.ach-cell.is-on.ach-cell--bronze .ach-cell__medal {
+  color: #c8893d;
+}
+.ach-cell__name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.ach-cell__desc {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  line-height: 1.4;
+  margin-top: 1px;
+}

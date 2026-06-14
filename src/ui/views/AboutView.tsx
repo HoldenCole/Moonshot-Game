@@ -1,12 +1,36 @@
 import { useGame } from "@/state/store";
+import { ACHIEVEMENTS } from "@/engine/achievements";
 import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Tag } from "@/ui/components/controls";
 
 export function AboutView() {
   const content = useGame((s) => s.content);
+  const achievements = useGame((s) => s.game?.achievements);
+  const unlocked = new Set(achievements ?? []);
 
   return (
     <div className="workspace-scroll">
+      <Panel className="achievements">
+        <PanelHeader
+          title="Achievements"
+          sub={`${unlocked.size} of ${ACHIEVEMENTS.length} unlocked`}
+        />
+        <div className="ach-grid">
+          {ACHIEVEMENTS.map((a) => {
+            const on = unlocked.has(a.id);
+            return (
+              <div key={a.id} className={`ach-cell ach-cell--${a.tier}${on ? " is-on" : ""}`}>
+                <span className="ach-cell__medal">{on ? "★" : "☆"}</span>
+                <div>
+                  <div className="ach-cell__name">{a.name}</div>
+                  <div className="ach-cell__desc">{on ? a.desc : "Locked"}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
+
       <Panel className="about">
         <PanelHeader title="Moonshot Inc" sub="Build status — what's playable, what's next" />
         <p className="about__lede">
@@ -31,13 +55,15 @@ export function AboutView() {
               <li><Tag tone="up">Done</Tag> Events engine + the 50 templates, slot-filled from the real market (Phase 7)</li>
               <li><Tag tone="up">Done</Tag> Personal wealth &amp; the net-worth ladder (Phase 8)</li>
               <li><Tag tone="up">Done</Tag> Signature mechanics + light delegation / auto-decisions (Phase 9)</li>
+              <li><Tag tone="up">Done</Tag> Exits: 3-act IPO + acquisition, the arc close, achievements (Phase 10)</li>
             </ul>
           </div>
           <div>
-            <h4 className="about__h">Next phases</h4>
+            <h4 className="about__h">Next</h4>
             <ul className="about__list">
-              <li><Tag tone="warn">Next</Tag> 3-act IPO, acquisition exits, achievements (Phase 10)</li>
-              <li><Tag>Later</Tag> Steam playtest prep, save migration (Phase 11)</li>
+              <li><Tag tone="up">Core loop complete</Tag> found → raise → run → exit → found again</li>
+              <li><Tag tone="warn">Next</Tag> Steam playtest prep: save/version migration, polish (Phase 11)</li>
+              <li><Tag>Later</Tag> Post-IPO earnings management, tutorial, the visual office layer</li>
             </ul>
           </div>
         </div>
