@@ -6,7 +6,7 @@
 import type { GameState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
 import { INITIAL_EVENT_STATE } from "@/domain/events";
-import { DEFAULT_DIFFICULTY } from "@/engine/difficulty";
+import { normalizeDifficulty } from "@/engine/difficulty";
 import { founderOwnership, latestPostMoney } from "@/engine/captable";
 import { IDLE_SIGNATURE } from "@/engine/signature";
 
@@ -105,7 +105,7 @@ function withDefaults(g: any): GameState {
   const world = g.world ?? {};
   return {
     ...g,
-    difficulty: g.difficulty ?? DEFAULT_DIFFICULTY,
+    difficulty: normalizeDifficulty(g.difficulty),
     founder: { reputation: 30, personalCash: 0, ethics: 60, ...g.founder },
     // Regime-transition memory (added for the macro event wiring) — backfill so
     // an older save reads as "settled" until the next real transition.

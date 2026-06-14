@@ -7,10 +7,10 @@ import {
   type Industry,
   type PlayableSubIndustry,
 } from "@/domain/ids";
-import type { DifficultyPreset, NewsCycle } from "@/domain/state";
-import { NEWS_CYCLES, PRESETS, previewBars } from "@/engine/difficulty";
+import type { DifficultyAxes, NewsCycle } from "@/domain/state";
+import { AXES, NEWS_CYCLES, PRESET_AXES, PRESETS, matchingPreset, previewBars } from "@/engine/difficulty";
 import { Icon } from "@/ui/components/Icon";
-import { Button, Segmented } from "@/ui/components/controls";
+import { Button, Segmented, Slider } from "@/ui/components/controls";
 import { saveSummary } from "@/state/persist";
 import { formatMoney } from "@/engine/format";
 
@@ -61,8 +61,10 @@ export function NewGameScreen() {
   const [founderName, setFounderName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [companyTouched, setCompanyTouched] = useState(false);
-  const [preset, setPreset] = useState<DifficultyPreset>("realistic");
+  const [axes, setAxes] = useState<DifficultyAxes>(PRESET_AXES.realistic);
   const [newsCycle, setNewsCycle] = useState<NewsCycle>("medium");
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const preset = matchingPreset(axes); // derived: which card is lit, or "custom"
 
   const suggestedCompany = sub ? NAME_SUGGESTIONS[sub] : "";
   const effectiveCompany = companyTouched ? companyName : suggestedCompany;
@@ -79,7 +81,7 @@ export function NewGameScreen() {
       subIndustry: sub,
       color: INDUSTRY_COLOR[sub] ?? "#5b82ff",
       seed: Math.floor(Math.random() * 2 ** 31),
-      difficulty: { preset, newsCycle },
+      difficulty: { preset, newsCycle, axes },
     });
   };
 
@@ -191,7 +193,7 @@ export function NewGameScreen() {
                 <button
                   key={p.id}
                   className={`difficulty-card${preset === p.id ? " is-active" : ""}`}
-                  onClick={() => setPreset(p.id)}
+                  onClick={() => setAxes(PRESET_AXES[p.id])}
                 >
                   <div className="difficulty-card__name">{p.label}</div>
                   <div className="difficulty-card__tag">{p.tagline}</div>
@@ -201,8 +203,11 @@ export function NewGameScreen() {
 
             <div className="difficulty-preview">
               <div className="difficulty-preview__bars">
-                <div className="difficulty-preview__cap">The world this builds</div>
-                {previewBars(preset).map((b) => (
+                <div className="difficulty-preview__cap">
+                  The world this builds
+                  {preset === "custom" && <span className="difficulty-custom-tag">Custom</span>}
+                </div>
+                {previewBars(axes).map((b) => (
                   <div key={b.label} className="profilebar" title={b.hint}>
                     <span className="profilebar__label">{b.label}</span>
                     <span className="profilebar__track">
@@ -222,6 +227,32 @@ export function NewGameScreen() {
                 <div className="difficulty-news__blurb">{NEWS_CYCLES.find((n) => n.id === newsCycle)?.blurb}</div>
               </div>
             </div>
+
+            <button
+              className={`difficulty-advanced-toggle${advancedOpen ? " is-open" : ""}`}
+              onClick={() => setAdvancedOpen((o) => !o)}
+              aria-expanded={advancedOpen}
+            >
+              <Icon name="chevron-right" size={13} />
+              Advanced — tune each axis
+            </button>
+            {advancedOpen && (
+              <div className="difficulty-sliders">
+                {AXES.map((a) => (
+                  <Slider
+                    key={a.key}
+                    label={a.label}
+                    value={axes[a.key]}
+                    min={a.min}
+                    max={a.max}
+                    step={0.05}
+                    onChange={(v) => setAxes({ ...axes, [a.key]: v })}
+                    format={(v) => `${v.toFixed(2)}×`}
+                    hint={a.hint}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 

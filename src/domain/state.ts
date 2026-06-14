@@ -155,13 +155,30 @@ export interface RunOutcome {
   headline: string;
 }
 
-/** Locked-at-start difficulty: a preset (which derives the engine multipliers)
- *  plus a separate News Cycle that governs how much the UI tells you. */
+/** Locked-at-start difficulty: a preset (or "custom" once a slider moves), the
+ *  authoritative tunable axes, and a separate News Cycle for UI transparency. */
 export type DifficultyPreset = "forgiving" | "realistic" | "brutal";
 export type NewsCycle = "easy" | "medium" | "hard";
+/** Each axis is a multiplier; 1.0 is the baseline (Realistic). Presets pre-fill
+ *  these; the Advanced sliders edit them directly. */
+export interface DifficultyAxes {
+  /** World swing — volatility + shock frequency. */
+  volatility: number;
+  /** How fast the macro cycle turns over. */
+  cycleSpeed: number;
+  /** How generously rounds price. */
+  capitalClimate: number;
+  /** Founder's opening capital. */
+  startingCapital: number;
+  /** Opening monthly burn. */
+  burnRate: number;
+  /** How hard the bad side of an event outcome bites. */
+  eventSeverity: number;
+}
 export interface Difficulty {
-  preset: DifficultyPreset;
+  preset: DifficultyPreset | "custom";
   newsCycle: NewsCycle;
+  axes: DifficultyAxes;
 }
 
 export interface GameMeta {

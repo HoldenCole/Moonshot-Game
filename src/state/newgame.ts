@@ -7,7 +7,7 @@ import { SCHEMA_VERSION } from "@/domain/state";
 import type { RoundTerms } from "@/domain/captable";
 import type { CompanyContent } from "@/domain/content";
 import { INITIAL_EVENT_STATE } from "@/domain/events";
-import { DEFAULT_DIFFICULTY, difficultyProfile } from "@/engine/difficulty";
+import { normalizeDifficulty } from "@/engine/difficulty";
 import { foundCompany } from "@/engine/captable";
 import { IDLE_SIGNATURE } from "@/engine/signature";
 import { snapshotWorld } from "@/engine/world";
@@ -46,10 +46,12 @@ export function createNewGame(
       : undefined,
   });
 
-  const difficulty = choices.difficulty ?? DEFAULT_DIFFICULTY;
-  // Founding capital scales with difficulty — more cushion on Forgiving, a
-  // tighter garage on Brutal.
-  const startingCash = Math.round(0.75 * difficultyProfile(difficulty).startingCapital * 100) / 100;
+  const difficulty = normalizeDifficulty(choices.difficulty);
+  const axes = difficulty.axes;
+  // Founding capital and opening burn scale with difficulty — more cushion and a
+  // lighter burn on Forgiving, a tighter garage on Brutal.
+  const startingCash = Math.round(0.75 * axes.startingCapital * 100) / 100;
+  const startingBurn = Math.round(0.08 * axes.burnRate * 1000) / 1000;
 
   // Opening "weather": a healthy late-expansion, all eight industries seeded
   // at their hype baselines so the public market (Phase 6) reads from them.
@@ -106,7 +108,7 @@ export function createNewGame(
       financials: {
         cash: startingCash, // base ~$750K of founder / F&F capital, scaled by difficulty
         revenue: 0,
-        burnMonthly: 0.08,
+        burnMonthly: startingBurn, // base $80K/mo, scaled by the burn-rate axis
         headcount: choices.cofounder ? 3 : 2,
         valuation: 0,
       },
