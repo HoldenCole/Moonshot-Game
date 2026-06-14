@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useGame } from "@/state/store";
+import { WealthPopover } from "./WealthPopover";
 import { latestPostMoney, founderOwnership } from "@/engine/captable";
 import { runwayMonths } from "@/engine/finance";
 import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
@@ -100,12 +102,7 @@ export function TopBar() {
       </div>
 
       <div className="topbar__right">
-        <div className="topbar__networth">
-          <span className="topbar__networth-label">Net worth</span>
-          <span className="topbar__networth-value num">
-            {nw > 0 ? <FlashNum value={nw} format={(n) => formatMoney(n)} count /> : "—"}
-          </span>
-        </div>
+        <Wealth nw={nw} />
         <div className="topbar__runway">
           <span className="topbar__networth-label">Runway</span>
           <span className={`topbar__networth-value num${runway !== Infinity && runway <= tuning.runway.criticalMonths ? " gauge__value--down" : ""}`}>
@@ -118,6 +115,21 @@ export function TopBar() {
         </button>
       </div>
     </header>
+  );
+}
+
+function Wealth({ nw }: { nw: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="topbar__wealth">
+      <button className="topbar__networth" onClick={() => setOpen((o) => !o)} title="Net worth breakdown">
+        <span className="topbar__networth-label">Net worth</span>
+        <span className="topbar__networth-value num">
+          {nw > 0 ? <FlashNum value={nw} format={(n) => formatMoney(n)} count /> : "—"}
+        </span>
+      </button>
+      {open && <WealthPopover onClose={() => setOpen(false)} />}
+    </div>
   );
 }
 
