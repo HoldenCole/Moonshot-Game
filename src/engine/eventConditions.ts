@@ -46,8 +46,8 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
     "company.trains_models": sub === "frontier_model_lab",
     "company.has_public_model": sub === "frontier_model_lab" && stageR >= stageRank("seed"),
     "company.deployment_scale": stageR >= stageRank("series_b") ? "large" : stageR >= stageRank("seed") ? "medium" : "small",
-    // Phase 9 signature mechanics — not committed yet, so these gate to false.
-    "company.training_run_committed": false,
+    // True while a signature process is running (feeds the a4/a5 run events).
+    "company.training_run_committed": sub === "frontier_model_lab" && c.signature.status === "running",
     "world.star_talent_available": true,
     "founder.reputation": state.founder.reputation,
     "founder.personal_wealth": netWorth(state),

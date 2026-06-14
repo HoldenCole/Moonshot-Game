@@ -30,6 +30,22 @@ export interface FirmRelationship {
 
 export const NEUTRAL_RELATIONSHIP = 50;
 
+/** The sub-industry signature process (Phase 9): a commit→anticipate→resolve
+ *  loop that gives the player something to advance toward. */
+export interface SignatureState {
+  status: "idle" | "running" | "resolved";
+  /** Process noun, e.g. "training run", "launch", "fab tape-out". */
+  noun: string;
+  /** Display name, e.g. "Helion-3 training run". */
+  name: string;
+  metricLabel: string;
+  startWeek: number;
+  endWeek: number;
+  /** Cash committed to the current process, $M. */
+  committed: Money;
+  lastOutcome?: { kind: "success" | "partial" | "failure"; summary: string; week: number };
+}
+
 /** The player's company — the operating entity at the center of the board. */
 export interface PlayerCompany {
   name: string;
@@ -51,6 +67,8 @@ export interface PlayerCompany {
     valuation: Money;
   };
   capTable: CapTable;
+  /** The sub-industry signature process. */
+  signature: SignatureState;
 }
 
 export type MacroPhase = "expansion" | "peak" | "contraction" | "trough" | "recovery";

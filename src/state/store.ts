@@ -14,6 +14,8 @@ import { advance as engineAdvance, checkMilestones, type AdvanceMode } from "@/e
 import { runwayBand } from "@/engine/finance";
 import { valuationMultiplier } from "@/engine/world";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
+import { commitProcess } from "@/engine/signature";
+import { makeRng } from "@/engine/rng";
 import {
   agentFromFirm,
   counterOffer as engineCounter,
@@ -41,6 +43,8 @@ interface GameStore {
   dismissAlert: (id: string) => void;
   /** Resolve the pending event by choosing one of its options. */
   resolveEvent: (choiceIndex: number) => void;
+  /** Commit the sub-industry signature process (a training run, a launch, …). */
+  commitSignature: () => void;
 
   startNegotiation: (leadInvestorId: string, openingTerms: RoundTerms) => void;
   counterOffer: (terms: RoundTerms) => void;
@@ -107,6 +111,14 @@ export const useGame = create<GameStore>((set, get) => ({
         detail: fx.result,
       };
       return { game: { ...after, pendingEvent: null, log: [...after.log, entry] } };
+    }),
+
+  commitSignature: () =>
+    set((s) => {
+      if (!s.game || s.game.company.signature.status === "running") return s;
+      // A one-off RNG draw seeded off the save's state — deterministic per commit.
+      const rng = makeRng((s.game.meta.rngState ^ (s.game.clock.week << 8)) >>> 0);
+      return { game: commitProcess(s.game, rng) };
     }),
 
   startNegotiation: (leadInvestorId, openingTerms) => {

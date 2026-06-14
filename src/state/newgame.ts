@@ -8,6 +8,7 @@ import type { RoundTerms } from "@/domain/captable";
 import type { CompanyContent } from "@/domain/content";
 import { INITIAL_EVENT_STATE } from "@/domain/events";
 import { foundCompany } from "@/engine/captable";
+import { IDLE_SIGNATURE } from "@/engine/signature";
 import { snapshotWorld } from "@/engine/world";
 import { generateMarket } from "@/engine/worldgen";
 
@@ -96,6 +97,7 @@ export function createNewGame(
         valuation: 0,
       },
       capTable,
+      signature: IDLE_SIGNATURE,
     },
     world,
     market: { companies: generateMarket(choices.seed, anchors, firmIds) },

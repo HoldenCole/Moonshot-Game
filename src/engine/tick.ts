@@ -12,6 +12,7 @@ import { makeRng } from "./rng";
 import { snapshotWorld, stepWorld } from "./world";
 import { bandWorsened, netWorth, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
+import { tickProcess } from "./signature";
 
 /** What the events engine needs to run inside a tick. */
 export interface EventEnv {
@@ -89,6 +90,16 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     meta: { ...state.meta, rngState: rng.state },
   };
 
+  // 2b — Signature process: creep forward; resolve at its end week (a stop).
+  let processResolved = false;
+  const proc = tickProcess(next, rng);
+  next = proc.state;
+  if (proc.resolved) {
+    entries.push(proc.resolved);
+    processResolved = true;
+    decision = true;
+  }
+
   // 3 — Threshold checks: fire an alert only when the runway band worsens.
   const newBand = runwayBand(company, tuning);
   if (bandWorsened(state.lastRunwayBand, newBand)) {
@@ -121,7 +132,7 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   }
 
   next = { ...next, log: [...next.log, ...entries], alerts: mergeAlerts(next.alerts, alerts) };
-  return { state: next, entries, alerts, decision, outOfCash: newBand === "empty", eventFired };
+  return { state: next, entries, alerts, decision, outOfCash: newBand === "empty", eventFired: eventFired || processResolved };
 }
 
 /** Advance multiple weeks or until the next decision. */
