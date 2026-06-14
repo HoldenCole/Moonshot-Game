@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import { useGame } from "@/state/store";
+import { usePrefs } from "@/state/prefs";
 import type { Company } from "@/content/load";
 import { industryLabel, subIndustryLabel, type Industry } from "@/domain/ids";
 import { formatMoney, formatPct } from "@/engine/format";
 import { Segmented, Tag } from "@/ui/components/controls";
+import { useMarketTape } from "./useMarketTape";
 
 type Sort = "valuation" | "revenue" | "fundamentals" | "growth";
 
@@ -30,11 +32,17 @@ export function MarketView() {
     return [...filtered].sort((a, b) => key(b) - key(a));
   }, [content.companies, industry, sort]);
 
+  const reduceMotion = usePrefs((s) => s.reduceMotion);
+  const ids = useMemo(() => rows.map((r) => r.id), [rows]);
+  const ticks = useMarketTape(ids, !reduceMotion);
+
   return (
     <div className="workspace-scroll market-view">
       <div className="market-head">
         <div>
-          <h3 className="panel__title">The Market</h3>
+          <h3 className="panel__title">
+            The Market <span className="live-dot" />
+          </h3>
           <div className="panel__sub">
             {content.companies.length} companies across the frontier — your investment universe and
             competitive web
@@ -72,34 +80,44 @@ export function MarketView() {
           <span>Sub-industry</span>
           <span>Stage</span>
           <span className="ar">Valuation</span>
+          <span className="ar">Move</span>
           <span className="ar">Revenue</span>
           <span className="ar">Growth</span>
-          <span className="ar">Fund.</span>
           <span className="ar">Hype</span>
         </div>
         <div className="market-grid__rows">
-          {rows.map((c) => (
-            <div key={c.id} className="market-grid__row market-grid__data">
-              <span className="market-cell-name">
-                <span className="swatch swatch--sm" style={{ background: c.color }} />
-                <span className="strong">{c.name}</span>
-                {c.tier === "anchor" && <Tag>Anchor</Tag>}
-              </span>
-              <span className="market-cell-tag dim">{c.identity.tagline}</span>
-              <span className="dim">{subIndustryLabel(c.sub_industry)}</span>
-              <span>
-                <span className={`status-dot status-dot--${c.stage.status}`} />
-                {cap(c.stage.status)}
-              </span>
-              <span className="ar num strong">{formatMoney(c.financials.valuation)}</span>
-              <span className="ar num">{c.financials.revenue > 0 ? formatMoney(c.financials.revenue) : "—"}</span>
-              <span className="ar num">{formatPct(c.financials.revenue_growth, 0)}</span>
-              <span className="ar num dim">{c.quality.fundamentals}</span>
-              <span className="ar">
-                <HypeBar value={c.quality.hype_exposure} />
-              </span>
-            </div>
-          ))}
+          {rows.map((c) => {
+            const t = ticks[c.id];
+            const pct = t?.pct ?? 0;
+            return (
+              <div key={c.id} className="market-grid__row market-grid__data">
+                <span className="market-cell-name">
+                  <span className="swatch swatch--sm" style={{ background: c.color }} />
+                  <span className="strong">{c.name}</span>
+                  {c.tier === "anchor" && <Tag>Anchor</Tag>}
+                </span>
+                <span className="market-cell-tag dim">{c.identity.tagline}</span>
+                <span className="dim">{subIndustryLabel(c.sub_industry)}</span>
+                <span>
+                  <span className={`status-dot status-dot--${c.stage.status}`} />
+                  {cap(c.stage.status)}
+                </span>
+                <span className="ar num strong">{formatMoney(c.financials.valuation)}</span>
+                <span
+                  key={t?.n ?? 0}
+                  className={`ar num market-move ${pct >= 0 ? "up" : "down"} ${t ? (t.dir === "up" ? "tick-up" : "tick-down") : ""}`}
+                >
+                  {pct >= 0 ? "+" : ""}
+                  {pct.toFixed(1)}%
+                </span>
+                <span className="ar num">{c.financials.revenue > 0 ? formatMoney(c.financials.revenue) : "—"}</span>
+                <span className="ar num">{formatPct(c.financials.revenue_growth, 0)}</span>
+                <span className="ar">
+                  <HypeBar value={c.quality.hype_exposure} />
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

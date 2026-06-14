@@ -1406,7 +1406,23 @@
 /* Market — a grid-list whose rows flex to fill the height (no dead space) and
    whose "Known for" column absorbs horizontal width (no mid-row gap). */
 .market-view {
-  --mcols: minmax(160px, 1.3fr) minmax(170px, 2.4fr) 150px 96px 110px 100px 66px 56px 66px;
+  --mcols: minmax(160px, 1.3fr) minmax(170px, 2.4fr) 150px 96px 110px 72px 100px 66px 66px;
+}
+.market-move {
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.market-move.up {
+  color: var(--up);
+}
+.market-move.down {
+  color: var(--down);
+}
+.tick-up {
+  animation: flash-up 0.32s ease-out;
+}
+.tick-down {
+  animation: flash-down 0.32s ease-out;
 }
 .market-head {
   display: flex;
@@ -2130,4 +2146,72 @@
   font-size: 11px;
   color: var(--text-faint);
   margin-top: 6px;
+}
+
+/* ── Narrative rail (voiced) ───────────────────────────────────────────────── */
+
+.narrative__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.narrative__skip {
+  font-size: 10px;
+  color: var(--text-ghost);
+}
+.narrative__date {
+  font-size: 10px;
+  color: var(--text-ghost);
+  font-style: italic;
+  margin: 0 0 6px;
+}
+.ceo-log__body {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-dim);
+  margin: 0;
+  max-width: 52ch;
+}
+.ceo-log__body strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.feed__item {
+  padding: 9px 0;
+}
+.feed__item + .feed__item {
+  border-top: 0.5px solid var(--border);
+}
+.feed__line {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-dim);
+  margin: 0;
+}
+.feed__who {
+  color: var(--text);
+  font-weight: 600;
+}
+.feed__new {
+  color: var(--accent);
+  font-weight: 600;
+  margin-left: 4px;
+}
+.feed__quote {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-faint);
+  line-height: 1.5;
+  margin: 3px 0 0;
+  max-width: 52ch;
+}
+.feed__age {
+  font-size: 10px;
+  color: var(--text-ghost);
+  margin: 3px 0 0;
 }
