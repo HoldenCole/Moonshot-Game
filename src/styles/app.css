@@ -1853,3 +1853,132 @@
   align-items: center;
   gap: 2px;
 }
+
+/* ── World view ────────────────────────────────────────────────────────────── */
+
+.world-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  border-bottom: 0.5px solid var(--border);
+}
+.world-gauge {
+  padding: 16px 20px 14px;
+  border-right: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+}
+.world-gauge__label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+}
+.world-gauge__value {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 6px 0 2px;
+  font-variant-numeric: tabular-nums;
+}
+.world-gauge__read {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  min-height: 16px;
+}
+.sparkline {
+  width: 100%;
+}
+.world-heat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.world-heat__label {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-ghost);
+}
+.world-heat__val {
+  font-size: 20px;
+  font-weight: 700;
+}
+.world-heat__val.up {
+  color: var(--up);
+}
+.world-heat__val.down {
+  color: var(--down);
+}
+/* Sector section flexes to fill the remaining height (no dead space). */
+.world-sectors {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.sector-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 4px 0;
+}
+.sector-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 44px 200px;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 20px;
+}
+.sector-row--you {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.sector-row__name {
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sector-row__you {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 1px 6px;
+  border-radius: var(--r-sm);
+}
+.sector-row__bar {
+  height: 6px;
+  background: var(--panel-2);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+.sector-row__fill {
+  height: 100%;
+  background: var(--series-2);
+  border-radius: var(--r-pill);
+}
+.sector-row__hype {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+.sector-row__meta {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  text-align: right;
+}
+.world-note {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 92ch;
+  margin: 0;
+  padding: 12px 20px 18px;
+  border-top: 0.5px solid var(--border);
+}
+.world-note strong {
+  color: var(--text);
+}

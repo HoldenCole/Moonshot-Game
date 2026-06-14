@@ -5,6 +5,7 @@ import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
 import { industryLabel } from "@/domain/ids";
 import { Icon } from "@/ui/components/Icon";
+import { FlashNum } from "@/ui/components/FlashNum";
 import { usePrefs } from "@/state/prefs";
 
 const MACRO_LABEL: Record<string, string> = {
@@ -101,7 +102,9 @@ export function TopBar() {
       <div className="topbar__right">
         <div className="topbar__networth">
           <span className="topbar__networth-label">Net worth</span>
-          <span className="topbar__networth-value num">{nw > 0 ? formatMoney(nw) : "—"}</span>
+          <span className="topbar__networth-value num">
+            {nw > 0 ? <FlashNum value={nw} format={(n) => formatMoney(n)} count /> : "—"}
+          </span>
         </div>
         <div className="topbar__runway">
           <span className="topbar__networth-label">Runway</span>

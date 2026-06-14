@@ -7,6 +7,7 @@ import type { View } from "./types";
 import { Dashboard } from "@/ui/views/Dashboard";
 import { MarketView } from "@/ui/views/MarketView";
 import { FundraisingView } from "@/ui/views/FundraisingView";
+import { WorldView } from "@/ui/views/WorldView";
 import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { useGame } from "@/state/store";
@@ -37,9 +38,10 @@ export function GameShell() {
           {view === "captable" && <CapTableView />}
           {view === "fundraising" && <FundraisingView />}
           {view === "market" && <MarketView />}
+          {view === "world" && <WorldView />}
           {view === "about" && <AboutView />}
         </main>
-        {view !== "market" && <NarrativeRail />}
+        {view !== "market" && view !== "world" && <NarrativeRail />}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { STAGE_LABELS, subIndustryLabel } from "@/domain/ids";
 import { formatMoney } from "@/engine/format";
 import { Panel } from "@/ui/components/Panel";
 import { Stat, Tag } from "@/ui/components/controls";
+import { FlashNum } from "@/ui/components/FlashNum";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
@@ -25,11 +26,18 @@ function FinancialBand({ company }: { company: PlayerCompany }) {
         </div>
       </div>
       <div className="finband__stats">
-        <Stat label="Cash" value={formatMoney(f.cash)} tone={f.cash < 0.5 ? "warn" : "neutral"} />
+        <Stat
+          label="Cash"
+          value={<FlashNum value={f.cash} format={(n) => formatMoney(n)} count />}
+          tone={f.cash < 0.5 ? "warn" : "neutral"}
+        />
         <Stat label="Runway" value={runway === Infinity ? "∞" : `${Math.max(0, Math.floor(runway))} mo`} />
         <Stat label="Revenue" value={f.revenue > 0 ? `${formatMoney(f.revenue)}/yr` : "Pre-rev"} />
         <Stat label="Burn" value={`${formatMoney(f.burnMonthly)}/mo`} />
-        <Stat label="Valuation" value={f.valuation > 0 ? formatMoney(f.valuation) : "—"} />
+        <Stat
+          label="Valuation"
+          value={f.valuation > 0 ? <FlashNum value={f.valuation} format={(n) => formatMoney(n)} count /> : "—"}
+        />
         <Stat label="Headcount" value={String(f.headcount)} />
       </div>
     </Panel>

@@ -1,1 +1,1 @@
-export type View = "dashboard" | "captable" | "fundraising" | "market" | "about";
+export type View = "dashboard" | "captable" | "fundraising" | "market" | "world" | "about";
