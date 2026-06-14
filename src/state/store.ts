@@ -12,6 +12,7 @@ import { nextStage } from "@/domain/ids";
 import { applyRound } from "@/engine/captable";
 import { advance as engineAdvance, checkMilestones, type AdvanceMode } from "@/engine/tick";
 import { runwayBand } from "@/engine/finance";
+import { valuationMultiplier } from "@/engine/world";
 import {
   agentFromFirm,
   counterOffer as engineCounter,
@@ -133,6 +134,11 @@ export function upcomingStage(current: Stage): Stage {
 
 function buildCtx(game: GameState, leadId: string): NegotiationContext {
   const stage = upcomingStage(game.company.stage);
+  // The world's "weather" sets the market price: a hot climate / high hype
+  // lifts the baseline valuation, a cold one cuts it.
+  const heat = valuationMultiplier(game.world, game.company.industry);
+  const base = suggestedTerms(stage);
+  const market = { ...base, valuation: Math.round(base.valuation * heat * 10) / 10 };
   return {
     stage,
     industry: game.company.industry,
@@ -140,7 +146,7 @@ function buildCtx(game: GameState, leadId: string): NegotiationContext {
     hype: game.world.hype[game.company.industry] ?? 50,
     vcClimate: game.world.vcClimate,
     week: game.clock.week,
-    market: suggestedTerms(stage),
+    market,
     relationshipScore: game.relationships[leadId]?.score ?? NEUTRAL_RELATIONSHIP,
     seed: game.meta.seed,
   };

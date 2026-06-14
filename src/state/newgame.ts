@@ -2,10 +2,11 @@
 // Pure — the store calls this; tests can too.
 
 import type { Industry, Stage, SubIndustry } from "@/domain/ids";
-import type { GameState } from "@/domain/state";
+import type { GameState, WorldState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
 import type { RoundTerms } from "@/domain/captable";
 import { foundCompany } from "@/engine/captable";
+import { snapshotWorld } from "@/engine/world";
 
 export interface FoundingChoices {
   founderName: string;
@@ -29,6 +30,32 @@ export function createNewGame(choices: FoundingChoices, createdAt: string): Game
       ? { id: "cofounder", name: choices.cofounder.name, sharePct: choices.cofounder.sharePct }
       : undefined,
   });
+
+  // Opening "weather": a healthy late-expansion, all eight industries seeded
+  // at their hype baselines so the public market (Phase 6) reads from them.
+  const world: WorldState = {
+    macroPhase: "expansion",
+    macroPosition: 0.6,
+    macroStrength: 0.45,
+    interestRate: 4.5,
+    rateTarget: 4.5,
+    weeksSinceRateReview: 0,
+    marketSentiment: 64,
+    vcClimate: 62,
+    ipoWindow: "open",
+    ipoOpenness: 68,
+    weeksInIpoWindow: 8,
+    hype: {
+      ai: 78,
+      space: 64,
+      biotech: 55,
+      energy: 50,
+      defense: 58,
+      advanced_mfg: 48,
+      mobility: 52,
+      quantum: 46,
+    },
+  };
 
   return {
     meta: {
@@ -60,13 +87,8 @@ export function createNewGame(choices: FoundingChoices, createdAt: string): Game
       },
       capTable,
     },
-    world: {
-      macroPhase: "expansion",
-      interestRate: 4.5,
-      vcClimate: 62,
-      ipoWindow: "open",
-      hype: { ai: 78, space: 64 },
-    },
+    world,
+    worldHistory: [snapshotWorld(world, 0)],
     log: [
       {
         id: "founded",

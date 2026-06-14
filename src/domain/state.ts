@@ -48,16 +48,43 @@ export interface PlayerCompany {
   capTable: CapTable;
 }
 
-/** Master-variable "weather". Full engines arrive in Phase 5; for now these
- *  carry sensible defaults so downstream code can read them. */
+export type MacroPhase = "expansion" | "peak" | "contraction" | "trough" | "recovery";
+export type IpoWindow = "open" | "cracking" | "closed";
+
+/** The six master-variable engines' live state (three-layer world model). */
 export interface WorldState {
-  macroPhase: "expansion" | "peak" | "contraction" | "trough" | "recovery";
+  // ── Universal layer ──
+  macroPhase: MacroPhase;
+  /** Economic-cycle oscillator phase, radians. */
+  macroPosition: number;
+  /** Cycle strength, −1 (deep trough) … +1 (peak). */
+  macroStrength: number;
   /** Policy interest rate, percent. */
   interestRate: number;
+  /** Taylor-rule target the rate is moving toward. */
+  rateTarget: number;
+  weeksSinceRateReview: number;
+  /** Risk appetite / animal spirits, 0–100. */
+  marketSentiment: number;
+  // ── Derived layer ──
   /** VC climate, 0–100. */
   vcClimate: number;
-  ipoWindow: "open" | "cracking" | "closed";
+  ipoWindow: IpoWindow;
+  /** Continuous IPO openness, 0–100 (mapped to the three states with hysteresis). */
+  ipoOpenness: number;
+  weeksInIpoWindow: number;
   /** Industry hype, 0–100, keyed by industry. */
+  hype: Partial<Record<Industry, number>>;
+}
+
+/** A compact world sample for the World view's sparklines. */
+export interface WorldSnapshot {
+  week: number;
+  macroStrength: number;
+  interestRate: number;
+  marketSentiment: number;
+  vcClimate: number;
+  ipoOpenness: number;
   hype: Partial<Record<Industry, number>>;
 }
 
@@ -83,6 +110,8 @@ export interface GameState {
   founder: FounderState;
   company: PlayerCompany;
   world: WorldState;
+  /** Recent world samples (capped ring) powering the World view's sparklines. */
+  worldHistory: WorldSnapshot[];
   /** The world's running record — notable events shown in the narrative rail. */
   log: LogEntry[];
   /** Active, unacknowledged alerts surfaced as in-context decisions. */

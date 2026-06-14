@@ -7,10 +7,13 @@ import type { GameState } from "@/domain/state";
 import type { Alert, LogEntry, RunwayBand, StopReason } from "@/domain/log";
 import type { Tuning } from "@/domain/tuning";
 import { makeRng } from "./rng";
-import { driftWorld } from "./world";
+import { snapshotWorld, stepWorld } from "./world";
 import { bandWorsened, netWorth, runwayBand, runwayMonths } from "./finance";
 
 export const WEEKS_PER_MONTH = 13 / 3; // ≈ 4.333
+
+/** How many world samples to retain for the World view's sparklines. */
+export const WORLD_HISTORY_CAP = 160;
 
 export interface AdvanceMode {
   type: "weeks" | "nextDecision";
@@ -45,8 +48,8 @@ export function tickWeek(state: GameState, tuning: Tuning): WeekResult {
   const alerts: Alert[] = [];
   let decision = false;
 
-  // 1 — World drifts.
-  const drift = driftWorld(state.world, rng, tuning);
+  // 1 — World advances: the six master-variable engines.
+  const drift = stepWorld(state.world, rng, tuning.world, state.company.industry);
   drift.news.forEach((n, i) =>
     entries.push({ id: `w${week}-world-${i}`, week, kind: "world", tone: n.tone, headline: n.headline, detail: n.detail }),
   );
@@ -57,10 +60,13 @@ export function tickWeek(state: GameState, tuning: Tuning): WeekResult {
   const netBurn = (f.burnMonthly - f.revenue / 12) * months;
   const company = { ...state.company, financials: { ...f, cash: f.cash - netBurn } };
 
+  const worldHistory = [...state.worldHistory, snapshotWorld(drift.world, week)].slice(-WORLD_HISTORY_CAP);
+
   let next: GameState = {
     ...state,
     clock: { week },
     world: drift.world,
+    worldHistory,
     company,
     meta: { ...state.meta, rngState: rng.state },
   };

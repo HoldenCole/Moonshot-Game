@@ -80,21 +80,58 @@ function loadTuning(glob: Record<string, string>): Tuning {
   if (!entry) throw new Error("content/world/tuning.toml not found");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const t = parse(entry[1]) as any;
+  const w = t.world;
   return {
     runway: { lowMonths: t.runway.low_months, criticalMonths: t.runway.critical_months },
-    world: {
-      hypeReversion: t.world.hype_reversion,
-      hypeNoise: t.world.hype_noise,
-      hypeBaseline: t.world.hype_baseline ?? {},
-      climateReversion: t.world.climate_reversion,
-      climateBaseline: t.world.climate_baseline,
-      climateNoise: t.world.climate_noise,
-      rateNoise: t.world.rate_noise,
-      macroTransitionWeeklyProb: t.world.macro_transition_weekly_prob,
-      ipoWindowTransitionWeeklyProb: t.world.ipo_window_transition_weekly_prob,
-    },
     advance: { nextDecisionCapWeeks: t.advance.next_decision_cap_weeks },
     milestones: { netWorth: t.milestones.net_worth },
+    world: {
+      macro: {
+        cycleWeeks: w.macro.cycle_weeks,
+        positionNoise: w.macro.position_noise,
+        shockWeeklyProb: w.macro.shock_weekly_prob,
+        shockMagnitude: w.macro.shock_magnitude,
+      },
+      rates: {
+        neutral: w.rates.neutral,
+        taylorOutput: w.rates.taylor_output,
+        taylorInflation: w.rates.taylor_inflation,
+        reviewWeeks: w.rates.review_weeks,
+        maxMovePerReview: w.rates.max_move_per_review,
+        min: w.rates.min,
+      },
+      sentiment: {
+        baseline: w.sentiment.baseline,
+        reversion: w.sentiment.reversion,
+        macroWeight: w.sentiment.macro_weight,
+        rateWeight: w.sentiment.rate_weight,
+        noise: w.sentiment.noise,
+      },
+      climate: {
+        reversion: w.climate.reversion,
+        base: w.climate.base,
+        sentimentWeight: w.climate.sentiment_weight,
+        rateWeight: w.climate.rate_weight,
+        hypeWeight: w.climate.hype_weight,
+        noise: w.climate.noise,
+      },
+      ipo: {
+        minPersistWeeks: w.ipo.min_persist_weeks,
+        openThreshold: w.ipo.open_threshold,
+        closedThreshold: w.ipo.closed_threshold,
+        sentimentWeight: w.ipo.sentiment_weight,
+        macroWeight: w.ipo.macro_weight,
+      },
+      hype: {
+        macroLift: w.hype.macro_lift,
+        waveWeeklyProb: w.hype.wave_weekly_prob,
+        waveMagnitude: w.hype.wave_magnitude,
+        noise: w.hype.noise,
+        baseline: w.hype.baseline ?? {},
+        reversion: w.hype.reversion ?? {},
+      },
+      difficulty: { volatility: w.difficulty.volatility },
+    },
   };
 }
 

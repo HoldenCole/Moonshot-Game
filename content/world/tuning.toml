@@ -5,27 +5,81 @@
 low_months = 9          # below this, nudge the founder to raise
 critical_months = 4     # below this, flag runway as critical
 
-[world]
-# Industry hype mean-reverts toward its baseline with a little weekly noise.
-hype_reversion = 0.035
-hype_noise = 1.1
-# VC climate (0-100) drifts toward a baseline.
-climate_reversion = 0.02
-climate_baseline = 60
-climate_noise = 1.4
-# Policy rate wobble per week (percentage points).
-rate_noise = 0.03
-# Per-week probability of a macro-cycle phase change / IPO-window shift.
-macro_transition_weekly_prob = 0.014
-ipo_window_transition_weekly_prob = 0.010
-
-[world.hype_baseline]
-ai = 72
-space = 60
-
 [advance]
 next_decision_cap_weeks = 104   # a single "advance to decision" caps at ~2 years
 
 [milestones]
 # Net-worth milestones, $M — the "why" the spine is built around.
 net_worth = [1, 10, 100, 1000, 10000]
+
+# ── The six master-variable engines (three-layer world model) ────────────────
+
+# Universal layer ─ the real economy, monetary policy, and animal spirits.
+
+[world.macro]
+cycle_weeks = 460          # ~8.8-year full economic cycle
+position_noise = 0.004
+shock_weekly_prob = 0.0035 # rare recession shocks (reconstructable in hindsight)
+shock_magnitude = 0.55
+
+[world.rates]
+neutral = 3.0              # neutral policy rate, %
+taylor_output = 1.2        # response to the output gap (macro strength)
+taylor_inflation = 1.6     # response to the inflation proxy
+review_weeks = 13          # Taylor rule settles quarterly
+max_move_per_review = 0.5  # capped movement per quarter, percentage points
+min = 0.25
+
+[world.sentiment]
+baseline = 58              # risk appetite / animal spirits, 0-100
+reversion = 0.05
+macro_weight = 24          # how strongly the cycle moves sentiment
+rate_weight = 4.0          # high rates dampen risk appetite
+noise = 2.6
+
+# Derived layer ─ private capital, exit windows, and sector hype.
+
+[world.climate]
+reversion = 0.06
+base = 54
+sentiment_weight = 0.55
+rate_weight = 3.0
+hype_weight = 0.22
+noise = 1.5
+
+[world.ipo]
+min_persist_weeks = 8      # a window state must hold for 8 weeks before changing
+open_threshold = 64
+closed_threshold = 38
+sentiment_weight = 0.7
+macro_weight = 26
+
+[world.hype]
+macro_lift = 18            # how much risk-on macro lifts all industry hype
+wave_weekly_prob = 0.012   # occasional sector hype waves
+wave_magnitude = 18
+noise = 1.1
+
+[world.hype.baseline]
+ai = 72
+space = 60
+biotech = 55
+energy = 50
+defense = 58
+advanced_mfg = 48
+mobility = 52
+quantum = 46
+
+[world.hype.reversion]
+# Mean-reversion speed by industry — AI snaps back fastest, Quantum slowest.
+ai = 0.060
+space = 0.042
+biotech = 0.036
+energy = 0.030
+defense = 0.034
+advanced_mfg = 0.030
+mobility = 0.040
+quantum = 0.022
+
+[world.difficulty]
+volatility = 1.0           # global multiplier on noise + shocks (difficulty seam)

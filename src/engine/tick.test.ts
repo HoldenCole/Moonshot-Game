@@ -7,22 +7,9 @@ import { createNewGame } from "@/state/newgame";
 import type { GameState } from "@/domain/state";
 import type { Tuning } from "@/domain/tuning";
 
-const TUNING: Tuning = {
-  runway: { lowMonths: 9, criticalMonths: 4 },
-  world: {
-    hypeReversion: 0.035,
-    hypeNoise: 1.1,
-    hypeBaseline: { ai: 72, space: 60 },
-    climateReversion: 0.02,
-    climateBaseline: 60,
-    climateNoise: 1.4,
-    rateNoise: 0.03,
-    macroTransitionWeeklyProb: 0.014,
-    ipoWindowTransitionWeeklyProb: 0.01,
-  },
-  advance: { nextDecisionCapWeeks: 104 },
-  milestones: { netWorth: [1, 10, 100, 1000, 10000] },
-};
+import { TEST_TUNING } from "./world.test.ts";
+
+const TUNING: Tuning = TEST_TUNING;
 
 function base(cash = 1.0, burnMonthly = 0.1): GameState {
   const g = createNewGame(
