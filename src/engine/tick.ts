@@ -13,6 +13,8 @@ import { snapshotWorld, stepWorld } from "./world";
 import { bandWorsened, netWorth, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
 import { tickProcess } from "./signature";
+import { applyOutcome as applyEventOutcome, resolveOutcome } from "./eventOutcomes";
+import { autoResolveChoice, delegationReport, eventArea, isDelegated } from "./delegation";
 
 /** What the events engine needs to run inside a tick. */
 export interface EventEnv {
@@ -124,10 +126,20 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     const et = evaluateEvents(next, env.events, env.market, rng);
     next = { ...next, eventState: et.eventState };
     if (et.event) {
-      next = { ...next, pendingEvent: et.event };
-      entries.push({ id: `w${week}-event-${et.event.id}`, week, kind: "company", tone: EVENT_TONE[et.event.tone], headline: et.event.headline });
-      eventFired = true;
-      decision = true;
+      const area = eventArea(et.event);
+      if (isDelegated(next, area)) {
+        // A delegated exec handles it automatically — a report, not a pause.
+        const exec = next.company.executives[area!]!;
+        const idx = autoResolveChoice(exec, et.event);
+        const choice = et.event.choices[idx]!;
+        next = applyEventOutcome(next, resolveOutcome(choice, next));
+        entries.push({ id: `w${week}-deleg-${et.event.id}`, week, kind: "company", tone: "neutral", headline: et.event.headline, detail: delegationReport(exec, et.event, idx) });
+      } else {
+        next = { ...next, pendingEvent: et.event };
+        entries.push({ id: `w${week}-event-${et.event.id}`, week, kind: "company", tone: EVENT_TONE[et.event.tone], headline: et.event.headline });
+        eventFired = true;
+        decision = true;
+      }
     }
   }
 

@@ -98,6 +98,8 @@ export function createNewGame(
       },
       capTable,
       signature: IDLE_SIGNATURE,
+      executives: {},
+      delegation: { finance: "decide", operations: "decide", revenue: "decide", technical: "decide" },
     },
     world,
     market: { companies: generateMarket(choices.seed, anchors, firmIds) },

@@ -2661,3 +2661,77 @@
 .sigwidget__outcome--partial {
   box-shadow: inset 3px 0 0 var(--warn);
 }
+
+/* ── Team / delegation (Phase 9) ───────────────────────────────────────────── */
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+}
+.area-row {
+  padding: 16px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.area-row:last-child {
+  border-bottom: none;
+}
+.area-row__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.area-row__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+.area-row__role {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.exec-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.exec-card__id {
+  flex: 1;
+  min-width: 0;
+  max-width: 340px;
+}
+.exec-card__name {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.exec-card__auto {
+  font-size: 12px;
+  color: var(--text-faint);
+  max-width: 30ch;
+  text-align: right;
+}
+.qbar--inline {
+  grid-template-columns: auto 1fr 28px;
+  margin: 0;
+  gap: 8px;
+}
+.qbar--inline .qbar__track {
+  min-width: 80px;
+}
+.hire-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.hire-card {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 13px;
+  background: var(--panel-2);
+}
+.hire-card__name {
+  font-size: 13.5px;
+  font-weight: 600;
+}

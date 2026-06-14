@@ -46,6 +46,21 @@ export interface SignatureState {
   lastOutcome?: { kind: "success" | "partial" | "failure"; summary: string; week: number };
 }
 
+/** The four delegatable operating areas (Phase 9 light delegation). */
+export type ExecArea = "finance" | "operations" | "revenue" | "technical";
+
+/** Per-area autonomy: surface to me / surface with a rec / let the exec handle it.
+ *  "Handle it" is what makes hands-off cadence viable (delegation = auto-decisions). */
+export type Autonomy = "decide" | "recommend" | "handle";
+
+export interface Exec {
+  name: string;
+  role: string;
+  area: ExecArea;
+  /** 0–100; higher execs handle delegated areas better. */
+  quality: number;
+}
+
 /** The player's company — the operating entity at the center of the board. */
 export interface PlayerCompany {
   name: string;
@@ -69,6 +84,10 @@ export interface PlayerCompany {
   capTable: CapTable;
   /** The sub-industry signature process. */
   signature: SignatureState;
+  /** Hired executives by area (empty until you delegate). */
+  executives: Partial<Record<ExecArea, Exec>>;
+  /** Autonomy setting per area. */
+  delegation: Record<ExecArea, Autonomy>;
 }
 
 export type MacroPhase = "expansion" | "peak" | "contraction" | "trough" | "recovery";

@@ -16,6 +16,7 @@ import { valuationMultiplier } from "@/engine/world";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
+import type { Autonomy, Exec, ExecArea } from "@/domain/state";
 import {
   agentFromFirm,
   counterOffer as engineCounter,
@@ -45,6 +46,10 @@ interface GameStore {
   resolveEvent: (choiceIndex: number) => void;
   /** Commit the sub-industry signature process (a training run, a launch, …). */
   commitSignature: () => void;
+  /** Hire an executive into an area (pays the cash cost). */
+  hireExec: (exec: Exec, cost: number) => void;
+  /** Set an area's autonomy. */
+  setAutonomy: (area: ExecArea, autonomy: Autonomy) => void;
 
   startNegotiation: (leadInvestorId: string, openingTerms: RoundTerms) => void;
   counterOffer: (terms: RoundTerms) => void;
@@ -120,6 +125,31 @@ export const useGame = create<GameStore>((set, get) => ({
       const rng = makeRng((s.game.meta.rngState ^ (s.game.clock.week << 8)) >>> 0);
       return { game: commitProcess(s.game, rng) };
     }),
+
+  hireExec: (exec, cost) =>
+    set((s) => {
+      if (!s.game || s.game.company.financials.cash < cost) return s;
+      const company = s.game.company;
+      return {
+        game: {
+          ...s.game,
+          company: {
+            ...company,
+            financials: { ...company.financials, cash: company.financials.cash - cost, headcount: company.financials.headcount + 1 },
+            executives: { ...company.executives, [exec.area]: exec },
+            // Hiring an exec opens that area up to delegation.
+            delegation: { ...company.delegation, [exec.area]: "recommend" as Autonomy },
+          },
+        },
+      };
+    }),
+
+  setAutonomy: (area, autonomy) =>
+    set((s) =>
+      s.game
+        ? { game: { ...s.game, company: { ...s.game.company, delegation: { ...s.game.company.delegation, [area]: autonomy } } } }
+        : s,
+    ),
 
   startNegotiation: (leadInvestorId, openingTerms) => {
     const s = get();

@@ -7,6 +7,7 @@ const ITEMS: { view: View; icon: IconName; label: string }[] = [
   { view: "fundraising", icon: "fundraising", label: "Fundraising" },
   { view: "market", icon: "market", label: "Market" },
   { view: "world", icon: "world", label: "World" },
+  { view: "team", icon: "team", label: "Team" },
   { view: "about", icon: "info", label: "About" },
 ];
 

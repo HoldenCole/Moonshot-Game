@@ -8,6 +8,7 @@ import { Dashboard } from "@/ui/views/Dashboard";
 import { MarketView } from "@/ui/views/MarketView";
 import { FundraisingView } from "@/ui/views/FundraisingView";
 import { WorldView } from "@/ui/views/WorldView";
+import { TeamView } from "@/ui/views/TeamView";
 import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { EventModal } from "@/ui/events/EventModal";
@@ -40,6 +41,7 @@ export function GameShell() {
           {view === "fundraising" && <FundraisingView />}
           {view === "market" && <MarketView />}
           {view === "world" && <WorldView />}
+          {view === "team" && <TeamView />}
           {view === "about" && <AboutView />}
         </main>
         {view !== "market" && view !== "world" && <NarrativeRail />}

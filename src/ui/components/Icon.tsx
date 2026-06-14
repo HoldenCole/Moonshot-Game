@@ -13,7 +13,8 @@ export type IconName =
   | "chevron-right"
   | "sun"
   | "moon"
-  | "motion";
+  | "motion"
+  | "team";
 
 const PATHS: Record<IconName, JSX.Element> = {
   dashboard: (
@@ -78,6 +79,13 @@ const PATHS: Record<IconName, JSX.Element> = {
   motion: (
     <>
       <path d="M3 12h4l3-8 4 16 3-8h4" />
+    </>
+  ),
+  team: (
+    <>
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3 20a6 6 0 0 1 12 0" />
+      <path d="M16 5.5a3 3 0 0 1 0 5.5M21 20a6 6 0 0 0-5-5.9" />
     </>
   ),
 };
