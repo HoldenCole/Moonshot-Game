@@ -22,7 +22,9 @@ import type { Autonomy, Exec, ExecArea } from "@/domain/state";
 import {
   acquisitionOffer,
   applyAcquisition,
+  applyCashOut,
   applyIpo,
+  lockupExpired,
   revealIpo,
   type AcquisitionOffer,
   type IpoResult,
@@ -88,6 +90,8 @@ interface GameStore {
   ipoList: () => void;
   exploreSale: () => void;
   acceptAcquisition: () => void;
+  /** Sell the public stake after lockup — banks the proceeds and ends the run. */
+  cashOut: () => void;
   cancelExit: () => void;
   /** Start a new company after an exit, carrying reputation + wealth forward. */
   foundAgain: () => void;
@@ -304,6 +308,14 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       if (!s.game || s.exitFlow?.kind !== "acquisition") return s;
       const { state, outcome } = applyAcquisition(s.game, s.exitFlow.offer);
+      const a = withAch({ ...state, runOutcome: outcome });
+      return { game: a.game, exitFlow: null, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  cashOut: () =>
+    set((s) => {
+      if (!s.game || !lockupExpired(s.game)) return s;
+      const { state, outcome } = applyCashOut(s.game);
       const a = withAch({ ...state, runOutcome: outcome });
       return { game: a.game, exitFlow: null, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),

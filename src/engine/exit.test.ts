@@ -2,13 +2,19 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  LOCKUP_WEEKS,
   acquisitionOffer,
   applyAcquisition,
+  applyCashOut,
   applyIpo,
+  cashOutProceeds,
   founderTakeAt,
   ipoEligible,
   ipoPricing,
+  lockupExpired,
+  repricePublic,
   revealIpo,
+  weeksToUnlock,
 } from "./exit.ts";
 import { applyRound, exitWaterfall } from "./captable.ts";
 import { createNewGame } from "@/state/newgame";
@@ -75,6 +81,32 @@ test("listing makes the company public and marks the valuation", () => {
   assert.equal(after.company.stage, "public");
   assert.equal(after.company.financials.valuation, result.publicValuation);
   assert.ok(after.company.financials.cash > g.company.financials.cash); // banked the raise
+});
+
+test("going public starts a lockup, re-prices weekly, and the cash-out ends the run", () => {
+  const g = grown();
+  const ipo = applyIpo(g, bank, revealIpo(g, bank, ipoPricing(g, bank).fair, makeRng(1)));
+  assert.equal(ipo.company.stage, "public");
+  assert.equal(ipo.company.publicSince, g.clock.week);
+
+  // Locked at listing; tradeable after the lockup window.
+  assert.equal(lockupExpired(ipo), false);
+  assert.equal(weeksToUnlock(ipo), LOCKUP_WEEKS);
+  const later = { ...ipo, clock: { week: ipo.clock.week + LOCKUP_WEEKS } };
+  assert.equal(lockupExpired(later), true);
+
+  // The stock actually moves week-to-week, within a bounded weekly return.
+  const v0 = ipo.company.financials.valuation;
+  const v1 = repricePublic(v0, ipo.world, ipo.company.industry, makeRng(3));
+  assert.notEqual(v1, v0);
+  assert.ok(v1 > v0 * 0.92 && v1 < v0 * 1.08);
+
+  // Cashing out banks the stake and produces an "ipo" run outcome (was never set).
+  const { state, outcome } = applyCashOut(later);
+  assert.equal(outcome.kind, "ipo");
+  assert.ok(outcome.founderProceeds > 0);
+  assert.ok(Math.abs(outcome.founderProceeds - cashOutProceeds(later)) < 1e-6);
+  assert.ok(state.founder.personalCash >= outcome.founderProceeds);
 });
 
 test("acquisition pays the founder their waterfall take and ends the run", () => {

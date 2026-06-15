@@ -88,6 +88,8 @@ export interface PlayerCompany {
   executives: Partial<Record<ExecArea, Exec>>;
   /** Autonomy setting per area. */
   delegation: Record<ExecArea, Autonomy>;
+  /** Week the company went public (set at IPO); drives the post-IPO lockup. */
+  publicSince?: number;
 }
 
 export type MacroPhase = "expansion" | "peak" | "contraction" | "trough" | "recovery";

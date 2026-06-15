@@ -4,14 +4,18 @@
 // Pure + deterministic; the payout math reuses the cap-table waterfall.
 
 import type { GameState, RunOutcome } from "@/domain/state";
+import type { Industry } from "@/domain/ids";
 import type { Money, RoundTerms } from "@/domain/captable";
 import type { Bank } from "@/content/load";
 import type { Company } from "@/content/load";
 import { stageRank } from "@/domain/ids";
 import { applyRound, exitWaterfall, founderOwnership, latestPostMoney } from "./captable";
-import { type Rng, nextRange, pick } from "./rng";
+import { type Rng, nextNoise, nextRange, pick } from "./rng";
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
+
+/** Post-IPO lockup before the founder can sell, ~180 days. */
+export const LOCKUP_WEEKS = 26;
 
 // ── IPO ──────────────────────────────────────────────────────────────────────
 
@@ -110,6 +114,7 @@ export function applyIpo(state: GameState, bank: Bank, result: IpoResult): GameS
       ...state.company,
       stage: "public",
       capTable,
+      publicSince: state.clock.week,
       financials: {
         ...state.company.financials,
         cash: state.company.financials.cash + result.raise,
@@ -117,6 +122,53 @@ export function applyIpo(state: GameState, bank: Bank, result: IpoResult): GameS
       },
     },
     founder: { ...state.founder, reputation: Math.min(100, state.founder.reputation + 12) },
+  };
+}
+
+// ── Public company: a live, weekly-repriced stock + a lockup'd cash-out ───────
+
+/** Re-rate a public company's market cap one week. A bounded weekly return
+ *  tilted by sector hype and the macro cycle, plus per-week noise — so the stock
+ *  actually moves, and timing the cash-out matters. Pure given the rng. */
+export function repricePublic(prev: Money, world: GameState["world"], industry: Industry, rng: Rng): Money {
+  const hype = world.hype[industry] ?? 55;
+  const hypeTilt = ((hype - 58) / 100) * 0.012;
+  const macroTilt = world.macroStrength * 0.004;
+  const ret = clamp(hypeTilt + macroTilt + nextNoise(rng, 0.018), -0.07, 0.07);
+  return Math.max(1, Math.round(prev * (1 + ret)));
+}
+
+/** Weeks until the founder's shares unlock (0 once tradeable; Infinity if not public). */
+export function weeksToUnlock(state: GameState): number {
+  if (state.company.stage !== "public" || state.company.publicSince == null) return Infinity;
+  return Math.max(0, state.company.publicSince + LOCKUP_WEEKS - state.clock.week);
+}
+
+export function lockupExpired(state: GameState): boolean {
+  return state.company.stage === "public" && weeksToUnlock(state) === 0;
+}
+
+/** What the founder would walk away with by selling their whole public stake. */
+export function cashOutProceeds(state: GameState): Money {
+  return founderOwnership(state.company.capTable) * state.company.financials.valuation;
+}
+
+/** Sell the public stake: bank the proceeds and end the run. */
+export function applyCashOut(state: GameState): { state: GameState; outcome: RunOutcome } {
+  const proceeds = cashOutProceeds(state);
+  const personalCash = state.founder.personalCash + proceeds;
+  const outcome: RunOutcome = {
+    kind: "ipo",
+    company: state.company.name,
+    exitValue: state.company.financials.valuation,
+    founderProceeds: proceeds,
+    finalNetWorth: personalCash,
+    week: state.clock.week,
+    headline: `You cashed out of ${state.company.name} at ${state.company.financials.valuation}`,
+  };
+  return {
+    state: { ...state, founder: { ...state.founder, personalCash } },
+    outcome,
   };
 }
 

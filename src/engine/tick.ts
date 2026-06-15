@@ -10,6 +10,7 @@ import type { EventContent, EventTone } from "@/domain/content";
 import type { Company } from "@/content/load";
 import { makeRng } from "./rng";
 import { snapshotWorld, stepWorld } from "./world";
+import { repricePublic } from "./exit";
 import { bandWorsened, netWorth, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
 import { tickProcess } from "./signature";
@@ -75,11 +76,16 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     entries.push({ id: `w${week}-world-${i}`, week, kind: "world", tone: n.tone, headline: n.headline, detail: n.detail }),
   );
 
-  // 2 — Company advances: accrue one week of net burn.
+  // 2 — Company advances: accrue one week of net burn; a public company also
+  //     re-rates its market cap with the world.
   const f = state.company.financials;
   const months = 1 / WEEKS_PER_MONTH;
   const netBurn = (f.burnMonthly - f.revenue / 12) * months;
-  const company = { ...state.company, financials: { ...f, cash: f.cash - netBurn } };
+  const valuation =
+    state.company.stage === "public"
+      ? repricePublic(f.valuation, drift.world, state.company.industry, rng)
+      : f.valuation;
+  const company = { ...state.company, financials: { ...f, cash: f.cash - netBurn, valuation } };
 
   const worldHistory = [...state.worldHistory, snapshotWorld(drift.world, week)].slice(-WORLD_HISTORY_CAP);
 
