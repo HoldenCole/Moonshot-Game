@@ -79,7 +79,7 @@ export function TopBar() {
       </div>
 
       <div className="topbar__time" data-coach="advance">
-        <button className="time-btn" onClick={() => advance({ type: "weeks", weeks: 1 })}>
+        <button className="time-btn" data-guide="advance-week-button" onClick={() => advance({ type: "weeks", weeks: 1 })}>
           <Icon name="chevron-right" size={15} /> Week
         </button>
         <button className="time-btn" onClick={() => advance({ type: "weeks", weeks: Math.round(WEEKS_PER_MONTH) })}>
@@ -87,6 +87,7 @@ export function TopBar() {
         </button>
         <button
           className={`time-btn time-btn--primary${pendingDecision ? " is-blocked" : ""}`}
+          data-guide="advance-event-button"
           onClick={() => advance({ type: "nextDecision" })}
           disabled={pendingDecision}
           title={pendingDecision ? "Resolve the open decision first" : "Skip quiet weeks to the next decision"}
@@ -100,7 +101,7 @@ export function TopBar() {
         <span className={`time-hint${pendingDecision ? " time-hint--alert" : ""}`}>{hint}</span>
       </div>
 
-      <div className="topbar__gauges">
+      <div className="topbar__gauges" data-guide="top-bar-gauges">
         <Gauge label="Macro" value={MACRO_LABEL[world.macroPhase] ?? world.macroPhase} />
         <Gauge label="Rates" value={`${world.interestRate.toFixed(1)}%`} />
         <Gauge label="VC Climate" value={climateLabel(world.vcClimate)} tone={world.vcClimate >= 65 ? "up" : undefined} />

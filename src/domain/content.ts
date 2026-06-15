@@ -215,3 +215,48 @@ export interface FounderContent {
 
 /** founders.toml is one keyed table per archetype; the loader flattens it. */
 export type FounderFile = Record<string, FounderContent>;
+
+// ── Guided first-run tutorial ────────────────────────────────────────────────
+
+export type GuidedPlacement = "top" | "bottom" | "left" | "right" | "center";
+
+/** One coachmark beat in the guided first-run script. */
+export interface TutorialStep {
+  id: string;
+  order: number;
+  /** `data-guide` value of the element this beat points at. */
+  anchor: string;
+  placement: GuidedPlacement;
+  title: string;
+  body: string;
+  /** "ack" (player taps Got it) or "action:<evt>" (player performs the action). */
+  advance_on: string;
+  allow_skip: boolean;
+  /** Gate string evaluated against the guided context (e.g. "screen == dashboard"). */
+  gate: string;
+  hint_fallback: string;
+}
+
+/** What happens once the guided run ends — hand the player to ambient hints. */
+export interface TutorialHandoff {
+  enable_hint_system: boolean;
+  first_hints: string[];
+  completion_flag: string;
+  replayable_from: string;
+}
+
+export interface TutorialScript {
+  id: string;
+  version: number;
+  title: string;
+  skippable_global: boolean;
+  resumable: boolean;
+  intro_line: string;
+  steps: TutorialStep[];
+  handoff: TutorialHandoff;
+}
+
+/** first_run.toml wraps the script under a single `[tutorial]` table. */
+export interface TutorialFile {
+  tutorial: TutorialScript;
+}

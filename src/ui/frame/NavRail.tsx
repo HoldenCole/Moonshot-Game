@@ -26,6 +26,7 @@ export function NavRail({ view, onChange }: { view: View; onChange: (v: View) =>
             title={it.label}
             aria-label={it.label}
             aria-current={view === it.view}
+            data-guide={it.view === "fundraising" ? "action-raise-round" : undefined}
           >
             <Icon name={it.icon} />
             <span className="navrail__tip">{it.label}</span>

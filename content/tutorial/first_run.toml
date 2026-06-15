@@ -1,0 +1,223 @@
+# Guided First-Run — coachmark script
+# 11 ordered beats walking a new player: found -> advance -> first raise ->
+# first signature. Pairs with the existing coachmark harness and hint system.
+#
+# CONTRACT WITH THE HARNESS (fields per step):
+#   id              stable key
+#   order           sequence index
+#   anchor          UI element the coachmark points at (data-guide attr / selector id)
+#   placement       preferred balloon side: top|bottom|left|right|center
+#   title           short bold line (<= ~6 words)
+#   body            1-2 sentences, plain, second person, no jargon-dump
+#   advance_on      what dismisses this beat and moves to the next:
+#                     "ack"          -> player taps Got it / Next
+#                     "action:<evt>" -> player performs the real action (preferred)
+#                   action-advance is better than ack: the player learns by doing.
+#   allow_skip      can this beat be skipped individually (vs. skip-all)
+#   gate            condition that must hold for the beat to show
+#   hint_fallback   if the player stalls, the paired hint-system line
+
+[tutorial]
+id = "first_run_guided"
+version = 1
+title = "Your First Company"
+skippable_global = true
+resumable = true
+intro_line = "Let's start your first company. Five minutes, hands-on — you'll be running it yourself by the end."
+
+# ===========================================================================
+# BEAT 1 — Found: name + archetype
+# ===========================================================================
+[[tutorial.steps]]
+id = "found_pick_archetype"
+order = 1
+anchor = "founder-step-archetype"
+placement = "right"
+title = "Pick who you are"
+body = """Your founder background tilts how you start — who funds you easily, \
+what you're great at. Pick one that sounds like you, or build a custom founder. \
+There's no wrong choice."""
+advance_on = "action:founder_archetype_selected"
+allow_skip = true
+gate = "screen == new_game"
+hint_fallback = "Tap any founder card to choose a background — you can hover each to see what it's good at."
+
+# ===========================================================================
+# BEAT 2 — Found: confirm and enter the world
+# ===========================================================================
+[[tutorial.steps]]
+id = "found_confirm"
+order = 2
+anchor = "new-game-confirm"
+placement = "top"
+title = "Start the company"
+body = """Name's set, background's set. Hit start and you'll drop into your \
+company's dashboard — the home base for everything that follows."""
+advance_on = "action:game_created"
+allow_skip = true
+gate = "screen == new_game"
+hint_fallback = "Press Start to found your company and enter the dashboard."
+
+# ===========================================================================
+# BEAT 3 — Orient: the dashboard
+# ===========================================================================
+[[tutorial.steps]]
+id = "orient_dashboard"
+order = 3
+anchor = "center-workspace"
+placement = "center"
+title = "This is home base"
+body = """Your dashboard: cash, the news feed, and anything that needs you. \
+When something needs a decision, it shows up here — you'll never have to go \
+hunting for it."""
+advance_on = "ack"
+allow_skip = true
+gate = "screen == dashboard"
+hint_fallback = "This is your company dashboard. Tap Got it to keep going."
+
+# ===========================================================================
+# BEAT 4 — Orient: the top bar
+# ===========================================================================
+[[tutorial.steps]]
+id = "orient_topbar"
+order = 4
+anchor = "top-bar-gauges"
+placement = "bottom"
+title = "Read the weather"
+body = """Up here: your cash, the date, and the market climate — how warm \
+investors are, whether the IPO window's open. These shift over time and shape \
+every move. Glance up here often."""
+advance_on = "ack"
+allow_skip = true
+gate = "screen == dashboard"
+hint_fallback = "These gauges show the market climate. They matter when you raise money — keep an eye on them."
+
+# ===========================================================================
+# BEAT 5 — Advance: the core loop
+# ===========================================================================
+[[tutorial.steps]]
+id = "advance_first_week"
+order = 5
+anchor = "advance-week-button"
+placement = "bottom"
+title = "Move time forward"
+body = """Nothing happens until you say so — this game is turn-based. One week at \
+a time is the default pace; click Advance Week to run the next week. Go ahead, \
+advance a couple of times and watch the news feed and your cash move."""
+advance_on = "action:advanced_week"
+allow_skip = true
+gate = "screen == dashboard"
+hint_fallback = "Click Advance Week to step time forward one week — it's the default pace."
+
+# ===========================================================================
+# BEAT 6 — Advance: fast-forward + auto-pause
+# ===========================================================================
+[[tutorial.steps]]
+id = "advance_fast_forward"
+order = 6
+anchor = "advance-event-button"
+placement = "bottom"
+title = "Skip the quiet weeks"
+body = """When nothing needs you, jump ahead: Advance to Next Decision fast-forwards \
+until something actually needs a decision, then stops automatically. You set the \
+pace — fast or slow, you'll never miss anything important."""
+advance_on = "ack"
+allow_skip = true
+gate = "screen == dashboard"
+hint_fallback = "Advance to Next Decision skips ahead and auto-pauses the moment something needs you."
+
+# ===========================================================================
+# BEAT 7 — First raise: open fundraising  (OPTIONAL — never forced)
+# ===========================================================================
+[[tutorial.steps]]
+id = "raise_open"
+order = 7
+anchor = "action-raise-round"
+placement = "right"
+title = "Raising money (optional)"
+body = """Most founders raise outside capital to grow faster — open the \
+Fundraising tab to see what a round looks like and meet investors. It's always \
+your call, though: if you're already funded, you can skip this and raise a seed \
+or pre-seed later whenever you want."""
+advance_on = "action:fundraise_opened"
+allow_skip = true
+gate = "company.can_raise == true"
+hint_fallback = "Open the Fundraising tab to start a round whenever you like — it's optional."
+
+# ===========================================================================
+# BEAT 8 — First raise: read the term sheet
+# ===========================================================================
+[[tutorial.steps]]
+id = "raise_read_terms"
+order = 8
+anchor = "term-sheet-panel"
+placement = "left"
+title = "Read the offer"
+body = """An investor's made an offer: how much they'll invest, at what \
+valuation, for how much of your company. Higher valuation means you give up \
+less. Don't over-think your first one — read it, get a feel for the shape."""
+advance_on = "ack"
+allow_skip = true
+gate = "screen == fundraising"
+hint_fallback = "This is a term sheet. Check the valuation and the equity you'd give up, then decide."
+
+# ===========================================================================
+# BEAT 9 — First raise: accept
+# ===========================================================================
+[[tutorial.steps]]
+id = "raise_accept"
+order = 9
+anchor = "term-sheet-accept"
+placement = "top"
+title = "Take the deal"
+body = """If the offer looks fair, accept it — the cash hits your balance and that \
+investor joins your cap table. You can always negotiate harder on future rounds; \
+for now, this is how a round closes."""
+advance_on = "action:round_closed"
+allow_skip = true
+gate = "screen == fundraising"
+hint_fallback = "Accept a term sheet to close the round and add the cash to your company."
+
+# ===========================================================================
+# BEAT 10 — First signature
+# ===========================================================================
+[[tutorial.steps]]
+id = "signature_intro"
+order = 10
+anchor = "signature-action-button"
+placement = "top"
+title = "Make your first {signature_label}"
+body = """This is the heart of your industry: your first {signature_label}. It's \
+the bet that turns money and effort into real progress — and the thing your \
+company lives or dies by. Kick it off; the outcome plays out over the coming \
+weeks."""
+advance_on = "action:signature_committed"
+allow_skip = true
+gate = "company.signature_available == true"
+hint_fallback = "Start your first {signature_label} — it's the signature move of your industry."
+
+# ===========================================================================
+# BEAT 11 — Hand off
+# ===========================================================================
+[[tutorial.steps]]
+id = "handoff"
+order = 11
+anchor = "center-workspace"
+placement = "center"
+title = "It's your company now"
+body = """That's the whole loop: decide, advance, react, repeat. Everything else \
+— hiring, investing, going public — builds on what you just did. When you're \
+unsure, hints will nudge you. Go build something."""
+advance_on = "ack"
+allow_skip = false
+gate = "screen == dashboard"
+hint_fallback = ""
+
+# ===========================================================================
+# POST-TUTORIAL — hand the player to the ambient hint system
+# ===========================================================================
+[tutorial.handoff]
+enable_hint_system = true
+first_hints = ["hire_first_exec", "watch_runway", "check_world_tab"]
+completion_flag = "tutorial.first_run_complete"
+replayable_from = "settings.help.replay_tutorial"

@@ -54,7 +54,7 @@ export function NegotiationPanel() {
   const lastRecord = negotiation?.history[negotiation.history.length - 1];
 
   return (
-    <Panel className="negotiation">
+    <Panel className="negotiation" guide="term-sheet-panel">
       <header className="neg-header">
         <div className="avatar">{initials(firm.partner_name)}</div>
         <div className="neg-header__id">
@@ -106,6 +106,7 @@ export function NegotiationPanel() {
               variant="primary"
               size="md"
               className="negotiation__cta"
+              data-guide="term-sheet-accept"
               onClick={() => startNegotiation(leadId, terms)}
             >
               Send term sheet to {firm.partner_name}
@@ -135,7 +136,7 @@ export function NegotiationPanel() {
             )}
             <div className="negotiation__actions">
               {negotiation.currentCounter && (
-                <Button variant="primary" size="md" className="negotiation__cta" onClick={acceptDeal}>
+                <Button variant="primary" size="md" className="negotiation__cta" data-guide="term-sheet-accept" onClick={acceptDeal}>
                   Accept their terms — {formatMoney(negotiation.currentCounter.roundSize)}
                 </Button>
               )}
@@ -166,7 +167,7 @@ export function NegotiationPanel() {
           </div>
           <aside className="negotiation__right">
             <LivePreview capTable={game.company.capTable} terms={negotiation.agreedTerms} />
-            <Button variant="primary" size="md" className="negotiation__cta" onClick={acceptDeal}>
+            <Button variant="primary" size="md" className="negotiation__cta" data-guide="term-sheet-accept" onClick={acceptDeal}>
               Sign &amp; close — {formatMoney(negotiation.agreedTerms.roundSize)}
             </Button>
           </aside>

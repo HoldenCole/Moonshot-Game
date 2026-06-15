@@ -14,6 +14,7 @@ import { Icon } from "@/ui/components/Icon";
 import { Button, Segmented, Slider } from "@/ui/components/controls";
 import { saveSummary } from "@/state/persist";
 import { formatMoney } from "@/engine/format";
+import { emitGuided } from "@/ui/tutorial/guidedBus";
 
 const SUBS: Record<Industry, PlayableSubIndustry[]> = {
   ai: ["frontier_model_lab", "vertical_ai_saas", "ai_chips"],
@@ -112,6 +113,13 @@ export function NewGameScreen() {
     },
   });
 
+  /** Toggle an archetype; selecting one advances the guided tour's first beat. */
+  const selectArchetype = (id: string) => {
+    const next = archetypeId === id ? null : id;
+    setArchetypeId(next);
+    if (next) emitGuided("founder_archetype_selected");
+  };
+
   const found = () => {
     if (!industry || !sub) return;
     const custom = archetypeId === "custom";
@@ -202,12 +210,12 @@ export function NewGameScreen() {
             <div className="newgame__step-label">3 · Founder</div>
             {founders.length > 0 && (
               <>
-                <div className="founder-cards">
+                <div className="founder-cards" data-guide="founder-step-archetype">
                   {founders.map((f) => (
                     <button
                       key={f.id}
                       className={`founder-card${archetypeId === f.id ? " is-active" : ""}`}
-                      onClick={() => setArchetypeId(archetypeId === f.id ? null : f.id)}
+                      onClick={() => selectArchetype(f.id)}
                     >
                       <div className="founder-card__name">{f.name}</div>
                       <div className="founder-card__hint">{f.playstyle_hint}</div>
@@ -215,7 +223,7 @@ export function NewGameScreen() {
                   ))}
                   <button
                     className={`founder-card founder-card--custom${archetypeId === "custom" ? " is-active" : ""}`}
-                    onClick={() => setArchetypeId(archetypeId === "custom" ? null : "custom")}
+                    onClick={() => selectArchetype("custom")}
                   >
                     <div className="founder-card__name">Custom</div>
                     <div className="founder-card__hint">Build your own founder — set the tilts by hand.</div>
@@ -385,7 +393,7 @@ export function NewGameScreen() {
         )}
 
         <div className="newgame__actions">
-          <Button variant="primary" size="md" disabled={!(industry && sub)} onClick={found}>
+          <Button variant="primary" size="md" data-guide="new-game-confirm" disabled={!(industry && sub)} onClick={found}>
             {ready ? `Found ${effectiveCompany}` : "Quick start"} <Icon name="chevron-right" size={16} />
           </Button>
           {industry && sub && !ready && (

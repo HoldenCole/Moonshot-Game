@@ -17,13 +17,23 @@ interface Prefs {
   seenHints: string[];
   /** Whether the narrative right rail is shown (pure-data players can hide it). */
   railOpen: boolean;
+  /** Current beat of the guided first-run tutorial (0-based index). */
+  guidedStep: number;
+  /** Whether the guided first-run tutorial has been completed or skipped. */
+  guidedDone: boolean;
   toggleTheme: () => void;
   setReduceMotion: (b: boolean) => void;
   markHintSeen: (id: string) => void;
   setTutorialEnabled: (b: boolean) => void;
-  /** Re-arm every hint (and ensure tips are on) — "replay the tutorial". */
+  /** Re-arm every hint + replay the guided tour — "replay the tutorial". */
   resetHints: () => void;
   toggleRail: () => void;
+  /** Move the guided tour to the next beat. */
+  advanceGuided: () => void;
+  /** Jump the guided tour to a specific beat (used to skip unreachable beats). */
+  setGuidedStep: (n: number) => void;
+  /** End the guided tour (completed or skipped) and hand off to ambient hints. */
+  finishGuided: () => void;
 }
 
 const KEY = "moonshot.prefs";
@@ -34,6 +44,8 @@ interface Stored {
   tutorialEnabled: boolean;
   seenHints: string[];
   railOpen: boolean;
+  guidedStep: number;
+  guidedDone: boolean;
 }
 
 function osReduceMotion(): boolean {
@@ -43,10 +55,16 @@ function osReduceMotion(): boolean {
 function load(): Stored {
   // Default to the OS reduced-motion preference (UI_LANGUAGE §2), so the JS
   // motion layer (market tape, count tweens) honors it like the CSS does.
-  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion(), tutorialEnabled: true, seenHints: [], railOpen: true };
+  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion(), tutorialEnabled: true, seenHints: [], railOpen: true, guidedStep: 0, guidedDone: false };
   if (typeof localStorage === "undefined") return fallback;
   try {
-    return { ...fallback, ...(JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<Stored>) };
+    const parsed = JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<Stored>;
+    const merged = { ...fallback, ...parsed };
+    // Only a brand-new install should drop into the guided first-run tour.
+    // An existing player who's already dismissed any hint is presumed to know
+    // the game, so the tour starts already-completed for them.
+    if (parsed.guidedDone === undefined) merged.guidedDone = (merged.seenHints?.length ?? 0) > 0;
+    return merged;
   } catch {
     return fallback;
   }
@@ -70,7 +88,7 @@ apply(initial); // set the default (dark) before first paint
 export const usePrefs = create<Prefs>((set, get) => {
   const snapshot = (): Stored => {
     const s = get();
-    return { theme: s.theme, reduceMotion: s.reduceMotion, tutorialEnabled: s.tutorialEnabled, seenHints: s.seenHints, railOpen: s.railOpen };
+    return { theme: s.theme, reduceMotion: s.reduceMotion, tutorialEnabled: s.tutorialEnabled, seenHints: s.seenHints, railOpen: s.railOpen, guidedStep: s.guidedStep, guidedDone: s.guidedDone };
   };
   const commit = (patch: Partial<Stored>) => {
     persist({ ...snapshot(), ...patch });
@@ -82,6 +100,8 @@ export const usePrefs = create<Prefs>((set, get) => {
     tutorialEnabled: initial.tutorialEnabled,
     seenHints: initial.seenHints,
     railOpen: initial.railOpen,
+    guidedStep: initial.guidedStep,
+    guidedDone: initial.guidedDone,
     toggleTheme: () => commit({ theme: get().theme === "dark" ? "light" : "dark" }),
     setReduceMotion: (reduceMotion) => commit({ reduceMotion }),
     markHintSeen: (id) => {
@@ -89,7 +109,11 @@ export const usePrefs = create<Prefs>((set, get) => {
       commit({ seenHints: [...get().seenHints, id] });
     },
     setTutorialEnabled: (tutorialEnabled) => commit({ tutorialEnabled }),
-    resetHints: () => commit({ seenHints: [], tutorialEnabled: true }),
+    // "Replay the tutorial": re-arm the ambient hints and restart the guided tour.
+    resetHints: () => commit({ seenHints: [], tutorialEnabled: true, guidedStep: 0, guidedDone: false }),
     toggleRail: () => commit({ railOpen: !get().railOpen }),
+    advanceGuided: () => commit({ guidedStep: get().guidedStep + 1 }),
+    setGuidedStep: (guidedStep) => commit({ guidedStep }),
+    finishGuided: () => commit({ guidedDone: true }),
   };
 });

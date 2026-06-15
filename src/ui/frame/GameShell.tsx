@@ -37,6 +37,10 @@ export function GameShell() {
   const setPaletteOpen = useUi((s) => s.setPaletteOpen);
   const railOpen = usePrefs((s) => s.railOpen);
   const toggleRail = usePrefs((s) => s.toggleRail);
+  // While the guided first-run tour is running, the ambient hints stand down so
+  // the player only ever sees one coachmark at a time.
+  const hasGuided = useGame((s) => (s.content.tutorial?.steps.length ?? 0) > 0);
+  const guidedActive = usePrefs((s) => s.tutorialEnabled && !s.guidedDone) && hasGuided;
 
   // ⌘K / Ctrl-K opens the command palette from anywhere.
   useEffect(() => {
@@ -58,7 +62,7 @@ export function GameShell() {
       <Ticker />
       <div className="shell__body">
         <NavRail view={view} onChange={setView} />
-        <main className="workspace">
+        <main className="workspace" data-guide="center-workspace">
           {view === "dashboard" && <Dashboard onNavigate={setView} />}
           {view === "captable" && <CapTableView />}
           {view === "fundraising" && <FundraisingView />}
@@ -77,7 +81,7 @@ export function GameShell() {
       <EventModal />
       <ExitFlow />
       <AchievementToast />
-      <TutorialLayer view={view} />
+      {!guidedActive && <TutorialLayer view={view} />}
       <CommandPalette />
     </div>
   );

@@ -11,6 +11,8 @@ import type {
   FounderContent,
   FounderFile,
   InvestorContent,
+  TutorialFile,
+  TutorialScript,
 } from "@/domain/content";
 import type { Tuning } from "@/domain/tuning";
 
@@ -27,6 +29,8 @@ export interface ContentDB {
   banks: Bank[];
   events: GameEvent[];
   founders: Founder[];
+  /** The guided first-run tutorial script, if a content file is present. */
+  tutorial?: TutorialScript;
   tuning: Tuning;
   companyById: Map<string, Company>;
   investorById: Map<string, Investor>;
@@ -80,6 +84,12 @@ const eventGlob = import.meta.glob("/content/events/*.toml", {
 }) as Record<string, string>;
 
 const worldGlob = import.meta.glob("/content/world/*.toml", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+const tutorialGlob = import.meta.glob("/content/tutorial/*.toml", {
   query: "?raw",
   import: "default",
   eager: true,
@@ -169,6 +179,17 @@ function loadFounders(glob: Record<string, string>): Founder[] {
   return out;
 }
 
+/** Parse the guided first-run tutorial (one file under content/tutorial/). */
+function loadTutorial(glob: Record<string, string>): TutorialScript | undefined {
+  const entry = Object.entries(glob)[0];
+  if (!entry) return undefined;
+  try {
+    return (parse(entry[1]) as unknown as TutorialFile).tutorial;
+  } catch (err) {
+    throw new Error(`Failed to parse ${entry[0]}: ${(err as Error).message}`);
+  }
+}
+
 function loadEvents(glob: Record<string, string>): GameEvent[] {
   const out: GameEvent[] = [];
   for (const [path, raw] of Object.entries(glob)) {
@@ -244,6 +265,7 @@ export function loadContent(): ContentDB {
     banks,
     events,
     founders,
+    tutorial: loadTutorial(tutorialGlob),
     tuning: loadTuning(worldGlob),
     companyById: indexBy(companies),
     investorById: indexBy(investors),

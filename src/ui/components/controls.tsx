@@ -5,6 +5,8 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "ghost" | "subtle";
   size?: "sm" | "md";
+  /** Pass-through for data-* anchors (e.g. data-guide for the guided tour). */
+  [dataAttr: `data-${string}`]: string | undefined;
 }
 
 export function Button({ variant = "subtle", size = "md", className, ...rest }: ButtonProps) {

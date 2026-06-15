@@ -85,10 +85,12 @@ Each is a substantial standalone feature; best tackled as focused follow-ups.
   stage). Pairs with the minimal post-IPO engine above to make it feel alive.
 - **Investor anchors: 7 → ~18** — author ~11 more firm TOMLs (the thinnest
   roster relative to its target).
-- **Founder archetypes** — the new-game "Founder" step needs authored archetypes
-  and their starting modifiers.
-- **Guided tutorial script** — the coachmark harness exists; a guided walkthrough
-  needs the authored steps/copy.
+- **Founder archetypes** — **Done.** Six archetypes + a custom-founder builder
+  drive the new-game "Founder" step (`content/founders/founders.toml`).
+- **Guided tutorial script** — **Done.** The authored 11-beat first-run tour
+  (`content/tutorial/first_run.toml`) drives anchored coachmarks via
+  `GuidedTutorial`, advancing on the player's real actions, then hands off to the
+  ambient hint system.
 - **Optional:** more company anchors / richer flavor; bespoke per-`outcome_ref`
   effect specs for true fidelity across all 117 outcomes; flavor copy to
   accompany the new signature mechanics.

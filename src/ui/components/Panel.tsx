@@ -5,14 +5,20 @@ interface PanelProps {
   className?: string;
   /** Removes inner padding (for tables / charts that manage their own). */
   flush?: boolean;
-  /** Optional onboarding anchor id (rendered as data-coach for the tutorial). */
+  /** Optional ambient-hint anchor id (rendered as data-coach). */
   coach?: string;
+  /** Optional guided-tour anchor id (rendered as data-guide). */
+  guide?: string;
 }
 
 /** A workspace card — the unit the dashboard is composed of. */
-export function Panel({ children, className, flush, coach }: PanelProps) {
+export function Panel({ children, className, flush, coach, guide }: PanelProps) {
   return (
-    <section className={`panel${flush ? " panel--flush" : ""}${className ? " " + className : ""}`} data-coach={coach}>
+    <section
+      className={`panel${flush ? " panel--flush" : ""}${className ? " " + className : ""}`}
+      data-coach={coach}
+      data-guide={guide}
+    >
       {children}
     </section>
   );

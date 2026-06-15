@@ -3610,3 +3610,41 @@
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* ── Guided first-run tour ─────────────────────────────────────────────────────
+   Same pinned-card + ring as the ambient hints, with tour chrome: a step
+   counter, a "do it to continue" line on action beats, and skip controls. */
+.coachmark--guided {
+  width: 340px;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-pop), 0 0 0 1px var(--accent-soft);
+}
+.coachmark--center {
+  width: 380px;
+}
+.coachmark__step {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-faint);
+  letter-spacing: 0.02em;
+}
+.coachmark__hintline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--accent);
+  font-weight: 550;
+}
+.coachmark__skip {
+  border: none;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-size: 11.5px;
+  padding: 5px 2px;
+}
+.coachmark__skip:hover {
+  color: var(--text-dim);
+}

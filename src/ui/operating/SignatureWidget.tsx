@@ -51,7 +51,7 @@ export function SignatureWidget() {
         Commit cash and weeks to a {cfg.noun}; advance time to see it resolve. Bigger bets and a
         stronger team raise your odds.
       </p>
-      <Button variant="primary" size="md" disabled={!canAfford} onClick={commit}>
+      <Button variant="primary" size="md" data-guide="signature-action-button" disabled={!canAfford} onClick={commit}>
         {cfg.commitVerb} — {formatMoney(cost)}
       </Button>
     </Panel>
