@@ -4,6 +4,7 @@ import { formatMoney } from "@/engine/format";
 import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Tag } from "@/ui/components/controls";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
+import { RelationshipsPanel } from "@/ui/fundraising/RelationshipsPanel";
 
 export function FundraisingView() {
   const content = useGame((s) => s.content);
@@ -11,6 +12,7 @@ export function FundraisingView() {
   return (
     <div className="workspace-scroll">
       <NegotiationPanel />
+      <RelationshipsPanel />
 
       <Panel className="investors" flush coach="fundraising">
         <PanelHeader
