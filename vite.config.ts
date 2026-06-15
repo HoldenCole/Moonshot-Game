@@ -2,28 +2,38 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
 
-// The Vite config doubles as the Tauri frontend config. When the Tauri
-// shell is added (Phase 11 / packaging), `tauri.conf.json` points its
-// `devUrl` at this dev server and its `frontendDist` at `dist/`.
+// The Vite config doubles as the Tauri frontend config: `src-tauri/tauri.conf.json`
+// points `devUrl` at this dev server (port 1420, fixed) and `frontendDist` at `dist/`.
+const host = process.env.TAURI_DEV_HOST;
+
 export default defineConfig({
   plugins: [react()],
+  // Tauri expects a fixed dev port and quieter output.
+  clearScreen: false,
+  envPrefix: ["VITE_", "TAURI_ENV_*"],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  // `content/` lives at the repo root, outside `src/`. Allow Vite's dev
-  // server to read it so `import.meta.glob('/content/**/*.toml')` resolves.
   server: {
     port: 1420,
-    strictPort: false,
-    fs: {
-      allow: [".."],
-    },
+    strictPort: true,
+    host: host || false,
+    hmr: host ? { protocol: "ws", host, port: 1421 } : undefined,
+    // `content/` lives at the repo root, outside `src/`. Allow Vite's dev
+    // server to read it so `import.meta.glob('/content/**/*.toml')` resolves.
+    fs: { allow: [".."] },
+    // Don't rebuild the frontend when the Rust shell changes.
+    watch: { ignored: ["**/src-tauri/**"] },
   },
   build: {
-    target: "es2022",
+    // The Tauri webviews are modern (WebView2 / WKWebView / WebKitGTK).
+    // safari14 is the floor: the content layer (smol-toml) uses BigInt literals,
+    // unavailable in Safari 13 / macOS 10.15.
+    target: process.env.TAURI_ENV_PLATFORM === "windows" ? "chrome105" : "safari14",
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: !!process.env.TAURI_ENV_DEBUG,
+    minify: process.env.TAURI_ENV_DEBUG ? false : "esbuild",
   },
 });
