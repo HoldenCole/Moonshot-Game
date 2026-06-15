@@ -90,6 +90,23 @@ export function applyOutcome(state: GameState, fx: OutcomeEffects): GameState {
   };
 }
 
+/** Re-shape a handled outcome by the exec's quality: a strong exec softens the
+ *  downside and presses the upside; a weak one makes a mess of it. Ethics and
+ *  headcount are left intact (an exec can't change the moral weight or who quit). */
+export function scaleByExec(fx: OutcomeEffects, quality: number): OutcomeEffects {
+  const badMult = quality >= 75 ? 0.7 : quality >= 55 ? 0.9 : 1.15;
+  const goodMult = quality >= 75 ? 1.2 : quality >= 55 ? 1.05 : 0.9;
+  const adj = (v: number) => (v < 0 ? v * badMult : v * goodMult);
+  const r2 = (v: number) => Math.round(v * 100) / 100;
+  return {
+    ...fx,
+    cash: r2(adj(fx.cash)),
+    reputation: Math.round(adj(fx.reputation)),
+    hypeSelf: Math.round(adj(fx.hypeSelf)),
+    revenue: r2(adj(fx.revenue)),
+  };
+}
+
 function costFor(state: GameState, mult: number): Money {
   const cash = Math.max(0, state.company.financials.cash);
   return Math.round(clamp(cash * 0.14 * mult, 0.03, Math.max(0.03, cash * 0.5)) * 100) / 100;

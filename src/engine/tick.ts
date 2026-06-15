@@ -14,8 +14,8 @@ import { repricePublic } from "./exit";
 import { bandWorsened, netWorth, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
 import { tickProcess } from "./signature";
-import { applyOutcome as applyEventOutcome, resolveOutcome } from "./eventOutcomes";
-import { autoResolveChoice, delegationReport, eventArea, isDelegated } from "./delegation";
+import { applyOutcome as applyEventOutcome, resolveOutcome, scaleByExec } from "./eventOutcomes";
+import { autoResolveChoice, delegationReport, eventArea, isDelegated, shouldEscalate } from "./delegation";
 
 /** What the events engine needs to run inside a tick. */
 export interface EventEnv {
@@ -133,12 +133,13 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     next = { ...next, eventState: et.eventState };
     if (et.event) {
       const area = eventArea(et.event);
-      if (isDelegated(next, area)) {
-        // A delegated exec handles it automatically — a report, not a pause.
+      if (isDelegated(next, area) && !shouldEscalate(et.event)) {
+        // A delegated exec handles it automatically — a report, not a pause — and
+        // their quality shapes how well it lands (a crisis escalates instead).
         const exec = next.company.executives[area!]!;
         const idx = autoResolveChoice(exec, et.event);
         const choice = et.event.choices[idx]!;
-        next = applyEventOutcome(next, resolveOutcome(choice, next));
+        next = applyEventOutcome(next, scaleByExec(resolveOutcome(choice, next), exec.quality));
         entries.push({ id: `w${week}-deleg-${et.event.id}`, week, kind: "company", tone: "neutral", headline: et.event.headline, detail: delegationReport(exec, et.event, idx) });
       } else {
         next = { ...next, pendingEvent: et.event };

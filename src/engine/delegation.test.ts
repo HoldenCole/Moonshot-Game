@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { autoResolveChoice, eventArea, isDelegated, generateCandidates } from "./delegation.ts";
+import { autoResolveChoice, eventArea, isDelegated, generateCandidates, recommendation, shouldEscalate } from "./delegation.ts";
+import { scaleByExec } from "./eventOutcomes.ts";
 import { advance } from "./tick.ts";
 import { TEST_TUNING } from "./world.test.ts";
 import { createNewGame } from "@/state/newgame";
@@ -59,6 +60,38 @@ test("candidates are rolled with a quality and a cost", () => {
     assert.ok(c.cost > 0);
     assert.equal(c.role, "CFO");
   }
+});
+
+test("exec quality reshapes a handled outcome; ethics + headcount stay intact", () => {
+  const fx = { cash: -10, ethics: -4, reputation: -3, hypeSelf: 2, headcount: -1, revenue: 4, result: "" };
+  const strong = scaleByExec(fx, 80);
+  const weak = scaleByExec(fx, 38);
+  assert.ok(strong.cash > fx.cash, "strong softens the loss");
+  assert.ok(strong.revenue > fx.revenue, "strong presses the gain");
+  assert.ok(weak.cash < fx.cash, "weak worsens the loss");
+  assert.equal(strong.ethics, fx.ethics);
+  assert.equal(strong.headcount, fx.headcount);
+});
+
+test("a crisis escalates past delegation; a lesser event does not", () => {
+  const crisis = { id: "x", category: "ai", tone: "crisis", headline: "h", body: "b", week: 0, choices: [] } as ResolvedEvent;
+  assert.equal(shouldEscalate(crisis), true);
+  assert.equal(shouldEscalate({ ...crisis, tone: "threat" }), false);
+});
+
+test("recommendation surfaces the exec's pick only in 'recommend' mode", () => {
+  const g = game();
+  const ev: ResolvedEvent = {
+    id: "x", category: "ai", tone: "threat", headline: "h", body: "b", week: 0,
+    choices: [
+      { label: "Act", detail: "", effects: "", outcomeRef: "a" },
+      { label: "Pass", detail: "", effects: "", outcomeRef: "b" },
+    ],
+  };
+  g.company.executives.operations = { name: "C", role: "COO", area: "operations", quality: 80 };
+  assert.equal(recommendation(g, "operations", ev), null, "decide mode → no recommendation");
+  g.company.delegation.operations = "recommend";
+  assert.equal(recommendation(g, "operations", ev), 0, "recommend mode → the strong exec's proactive pick");
 });
 
 test("a delegated area's events auto-resolve on advance (no pause)", () => {

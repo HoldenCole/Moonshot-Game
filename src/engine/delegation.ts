@@ -63,6 +63,19 @@ export function isDelegated(state: GameState, area: ExecArea | null): boolean {
   return state.company.delegation[area] === "handle" && state.company.executives[area] != null;
 }
 
+/** Escalation threshold: a full-blown crisis always reaches the founder's desk,
+ *  even in a "handle it" area — an exec doesn't get to quietly decide a crisis. */
+export function shouldEscalate(event: ResolvedEvent): boolean {
+  return event.tone === "crisis";
+}
+
+/** The exec who would advise on an area set to "recommend" (else null). */
+export function recommendation(state: GameState, area: ExecArea | null, event: ResolvedEvent): number | null {
+  if (!area || state.company.delegation[area] !== "recommend") return null;
+  const exec = state.company.executives[area];
+  return exec ? autoResolveChoice(exec, event) : null;
+}
+
 /** Which choice a delegated exec takes. Strong execs take the proactive action;
  *  weak ones default to the cautious/cheap option. Deterministic-ish. */
 export function autoResolveChoice(exec: Exec, event: ResolvedEvent): number {

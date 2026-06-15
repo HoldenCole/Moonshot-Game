@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useGame } from "@/state/store";
 import { useModalA11y } from "@/ui/components/useModalA11y";
+import { eventArea, recommendation } from "@/engine/delegation";
 import type { ResolvedEvent } from "@/domain/events";
 import type { EventTone } from "@/domain/content";
 
@@ -22,10 +23,16 @@ export function EventModal() {
 
 function EventDialog({ event }: { event: ResolvedEvent }) {
   const resolveEvent = useGame((s) => s.resolveEvent);
+  const game = useGame((s) => s.game);
   const ref = useRef<HTMLDivElement>(null);
   // A decision is a hard stop — trap focus, but no Escape-to-dismiss (you must
   // choose). The choices are the focusable targets.
   useModalA11y(ref, { closeOnEsc: false });
+
+  // If the relevant area is on "Recommend", flag the exec's suggested choice.
+  const area = eventArea(event);
+  const exec = area && game ? game.company.executives[area] : undefined;
+  const recIdx = game ? recommendation(game, area, event) : null;
 
   return (
     <div className="event-overlay">
@@ -47,8 +54,15 @@ function EventDialog({ event }: { event: ResolvedEvent }) {
         <p className="event-modal__body">{event.body}</p>
         <div className="event-modal__choices">
           {event.choices.map((c, i) => (
-            <button key={c.outcomeRef + i} className="event-choice" onClick={() => resolveEvent(i)}>
-              <div className="event-choice__label">{c.label}</div>
+            <button
+              key={c.outcomeRef + i}
+              className={`event-choice${i === recIdx ? " is-recommended" : ""}`}
+              onClick={() => resolveEvent(i)}
+            >
+              <div className="event-choice__label">
+                {c.label}
+                {i === recIdx && exec && <span className="event-choice__rec">{exec.role} suggests</span>}
+              </div>
               <div className="event-choice__detail">{c.detail}</div>
               <div className="event-choice__effects">{c.effects}</div>
             </button>
