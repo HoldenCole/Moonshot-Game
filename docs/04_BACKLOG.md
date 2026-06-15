@@ -11,6 +11,19 @@ save/migration are **solid and tested** — the gaps below cluster in the
 public-company half of the arc, in mechanical depth behind finished UI shells,
 and in forward-declared seams.
 
+## Status (Bucket 1)
+
+**Done** — IPO run-loop + living public company (mark-to-market, lockup,
+cash-out); the 4 dead events revived; Hot-Deal rarity; networkStrength wired;
+dead-code cleanup; event-effect layer (headcount/revenue + space/crisis
+vocabulary); delegation depth (real Recommend, crisis escalation, quality
+scaling); cap-table Vesting tab; News-Cycle gauge gating; new-game Quick Start;
+investor relationship ledger.
+
+**Remaining (the three big ones)** — debt financing, distinct per-sub-industry
+signature mechanics, and a customizable/draggable + stage-adaptive workspace.
+Each is a substantial standalone feature; best tackled as focused follow-ups.
+
 ---
 
 ## Category 1 — Fixable now (engine / UI, no new content)
