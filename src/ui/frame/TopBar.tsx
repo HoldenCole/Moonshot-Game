@@ -7,7 +7,7 @@ import { runwayMonths } from "@/engine/finance";
 import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
 import { industryLabel } from "@/domain/ids";
-import { showsRunwayForecast } from "@/engine/difficulty";
+import { showsExactGauges, showsRunwayForecast } from "@/engine/difficulty";
 import { Icon } from "@/ui/components/Icon";
 import { FlashNum } from "@/ui/components/FlashNum";
 import { usePrefs } from "@/state/prefs";
@@ -105,7 +105,11 @@ export function TopBar() {
         <Gauge label="Rates" value={`${world.interestRate.toFixed(1)}%`} />
         <Gauge label="VC Climate" value={climateLabel(world.vcClimate)} tone={world.vcClimate >= 65 ? "up" : undefined} />
         <Gauge label="IPO Window" value={cap(world.ipoWindow)} tone={ipoTone} />
-        <Gauge label={`${industryLabel(company.industry)} Hype`} value={String(Math.round(hype))} tone={hype >= 70 ? "warn" : undefined} />
+        <Gauge
+          label={`${industryLabel(company.industry)} Hype`}
+          value={showsExactGauges(game.difficulty) ? String(Math.round(hype)) : hypeBand(hype)}
+          tone={hype >= 70 ? "warn" : undefined}
+        />
       </div>
 
       <div className="topbar__right">
@@ -179,3 +183,11 @@ function Settings() {
 }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+/** Qualitative hype band (shown instead of the exact number on a Hard news cycle). */
+function hypeBand(v: number): string {
+  if (v >= 78) return "Frothy";
+  if (v >= 62) return "Hot";
+  if (v >= 46) return "Warm";
+  return "Cool";
+}

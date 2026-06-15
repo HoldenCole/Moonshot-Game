@@ -1754,6 +1754,11 @@
 .newgame__actions {
   margin-top: 32px;
 }
+.newgame__quickstart-note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
 .newgame__actions .btn {
   height: 46px;
   padding: 0 26px;

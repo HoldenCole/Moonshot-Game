@@ -112,6 +112,16 @@ export function showsRunwayForecast(d: Difficulty | undefined): boolean {
   return (d?.newsCycle ?? "medium") === "easy";
 }
 
+/** Forward-looking projections (world sparkline forecasts) — Easy/Medium only. */
+export function showsForecasts(d: Difficulty | undefined): boolean {
+  return (d?.newsCycle ?? "medium") !== "hard";
+}
+
+/** Exact gauge numbers vs. qualitative bands. Hard makes you read the room. */
+export function showsExactGauges(d: Difficulty | undefined): boolean {
+  return (d?.newsCycle ?? "medium") !== "hard";
+}
+
 // ── New-game world preview ────────────────────────────────────────────────────
 
 export interface PreviewBar {

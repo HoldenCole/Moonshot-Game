@@ -257,9 +257,14 @@ export function NewGameScreen() {
         )}
 
         <div className="newgame__actions">
-          <Button variant="primary" size="md" disabled={!ready} onClick={found}>
-            Found {effectiveCompany || "your company"} <Icon name="chevron-right" size={16} />
+          <Button variant="primary" size="md" disabled={!(industry && sub)} onClick={found}>
+            {ready ? `Found ${effectiveCompany}` : "Quick start"} <Icon name="chevron-right" size={16} />
           </Button>
+          {industry && sub && !ready && (
+            <p className="newgame__quickstart-note">
+              Quick start founds with a default founder name and Realistic difficulty — or fill in the details above to customize.
+            </p>
+          )}
         </div>
       </div>
     </div>
