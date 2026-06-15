@@ -9,8 +9,7 @@ import { INITIAL_EVENT_STATE } from "@/domain/events";
 import { normalizeDifficulty } from "@/engine/difficulty";
 import { founderOwnership, latestPostMoney } from "@/engine/captable";
 import { IDLE_SIGNATURE } from "@/engine/signature";
-
-const KEY = "moonshot.save";
+import { saveBackend } from "./saveBackend";
 
 interface SaveEnvelope {
   version: number;
@@ -18,30 +17,26 @@ interface SaveEnvelope {
   game: GameState;
 }
 
-const available = (): boolean => typeof localStorage !== "undefined";
-
 export function saveGame(game: GameState): void {
-  if (!available()) return;
   const env: SaveEnvelope = { version: SCHEMA_VERSION, savedAt: new Date().toISOString(), game };
   try {
-    localStorage.setItem(KEY, JSON.stringify(env));
+    saveBackend.write(JSON.stringify(env));
   } catch {
     // Quota or serialization failure — non-fatal; the run continues in memory.
   }
 }
 
 export function hasSave(): boolean {
-  return available() && localStorage.getItem(KEY) != null;
+  return saveBackend.read() != null;
 }
 
 export function clearSave(): void {
-  if (available()) localStorage.removeItem(KEY);
+  saveBackend.clear();
 }
 
 /** Load + migrate the save, or null if absent/unreadable/incompatible. */
 export function loadGame(): GameState | null {
-  if (!available()) return null;
-  const raw = localStorage.getItem(KEY);
+  const raw = saveBackend.read();
   if (!raw) return null;
   try {
     const env = JSON.parse(raw) as SaveEnvelope;
@@ -66,9 +61,8 @@ export function saveSummary(): SaveSummary | null {
 }
 
 function readSavedAt(): string | null {
-  if (!available()) return null;
   try {
-    return (JSON.parse(localStorage.getItem(KEY) ?? "{}") as SaveEnvelope).savedAt ?? null;
+    return (JSON.parse(saveBackend.read() ?? "{}") as SaveEnvelope).savedAt ?? null;
   } catch {
     return null;
   }

@@ -20,6 +20,11 @@ tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
+# Desktop-only plugins: remember window geometry and keep a single instance.
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance = "2"
+tauri-plugin-window-state = "2"
+
 [features]
 # A no-op feature kept so `tauri dev`/`build` can pass `--features custom-protocol`
 # style flags if needed later.

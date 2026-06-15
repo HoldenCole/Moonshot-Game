@@ -1,9 +1,24 @@
 # Moonshot Inc — desktop shell (Tauri v2)
 
 This wraps the Vite/React frontend in a native [Tauri v2](https://tauri.app)
-window so the game ships as a desktop app (the Steam-first target). The game is
-pure TypeScript and persists to the webview's `localStorage`, so there are no
-Rust-side commands yet — the shell just loads the bundled frontend.
+window so the game ships as a desktop app (the Steam-first target). The game
+logic is all TypeScript; the Rust side provides the desktop layer.
+
+## The desktop layer
+
+- **File-based saves** — under the desktop build, saves are a JSON file in the
+  OS app-data dir (`save_game` / `load_game` / `clear_save` commands) instead of
+  `localStorage`, so Steam Cloud can sync them. The TS save layer reads the file
+  into memory once at boot (`src/state/saveBackend.ts`) and falls back to
+  `localStorage` on the web build.
+- **Native menu** — a real menu bar with accelerators (New Game ⌘/Ctrl+N, Save
+  ⌘/Ctrl+S, Reload ⌘/Ctrl+R, Toggle Fullscreen F11, About, Quit). Fullscreen is
+  handled in Rust; the rest emit `menu:*` events the frontend listens for
+  (`src/state/desktop.ts`).
+- **Window state** — size and position are remembered across launches
+  (`tauri-plugin-window-state`).
+- **Single instance** — a second launch focuses the running window
+  (`tauri-plugin-single-instance`).
 
 ## Layout
 
@@ -11,7 +26,7 @@ Rust-side commands yet — the shell just loads the bundled frontend.
 |---|---|
 | `tauri.conf.json` | App config — window, bundle, and the Vite wiring (`devUrl` → `localhost:1420`, `frontendDist` → `../dist`) |
 | `Cargo.toml` · `build.rs` | The Rust crate and its build script |
-| `src/main.rs` · `src/lib.rs` | Entry point → `tauri::Builder` |
+| `src/main.rs` · `src/lib.rs` | Entry point → save commands, the native menu, and the desktop plugins |
 | `capabilities/default.json` | Window permissions (core defaults) |
 | `icons/app-icon.png` | The 1024² source icon; the desktop set beside it is generated from it |
 
@@ -41,11 +56,11 @@ a `v*` tag push, or on demand via *workflow_dispatch* to verify the build.
 
 ## Saves & Steam Cloud
 
-Saves currently live in the webview's `localStorage`, which persists per-app on
-desktop. For Steam Cloud, the simplest path is to point the Steam depot's
-auto-cloud at the app's data directory; migrating saves to a real file via a
-Rust command is a clean follow-up (the save layer is already a versioned JSON
-envelope, so it ports directly).
+The desktop build writes `save.json` to the OS app-data directory (e.g.
+`~/Library/Application Support/Moonshot Inc/` on macOS,
+`%APPDATA%\Moonshot Inc\` on Windows). Point the Steam depot's auto-cloud at
+that directory and saves sync. The file is the same versioned JSON envelope the
+web build uses, so saves move between platforms unchanged.
 
 ## Note on verification
 
