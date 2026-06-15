@@ -8,12 +8,14 @@ import { OverviewTab } from "./OverviewTab";
 import { HoldersTab } from "./HoldersTab";
 import { RoundsTab } from "./RoundsTab";
 import { ExitTab } from "./ExitTab";
+import { VestingTab } from "./VestingTab";
 
-type Tab = "overview" | "holders" | "rounds" | "exit";
+type Tab = "overview" | "holders" | "vesting" | "rounds" | "exit";
 
 const TABS: { value: Tab; label: string }[] = [
   { value: "overview", label: "Overview" },
   { value: "holders", label: "Holders" },
+  { value: "vesting", label: "Vesting" },
   { value: "rounds", label: "Round History" },
   { value: "exit", label: "Exit Scenarios" },
 ];
@@ -37,6 +39,7 @@ export function CapTablePanel({ capTable }: { capTable: CapTable }) {
       <div className="captable__body">
         {tab === "overview" && <OverviewTab capTable={capTable} />}
         {tab === "holders" && <HoldersTab capTable={capTable} />}
+        {tab === "vesting" && <VestingTab capTable={capTable} />}
         {tab === "rounds" && <RoundsTab capTable={capTable} />}
         {tab === "exit" && <ExitTab capTable={capTable} />}
       </div>
