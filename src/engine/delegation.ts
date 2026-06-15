@@ -31,7 +31,9 @@ const LAST = ["Okafor", "Cho", "Renn", "Vance", "Sato", "Boone", "Adler", "Cruz"
 /** Coarse area routing for an event, from keywords in its id. Personal events
  *  never delegate — they're always the founder's. */
 export function eventArea(ev: { id: string; category: string }): ExecArea | null {
-  if (ev.category === "personal") return null;
+  // Personal and public-company calls (earnings, guidance, lockup) are the
+  // founder's own — never an exec's to auto-handle.
+  if (ev.category === "personal" || ev.category === "public") return null;
   const id = ev.id;
   // Ethics-laden calls (safety incidents, regulatory inquiries) are the founder's
   // conscience to weigh — never an exec's to silently auto-handle on advance.

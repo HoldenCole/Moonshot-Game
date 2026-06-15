@@ -115,6 +115,7 @@ export function applyIpo(state: GameState, bank: Bank, result: IpoResult): GameS
       stage: "public",
       capTable,
       publicSince: state.clock.week,
+      earnings: { gap: 0, guidance: "inline" },
       financials: {
         ...state.company.financials,
         cash: state.company.financials.cash + result.raise,

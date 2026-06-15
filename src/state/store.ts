@@ -15,6 +15,7 @@ import { runwayBand } from "@/engine/finance";
 import { valuationMultiplier } from "@/engine/world";
 import { applyWorldDifficulty, difficultyProfile } from "@/engine/difficulty";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
+import { applyPublicChoice } from "@/engine/earnings";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
@@ -166,7 +167,9 @@ export const useGame = create<GameStore>((set, get) => ({
       const choice = ev.choices[choiceIndex];
       if (!choice) return s;
       const fx = resolveOutcome(choice, s.game);
-      const after = applyEventOutcome(s.game, fx);
+      // Generic text-based effect, then the bespoke earnings/guidance/lockup
+      // effect for public-company choices (a no-op for everything else).
+      const after = applyPublicChoice(applyEventOutcome(s.game, fx), choice.outcomeRef);
       const entry: LogEntry = {
         id: `evres-${ev.id}-${s.game.clock.week}`,
         week: s.game.clock.week,

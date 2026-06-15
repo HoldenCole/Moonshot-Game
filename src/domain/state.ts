@@ -90,7 +90,12 @@ export interface PlayerCompany {
   delegation: Record<ExecArea, Autonomy>;
   /** Week the company went public (set at IPO); drives the post-IPO lockup. */
   publicSince?: number;
+  /** Public-company earnings-management state (set at IPO). */
+  earnings?: { gap: number; guidance: GuidanceStance };
 }
+
+/** The bar a public company sets itself for the next quarter. */
+export type GuidanceStance = "sandbagged" | "inline" | "stretched";
 
 export type MacroPhase = "expansion" | "peak" | "contraction" | "trough" | "recovery";
 /** The macro phase plus a "frothy" overlay (euphoric sentiment / hot VC climate),

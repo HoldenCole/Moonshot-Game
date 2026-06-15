@@ -49,12 +49,16 @@ export function evaluateEvents(
     eligible.push({ ev, weight });
   }
 
-  if (eligible.length === 0 || !chance(rng, BASE_FIRE_CHANCE)) {
+  // Scheduled events are point-in-time ("the quarter closed", "the cycle
+  // turned") — they fire on cue rather than rolling the ambient fire chance.
+  const hasScheduled = eligible.some((e) => e.ev.trigger.type === "scheduled");
+  if (eligible.length === 0 || (!hasScheduled && !chance(rng, BASE_FIRE_CHANCE))) {
     return { event: null, eventState: es };
   }
 
-  // Weighted pick; if its slots can't resolve, drop it and try again.
-  const pool = eligible.slice();
+  // Weighted pick; if its slots can't resolve, drop it and try again. When a
+  // scheduled event is in the pool, prefer scheduled ones so the cue lands.
+  const pool = hasScheduled ? eligible.filter((e) => e.ev.trigger.type === "scheduled") : eligible.slice();
   for (let attempt = 0; attempt < 4 && pool.length > 0; attempt++) {
     const idx = weightedIndex(rng, pool);
     const ev = pool[idx]!.ev;
@@ -102,10 +106,11 @@ function resolveEvent(ev: EventContent, state: GameState, market: Company[], rng
 /** Authored weight × applicable weight-mods. Threshold/scheduled events with a
  *  zero authored weight get a baseline so they can fire when conditions hold. */
 function effectiveWeight(ev: EventContent, ctx: Record<string, CtxValue>): number {
-  // A zero authored weight means "fire when conditions hold" (threshold-style),
-  // not "never" — give it a baseline so weight-0 events (incl. the binary launch
-  // moments) aren't silently disabled.
-  let base = ev.weight > 0 ? ev.weight : 7;
+  // A zero authored weight means "fire when conditions hold" (threshold/
+  // scheduled), not "never" — give it a strong baseline so these gated moments
+  // (the binary launch results, the earnings reckoning) win over the ambient
+  // random churn once their specific condition is met.
+  let base = ev.weight > 0 ? ev.weight : 14;
   for (const mod of ev.trigger.weight_mods ?? []) {
     if (evalCondition(mod.when, ctx)) base *= mod.factor;
   }

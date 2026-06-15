@@ -1,0 +1,436 @@
+# Events — POST-IPO / PUBLIC STAGE
+# Gated on company.status == public. The drama of life on the 13-week clock.
+#
+# TIERING (the design doc files some of these as post-V1 / DLC):
+#   V1        — earnings & guidance, lockup expiry  (the spec'd V1 core)
+#   DLC-ready — analyst ratings, short-seller, activist, buyback/dividend,
+#               hostile M&A. Authored now so the library is ready; each is
+#               gated on a context key that stays false in a pure-V1 save,
+#               so the event simply never becomes eligible until its system
+#               is switched on. Flip the gate, the drama lights up.
+#
+# NEW CONTEXT KEYS THIS FILE ASSUMES (engine to provide):
+#   company.weeks_public          int    — weeks since IPO
+#   company.beat_guidance         enum   — beat | met | missed   (last quarter)
+#   company.earnings_gap          float  — hidden engineered-vs-real gap (0..1)
+#   company.guidance_stance       enum   — sandbagged | inline | stretched
+#   company.quarter_close_tick     bool   — true on the tick a quarter closes
+#   company.analyst_coverage      bool   — DLC system on?  (false in V1)
+#   company.activism_enabled      bool   — DLC system on?  (false in V1)
+#   company.capital_return_enabled bool  — DLC system on?  (false in V1)
+#   company.ma_market_enabled     bool   — DLC system on?  (false in V1)
+#   company.cash_surplus          enum   — none | modest | large
+#   founder.voting_control        float  — founder voting % (dual-class etc.)
+
+# ===========================================================================
+# PUB1 — Quarterly earnings result   (V1 CORE — the earnings-management lever)
+# ===========================================================================
+# Fires when a quarter closes. Resolves the guidance the player set against
+# real operations, then offers the engineer-vs-invest choice for NEXT quarter.
+# This is the recurring heart of public-company life. The hidden earnings_gap
+# widens with engineering and ties into the ethics/integrity score.
+[pub1_earnings_result]
+id = "pub1_earnings_result"
+category = "public"
+weight = 0                       # not random — scheduled on the quarter clock
+cooldown_weeks = 11              # ~one per 13-week quarter, never doubles up
+one_shot = false
+
+[pub1_earnings_result.trigger]
+type = "scheduled"
+conditions = ["company.status == public", "company.quarter_close_tick == true"]
+
+[pub1_earnings_result.framing]
+headline = "Q{quarter} results: you {beat_guidance} guidance"
+body = """The quarter closed and the numbers are public. Against the guidance you \
+set, you {beat_guidance_verbose}. {market_reaction} Now the real decision for \
+the quarter ahead: how hard do you push to hit the next number? You can engineer \
+results to land the beat, or invest for the long term and let the quarter fall \
+where it honestly falls."""
+tone = "neutral"
+# {quarter} = fiscal quarter label
+# {beat_guidance}         = "beat" | "met" | "missed"
+# {beat_guidance_verbose} = expanded phrasing of the result
+# {market_reaction}       = templated from result + analyst confidence
+# Resolution reads company.guidance_stance and company.earnings_gap for severity.
+
+[[pub1_earnings_result.choices]]
+label = "Invest for the long term"
+detail = "Spend into growth; tolerate a lumpy quarter and the volatility"
+effects = "Builds real, compounding value. Stock may wobble and analysts may grumble; the honest path."
+outcome_ref = "earnings_invest_longterm"
+# Hidden: narrows/holds earnings_gap, protects integrity score, higher variance on the print.
+
+[[pub1_earnings_result.choices]]
+label = "Smooth the results"
+detail = "Light, normal earnings management to land near guidance"
+effects = "Predictable print, calmer market. Standard corporate behavior; a small gap to manage later."
+outcome_ref = "earnings_smooth"
+# Hidden: modestly widens earnings_gap, low integrity cost — the normal middle.
+
+[[pub1_earnings_result.choices]]
+label = "Engineer the beat"
+detail = "Pull levers hard to guarantee you hit the number this quarter"
+effects = "Hits the quarter and feeds the stock. Mortgages the future — the gap compounds toward a reckoning."
+outcome_ref = "earnings_engineer_aggressive"
+# Hidden: sharply widens earnings_gap, real integrity hit, raises restatement/blowup risk later.
+
+# ===========================================================================
+# PUB2 — Setting next quarter's guidance   (V1 CORE — sandbag vs. stretch)
+# ===========================================================================
+# The companion to PUB1: the player sets the bar they'll be judged against.
+# Kept as a discrete decision event so the sandbag/stretch tension is explicit.
+[pub2_set_guidance]
+id = "pub2_set_guidance"
+category = "public"
+weight = 0
+cooldown_weeks = 11
+one_shot = false
+
+[pub2_set_guidance.trigger]
+type = "scheduled"
+conditions = ["company.status == public", "company.guidance_window_open == true"]
+
+[pub2_set_guidance.framing]
+headline = "Set guidance for next quarter"
+body = """The Street wants a number. What you promise now becomes the bar you're \
+measured against in 13 weeks. Lowball it and you'll likely beat — but everyone \
+reads a soft number as a soft quarter. Reach high and you signal confidence, but \
+a stretched target you miss is the worst of both worlds."""
+tone = "neutral"
+
+[[pub2_set_guidance.choices]]
+label = "Sandbag it"
+detail = "Set a conservative number you're confident you can beat"
+effects = "Easy to beat and a likely pop. Reads as weak guidance; analysts notice the soft ambition."
+outcome_ref = "guidance_sandbag"
+
+[[pub2_set_guidance.choices]]
+label = "Guide in line"
+detail = "Set an honest number that reflects the plan"
+effects = "Credible and clean. Beating it takes real execution; missing it is a normal stumble."
+outcome_ref = "guidance_inline"
+
+[[pub2_set_guidance.choices]]
+label = "Stretch it"
+detail = "Set an ambitious number that signals confidence"
+effects = "Signals strength and can re-rate the stock. A miss against a stretch target stings doubly."
+outcome_ref = "guidance_stretch"
+
+# ===========================================================================
+# PUB3 — Guidance cut / profit warning   (V1 CORE — the gap catches up)
+# ===========================================================================
+# Threshold event: when the hidden engineered-vs-real gap gets wide enough,
+# the company is forced to walk guidance down. The reckoning the doc describes.
+[pub3_guide_down]
+id = "pub3_guide_down"
+category = "public"
+weight = 0
+cooldown_weeks = 26
+one_shot = false
+
+[pub3_guide_down.trigger]
+type = "threshold"
+conditions = ["company.status == public", "company.earnings_gap > 0.6"]
+weight_mods = [
+  { when = "macro.cycle_phase == contraction", factor = 1.5 },
+]
+
+[pub3_guide_down.framing]
+headline = "The numbers no longer support the story"
+body = """The gap between the results you've been printing and what the business \
+is really doing has grown too wide to paper over. You're facing a guidance cut — \
+the moment the market finds out the recent quarters were flattered. How you \
+frame it now decides whether this is a stumble or the start of a credibility \
+spiral."""
+tone = "crisis"
+# Ties: ethics/integrity score, earnings-management mechanic
+
+[[pub3_guide_down.choices]]
+label = "Reset clean and own it"
+detail = "Cut guidance fully, take the hit, draw a line under it"
+effects = "One brutal day, then a credible reset. Rebuilds trust faster than a slow bleed."
+outcome_ref = "guide_down_clean_reset"
+
+[[pub3_guide_down.choices]]
+label = "Trim and reassure"
+detail = "Cut modestly, frame it as temporary, project confidence"
+effects = "Softens the immediate blow. If the real gap is worse, you're back here soon — with less benefit of the doubt."
+outcome_ref = "guide_down_partial"
+
+[[pub3_guide_down.choices]]
+label = "Hold the line one more quarter"
+detail = "Don't cut; engineer through it and hope operations recover"
+effects = "Avoids today's pain. The deepest gamble — if it doesn't recover, the eventual miss is catastrophic."
+outcome_ref = "guide_down_double_down"
+
+# ===========================================================================
+# PUB4 — Lockup expiration   (V1 CORE — the designed 180-day moment)
+# ===========================================================================
+# Fires once, at game-week 180 post-IPO. Paper wealth becomes sellable.
+# Heavy insider selling moves the stock; restraint barely registers.
+[pub4_lockup_expiry]
+id = "pub4_lockup_expiry"
+category = "public"
+weight = 0
+cooldown_weeks = 0
+one_shot = true
+
+[pub4_lockup_expiry.trigger]
+type = "scheduled"
+conditions = ["company.status == public", "company.weeks_public >= 180", "company.lockup_cleared == false"]
+
+[pub4_lockup_expiry.framing]
+headline = "The lockup expires — your paper wealth is finally liquid"
+body = """One hundred eighty days after the IPO, the restriction lifts. For the \
+first time, you and your insiders can actually sell. The market knows the date \
+is here and is watching what you do: sell heavily and the stock reads it as a \
+vote of no confidence; hold and you signal you're in it for the long haul. \
+Everyone's been waiting six months to touch this."""
+tone = "opportunity"
+
+[[pub4_lockup_expiry.choices]]
+label = "Hold everything"
+detail = "Sell nothing; signal total conviction"
+effects = "The strongest signal to the market. Your wealth stays fully exposed to the stock."
+outcome_ref = "lockup_hold"
+
+[[pub4_lockup_expiry.choices]]
+label = "Sell a modest slice"
+detail = "Take some chips off the table; diversify responsibly"
+effects = "Prudent personal de-risking that the market generally forgives. Barely moves the stock."
+outcome_ref = "lockup_sell_modest"
+
+[[pub4_lockup_expiry.choices]]
+label = "Sell aggressively"
+detail = "Cash out a large position now"
+effects = "Locks in real personal wealth immediately. Heavy selling reads as no-confidence and pressures the stock."
+outcome_ref = "lockup_sell_heavy"
+
+# ===========================================================================
+# PUB5 — Analyst rating change   (DLC-ready — analyst coverage system)
+# ===========================================================================
+[pub5_analyst_rating]
+id = "pub5_analyst_rating"
+category = "public"
+weight = 6
+cooldown_weeks = 13
+one_shot = false
+
+[pub5_analyst_rating.trigger]
+type = "random"
+conditions = ["company.status == public", "company.analyst_coverage == true"]
+weight_mods = [
+  { when = "company.beat_guidance == missed", factor = 1.8 },
+  { when = "company.beat_guidance == beat", factor = 1.3 },
+]
+
+[pub5_analyst_rating.framing]
+headline = "{analyst_firm} {rating_direction}s {company} to {new_rating}"
+body = """{analyst_firm} just moved on your stock, taking you to {new_rating} and \
+{price_target_move} their price target. {rating_rationale} A single note doesn't \
+change the business, but it moves sentiment, and other analysts tend to follow a \
+strong voice. You can engage the analyst or let the work speak."""
+tone = "opportunity"   # resolver flips presentation for downgrades
+# {analyst_firm}      = a procedural sell-side firm
+# {rating_direction}  = "upgrade" | "downgrade"
+# {new_rating}        = Buy | Hold | Sell etc.
+# {price_target_move} = "raising" | "cutting"
+# {rating_rationale}  = templated from recent performance
+
+[[pub5_analyst_rating.choices]]
+label = "Engage the analyst"
+detail = "Get your IR team and CFO in front of them with the real story"
+effects = "Can shift the narrative if your numbers back you. Costs executive time and looks needy if overdone."
+outcome_ref = "analyst_engage"
+
+[[pub5_analyst_rating.choices]]
+label = "Let the results answer"
+detail = "Don't court coverage; execute and let the next print speak"
+effects = "Keeps you focused and above the fray. Cedes the short-term narrative to the analyst's take."
+outcome_ref = "analyst_ignore"
+
+# ===========================================================================
+# PUB6 — Short-seller report   (DLC-ready — adversarial coverage)
+# ===========================================================================
+[pub6_short_seller]
+id = "pub6_short_seller"
+category = "public"
+weight = 3
+cooldown_weeks = 52
+one_shot = false
+
+[pub6_short_seller.trigger]
+type = "random"
+conditions = ["company.status == public", "company.analyst_coverage == true"]
+weight_mods = [
+  { when = "company.earnings_gap > 0.4", factor = 2.5 },   # engineered books attract shorts
+  { when = "sector.hype > 85", factor = 1.4 },
+]
+
+[pub6_short_seller.framing]
+headline = "{short_firm} publishes a damning report on {company}"
+body = """{short_firm}, a known short-seller, just dropped a report accusing you \
+of {short_thesis}. The stock is sliding as it circulates. Some of it may be \
+noise built to profit from the panic — but if any of it lands near something \
+real, a flat denial could age badly. The market wants a response today."""
+tone = "crisis"
+# {short_firm}   = a procedural activist-short firm
+# {short_thesis} = templated; if earnings_gap is high, it points at the real gap
+# Ties: ethics/integrity score (a true thesis is far more dangerous)
+
+[[pub6_short_seller.choices]]
+label = "Rebut point by point"
+detail = "Publish a detailed, evidence-backed takedown"
+effects = "Devastating to the short if your books are clean. Backfires hard if they've found something real."
+outcome_ref = "short_rebut"
+
+[[pub6_short_seller.choices]]
+label = "Stay above it"
+detail = "Brief statement, let results disprove the thesis over time"
+effects = "Calm and confident if the fundamentals are sound. Reads as evasive if the stock keeps falling."
+outcome_ref = "short_ignore"
+
+[[pub6_short_seller.choices]]
+label = "Buy back into the weakness"
+detail = "Authorize a buyback to signal conviction and defend the stock"
+effects = "A strong confidence signal that can squeeze the short. Spends real cash; looks desperate if it fails."
+outcome_ref = "short_buyback_defense"
+
+# ===========================================================================
+# PUB7 — Activist investor takes a stake   (DLC-ready — activism system)
+# ===========================================================================
+[pub7_activist_stake]
+id = "pub7_activist_stake"
+category = "public"
+weight = 3
+cooldown_weeks = 78
+one_shot = false
+
+[pub7_activist_stake.trigger]
+type = "threshold"
+conditions = ["company.status == public", "company.activism_enabled == true", "founder.voting_control < 0.5"]
+weight_mods = [
+  { when = "company.beat_guidance == missed", factor = 1.6 },
+  { when = "company.underperforming_sector == true", factor = 1.5 },
+]
+
+[pub7_activist_stake.framing]
+headline = "{activist} discloses a {stake_pct} stake and wants changes"
+body = """{activist}, an activist investor, has built a {stake_pct} position and \
+gone public with a letter. They're pushing for {activist_demand} and they're \
+courting other shareholders to back them. With your voting control below a \
+majority, this isn't something you can simply wave off — it's a fight for the \
+narrative with your own owners."""
+tone = "threat"
+# {activist}        = an activist firm (e.g. meridian_crossing) or procedural
+# {stake_pct}       = disclosed stake
+# {activist_demand} = templated: buyback / board seats / cost cuts / breakup / sale
+# Ties: governance / cap-table
+
+[[pub7_activist_stake.choices]]
+label = "Engage and negotiate"
+detail = "Give a little — a board seat or a concession — to keep the peace"
+effects = "Defuses the fight and avoids a proxy battle. Cedes some control and validates their thesis."
+outcome_ref = "activist_settle"
+
+[[pub7_activist_stake.choices]]
+label = "Fight the proxy battle"
+detail = "Rally shareholders, defend your strategy, take it to a vote"
+effects = "Keeps your strategy intact if you win. Expensive, distracting, and damaging if shareholders side with them."
+outcome_ref = "activist_fight"
+
+[[pub7_activist_stake.choices]]
+label = "Adopt part of their plan"
+detail = "Pre-empt them by enacting the reasonable demands yourself"
+effects = "Takes the wind out of their sails and may genuinely help. Concedes they were partly right."
+outcome_ref = "activist_preempt"
+
+# ===========================================================================
+# PUB8 — Capital return: buyback vs. dividend   (DLC-ready — capital policy)
+# ===========================================================================
+[pub8_capital_return]
+id = "pub8_capital_return"
+category = "public"
+weight = 4
+cooldown_weeks = 52
+one_shot = false
+
+[pub8_capital_return.trigger]
+type = "threshold"
+conditions = ["company.status == public", "company.capital_return_enabled == true", "company.cash_surplus == large", "company.profitable == true"]
+
+[pub8_capital_return.framing]
+headline = "You're sitting on real cash — time to decide what to do with it"
+body = """The balance sheet has built up a genuine surplus beyond what the \
+business needs to grow. Holding it idle invites pressure to return it. You can \
+reinvest for more growth, buy back stock, or start a dividend — and the choice \
+signals how you see the company's next chapter: still a growth story, or a \
+maturing one that returns cash to owners."""
+tone = "opportunity"
+
+[[pub8_capital_return.choices]]
+label = "Reinvest in growth"
+detail = "Put the cash back into the business — R&D, expansion, talent"
+effects = "Keeps the growth story alive if you have the opportunities. Pressure builds if the returns don't show."
+outcome_ref = "capital_reinvest"
+
+[[pub8_capital_return.choices]]
+label = "Buy back stock"
+detail = "Repurchase shares to boost per-share value and signal confidence"
+effects = "Supports the stock and concentrates ownership. Does nothing for the underlying business; ill-timed buybacks age badly."
+outcome_ref = "capital_buyback"
+
+[[pub8_capital_return.choices]]
+label = "Start a dividend"
+detail = "Begin returning cash directly to shareholders each quarter"
+effects = "Attracts income investors and signals stability. Hard to ever cut, and brands you a mature, slower-growth name."
+outcome_ref = "capital_dividend"
+
+# ===========================================================================
+# PUB9 — Hostile acquisition approach   (DLC-ready — M&A market)
+# ===========================================================================
+[pub9_hostile_approach]
+id = "pub9_hostile_approach"
+category = "public"
+weight = 2
+cooldown_weeks = 104
+one_shot = false
+
+[pub9_hostile_approach.trigger]
+type = "threshold"
+conditions = ["company.status == public", "company.ma_market_enabled == true", "founder.voting_control < 0.5"]
+weight_mods = [
+  { when = "company.stock_below_intrinsic == true", factor = 2.0 },   # undervaluation invites raiders
+  { when = "macro.cycle_phase == contraction", factor = 1.3 },
+]
+
+[pub9_hostile_approach.framing]
+headline = "{acquirer} makes an unsolicited bid for {company}"
+body = """{acquirer} has gone public with an unsolicited offer at {bid_premium} \
+over your current price, taking it straight to shareholders. It's a real number \
+— enough that your owners will listen — but it likely undervalues where you \
+think this is going. With your voting control under a majority, you can't just \
+say no; you have to win the argument or find another way out."""
+tone = "crisis"
+# {acquirer}    = a larger public company or strategic (procedural / graph)
+# {bid_premium} = premium over current price
+# Ties: governance, exit paths
+
+[[pub9_hostile_approach.choices]]
+label = "Reject and defend"
+detail = "Rebuff the bid; make the case that you're worth far more independent"
+effects = "Keeps the company yours if shareholders believe you. A low stock makes that a hard sell."
+outcome_ref = "hostile_reject"
+
+[[pub9_hostile_approach.choices]]
+label = "Seek a better deal"
+detail = "Use the bid to flush out a friendlier buyer or a higher price"
+effects = "Can turn an unwanted bid into a strong exit on your terms. No guarantee a white knight appears."
+outcome_ref = "hostile_shop"
+
+[[pub9_hostile_approach.choices]]
+label = "Negotiate the sale"
+detail = "Engage the acquirer and push hard for the best terms"
+effects = "A clean, lucrative exit and an end to public-company life. You give up the independent future you imagined."
+outcome_ref = "hostile_negotiate"

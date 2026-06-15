@@ -9,6 +9,8 @@ import type { Company } from "@/content/load";
 import { stageRank } from "@/domain/ids";
 import { netWorth } from "./finance";
 import { regimeOf } from "./world";
+import { founderOwnership } from "./captable";
+import { cashSurplus, earningsResult, guidanceWindowOpen, quarterCloseTick, weeksPublic } from "./earnings";
 
 export type CtxValue = string | number | boolean;
 
@@ -106,6 +108,26 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
     "sector.hype_moved_band": hypeBandMoved,
     "sector.maturity": maturity,
     "sector.recent_failure_density": failureDensity,
+
+    // ── Public-company / earnings-management (the pub-series) ──
+    "company.status": c.stage === "public" ? "public" : "private",
+    "company.weeks_public": weeksPublic(state),
+    "company.beat_guidance": c.stage === "public" ? earningsResult(state) : "met",
+    "company.earnings_gap": c.earnings?.gap ?? 0,
+    "company.guidance_stance": c.earnings?.guidance ?? "inline",
+    "company.quarter_close_tick": quarterCloseTick(state),
+    "company.guidance_window_open": guidanceWindowOpen(state),
+    "company.lockup_cleared": state.eventState.fired.includes("pub4_lockup_expiry"),
+    "company.profitable": c.financials.burnMonthly <= c.financials.revenue / 12,
+    "company.cash_surplus": cashSurplus(state),
+    "founder.voting_control": founderOwnership(c.capTable),
+    // DLC gates — off in V1, so the analyst/activist/buyback/M&A events stay dormant.
+    "company.analyst_coverage": false,
+    "company.activism_enabled": false,
+    "company.capital_return_enabled": false,
+    "company.ma_market_enabled": false,
+    "company.stock_below_intrinsic": false,
+    "company.underperforming_sector": false,
 
     // ── Space-business facts (persistent proxies that light up the s-series) ──
     "company.has_anchor_customer": isSpace && customers.length > 0 && stageR >= stageRank("series_a"),

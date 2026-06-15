@@ -12,6 +12,7 @@ import type { Company } from "@/content/load";
 import { industryLabel } from "@/domain/ids";
 import { type Rng, nextFloat, nextRange, pick } from "./rng";
 import { buildGraph, type CompanyGraph } from "./companyGraph";
+import { earningsResult, marketReaction, quarterIndex, resultVerbose } from "./earnings";
 import { generateTeam } from "./narrative";
 import { formatMoney } from "./format";
 
@@ -199,6 +200,16 @@ function resolveSlot(slot: string, state: GameState, rng: Rng): string | null {
       return pick(rng, ["expanded", "realigned", "scaled back"]) ?? null;
     case "program_summary":
       return pick(rng, PROGRAM_SUMMARIES) ?? null;
+
+    // ── Public-company earnings slots (pub1) ──
+    case "quarter":
+      return String(quarterIndex(state));
+    case "beat_guidance":
+      return earningsResult(state);
+    case "beat_guidance_verbose":
+      return resultVerbose(earningsResult(state));
+    case "market_reaction":
+      return marketReaction(earningsResult(state));
 
     default:
       // An unhandled slot fails the resolution → the event is skipped, rather
