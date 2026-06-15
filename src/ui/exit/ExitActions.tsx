@@ -15,7 +15,7 @@ export function ExitActions() {
   if (!ipoOk && !saleOk) return null;
 
   return (
-    <Panel className="exit-actions">
+    <Panel className="exit-actions" coach="exit">
       <div className="exit-actions__row">
         <div>
           <div className="section-label">Exit</div>

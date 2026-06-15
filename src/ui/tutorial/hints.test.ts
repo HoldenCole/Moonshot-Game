@@ -43,3 +43,29 @@ test("a seen tip never fires again; once all are seen, nothing surfaces", () => 
   const all = HINTS.map((h) => h.id);
   assert.equal(eligibleHints({ view: "dashboard", game: g }, all).length, 0);
 });
+
+// ── First-time milestone triggers ─────────────────────────────────────────────
+
+const ids = (g: GameState) => eligibleHints({ view: "dashboard", game: g }, []).map((h) => h.id);
+
+test("first-raise fires only after a priced round closes", () => {
+  const g = game();
+  assert.ok(!ids(g).includes("first-raise"), "not before any raise");
+  g.company.capTable.rounds[0]!.postMoney = 12; // simulate a closed priced round
+  assert.ok(ids(g).includes("first-raise"), "fires once you've raised");
+});
+
+test("exit-ready fires only when IPO-eligible", () => {
+  const g = game();
+  assert.ok(!ids(g).includes("exit-ready"), "not at pre-seed");
+  g.company.stage = "series_b";
+  g.company.capTable.rounds[0]!.postMoney = 300; // >= the $250M IPO bar
+  assert.ok(ids(g).includes("exit-ready"), "fires once public-ready");
+});
+
+test("went-public fires once the company is public", () => {
+  const g = game();
+  assert.ok(!ids(g).includes("went-public"));
+  g.company.stage = "public";
+  assert.ok(ids(g).includes("went-public"));
+});

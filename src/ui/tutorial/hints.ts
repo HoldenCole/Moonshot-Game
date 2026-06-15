@@ -5,6 +5,7 @@
 
 import type { View } from "@/ui/frame/types";
 import type { GameState } from "@/domain/state";
+import { ipoEligible } from "@/engine/exit";
 
 export interface HintCtx {
   view: View;
@@ -96,5 +97,34 @@ export const HINTS: Hint[] = [
     placement: "bottom",
     priority: 50,
     when: (c) => c.view === "market",
+  },
+
+  // ── First-time milestone triggers (fire once, the first time it happens) ──
+  {
+    id: "first-raise",
+    anchor: "captable",
+    title: "Your first round is closed",
+    body: "Investors own a slice now, and your founder percentage just dropped — that's dilution. It compounds across every future round, so the goal is to raise as little, and as high, as you can get away with.",
+    placement: "top",
+    priority: 22,
+    when: (c) => c.game.company.capTable.rounds.some((r) => r.postMoney > 0),
+  },
+  {
+    id: "exit-ready",
+    anchor: "exit",
+    title: "An exit is on the table",
+    body: "You're big enough to go public — or to field an acquisition. Either one ends the run and locks in your founder proceeds, so time it for a hot window rather than a desperate one.",
+    placement: "top",
+    priority: 35,
+    when: (c) => ipoEligible(c.game),
+  },
+  {
+    id: "went-public",
+    anchor: "company",
+    title: "You took it public",
+    body: "You're a public-company CEO now. Your shares are locked for 180 days, the market re-prices you every week, and the run keeps going — chase the next net-worth milestone.",
+    placement: "bottom",
+    priority: 8,
+    when: (c) => c.game.company.stage === "public",
   },
 ];

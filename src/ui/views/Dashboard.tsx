@@ -17,7 +17,7 @@ function FinancialBand({ company }: { company: PlayerCompany }) {
   const netBurn = f.burnMonthly - f.revenue / 12;
   const runway = netBurn > 0 ? f.cash / netBurn : Infinity;
   return (
-    <Panel className="finband">
+    <Panel className="finband" coach="company">
       <div className="finband__id">
         <span className="finband__dot" style={{ background: company.color }} />
         <div>
