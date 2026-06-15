@@ -8,6 +8,8 @@ import type {
   CompanyContent,
   EventContent,
   EventFile,
+  FounderContent,
+  FounderFile,
   InvestorContent,
 } from "@/domain/content";
 import type { Tuning } from "@/domain/tuning";
@@ -17,17 +19,20 @@ export type Company = CompanyContent["company"];
 export type Investor = InvestorContent["firm"];
 export type Bank = BankContent["bank"];
 export type GameEvent = EventContent;
+export type Founder = FounderContent;
 
 export interface ContentDB {
   companies: Company[];
   investors: Investor[];
   banks: Bank[];
   events: GameEvent[];
+  founders: Founder[];
   tuning: Tuning;
   companyById: Map<string, Company>;
   investorById: Map<string, Investor>;
   bankById: Map<string, Bank>;
   eventById: Map<string, GameEvent>;
+  founderById: Map<string, Founder>;
   /** Cross-reference issues found at load (unresolved ids). Empty when clean. */
   warnings: string[];
 }
@@ -57,6 +62,12 @@ const investorGlob = import.meta.glob("/content/investors/*.toml", {
 }) as Record<string, string>;
 
 const bankGlob = import.meta.glob("/content/banks/*.toml", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+const founderGlob = import.meta.glob("/content/founders/*.toml", {
   query: "?raw",
   import: "default",
   eager: true,
@@ -142,6 +153,22 @@ function indexBy<T extends { id: string }>(items: T[]): Map<string, T> {
 }
 
 /** Flatten the keyed event tables across all event files into one list. */
+function loadFounders(glob: Record<string, string>): Founder[] {
+  const out: Founder[] = [];
+  for (const [path, raw] of Object.entries(glob)) {
+    let parsed: FounderFile;
+    try {
+      parsed = parse(raw) as unknown as FounderFile;
+    } catch (err) {
+      throw new Error(`Failed to parse ${path}: ${(err as Error).message}`);
+    }
+    for (const value of Object.values(parsed)) {
+      if (value && typeof value === "object" && "id" in value && "modifiers" in value) out.push(value);
+    }
+  }
+  return out;
+}
+
 function loadEvents(glob: Record<string, string>): GameEvent[] {
   const out: GameEvent[] = [];
   for (const [path, raw] of Object.entries(glob)) {
@@ -209,17 +236,20 @@ export function loadContent(): ContentDB {
   const investors = loadDir<Investor>(investorGlob, (p) => (p as InvestorContent).firm);
   const banks = loadDir<Bank>(bankGlob, (p) => (p as BankContent).bank);
   const events = loadEvents(eventGlob);
+  const founders = loadFounders(founderGlob);
 
   const base = {
     companies,
     investors,
     banks,
     events,
+    founders,
     tuning: loadTuning(worldGlob),
     companyById: indexBy(companies),
     investorById: indexBy(investors),
     bankById: indexBy(banks),
     eventById: indexBy(events),
+    founderById: indexBy(founders),
   };
 
   cached = { ...base, warnings: validate(base) };

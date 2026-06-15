@@ -55,9 +55,11 @@ const NAME_SUGGESTIONS: Record<PlayableSubIndustry, string> = {
 export function NewGameScreen() {
   const newGame = useGame((s) => s.newGame);
   const continueGame = useGame((s) => s.continueGame);
+  const founders = useGame((s) => s.content.founders);
   const saved = useMemo(() => saveSummary(), []);
   const [industry, setIndustry] = useState<Industry | null>(null);
   const [sub, setSub] = useState<PlayableSubIndustry | null>(null);
+  const [archetypeId, setArchetypeId] = useState<string | null>(null);
   const [founderName, setFounderName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [companyTouched, setCompanyTouched] = useState(false);
@@ -82,6 +84,7 @@ export function NewGameScreen() {
       color: INDUSTRY_COLOR[sub] ?? "#5b82ff",
       seed: Math.floor(Math.random() * 2 ** 31),
       difficulty: { preset, newsCycle, axes },
+      archetype: founders.find((f) => f.id === archetypeId),
     });
   };
 
@@ -153,10 +156,29 @@ export function NewGameScreen() {
           </div>
         )}
 
-        {/* Step 3 — Identity */}
+        {/* Step 3 — Founder */}
         {sub && (
           <div className="newgame__step rise">
-            <div className="newgame__step-label">3 · Identity</div>
+            <div className="newgame__step-label">3 · Founder</div>
+            {founders.length > 0 && (
+              <>
+                <div className="founder-cards">
+                  {founders.map((f) => (
+                    <button
+                      key={f.id}
+                      className={`founder-card${archetypeId === f.id ? " is-active" : ""}`}
+                      onClick={() => setArchetypeId(archetypeId === f.id ? null : f.id)}
+                    >
+                      <div className="founder-card__name">{f.name}</div>
+                      <div className="founder-card__hint">{f.playstyle_hint}</div>
+                    </button>
+                  ))}
+                </div>
+                {archetypeId && (
+                  <p className="founder-blurb">{founders.find((f) => f.id === archetypeId)?.blurb}</p>
+                )}
+              </>
+            )}
             <div className="identity-fields">
               <label className="field">
                 <span className="field__label">Founder name</span>

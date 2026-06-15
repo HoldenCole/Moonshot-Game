@@ -1,0 +1,131 @@
+# Founder Archetypes — starting backgrounds for the "Founder" step.
+# Each archetype is a THEMATIC PRESET over levers the game already exposes
+# (starting reputation, network/investor warmth, starting cash, integrity,
+# the delegation/exec sub-system, and the signature mechanics). Numbers are
+# deliberately MODEST: an archetype is flavor + a tilt, never a power pick.
+# There is no objectively best founder — each leans toward a different
+# playstyle, consistent with the game's "no right answer" philosophy.
+#
+# All numeric fields are DELTAS/MULTIPLIERS applied in createNewGame on top
+# of the difficulty-slider baselines. See entity_founders.md for the schema
+# and the dimension-by-dimension mapping to existing systems.
+#
+# Baselines assumed (tune in playtest): reputation 50, integrity 50,
+# investor_warmth 0, exec quality rolled ~50. starting_cash_mult multiplies
+# the Starting Capital slider value (1.0 = exactly the slider).
+
+# ---------------------------------------------------------------------------
+[engineer]
+id = "engineer"
+name = "The Engineer"
+blurb = """You built the thing before you built the company. Deep technical \
+credibility, a bias for shipping over selling, and instincts that shine inside \
+the product and dim inside a boardroom. Investors respect the work; convincing \
+them to fund it is the part you'll have to learn."""
+playstyle_hint = "Product-led. Strong on the technical signature mechanic, weaker on fundraising warmth."
+
+[engineer.modifiers]
+starting_reputation = 5        # known for the work, in technical circles
+starting_cash_mult = 1.0       # no personal-wealth tilt
+investor_warmth = -8           # less natural rapport with VCs
+integrity_baseline = 5         # builder's instinct to do it right
+signature_lean = 8             # the product/tech signature: research, reliability, design
+exec_quality_floor = 0
+sub_system_lean = "signature_mechanic"
+
+# ---------------------------------------------------------------------------
+[operator]
+id = "operator"
+name = "The Operator"
+blurb = """You've run things at scale — org charts, budgets, the machinery that \
+turns a plan into shipped reality. You know how to hire well and delegate \
+without losing the thread, which means you can go hands-off sooner than most. \
+The open question is whether you can find the bold bet, not just execute it."""
+playstyle_hint = "Execution- and delegation-led. Better first executives, smoother hands-off play."
+
+[operator.modifiers]
+starting_reputation = -3       # a builder behind the scenes, not a known name
+starting_cash_mult = 1.0
+investor_warmth = 0
+integrity_baseline = 0
+signature_lean = -2            # less hands-on technical edge than a builder-founder
+exec_quality_floor = 10        # hires better, delegates earlier — the exec/delegation lean
+sub_system_lean = "delegation"
+
+# ---------------------------------------------------------------------------
+[seller]
+id = "seller"
+name = "The Seller"
+blurb = """You can get the meeting and close the room. Customers, recruits, and \
+especially investors warm to you fast — fundraising is where you're most \
+dangerous. The risk is selling a story the product hasn't earned yet, and \
+having to make good on it before the gap shows."""
+playstyle_hint = "Fundraising- and revenue-led. Warm investor relationships, easier raises, watch the substance gap."
+
+[seller.modifiers]
+starting_reputation = 4
+starting_cash_mult = 1.0
+investor_warmth = 12           # the standout: investors lean in — easier raises
+integrity_baseline = -5        # the temptation to oversell is real
+signature_lean = 0
+exec_quality_floor = 0
+sub_system_lean = "fundraising"
+
+# ---------------------------------------------------------------------------
+[academic]
+id = "academic"
+name = "The Academic"
+blurb = """You come from the research frontier, where the hardest problems live. \
+Your name opens doors with technical talent and lends instant credibility to a \
+deep-tech thesis. Commercial discipline is the muscle you haven't trained — \
+turning a breakthrough into a business is a different kind of hard."""
+playstyle_hint = "Deep-tech and talent-led. Strongest technical signature edge and integrity, weakest on cash and commercial pace."
+
+[academic.modifiers]
+starting_reputation = 6        # cited, credible, known in the field
+starting_cash_mult = 0.85      # came from the lab, not a payout — leaner start
+investor_warmth = -5           # brilliant, not yet bankable to generalist VCs
+integrity_baseline = 8         # research-integrity instincts carry over
+signature_lean = 10            # the deepest technical-signature edge
+exec_quality_floor = 0
+sub_system_lean = "signature_mechanic"
+
+# ---------------------------------------------------------------------------
+[repeat_founder]
+id = "repeat_founder"
+name = "The Repeat Founder"
+blurb = """You've done this before, and people know it. Investors take your call, \
+top operators will join, and you start with real personal capital from the last \
+ride. The shadow is the encore: the market scrutinizes a second act harder, and \
+years out of the weeds mean your hands-on edge has dulled into general instinct."""
+playstyle_hint = "All-around head start from a prior exit. Higher cash, reputation, and warmth; harsher scrutiny and a duller technical edge."
+
+[repeat_founder.modifiers]
+starting_reputation = 10       # the prior exit precedes you
+starting_cash_mult = 1.3       # personal wealth from the last company
+investor_warmth = 8            # they've made money with you before
+integrity_baseline = -4        # the market scrutinizes the encore harder; less benefit of the doubt
+signature_lean = -3            # a generalist now — out of the weeds, edge has dulled
+exec_quality_floor = 6         # top execs return your calls
+sub_system_lean = "fundraising"
+
+# ---------------------------------------------------------------------------
+[bootstrapper]
+id = "bootstrapper"
+name = "The Bootstrapper"
+blurb = """You've never taken a dollar you didn't have to. Frugal, revenue-first, \
+and allergic to dilution — you can stretch a runway further than anyone and \
+build real value before you ever pitch. The flip side: when you do need outside \
+capital fast, you don't have the warm network the fundraisers lean on."""
+playstyle_hint = "Capital-efficient, revenue-first. Cash stretches further; thinner investor network for when you do raise."
+
+[bootstrapper.modifiers]
+starting_reputation = 2
+starting_cash_mult = 0.9       # lean by choice and circumstance
+investor_warmth = -10          # hasn't worked the VC circuit
+integrity_baseline = 6         # disciplined, low-drama operator
+signature_lean = 4
+exec_quality_floor = 3
+sub_system_lean = "burn_efficiency"
+# burn_efficiency: a small multiplier reducing effective monthly burn — the
+# capital-efficiency lean. (New sub-system tag; see entity_founders.md note.)

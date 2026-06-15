@@ -5,7 +5,7 @@ import type { Industry, Stage, SubIndustry } from "@/domain/ids";
 import type { Difficulty, GameState, WorldState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
 import type { RoundTerms } from "@/domain/captable";
-import type { CompanyContent } from "@/domain/content";
+import type { CompanyContent, FounderContent } from "@/domain/content";
 import { INITIAL_EVENT_STATE } from "@/domain/events";
 import { normalizeDifficulty } from "@/engine/difficulty";
 import { foundCompany } from "@/engine/captable";
@@ -23,6 +23,8 @@ export interface FoundingChoices {
   cofounder?: { name: string; sharePct: number };
   /** Difficulty chosen on the setup screen (defaults to Realistic / Medium). */
   difficulty?: Difficulty;
+  /** Chosen founder archetype (tilts the opening state); neutral if omitted. */
+  archetype?: FounderContent;
   /** New Game Plus: reputation + personal wealth carried from a prior run. */
   carryOver?: { reputation: number; personalCash: number };
 }
@@ -30,6 +32,8 @@ export interface FoundingChoices {
 /** Build the genesis save from founding choices. The company starts pre-seed
  *  with a little founder capital and a cap table the founder wholly owns. The
  *  procedural market is generated from the seed (anchors as templates). */
+const clampScore = (x: number) => Math.max(0, Math.min(100, x));
+
 export function createNewGame(
   choices: FoundingChoices,
   createdAt: string,
@@ -48,10 +52,13 @@ export function createNewGame(
 
   const difficulty = normalizeDifficulty(choices.difficulty);
   const axes = difficulty.axes;
-  // Founding capital and opening burn scale with difficulty — more cushion and a
-  // lighter burn on Forgiving, a tighter garage on Brutal.
-  const startingCash = Math.round(0.75 * axes.startingCapital * 100) / 100;
-  const startingBurn = Math.round(0.08 * axes.burnRate * 1000) / 1000;
+  // Founder archetype tilts the opening board over the difficulty baselines.
+  const m = choices.archetype?.modifiers;
+  const burnEff = m?.sub_system_lean === "burn_efficiency" ? 0.92 : 1;
+  // Founding capital and opening burn scale with difficulty (and the archetype) —
+  // more cushion and a lighter burn on Forgiving / capital-efficient founders.
+  const startingCash = Math.round(0.75 * axes.startingCapital * (m?.starting_cash_mult ?? 1) * 100) / 100;
+  const startingBurn = Math.round(0.08 * axes.burnRate * burnEff * 1000) / 1000;
 
   // Opening "weather": a healthy late-expansion, all eight industries seeded
   // at their hype baselines so the public market (Phase 6) reads from them.
@@ -93,10 +100,16 @@ export function createNewGame(
     clock: { week: 0 },
     founder: {
       name: choices.founderName,
-      // A proven serial founder carries reputation (and exit wealth) forward.
-      reputation: choices.carryOver?.reputation ?? 30,
+      // A proven serial founder carries reputation (and exit wealth) forward;
+      // the archetype tilts reputation/integrity over that baseline.
+      reputation: clampScore((choices.carryOver?.reputation ?? 30) + (m?.starting_reputation ?? 0)),
       personalCash: choices.carryOver?.personalCash ?? 0,
-      ethics: 60,
+      ethics: clampScore(60 + (m?.integrity_baseline ?? 0)),
+      investorWarmth: m?.investor_warmth ?? 0,
+      signatureLean: m?.signature_lean ?? 0,
+      execQualityFloor: m?.exec_quality_floor ?? 0,
+      // Only present when an archetype was chosen (keeps the save round-trip clean).
+      ...(choices.archetype ? { archetype: choices.archetype.id } : {}),
     },
     company: {
       name: choices.companyName,

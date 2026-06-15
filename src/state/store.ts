@@ -376,7 +376,8 @@ function buildCtx(game: GameState, leadId: string): NegotiationContext {
     vcClimate: game.world.vcClimate,
     week: game.clock.week,
     market,
-    relationshipScore: game.relationships[leadId]?.score ?? NEUTRAL_RELATIONSHIP,
+    // A warm/cold founder (Seller vs. Engineer) seeds every relationship.
+    relationshipScore: clamp((game.relationships[leadId]?.score ?? NEUTRAL_RELATIONSHIP) + (game.founder.investorWarmth ?? 0), 0, 100),
     seed: game.meta.seed,
   };
 }

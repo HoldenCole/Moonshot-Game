@@ -230,7 +230,9 @@ function companyExecution(state: GameState): number {
   // lands its big bets more reliably.
   const stageBoost = Math.min(0.35, stageRank(state.company.stage) / 22);
   const teamBoost = Math.min(0.2, state.company.financials.headcount / 80);
-  return Math.min(0.85, 0.28 + stageBoost + teamBoost);
+  // A technical founder (Engineer/Academic) gets a small head start in the lab.
+  const founderLean = (state.founder.signatureLean ?? 0) / 100;
+  return Math.min(0.9, 0.28 + stageBoost + teamBoost + founderLean);
 }
 
 function processName(company: string, cfg: SignatureConfig, gen: number): string {

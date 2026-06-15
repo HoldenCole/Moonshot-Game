@@ -90,6 +90,7 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
     "world.star_talent_available": true,
     "founder.reputation": state.founder.reputation,
     "founder.personal_wealth": netWorth(state),
+    "founder.archetype": state.founder.archetype ?? "none",
     // Strain from the recent crisis record (feeds p1 burnout).
     "founder.sustained_intensity": sustainedCrises >= 3 ? "high" : sustainedCrises >= 1 ? "elevated" : "low",
     "founder.recent_crisis_density": recentCrises >= 2 ? "high" : recentCrises >= 1 ? "elevated" : "low",

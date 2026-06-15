@@ -190,3 +190,28 @@ export interface EventContent {
 /** Event TOML files are keyed tables (one table per event); the loader
  *  flattens them into a list. */
 export type EventFile = Record<string, EventContent>;
+
+// ── Founder archetypes ───────────────────────────────────────────────────────
+
+/** Deltas/multipliers applied in createNewGame over the difficulty baselines. */
+export interface FounderModifiers {
+  starting_reputation: number;
+  starting_cash_mult: number;
+  investor_warmth: number;
+  integrity_baseline: number;
+  signature_lean: number;
+  exec_quality_floor: number;
+  /** Names the one system this founder is nudged toward (tooltip + future hooks). */
+  sub_system_lean: string;
+}
+
+export interface FounderContent {
+  id: string;
+  name: string;
+  blurb: string;
+  playstyle_hint: string;
+  modifiers: FounderModifiers;
+}
+
+/** founders.toml is one keyed table per archetype; the loader flattens it. */
+export type FounderFile = Record<string, FounderContent>;
