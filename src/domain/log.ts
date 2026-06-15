@@ -10,7 +10,7 @@ export type LogTone =
   | "crisis"
   | "opportunity";
 
-export type LogKind = "recap" | "world" | "alert" | "milestone" | "company";
+export type LogKind = "world" | "alert" | "milestone" | "company";
 
 export interface LogEntry {
   id: string;

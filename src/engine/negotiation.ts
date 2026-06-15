@@ -167,8 +167,10 @@ function counterTerms(
   const p = agent.personality;
   const agg = p.aggression / 100;
   const ff = p.founderFriendliness / 100;
-  // How far the firm moves from its ideal toward the player's ask.
-  const toPlayer = clamp(0.25 + 0.5 * ff - 0.25 * agg + 0.15 * appetite, 0.1, 0.8);
+  const net = p.networkStrength / 100;
+  // How far the firm moves from its ideal toward the player's ask. A
+  // well-networked firm knows founders want it, so it concedes less.
+  const toPlayer = clamp(0.25 + 0.5 * ff - 0.25 * agg + 0.15 * appetite - 0.12 * net, 0.1, 0.8);
 
   return {
     valuation: Math.min(player.valuation, lerp(ideal.valuation, player.valuation, toPlayer)),
@@ -231,7 +233,9 @@ export function evaluateProposal(
 
   const conv = agent.personality.conviction / 100;
   const pat = agent.personality.patience / 100;
-  const acceptThreshold = 0.68 - 0.12 * appetite - (round / MAX_ROUNDS) * 0.12 * conv;
+  const net = agent.personality.networkStrength / 100;
+  // Desirable, well-networked firms can afford to be a touch pickier.
+  const acceptThreshold = 0.68 - 0.12 * appetite - (round / MAX_ROUNDS) * 0.12 * conv + 0.05 * net;
   const walkFloor = 0.35 - 0.18 * pat;
 
   // Per-term reactions (a term the player over-delivers on is "loved").
@@ -366,7 +370,7 @@ export function comparableRounds(
 function hotDeal(agent: InvestorAgent, ctx: NegotiationContext): boolean {
   const ripe = ctx.hype > 78 && ctx.vcClimate > 68 && dealAppetite(agent, ctx) > 0.7;
   if (!ripe) return false;
-  return hashStr(`${ctx.seed}:${ctx.week}:${agent.id}`) % 100 < 25; // rare even when ripe
+  return hashStr(`${ctx.seed}:${ctx.week}:${agent.id}`) % 100 < 5; // a rare earned moment even when ripe
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────

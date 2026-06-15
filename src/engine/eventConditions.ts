@@ -57,6 +57,15 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
   const lastSig = c.signature.lastOutcome;
   const sinceFailure = lastSig && lastSig.kind === "failure" ? state.clock.week - lastSig.week : Infinity;
   const failureDensity = sinceFailure <= 6 ? "high" : sinceFailure <= 16 ? "elevated" : "low";
+  // A signature process that just resolved (the launch/deploy "binary moment").
+  const sigRecent = !!lastSig && state.clock.week - lastSig.week <= 2;
+
+  // Founder strain, derived from the crisis-tone record over two windows, so the
+  // burnout beat (p1) can fire after a genuinely rough stretch.
+  const crisesIn = (weeks: number) =>
+    state.log.filter((e) => e.tone === "crisis" && state.clock.week - e.week <= weeks).length;
+  const recentCrises = crisesIn(12);
+  const sustainedCrises = crisesIn(26);
 
   const isSpace = ind === "space";
 
@@ -79,9 +88,9 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
     "world.star_talent_available": true,
     "founder.reputation": state.founder.reputation,
     "founder.personal_wealth": netWorth(state),
-    // Burnout/intensity tracking arrives with delegation (Phase 9).
-    "founder.sustained_intensity": "low",
-    "founder.recent_crisis_density": "normal",
+    // Strain from the recent crisis record (feeds p1 burnout).
+    "founder.sustained_intensity": sustainedCrises >= 3 ? "high" : sustainedCrises >= 1 ? "elevated" : "low",
+    "founder.recent_crisis_density": recentCrises >= 2 ? "high" : recentCrises >= 1 ? "elevated" : "low",
     "game.year": year,
 
     // ── Macro regime + transitions (the m-series economic events) ──
@@ -104,6 +113,11 @@ export function buildEventContext(state: GameState, market: Company[]): Record<s
     "company.reusability_program": sub === "launch_services" && stageR >= stageRank("seed"),
     "company.has_tenant": sub === "space_stations" && stageR >= stageRank("seed"),
     "company.demand_exceeds_capacity": sub === "launch_services" && (hypeNow >= 65 || stageR >= stageRank("series_b")),
+    // Signature "binary moment" results — dramatize a launch/deploy the tick it
+    // resolves (s1/s2/s6).
+    "company.launch_committed": sub === "launch_services" && lastSig != null,
+    "company.launch_outcome": sub === "launch_services" && sigRecent ? lastSig!.kind : "none",
+    "company.deployment_batch_ready": sub === "satellite_constellations" && sigRecent && lastSig!.kind !== "failure",
   };
 }
 

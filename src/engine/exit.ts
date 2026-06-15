@@ -9,7 +9,7 @@ import type { Bank } from "@/content/load";
 import type { Company } from "@/content/load";
 import { stageRank } from "@/domain/ids";
 import { applyRound, exitWaterfall, founderOwnership, latestPostMoney } from "./captable";
-import { type Rng, nextFloat, nextRange, pick } from "./rng";
+import { type Rng, nextRange, pick } from "./rng";
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
@@ -194,8 +194,4 @@ export function firstDayWord(pop: number): string {
   if (pop > 0.05) return "pops";
   if (pop > -0.05) return "holds steady";
   return "slides";
-}
-
-export function rollGen(rng: Rng): number {
-  return Math.floor(nextFloat(rng) * 1000);
 }
