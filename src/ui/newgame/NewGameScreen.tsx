@@ -8,6 +8,7 @@ import {
   type PlayableSubIndustry,
 } from "@/domain/ids";
 import type { DifficultyAxes, NewsCycle } from "@/domain/state";
+import type { FounderContent } from "@/domain/content";
 import { AXES, NEWS_CYCLES, PRESET_AXES, PRESETS, matchingPreset, previewBars } from "@/engine/difficulty";
 import { Icon } from "@/ui/components/Icon";
 import { Button, Segmented, Slider } from "@/ui/components/controls";
@@ -52,6 +53,20 @@ const NAME_SUGGESTIONS: Record<PlayableSubIndustry, string> = {
   space_stations: "Meridian Station",
 };
 
+// The custom-founder builder exposes the same dimensions the presets tune, under
+// friendly labels. A net-advantage "tilt budget" bounds a hand-built founder so
+// it can't out-tilt the curated archetypes; weaknesses (negatives) buy strengths.
+const CUSTOM_ATTRS = [
+  { key: "reputation", label: "Reputation", min: -5, max: 10, hint: "How known you are — affects hiring and the investor signal." },
+  { key: "warmth", label: "Investor Network", min: -10, max: 12, hint: "Rapport with VCs — warms every negotiation." },
+  { key: "integrity", label: "Integrity", min: -8, max: 8, hint: "Your ethics baseline — the hidden risk meter." },
+  { key: "signature", label: "Technical Credibility", min: -5, max: 10, hint: "A head start in the lab / on the pad." },
+  { key: "exec", label: "Team Builder", min: 0, max: 10, hint: "The quality of your first executive hires." },
+] as const;
+type CustomKey = (typeof CUSTOM_ATTRS)[number]["key"];
+const TILT_BUDGET = 22;
+const NEUTRAL_ATTRS: Record<CustomKey, number> = { reputation: 0, warmth: 0, integrity: 0, signature: 0, exec: 0 };
+
 export function NewGameScreen() {
   const newGame = useGame((s) => s.newGame);
   const continueGame = useGame((s) => s.continueGame);
@@ -60,6 +75,8 @@ export function NewGameScreen() {
   const [industry, setIndustry] = useState<Industry | null>(null);
   const [sub, setSub] = useState<PlayableSubIndustry | null>(null);
   const [archetypeId, setArchetypeId] = useState<string | null>(null);
+  const [customAttrs, setCustomAttrs] = useState<Record<CustomKey, number>>(NEUTRAL_ATTRS);
+  const [age, setAge] = useState(35);
   const [founderName, setFounderName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [companyTouched, setCompanyTouched] = useState(false);
@@ -70,12 +87,34 @@ export function NewGameScreen() {
 
   const suggestedCompany = sub ? NAME_SUGGESTIONS[sub] : "";
   const effectiveCompany = companyTouched ? companyName : suggestedCompany;
-  const ready = Boolean(industry && sub && founderName.trim() && effectiveCompany.trim());
+  const tiltUsed = CUSTOM_ATTRS.reduce((s, a) => s + customAttrs[a.key], 0);
+  const overBudget = archetypeId === "custom" && tiltUsed > TILT_BUDGET;
+  const ready = Boolean(industry && sub && founderName.trim() && effectiveCompany.trim() && !overBudget);
 
   const subs = useMemo(() => (industry ? SUBS[industry] : []), [industry]);
 
+  /** Build a FounderContent from the custom sliders — same shape as a preset, so
+   *  createNewGame can't tell them apart. Cash comes from the difficulty axis
+   *  (one source of truth), so the multiplier stays neutral. */
+  const customFounder = (): FounderContent => ({
+    id: "custom",
+    name: "Custom Founder",
+    blurb: "A founder of your own design.",
+    playstyle_hint: "Custom",
+    modifiers: {
+      starting_reputation: customAttrs.reputation,
+      starting_cash_mult: 1.0,
+      investor_warmth: customAttrs.warmth,
+      integrity_baseline: customAttrs.integrity,
+      signature_lean: customAttrs.signature,
+      exec_quality_floor: customAttrs.exec,
+      sub_system_lean: "custom",
+    },
+  });
+
   const found = () => {
     if (!industry || !sub) return;
+    const custom = archetypeId === "custom";
     newGame({
       founderName: founderName.trim() || "Alex Rivera",
       companyName: effectiveCompany.trim() || suggestedCompany,
@@ -84,7 +123,8 @@ export function NewGameScreen() {
       color: INDUSTRY_COLOR[sub] ?? "#5b82ff",
       seed: Math.floor(Math.random() * 2 ** 31),
       difficulty: { preset, newsCycle, axes },
-      archetype: founders.find((f) => f.id === archetypeId),
+      archetype: custom ? customFounder() : founders.find((f) => f.id === archetypeId),
+      ...(custom ? { age } : {}),
     });
   };
 
@@ -173,10 +213,76 @@ export function NewGameScreen() {
                       <div className="founder-card__hint">{f.playstyle_hint}</div>
                     </button>
                   ))}
+                  <button
+                    className={`founder-card founder-card--custom${archetypeId === "custom" ? " is-active" : ""}`}
+                    onClick={() => setArchetypeId(archetypeId === "custom" ? null : "custom")}
+                  >
+                    <div className="founder-card__name">Custom</div>
+                    <div className="founder-card__hint">Build your own founder — set the tilts by hand.</div>
+                  </button>
                 </div>
-                {archetypeId && (
+
+                {archetypeId === "custom" ? (
+                  <div className="founder-custom">
+                    <div className="founder-custom__budget">
+                      <span className="founder-custom__budget-label">Tilt budget</span>
+                      <span className="founder-custom__track">
+                        <span
+                          className="founder-custom__fill"
+                          style={{
+                            width: `${Math.max(0, Math.min(100, (tiltUsed / TILT_BUDGET) * 100))}%`,
+                            background: overBudget ? "var(--down)" : "var(--accent)",
+                          }}
+                        />
+                      </span>
+                      <span className={`founder-custom__budget-val${overBudget ? " down" : ""}`}>
+                        {tiltUsed} / {TILT_BUDGET}
+                      </span>
+                    </div>
+                    <div className="founder-custom__sliders">
+                      {CUSTOM_ATTRS.map((a) => (
+                        <Slider
+                          key={a.key}
+                          label={a.label}
+                          value={customAttrs[a.key]}
+                          min={a.min}
+                          max={a.max}
+                          step={1}
+                          onChange={(v) => setCustomAttrs({ ...customAttrs, [a.key]: v })}
+                          format={(v) => (v > 0 ? `+${v}` : `${v}`)}
+                          hint={a.hint}
+                        />
+                      ))}
+                      <Slider
+                        label="Starting capital"
+                        value={Math.round(0.75 * axes.startingCapital * 100) / 100}
+                        min={0.4}
+                        max={1.35}
+                        step={0.05}
+                        onChange={(v) => setAxes({ ...axes, startingCapital: v / 0.75 })}
+                        format={(v) => formatMoney(v)}
+                        hint="Your founder/F&F capital — shared with the Starting Capital difficulty slider."
+                      />
+                      <Slider
+                        label="Age"
+                        value={age}
+                        min={22}
+                        max={70}
+                        step={1}
+                        onChange={setAge}
+                        format={(v) => `${v}`}
+                        hint="Flavor for now — seeds the lifespan clock if a mortal/Dynasty mode is on."
+                      />
+                    </div>
+                    {overBudget && (
+                      <p className="founder-custom__warn">
+                        Over the tilt budget — dial back a strength, or take a weakness to afford it.
+                      </p>
+                    )}
+                  </div>
+                ) : archetypeId ? (
                   <p className="founder-blurb">{founders.find((f) => f.id === archetypeId)?.blurb}</p>
-                )}
+                ) : null}
               </>
             )}
             <div className="identity-fields">

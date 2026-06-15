@@ -1784,6 +1784,57 @@
   border-left: 2px solid var(--accent);
   padding-left: 11px;
 }
+.founder-card--custom {
+  border-style: dashed;
+}
+.founder-custom {
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 0.5px solid var(--border-faint);
+}
+.founder-custom__budget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.founder-custom__budget-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+}
+.founder-custom__track {
+  flex: 1;
+  height: 6px;
+  background: var(--panel-2);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+.founder-custom__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  transition: width 0.15s ease;
+}
+[data-reduce-motion="on"] .founder-custom__fill {
+  transition: none;
+}
+.founder-custom__budget-val {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+.founder-custom__sliders {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 28px;
+}
+.founder-custom__warn {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--down);
+}
 .identity-fields {
   display: grid;
   grid-template-columns: 1fr 1fr;

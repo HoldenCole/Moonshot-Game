@@ -47,6 +47,26 @@ test("burn-efficiency lowers opening burn; the cash multiplier scales the start"
   assert.equal(b.founder.execQualityFloor, 3);
 });
 
+test("a custom founder produces the same opening state as an equivalent preset", () => {
+  const mods = seller.modifiers;
+  const asPreset = mk({ ...seller, id: "seller" });
+  const asCustom = createNewGame(
+    { founderName: "You", companyName: "Co", industry: "ai", subIndustry: "frontier_model_lab", color: "#fff", seed: 1, archetype: { id: "custom", name: "", blurb: "", playstyle_hint: "", modifiers: mods }, age: 40 },
+    "2026-01-01T00:00:00Z",
+  );
+  // Equivalent inputs → identical DERIVED state (the §4a invariant).
+  assert.equal(asCustom.founder.reputation, asPreset.founder.reputation);
+  assert.equal(asCustom.founder.ethics, asPreset.founder.ethics);
+  assert.equal(asCustom.founder.investorWarmth, asPreset.founder.investorWarmth);
+  assert.equal(asCustom.founder.signatureLean, asPreset.founder.signatureLean);
+  assert.equal(asCustom.founder.execQualityFloor, asPreset.founder.execQualityFloor);
+  assert.equal(asCustom.company.financials.cash, asPreset.company.financials.cash);
+  assert.equal(asCustom.company.financials.burnMonthly, asPreset.company.financials.burnMonthly);
+  // The custom build records its own id + age.
+  assert.equal(asCustom.founder.archetype, "custom");
+  assert.equal(asCustom.founder.age, 40);
+});
+
 test("archetype deltas clamp into the valid range", () => {
   const harsh: FounderContent = {
     id: "x",

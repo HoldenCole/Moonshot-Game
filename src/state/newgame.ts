@@ -23,8 +23,11 @@ export interface FoundingChoices {
   cofounder?: { name: string; sharePct: number };
   /** Difficulty chosen on the setup screen (defaults to Realistic / Medium). */
   difficulty?: Difficulty;
-  /** Chosen founder archetype (tilts the opening state); neutral if omitted. */
+  /** Chosen founder archetype (tilts the opening state); neutral if omitted.
+   *  A custom-built founder passes one of these too, with id "custom". */
   archetype?: FounderContent;
+  /** Founder age (custom builds set it; cosmetic in V1). */
+  age?: number;
   /** New Game Plus: reputation + personal wealth carried from a prior run. */
   carryOver?: { reputation: number; personalCash: number };
 }
@@ -108,8 +111,9 @@ export function createNewGame(
       investorWarmth: m?.investor_warmth ?? 0,
       signatureLean: m?.signature_lean ?? 0,
       execQualityFloor: m?.exec_quality_floor ?? 0,
-      // Only present when an archetype was chosen (keeps the save round-trip clean).
+      // Only present when set (keeps the save round-trip clean).
       ...(choices.archetype ? { archetype: choices.archetype.id } : {}),
+      ...(choices.age != null ? { age: choices.age } : {}),
     },
     company: {
       name: choices.companyName,

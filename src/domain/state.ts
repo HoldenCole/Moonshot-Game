@@ -18,8 +18,10 @@ export interface FounderState {
   /** Integrity score, 0–100 (decision L/M). Nudged by event choices; mostly a
    *  hidden risk meter in V1, deepened by scandals/activists in DLCs. */
   ethics: number;
-  /** Chosen founder archetype id (flavor + the tilts below). */
+  /** Chosen founder archetype id (flavor + the tilts below), or "custom". */
   archetype?: string;
+  /** Founder age — cosmetic in V1 (seeds the lifespan clock in mortal/Dynasty mode). */
+  age?: number;
   /** Persistent founder tilts from the archetype. Warmth seeds every
    *  negotiation; the lean boosts the signature mechanic; the floor lifts hires. */
   investorWarmth?: number;
