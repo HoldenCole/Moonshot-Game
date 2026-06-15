@@ -94,6 +94,30 @@ test("slots resolve from the real market; missing required slot skips", () => {
   assert.equal(lonely, null);
 });
 
+test("a {customer} beside a {rival} is drawn from that rival's real customers", () => {
+  const g = game(); // player is frontier_model_lab
+  const rival = co("cerebra"); // the only same-sub competitor in this market
+  const cust = co("acme", "vertical_ai_saas");
+  rival.relationships = { competitors: [], customers: ["acme"], investors: [] };
+  const filled = resolveSlots(["{rival} lost {customer}"], g, [rival, cust], makeRng(3))!.fill(
+    "{rival} lost {customer}",
+  );
+  assert.equal(filled, "Cerebra lost Acme", "the customer is the rival's actual account");
+});
+
+test("entity slots favour salient anchors over the procedural long tail", () => {
+  const g = game();
+  const anchor = co("openmind"); // anchor, reputation 80
+  const gen = co("smallfry");
+  gen.tier = "procedural";
+  gen.identity.reputation = 35;
+  let anchorHits = 0;
+  for (let s = 0; s < 80; s++) {
+    if (resolveSlots(["{rival}"], g, [anchor, gen], makeRng(s))!.fill("{rival}") === "Openmind") anchorHits++;
+  }
+  assert.ok(anchorHits > 55, `anchor named ${anchorHits}/80 — expected the clear majority`);
+});
+
 // ── Outcomes ─────────────────────────────────────────────────────────────────
 
 test("a costly choice spends cash; a transparent one lifts ethics", () => {

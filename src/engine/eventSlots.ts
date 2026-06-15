@@ -1,13 +1,17 @@
 // Event slot resolution. Templates carry {rival}, {researcher}, {supplier},
 // {customer}, {offer_amount}, {star_researcher}, {competitor_move}, {cofounder}.
 // Slots resolve from the real market + team so events name actual entities
-// ("Cerebra is poaching Dr. Okafor"). If a required slot can't resolve, the
-// event is skipped (decision M).
+// ("Cerebra is poaching Dr. Okafor"). The company entities ({rival}/{supplier}/
+// {customer}) are picked together off the relationship graph — salient (anchors
+// and well-connected names surface) and coherent (a {customer} that co-occurs
+// with a {rival} is drawn from that rival's real customers). If a required slot
+// can't resolve, the event is skipped (decision M).
 
 import type { GameState } from "@/domain/state";
 import type { Company } from "@/content/load";
 import { industryLabel } from "@/domain/ids";
-import { type Rng, nextRange, pick } from "./rng";
+import { type Rng, nextFloat, nextRange, pick } from "./rng";
+import { buildGraph, type CompanyGraph } from "./companyGraph";
 import { generateTeam } from "./narrative";
 import { formatMoney } from "./format";
 
@@ -66,8 +70,13 @@ export function resolveSlots(
   const needed = new Set([...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]!));
   const slots: Record<string, string> = {};
 
+  // The company entities are cast together off the graph (salient + coherent);
+  // everything else resolves independently.
+  const cast = resolveCast(state, market, buildGraph(market), rng, needed);
+
   for (const slot of needed) {
-    const value = resolveSlot(slot, state, market, rng);
+    const fromCast = (cast as Record<string, string | null | undefined>)[slot];
+    const value = fromCast !== undefined ? fromCast : resolveSlot(slot, state, rng);
     if (value == null) return null; // required slot failed → skip event
     slots[slot] = value;
   }
@@ -77,21 +86,68 @@ export function resolveSlots(
   };
 }
 
-function resolveSlot(slot: string, state: GameState, market: Company[], rng: Rng): string | null {
+const ENTITY_SLOTS = ["rival", "supplier", "customer"] as const;
+
+/** Pick a coherent, salient set of company entities for one event. A {rival} is
+ *  a prominent same-sub competitor; a {customer} prefers that rival's real
+ *  customers (a contested account) before falling back to the player's
+ *  downstream sector; a {supplier} prefers a company that is actually a supplier
+ *  in the graph. Returns only the entity slots the event needs. */
+function resolveCast(
+  state: GameState,
+  market: Company[],
+  graph: CompanyGraph,
+  rng: Rng,
+  needed: Set<string>,
+): Partial<Record<(typeof ENTITY_SLOTS)[number], string | null>> {
+  if (!ENTITY_SLOTS.some((s) => needed.has(s))) return {};
+  const c = state.company;
+  const byId = new Map(market.map((m) => [m.id, m]));
+  const cast: Partial<Record<(typeof ENTITY_SLOTS)[number], string | null>> = {};
+
+  let rivalCo: Company | null = null;
+  if (needed.has("rival")) {
+    const rivals = market.filter((m) => m.sub_industry === c.subIndustry && m.industry === c.industry);
+    rivalCo = pickSalient(rng, rivals, graph);
+    cast.rival = rivalCo?.name ?? null;
+  }
+
+  if (needed.has("customer")) {
+    const contested = rivalCo ? graph.customersOf(rivalCo.id).map((id) => byId.get(id)).filter((m): m is Company => !!m) : [];
+    const pool = contested.length > 0 ? contested : market.filter((m) => m.industry === c.industry && m.sub_industry !== c.subIndustry);
+    cast.customer = pickSalient(rng, pool, graph)?.name ?? null;
+  }
+
+  if (needed.has("supplier")) {
+    const sectorSuppliers = market.filter((m) => (c.industry === "ai" ? m.sub_industry === "ai_chips" : m.industry === "advanced_mfg"));
+    const realSuppliers = sectorSuppliers.filter((m) => graph.customersOf(m.id).length > 0);
+    cast.supplier = pickSalient(rng, realSuppliers.length > 0 ? realSuppliers : sectorSuppliers, graph)?.name ?? null;
+  }
+
+  return cast;
+}
+
+/** Weighted pick favouring anchors, reputation, and graph connectivity, so
+ *  events name recognizable, well-connected players. Deterministic via rng. */
+function pickSalient(rng: Rng, pool: Company[], graph: CompanyGraph): Company | null {
+  if (pool.length === 0) return null;
+  const weights = pool.map((m) => {
+    const rep = m.identity?.reputation ?? 50;
+    const degree = graph.competitorsOf(m.id).length + graph.customersOf(m.id).length + graph.suppliersOf(m.id).length;
+    return (rep + degree * 6) * (m.tier === "anchor" ? 2.5 : 1);
+  });
+  const total = weights.reduce((s, w) => s + w, 0);
+  let r = nextFloat(rng) * total;
+  for (let i = 0; i < pool.length; i++) {
+    r -= weights[i]!;
+    if (r <= 0) return pool[i]!;
+  }
+  return pool[pool.length - 1]!;
+}
+
+function resolveSlot(slot: string, state: GameState, rng: Rng): string | null {
   const c = state.company;
   switch (slot) {
-    case "rival": {
-      const rivals = market.filter((m) => m.sub_industry === c.subIndustry && m.industry === c.industry);
-      return pick(rng, rivals)?.name ?? null;
-    }
-    case "supplier": {
-      const sup = market.filter((m) => (c.industry === "ai" ? m.sub_industry === "ai_chips" : m.industry === "advanced_mfg"));
-      return pick(rng, sup)?.name ?? null;
-    }
-    case "customer": {
-      const cust = market.filter((m) => m.industry === c.industry && m.sub_industry !== c.subIndustry);
-      return pick(rng, cust)?.name ?? null;
-    }
     case "researcher": {
       const team = generateTeam(state.meta.seed);
       return pick(rng, team)?.name ?? null;
