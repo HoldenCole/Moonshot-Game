@@ -8,6 +8,9 @@ const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig({
   plugins: [react()],
+  // Project GitHub Pages serve from a `/<repo>/` subpath; the Pages workflow sets
+  // BASE_PATH. Dev and the Tauri build leave it unset (served from root).
+  base: process.env.BASE_PATH || "/",
   // Tauri expects a fixed dev port and quieter output.
   clearScreen: false,
   envPrefix: ["VITE_", "TAURI_ENV_*"],

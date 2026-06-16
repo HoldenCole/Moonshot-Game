@@ -1,0 +1,66 @@
+name: pages
+
+# Builds the Vite web frontend and deploys it to GitHub Pages so the game is
+# playable in a browser (no install) for beta testing. Runs on every push to
+# main, or on demand. The desktop installers are a separate workflow (release.yml,
+# triggered by a version tag).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Least-privilege tokens the Pages deploy needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push supersedes an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          # Enable Pages (source = GitHub Actions) on first run if it isn't yet.
+          enablement: true
+
+      - name: Build
+        run: npm run build
+        env:
+          # Project pages serve from https://<owner>.github.io/<repo>/, so the
+          # bundle's asset URLs must be prefixed with the repo path.
+          BASE_PATH: /${{ github.event.repository.name }}/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
