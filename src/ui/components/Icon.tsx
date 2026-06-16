@@ -14,7 +14,9 @@ export type IconName =
   | "sun"
   | "moon"
   | "motion"
-  | "team";
+  | "team"
+  | "grip"
+  | "sliders";
 
 const PATHS: Record<IconName, JSX.Element> = {
   dashboard: (
@@ -86,6 +88,24 @@ const PATHS: Record<IconName, JSX.Element> = {
       <circle cx="9" cy="8" r="3" />
       <path d="M3 20a6 6 0 0 1 12 0" />
       <path d="M16 5.5a3 3 0 0 1 0 5.5M21 20a6 6 0 0 0-5-5.9" />
+    </>
+  ),
+  grip: (
+    <>
+      <circle cx="9" cy="6" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="6" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="12" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="12" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="18" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="18" r="1.4" fill="currentColor" stroke="none" />
+    </>
+  ),
+  sliders: (
+    <>
+      <path d="M4 6h8M16 6h4M4 12h4M12 12h8M4 18h10M18 18h2" />
+      <circle cx="14" cy="6" r="2" />
+      <circle cx="10" cy="12" r="2" />
+      <circle cx="16" cy="18" r="2" />
     </>
   ),
 };

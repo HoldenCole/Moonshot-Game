@@ -20,9 +20,14 @@ vocabulary); delegation depth (real Recommend, crisis escalation, quality
 scaling); cap-table Vesting tab; News-Cycle gauge gating; new-game Quick Start;
 investor relationship ledger.
 
-**Remaining (the three big ones)** — debt financing, distinct per-sub-industry
-signature mechanics, and a customizable/draggable + stage-adaptive workspace.
-Each is a substantial standalone feature; best tackled as focused follow-ups.
+**Customizable dashboard** — **Done.** The four standing dashboard panels
+reorder via a drag handle (or arrow keys) and hide via a Customize menu; the
+layout persists at the device level (`dashboardLayout.ts` + prefs).
+
+**Remaining (the big ones)** — debt financing and distinct per-sub-industry
+signature mechanics. (Stage-adaptive panels — e.g. a post-IPO stock chart — are
+a smaller follow-on to the now-customizable dashboard.) Each is a substantial
+standalone feature; best tackled as focused follow-ups.
 
 ---
 
@@ -70,8 +75,10 @@ Each is a substantial standalone feature; best tackled as focused follow-ups.
   generic engine reskinned six times.
 - **Debt financing.** The bank `debt` / covenant data is authored but unread;
   build the loan / interest / repayment mechanic + UI.
-- **Customizable + stage-adaptive workspace.** Draggable/resizable widgets with
-  layout persistence; post-IPO panels (stock chart, etc.).
+- **Customizable + stage-adaptive workspace.** **Done (reorder + hide + persist).**
+  Drag-to-reorder, arrow-key reorder, and hide/show with device-level persistence
+  shipped. Still open: per-widget resizing and stage-adaptive panels (post-IPO
+  stock chart, etc.).
 - **Cap-table Vesting tab** + a vesting model (the missing 5th hero tab).
 - **New-game Quick Start vs. Custom split** (the UI; founder archetypes are
   Category 2).

@@ -21,6 +21,10 @@ interface Prefs {
   guidedStep: number;
   /** Whether the guided first-run tutorial has been completed or skipped. */
   guidedDone: boolean;
+  /** Player-chosen order of the dashboard panels (empty = canonical order). */
+  dashboardOrder: string[];
+  /** Dashboard panel ids the player has hidden. */
+  dashboardHidden: string[];
   toggleTheme: () => void;
   setReduceMotion: (b: boolean) => void;
   markHintSeen: (id: string) => void;
@@ -34,6 +38,12 @@ interface Prefs {
   setGuidedStep: (n: number) => void;
   /** End the guided tour (completed or skipped) and hand off to ambient hints. */
   finishGuided: () => void;
+  /** Persist a new dashboard panel order. */
+  setDashboardOrder: (ids: string[]) => void;
+  /** Show/hide a dashboard panel. */
+  toggleDashboardPanel: (id: string) => void;
+  /** Restore the dashboard to its default order with every panel shown. */
+  resetDashboard: () => void;
 }
 
 const KEY = "moonshot.prefs";
@@ -46,6 +56,8 @@ interface Stored {
   railOpen: boolean;
   guidedStep: number;
   guidedDone: boolean;
+  dashboardOrder: string[];
+  dashboardHidden: string[];
 }
 
 function osReduceMotion(): boolean {
@@ -55,7 +67,7 @@ function osReduceMotion(): boolean {
 function load(): Stored {
   // Default to the OS reduced-motion preference (UI_LANGUAGE §2), so the JS
   // motion layer (market tape, count tweens) honors it like the CSS does.
-  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion(), tutorialEnabled: true, seenHints: [], railOpen: true, guidedStep: 0, guidedDone: false };
+  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion(), tutorialEnabled: true, seenHints: [], railOpen: true, guidedStep: 0, guidedDone: false, dashboardOrder: [], dashboardHidden: [] };
   if (typeof localStorage === "undefined") return fallback;
   try {
     const parsed = JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<Stored>;
@@ -88,7 +100,7 @@ apply(initial); // set the default (dark) before first paint
 export const usePrefs = create<Prefs>((set, get) => {
   const snapshot = (): Stored => {
     const s = get();
-    return { theme: s.theme, reduceMotion: s.reduceMotion, tutorialEnabled: s.tutorialEnabled, seenHints: s.seenHints, railOpen: s.railOpen, guidedStep: s.guidedStep, guidedDone: s.guidedDone };
+    return { theme: s.theme, reduceMotion: s.reduceMotion, tutorialEnabled: s.tutorialEnabled, seenHints: s.seenHints, railOpen: s.railOpen, guidedStep: s.guidedStep, guidedDone: s.guidedDone, dashboardOrder: s.dashboardOrder, dashboardHidden: s.dashboardHidden };
   };
   const commit = (patch: Partial<Stored>) => {
     persist({ ...snapshot(), ...patch });
@@ -102,6 +114,8 @@ export const usePrefs = create<Prefs>((set, get) => {
     railOpen: initial.railOpen,
     guidedStep: initial.guidedStep,
     guidedDone: initial.guidedDone,
+    dashboardOrder: initial.dashboardOrder,
+    dashboardHidden: initial.dashboardHidden,
     toggleTheme: () => commit({ theme: get().theme === "dark" ? "light" : "dark" }),
     setReduceMotion: (reduceMotion) => commit({ reduceMotion }),
     markHintSeen: (id) => {
@@ -115,5 +129,11 @@ export const usePrefs = create<Prefs>((set, get) => {
     advanceGuided: () => commit({ guidedStep: get().guidedStep + 1 }),
     setGuidedStep: (guidedStep) => commit({ guidedStep }),
     finishGuided: () => commit({ guidedDone: true }),
+    setDashboardOrder: (dashboardOrder) => commit({ dashboardOrder }),
+    toggleDashboardPanel: (id) => {
+      const hidden = get().dashboardHidden;
+      commit({ dashboardHidden: hidden.includes(id) ? hidden.filter((x) => x !== id) : [...hidden, id] });
+    },
+    resetDashboard: () => commit({ dashboardOrder: [], dashboardHidden: [] }),
   };
 });
