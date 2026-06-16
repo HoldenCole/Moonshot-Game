@@ -52,6 +52,8 @@ export interface SignatureState {
   endWeek: number;
   /** Cash committed to the current process, $M. */
   committed: Money;
+  /** The chosen approach id for the running process (e.g. "frontier", "aggressive"). */
+  approach?: string;
   lastOutcome?: { kind: "success" | "partial" | "failure"; summary: string; week: number };
 }
 
@@ -113,6 +115,10 @@ export interface PlayerCompany {
   loans?: Loan[];
   /** The sub-industry signature process. */
   signature: SignatureState;
+  /** Persistent quantities the signature mechanic builds up — keyed per
+   *  sub-industry (flight heritage, satellites live, station occupancy, moat
+   *  depth). Absent until the first process resolves. */
+  signatureStats?: Record<string, number>;
   /** Hired executives by area (empty until you delegate). */
   executives: Partial<Record<ExecArea, Exec>>;
   /** Autonomy setting per area. */

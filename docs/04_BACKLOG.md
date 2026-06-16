@@ -24,10 +24,11 @@ investor relationship ledger.
 reorder via a drag handle (or arrow keys) and hide via a Customize menu; the
 layout persists at the device level (`dashboardLayout.ts` + prefs).
 
-**Remaining (the big one)** — distinct per-sub-industry signature mechanics
-(today it's one generic resolve-engine reskinned six times). Smaller follow-ons:
-per-widget resizing + stage-adaptive panels (e.g. a post-IPO stock chart) on the
-now-customizable dashboard.
+**Remaining** — all three big Bucket-1 items (debt financing, the customizable
+workspace, and distinct per-sub-industry signature mechanics) are now shipped.
+Smaller follow-ons only: per-widget resizing + stage-adaptive panels (e.g. a
+post-IPO stock chart) on the now-customizable dashboard, and continued content
+authoring (investor anchors, more company flavor).
 
 ---
 
@@ -70,9 +71,13 @@ now-customizable dashboard.
   them into hype/fundraising, and add a dedicated Relationships view.
 
 ### Larger (new systems, but data already exists / purely mechanical)
-- **Distinct signature mechanics** per sub-industry (twin compute/talent
-  constraint, batch accumulation, tenant-mix composition) — today it's one
-  generic engine reskinned six times.
+- **Distinct signature mechanics** per sub-industry — **Done.** Each commit now
+  takes an industry-specific *approach* (scale a training run, push an aggressive
+  fab node, fly conservative vs. push the window, batch small vs. large, choose a
+  station tenant) that shifts cost/time/odds/reward, and four of the six carry a
+  persistent *accumulator* with distinct meaning: flight heritage + moat depth
+  compound the odds, fleet + occupancy compound recurring revenue. Unified
+  resolve engine, genuinely different play (`engine/signature.ts`).
 - **Debt financing.** **Done.** Loans draw from the bank roster (the IPO
   underwriters); rates are the global policy rate plus a macro-scaled credit
   spread, fixed at origination; the player adjusts amount + term. Interest

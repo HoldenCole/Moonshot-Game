@@ -72,8 +72,9 @@ interface GameStore {
   dismissAlert: (id: string) => void;
   /** Resolve the pending event by choosing one of its options. */
   resolveEvent: (choiceIndex: number) => void;
-  /** Commit the sub-industry signature process (a training run, a launch, …). */
-  commitSignature: () => void;
+  /** Commit the sub-industry signature process (a training run, a launch, …)
+   *  under a chosen approach. */
+  commitSignature: (approachId?: string) => void;
   /** Hire an executive into an area (pays the cash cost). */
   hireExec: (exec: Exec, cost: number) => void;
   /** Set an area's autonomy. */
@@ -188,12 +189,12 @@ export const useGame = create<GameStore>((set, get) => ({
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
-  commitSignature: () =>
+  commitSignature: (approachId) =>
     set((s) => {
       if (!s.game || s.game.company.signature.status === "running") return s;
       // A one-off RNG draw seeded off the save's state — deterministic per commit.
       const rng = makeRng((s.game.meta.rngState ^ (s.game.clock.week << 8)) >>> 0);
-      const a = withAch(commitProcess(s.game, rng));
+      const a = withAch(commitProcess(s.game, rng, approachId));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
