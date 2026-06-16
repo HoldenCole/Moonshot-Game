@@ -24,10 +24,10 @@ investor relationship ledger.
 reorder via a drag handle (or arrow keys) and hide via a Customize menu; the
 layout persists at the device level (`dashboardLayout.ts` + prefs).
 
-**Remaining (the big ones)** — debt financing and distinct per-sub-industry
-signature mechanics. (Stage-adaptive panels — e.g. a post-IPO stock chart — are
-a smaller follow-on to the now-customizable dashboard.) Each is a substantial
-standalone feature; best tackled as focused follow-ups.
+**Remaining (the big one)** — distinct per-sub-industry signature mechanics
+(today it's one generic resolve-engine reskinned six times). Smaller follow-ons:
+per-widget resizing + stage-adaptive panels (e.g. a post-IPO stock chart) on the
+now-customizable dashboard.
 
 ---
 
@@ -73,8 +73,12 @@ standalone feature; best tackled as focused follow-ups.
 - **Distinct signature mechanics** per sub-industry (twin compute/talent
   constraint, batch accumulation, tenant-mix composition) — today it's one
   generic engine reskinned six times.
-- **Debt financing.** The bank `debt` / covenant data is authored but unread;
-  build the loan / interest / repayment mechanic + UI.
+- **Debt financing.** **Done.** Loans draw from the bank roster (the IPO
+  underwriters); rates are the global policy rate plus a macro-scaled credit
+  spread, fixed at origination; the player adjusts amount + term. Interest
+  services weekly through the tick (folded into runway), the principal balloons
+  at maturity (auto-repay or overdue at a penalty), and a Debt panel in
+  Fundraising drives it (`engine/debt.ts` + `DebtPanel`).
 - **Customizable + stage-adaptive workspace.** **Done (reorder + hide + persist).**
   Drag-to-reorder, arrow-key reorder, and hide/show with device-level persistence
   shipped. Still open: per-widget resizing and stage-adaptive panels (post-IPO

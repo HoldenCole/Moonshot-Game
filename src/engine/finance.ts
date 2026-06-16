@@ -5,10 +5,12 @@ import type { Money } from "@/domain/captable";
 import type { RunwayBand } from "@/domain/log";
 import type { Tuning } from "@/domain/tuning";
 import { founderOwnership, latestPostMoney } from "./captable";
+import { monthlyDebtService } from "./debt";
 
-/** Net monthly cash burn ($M); negative means cash-generative. */
+/** Net monthly cash burn ($M); negative means cash-generative. Includes debt
+ *  service, so carrying a loan shortens the runway. */
 export function netBurnMonthly(c: PlayerCompany): Money {
-  return c.financials.burnMonthly - c.financials.revenue / 12;
+  return c.financials.burnMonthly - c.financials.revenue / 12 + monthlyDebtService(c);
 }
 
 /** Months of runway; Infinity when the company is cash-flow positive. */

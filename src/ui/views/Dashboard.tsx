@@ -4,6 +4,8 @@ import { usePrefs } from "@/state/prefs";
 import type { PlayerCompany } from "@/domain/state";
 import { STAGE_LABELS, subIndustryLabel } from "@/domain/ids";
 import { formatMoney } from "@/engine/format";
+import { runwayMonths } from "@/engine/finance";
+import { totalDebt } from "@/engine/debt";
 import { Panel } from "@/ui/components/Panel";
 import { Stat, Tag } from "@/ui/components/controls";
 import { FlashNum } from "@/ui/components/FlashNum";
@@ -26,8 +28,8 @@ import type { View } from "@/ui/frame/types";
 
 function FinancialBand({ company }: { company: PlayerCompany }) {
   const f = company.financials;
-  const netBurn = f.burnMonthly - f.revenue / 12;
-  const runway = netBurn > 0 ? f.cash / netBurn : Infinity;
+  const runway = runwayMonths(company); // includes debt service
+  const debt = totalDebt(company);
   return (
     <Panel className="finband" coach="company">
       <div className="finband__id">
@@ -53,6 +55,7 @@ function FinancialBand({ company }: { company: PlayerCompany }) {
           value={f.valuation > 0 ? <FlashNum value={f.valuation} format={(n) => formatMoney(n)} count /> : "—"}
         />
         <Stat label="Headcount" value={String(f.headcount)} />
+        {debt > 0 && <Stat label="Debt" value={formatMoney(debt)} tone="warn" />}
       </div>
     </Panel>
   );

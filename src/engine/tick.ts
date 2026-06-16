@@ -11,7 +11,8 @@ import type { Company } from "@/content/load";
 import { makeRng } from "./rng";
 import { snapshotWorld, stepWorld } from "./world";
 import { repricePublic } from "./exit";
-import { bandWorsened, netWorth, runwayBand, runwayMonths } from "./finance";
+import { serviceDebt } from "./debt";
+import { bandWorsened, netBurnMonthly, netWorth, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
 import { tickProcess } from "./signature";
 import { applyOutcome as applyEventOutcome, resolveOutcome, scaleByExec } from "./eventOutcomes";
@@ -108,8 +109,15 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     decision = true;
   }
 
+  // 2c — Debt service: weekly interest, and principal due at maturity (an
+  //      overdue loan is a decision-worthy stop).
+  const ds = serviceDebt(next);
+  next = ds.state;
+  entries.push(...ds.entries);
+  if (ds.entries.some((e) => e.tone === "crisis")) decision = true;
+
   // 3 — Threshold checks: fire an alert only when the runway band worsens.
-  const newBand = runwayBand(company, tuning);
+  const newBand = runwayBand(next.company, tuning);
   if (bandWorsened(state.lastRunwayBand, newBand)) {
     const alert = runwayAlert(newBand, week);
     if (alert) {
@@ -195,8 +203,7 @@ export function advance(state: GameState, tuning: Tuning, mode: AdvanceMode, env
 /** Estimate weeks until runway crosses into the critical band (for the
  *  smart-advance hint). Infinity when cash-positive or already critical. */
 export function weeksToCritical(state: GameState, tuning: Tuning): number {
-  const f = state.company.financials;
-  const netBurnMo = f.burnMonthly - f.revenue / 12;
+  const netBurnMo = netBurnMonthly(state.company);
   if (netBurnMo <= 0) return Infinity;
   const monthsNow = runwayMonths(state.company);
   const target = tuning.runway.criticalMonths;

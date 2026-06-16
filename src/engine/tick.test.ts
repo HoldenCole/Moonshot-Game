@@ -3,8 +3,9 @@ import assert from "node:assert/strict";
 
 import { advance, checkMilestones, tickWeek, weeksToCritical, WEEKS_PER_MONTH } from "./tick.ts";
 import { applyRound } from "./captable.ts";
+import { weeklyInterest } from "./debt.ts";
 import { createNewGame } from "@/state/newgame";
-import type { GameState } from "@/domain/state";
+import type { GameState, Loan } from "@/domain/state";
 import type { Tuning } from "@/domain/tuning";
 
 import { TEST_TUNING } from "./world.test.ts";
@@ -118,4 +119,20 @@ test("tickWeek is a pure step (does not mutate the input state)", () => {
   tickWeek(g, TUNING);
   assert.equal(g.company.financials.cash, before);
   assert.equal(g.clock.week, 0);
+});
+
+test("a drawn loan services interest through the tick and settles at maturity", () => {
+  const g = base(20, 0); // ample cash, no operating burn — isolate debt service
+  const loan: Loan = { id: "L", lenderId: "b", lenderName: "Bank", principal: 10, rateAnnual: 5.2, startWeek: 0, termWeeks: 3 };
+  g.company.loans = [loan];
+
+  // Pre-maturity: interest only, the loan stays open.
+  const r1 = advance(g, TUNING, { type: "weeks", weeks: 2 });
+  assert.equal(r1.state.company.loans!.length, 1);
+  approx(r1.state.company.financials.cash, 20 - weeklyInterest(loan) * 2, 1e-6);
+
+  // Past maturity: the balloon principal is repaid from cash and the loan closes.
+  const r2 = advance(r1.state, TUNING, { type: "weeks", weeks: 1 });
+  assert.equal(r2.state.company.loans!.length, 0);
+  assert.ok(r2.state.company.financials.cash < 11, "principal came out of cash");
 });

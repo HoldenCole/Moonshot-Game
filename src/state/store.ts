@@ -16,6 +16,7 @@ import { valuationMultiplier } from "@/engine/world";
 import { applyWorldDifficulty, difficultyProfile } from "@/engine/difficulty";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
 import { applyPublicChoice } from "@/engine/earnings";
+import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } from "@/engine/debt";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
@@ -77,6 +78,11 @@ interface GameStore {
   hireExec: (exec: Exec, cost: number) => void;
   /** Set an area's autonomy. */
   setAutonomy: (area: ExecArea, autonomy: Autonomy) => void;
+
+  /** Draw a debt facility from a bank (cash in now, principal due at maturity). */
+  takeLoan: (bankId: string, amount: number, termWeeks: number) => void;
+  /** Repay an outstanding loan's principal in full. */
+  repayLoan: (loanId: string) => void;
 
   startNegotiation: (leadInvestorId: string, openingTerms: RoundTerms) => void;
   counterOffer: (terms: RoundTerms) => void;
@@ -212,6 +218,24 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       if (!s.game) return s;
       const a = withAch({ ...s.game, company: { ...s.game.company, delegation: { ...s.game.company.delegation, [area]: autonomy } } });
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  takeLoan: (bankId, amount, termWeeks) =>
+    set((s) => {
+      if (!s.game) return s;
+      const bank = s.content.bankById.get(bankId);
+      if (!bank) return s;
+      const offer = debtOffer(s.game.company, bank, s.game.world);
+      if (!offer) return s;
+      const a = withAch(engineTakeLoan(s.game, offer, amount, termWeeks));
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  repayLoan: (loanId) =>
+    set((s) => {
+      if (!s.game) return s;
+      const a = withAch(engineRepayLoan(s.game, loanId));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 

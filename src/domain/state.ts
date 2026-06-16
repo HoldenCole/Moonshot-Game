@@ -55,6 +55,24 @@ export interface SignatureState {
   lastOutcome?: { kind: "success" | "partial" | "failure"; summary: string; week: number };
 }
 
+/** A drawn debt facility (non-dilutive capital). Interest services weekly; the
+ *  principal is a balloon due at maturity. Rate is fixed at origination. */
+export interface Loan {
+  id: string;
+  /** Lending bank id + display name (the same roster that underwrites IPOs). */
+  lenderId: string;
+  lenderName: string;
+  /** Outstanding principal, $M. */
+  principal: Money;
+  /** Annual rate, percent, locked when the loan was drawn. */
+  rateAnnual: number;
+  startWeek: number;
+  /** Weeks from `startWeek` to maturity. */
+  termWeeks: number;
+  /** Set once a matured loan couldn't be repaid (accrues at a penalty rate). */
+  overdue?: boolean;
+}
+
 /** The four delegatable operating areas (Phase 9 light delegation). */
 export type ExecArea = "finance" | "operations" | "revenue" | "technical";
 
@@ -91,6 +109,8 @@ export interface PlayerCompany {
     valuation: Money;
   };
   capTable: CapTable;
+  /** Outstanding debt facilities (non-dilutive financing); absent until drawn. */
+  loans?: Loan[];
   /** The sub-industry signature process. */
   signature: SignatureState;
   /** Hired executives by area (empty until you delegate). */

@@ -5,6 +5,7 @@ import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Tag } from "@/ui/components/controls";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
 import { RelationshipsPanel } from "@/ui/fundraising/RelationshipsPanel";
+import { DebtPanel } from "@/ui/fundraising/DebtPanel";
 
 export function FundraisingView() {
   const content = useGame((s) => s.content);
@@ -12,6 +13,7 @@ export function FundraisingView() {
   return (
     <div className="workspace-scroll">
       <NegotiationPanel />
+      <DebtPanel />
       <RelationshipsPanel />
 
       <Panel className="investors" flush coach="fundraising">

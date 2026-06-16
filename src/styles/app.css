@@ -3795,3 +3795,131 @@
   padding: 0;
   text-decoration: underline;
 }
+
+/* ── Debt financing ──────────────────────────────────────────────────────────
+   Non-dilutive capital from the bank roster: a terms editor + a live readout,
+   then a compact book of outstanding loans. Flat language throughout. */
+.debt__new {
+  display: grid;
+  grid-template-columns: 1fr 270px;
+  gap: 22px;
+  padding-top: 4px;
+}
+@media (max-width: 920px) {
+  .debt__new {
+    grid-template-columns: 1fr;
+  }
+}
+.debt__left {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.debt__right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.debt__terms {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 14px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--panel-2);
+}
+.debt__rate-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.debt__rate {
+  font-size: 22px;
+  font-weight: 650;
+  color: var(--text);
+}
+.debt__rate-cap {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.debt__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+.debt__row-v {
+  color: var(--text);
+}
+.debt__covenant {
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: var(--warn);
+  line-height: 1.4;
+}
+.debt__cta {
+  width: 100%;
+}
+.debt__none {
+  font-size: 13px;
+  color: var(--text-faint);
+  line-height: 1.5;
+  margin: 4px 0 0;
+  max-width: 60ch;
+}
+.debt__book {
+  margin-top: 18px;
+  border-top: 0.5px solid var(--border);
+  padding-top: 12px;
+}
+.debt__book-head {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+}
+.loan {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 0.5px solid var(--border-faint);
+}
+.loan:last-child {
+  border-bottom: none;
+}
+.loan--overdue {
+  box-shadow: inset 2px 0 0 var(--down);
+  padding-left: 10px;
+}
+.loan__id {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.loan__lender {
+  font-size: 13px;
+  font-weight: 550;
+  color: var(--text);
+}
+.loan__meta {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.loan__maturity {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.loan__principal {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
