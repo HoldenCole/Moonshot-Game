@@ -27,8 +27,9 @@ layout persists at the device level (`dashboardLayout.ts` + prefs).
 **Remaining** — all three big Bucket-1 items (debt financing, the customizable
 workspace, and distinct per-sub-industry signature mechanics) are now shipped.
 Smaller follow-ons only: per-widget resizing + stage-adaptive panels (e.g. a
-post-IPO stock chart) on the now-customizable dashboard, and continued content
-authoring (investor anchors, more company flavor).
+post-IPO stock chart) on the now-customizable dashboard, and optional content
+flavor (more company anchors). The investor roster now fills procedurally from
+the 7 anchors.
 
 ---
 
@@ -99,8 +100,10 @@ authoring (investor anchors, more company flavor).
 - **Post-IPO events** — earnings calls, guidance beats, restatement,
   short-seller / activist, buyback / dividend (new event TOML gated on the public
   stage). Pairs with the minimal post-IPO engine above to make it feel alive.
-- **Investor anchors: 7 → ~18** — author ~11 more firm TOMLs (the thinnest
-  roster relative to its target).
+- **Investor roster: 7 → 18** — **Done (procedurally).** Per the plan, the 7
+  authored anchors stay; the rest are generated from them as archetypes at
+  content-load (`engine/investorgen.ts`), spread across seed→growth so every
+  round has eligible leads. Not an authoring task.
 - **Founder archetypes** — **Done.** Six archetypes + a custom-founder builder
   drive the new-game "Founder" step (`content/founders/founders.toml`).
 - **Guided tutorial script** — **Done.** The authored 11-beat first-run tour

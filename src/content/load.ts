@@ -15,6 +15,13 @@ import type {
   TutorialScript,
 } from "@/domain/content";
 import type { Tuning } from "@/domain/tuning";
+import { generateInvestors } from "@/engine/investorgen";
+
+/** The roster grows from the 7 hand-authored anchors to this many firms by
+ *  procedurally generating the rest from the anchors as archetypes (a fixed seed
+ *  → a stable roster, so every firm-id reference resolves). */
+const INVESTOR_SEED = 0x5eed1701;
+const INVESTOR_TARGET = 18;
 
 // Convenience aliases for the unwrapped inner records.
 export type Company = CompanyContent["company"];
@@ -254,7 +261,10 @@ export function loadContent(): ContentDB {
   if (cached) return cached;
 
   const companies = loadDir<Company>(companyGlob, (p) => (p as CompanyContent).company);
-  const investors = loadDir<Investor>(investorGlob, (p) => (p as InvestorContent).firm);
+  // The 7 authored anchors, plus a procedural roster generated from them as
+  // archetypes — so fundraising has eligible leads at every stage.
+  const anchorInvestors = loadDir<Investor>(investorGlob, (p) => (p as InvestorContent).firm);
+  const investors = [...anchorInvestors, ...generateInvestors(INVESTOR_SEED, anchorInvestors, INVESTOR_TARGET)];
   const banks = loadDir<Bank>(bankGlob, (p) => (p as BankContent).bank);
   const events = loadEvents(eventGlob);
   const founders = loadFounders(founderGlob);
