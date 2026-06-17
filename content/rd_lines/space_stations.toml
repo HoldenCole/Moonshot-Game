@@ -1,0 +1,34 @@
+# content/rd_lines/space_stations.toml
+# 3 lines: module/structures (what you can build in orbit) vs. life-support
+# (the human-rating bar that unlocks tourism/long-duration) vs. on-orbit assembly
+# (how cheaply and reliably you can put it all together up there).
+
+[module_tech]
+id = "module_tech"
+sub_industry = "space_stations"
+name = "Module & structures"
+description = "The habitats, labs, and docking structures themselves — volume, durability, what they can house. Better module tech means more usable space and more kinds of tenant you can serve, from research racks to tourist suites."
+icon = "module"
+starting_level = 30
+base_cost_per_quarter = 6
+drives_specs = ["capacity", "capability"]
+
+[life_support]
+id = "life_support"
+sub_industry = "space_stations"
+name = "Life support & habitation"
+description = "Keeping people alive and comfortable in orbit — air, water, radiation, the works. This is the human-rating bar: clear it and you unlock tourism and long-duration crews; fall short and you're limited to cargo and short visits. The hardest, most safety-critical line."
+icon = "heart-pulse"
+starting_level = 20
+base_cost_per_quarter = 5
+drives_specs = ["safety", "capability"]
+
+[assembly]
+id = "assembly"
+sub_industry = "space_stations"
+name = "On-orbit assembly"
+description = "How efficiently you build and expand in space — autonomous docking, robotic construction, in-orbit fit-out. It drives the cost and speed of standing up modules, which is the difference between a station that pencils out and one that bankrupts you on assembly alone."
+icon = "robot-arm"
+starting_level = 25
+base_cost_per_quarter = 5
+drives_specs = ["cost", "reliability"]

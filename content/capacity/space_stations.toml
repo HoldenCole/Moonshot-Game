@@ -1,0 +1,36 @@
+# content/capacity/space_stations.toml
+# one capacity type (module construction / berths). The slowest, most capital-
+# heavy buildout of all six sub-industries — building in orbit is brutal. Rungs
+# ladder high so even a multi-station operator has a next rung.
+
+[module_construction]
+id = "module_construction"
+sub_industry = "space_stations"
+name = "Module construction"
+unit_label = "berth"
+description = "Your in-orbit construction and berthing capacity — the assembly slots, robotic systems, and docking ports that let you stand up and operate modules. Building in space is the hardest, slowest capacity to add, and every active module program and live station draws on it."
+
+[[module_construction.rungs]]
+capacity = 3
+cost = 70
+build_weeks = 60
+[[module_construction.rungs]]
+capacity = 6
+cost = 160
+build_weeks = 70
+[[module_construction.rungs]]
+capacity = 10
+cost = 340
+build_weeks = 82
+[[module_construction.rungs]]
+capacity = 15
+cost = 640
+build_weeks = 94
+[[module_construction.rungs]]
+capacity = 21
+cost = 1100
+build_weeks = 106
+[[module_construction.rungs]]
+capacity = 28
+cost = 1800
+build_weeks = 118

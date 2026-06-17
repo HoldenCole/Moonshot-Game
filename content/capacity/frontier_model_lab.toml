@@ -1,0 +1,40 @@
+# content/capacity/frontier_model_lab.toml
+# one capacity type (compute), 7 rungs: pods -> clusters -> datacenters.
+# cheaper early rungs than fab lines, faster to stand up — compute scales more
+# fluidly than silicon fabs, matching the fast-cadence feel of the sub-industry.
+
+[compute]
+id = "compute"
+sub_industry = "frontier_model_lab"
+name = "Compute"
+unit_label = "cluster"
+description = "The GPUs and pods your models train and serve on. Every training run and every live endpoint draws on it, and the frontier is an arms race for more. Run short and your next model waits in the allocation queue behind everyone else's."
+
+[[compute.rungs]]
+capacity = 3
+cost = 30
+build_weeks = 20
+[[compute.rungs]]
+capacity = 6
+cost = 75
+build_weeks = 26
+[[compute.rungs]]
+capacity = 10
+cost = 160
+build_weeks = 32
+[[compute.rungs]]
+capacity = 16
+cost = 320
+build_weeks = 38
+[[compute.rungs]]
+capacity = 24
+cost = 600
+build_weeks = 44
+[[compute.rungs]]
+capacity = 34
+cost = 1050
+build_weeks = 50
+[[compute.rungs]]
+capacity = 46
+cost = 1750
+build_weeks = 56

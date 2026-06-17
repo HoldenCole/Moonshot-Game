@@ -1,0 +1,69 @@
+# content/capacity/satellite_constellations.toml
+# TWO capacity types (the spec's suggested example): manufacturing throughput to
+# BUILD the fleet, and ground network to SERVE it. Products consume manufacturing
+# during the build bet; the engine can also draw ground_network for run capacity
+# of large constellations. Both ladder so neither caps out.
+
+[sat_manufacturing]
+id = "sat_manufacturing"
+sub_industry = "satellite_constellations"
+name = "Satellite manufacturing"
+unit_label = "line"
+description = "Your assembly throughput — how many satellites you can build and replenish per cycle. A constellation is never finished; birds age out and must be replaced, so manufacturing is a permanent constraint, not a one-time build."
+
+[[sat_manufacturing.rungs]]
+capacity = 3
+cost = 50
+build_weeks = 44
+[[sat_manufacturing.rungs]]
+capacity = 6
+cost = 120
+build_weeks = 52
+[[sat_manufacturing.rungs]]
+capacity = 10
+cost = 260
+build_weeks = 60
+[[sat_manufacturing.rungs]]
+capacity = 16
+cost = 500
+build_weeks = 70
+[[sat_manufacturing.rungs]]
+capacity = 23
+cost = 880
+build_weeks = 80
+[[sat_manufacturing.rungs]]
+capacity = 32
+cost = 1450
+build_weeks = 90
+
+[ground_network]
+id = "ground_network"
+sub_industry = "satellite_constellations"
+name = "Ground network"
+unit_label = "station"
+description = "The ground stations and network operations that bring your fleet's signal down to paying customers. Coverage and capacity here gate how much of your orbital fleet you can actually monetize — birds you can't talk to don't earn."
+
+[[ground_network.rungs]]
+capacity = 2
+cost = 20
+build_weeks = 24
+[[ground_network.rungs]]
+capacity = 5
+cost = 55
+build_weeks = 30
+[[ground_network.rungs]]
+capacity = 9
+cost = 120
+build_weeks = 36
+[[ground_network.rungs]]
+capacity = 14
+cost = 230
+build_weeks = 42
+[[ground_network.rungs]]
+capacity = 20
+cost = 400
+build_weeks = 48
+[[ground_network.rungs]]
+capacity = 28
+cost = 660
+build_weeks = 54

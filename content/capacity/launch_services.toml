@@ -1,0 +1,36 @@
+# content/capacity/launch_services.toml
+# one combined capacity type folding pads + vehicle fleet into "launch capacity"
+# (kept to one type for clarity per the 1-2 guidance). starting_capacity is
+# higher in tuning (3) so you can fly from day one.
+
+[launch_capacity]
+id = "launch_capacity"
+sub_industry = "launch_services"
+name = "Launch capacity"
+unit_label = "slot"
+description = "Your pads, integration facilities, and vehicle fleet — everything that lets you actually fly. Each active vehicle program and each booked launch draws on it. Demand past your capacity means a backlog, and a backlog means customers eyeing rivals who can fly them sooner."
+
+[[launch_capacity.rungs]]
+capacity = 3
+cost = 45
+build_weeks = 40
+[[launch_capacity.rungs]]
+capacity = 6
+cost = 110
+build_weeks = 48
+[[launch_capacity.rungs]]
+capacity = 10
+cost = 240
+build_weeks = 56
+[[launch_capacity.rungs]]
+capacity = 15
+cost = 460
+build_weeks = 64
+[[launch_capacity.rungs]]
+capacity = 21
+cost = 800
+build_weeks = 72
+[[launch_capacity.rungs]]
+capacity = 28
+cost = 1300
+build_weeks = 80

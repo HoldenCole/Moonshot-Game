@@ -1,0 +1,90 @@
+# content/products/launch_services.toml
+# vehicles as products. The signature "launch" is the build/upgrade bet here.
+# Note the workhorse feel: LOW decay (a proven vehicle flies for years) and
+# faster build cadence than chips. A reliable rocket is a long-lived asset.
+
+[small_lift]
+id = "small_lift"
+sub_industry = "launch_services"
+name = "Small-lift vehicle"
+tier = 1
+description = "A dedicated small rocket for smallsats and rideshares — the Ascent Aerospace beachhead. Lower payload, but you fly it often, you fly it on the customer's schedule, and every clean flight builds the reliability record you'll need to climb the lift-class ladder."
+flavor_naming_hint = "e.g. 'Sprite', a small/fast vehicle name"
+
+[small_lift.gates]
+propulsion = 20
+reliability = 25
+
+[small_lift.economics]
+build_cost = 35
+build_weeks = 44
+unit_margin = 0.30
+capacity_type = "launch_capacity"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 800
+ramp_weeks = 26
+decay_per_quarter = 0.03
+
+[small_lift.specs]
+payload = 0.4
+reliability = 0.4
+cost = 0.2
+
+[medium_lift]
+id = "medium_lift"
+sub_industry = "launch_services"
+name = "Medium-lift reusable"
+tier = 2
+description = "The workhorse that makes the business — a reusable medium-lift vehicle that flies commercial constellations, government payloads, and anything in between. Reusability is the whole game here: crack it and your cost-per-kilo undercuts everyone; miss it and you're flying at a loss."
+flavor_naming_hint = "e.g. 'Vector-9', a workhorse vehicle name"
+
+[medium_lift.gates]
+propulsion = 45
+reusability = 45
+reliability = 45
+
+[medium_lift.economics]
+build_cost = 140
+build_weeks = 78
+unit_margin = 0.48
+capacity_type = "launch_capacity"
+capacity_to_build = 2
+capacity_to_run = 2
+addressable_market = 6500
+ramp_weeks = 39
+decay_per_quarter = 0.03
+
+[medium_lift.specs]
+cost = 0.4
+payload = 0.35
+reliability = 0.25
+
+[heavy_human]
+id = "heavy_human"
+sub_industry = "launch_services"
+name = "Heavy-lift / human-rated"
+tier = 3
+description = "The flagship — heavy-lift capacity and the reliability bar to carry crew. The contracts are enormous and so is the prestige, but human-rating is the most demanding standard in the business: everything has to be near-perfect, and one failure is catastrophic in every sense."
+flavor_naming_hint = "e.g. 'Titan Heavy', a flagship vehicle name"
+
+[heavy_human.gates]
+propulsion = 70
+reusability = 60
+reliability = 70
+
+[heavy_human.economics]
+build_cost = 420
+build_weeks = 130
+unit_margin = 0.52
+capacity_type = "launch_capacity"
+capacity_to_build = 3
+capacity_to_run = 2
+addressable_market = 12000
+ramp_weeks = 52
+decay_per_quarter = 0.04
+
+[heavy_human.specs]
+reliability = 0.45
+payload = 0.35
+performance = 0.20

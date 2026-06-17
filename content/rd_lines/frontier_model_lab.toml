@@ -1,0 +1,34 @@
+# content/rd_lines/frontier_model_lab.toml
+# 3 lines pulling apart: raw scaling (compute+params, the headline driver) vs.
+# data quality (cheaper edge, often underrated) vs. alignment/safety (slows raw
+# capability but unlocks enterprise trust and dodges the safety-incident events).
+
+[scaling]
+id = "scaling"
+sub_industry = "frontier_model_lab"
+name = "Scaling & pretraining"
+description = "How big and how well you train the base model. The headline lever — more compute, more parameters, better training recipes. It moves benchmarks and press fastest, and it's where the money and the bragging rights go."
+icon = "trend-up"
+starting_level = 25
+base_cost_per_quarter = 7
+drives_specs = ["capability", "benchmark"]
+
+[data_quality]
+id = "data_quality"
+sub_industry = "frontier_model_lab"
+name = "Data & post-training"
+description = "The curation, fine-tuning, and RLHF that turn a raw model into a useful one. Cheaper than brute scale and frequently the real edge — a smaller model with great data can beat a bigger sloppy one where it actually counts."
+icon = "database"
+starting_level = 30
+base_cost_per_quarter = 5
+drives_specs = ["capability", "reliability"]
+
+[alignment]
+id = "alignment"
+sub_industry = "frontier_model_lab"
+name = "Alignment & safety"
+description = "Making the model behave — refusing what it should, staying reliable under pressure. It taxes raw capability progress, but it's what wins regulated enterprise customers and keeps you out of the safety-incident headlines."
+icon = "shield"
+starting_level = 20
+base_cost_per_quarter = 4
+drives_specs = ["reliability", "safety"]

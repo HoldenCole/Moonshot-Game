@@ -1,0 +1,73 @@
+# content/products/_tuning.toml
+# One block per sub-industry. These knobs make each industry's economics and
+# pace feel distinct without touching the engine. Tuned AGAINST each other so no
+# sub-industry is strictly easiest — each trades ease in one axis for difficulty
+# in another.
+#
+# Quick read of the intended contrast:
+#   frontier_model_lab  -> fast / cheap / many-parallel / hype-volatile (high churn)
+#   vertical_ai_saas    -> cheapest+fastest builds / very sticky / capacity-light
+#   ai_chips            -> slow / expensive / few-parallel / sticky design-wins
+#   launch_services     -> fast cadence / workhorse decay / very contract-sticky
+#   satellite_constel.  -> capital-heavy buildout / moderate / two-capacity juggle
+#   space_stations      -> slowest / most expensive / lumpy revenue / fewest bets
+
+[frontier_model_lab]
+starting_capacity = 2
+rd_diminishing_k = 0.7      # returns diminish gently — scaling keeps paying
+frontier_pull = 1.3         # strong catch-up aid (the field moves together)
+max_concurrent_bets = 4     # many parallel training runs
+build_cost_mult = 1.0
+build_time_mult = 1.0       # the baseline-fast reference
+decay_mult = 1.0            # treadmill is real (per-product decay already high)
+share_volatility = 0.25     # hype-driven — share swings fast
+
+[vertical_ai_saas]
+starting_capacity = 4       # capacity-light: you start with room
+rd_diminishing_k = 0.65     # domain depth keeps compounding
+frontier_pull = 0.8         # HARD AXIS: little catch-up aid — entrenched incumbents are sticky
+max_concurrent_bets = 3     # focused: a vertical wins by depth, not breadth
+build_cost_mult = 0.55      # cheapest builds of all six
+build_time_mult = 0.6       # and the fastest
+decay_mult = 0.7            # subscriptions are sticky — slow churn
+share_volatility = 0.10     # retention-driven — share barely moves either way
+
+[ai_chips]
+starting_capacity = 2
+rd_diminishing_k = 0.8      # the node gets brutally hard at the frontier
+frontier_pull = 1.2
+max_concurrent_bets = 3     # fewer parallel tape-outs — they're huge
+build_cost_mult = 1.4       # capital-heavy
+build_time_mult = 1.6       # and slow
+decay_mult = 1.1            # frontier parts obsolesce fast
+share_volatility = 0.15     # stickier, design-win-driven
+
+[launch_services]
+starting_capacity = 3       # you can fly from day one
+rd_diminishing_k = 0.75
+frontier_pull = 1.1
+max_concurrent_bets = 3     # HARD AXIS: vehicle programs are large, capital-heavy, few at once
+build_cost_mult = 1.2       # capital-heavy vehicles
+build_time_mult = 0.7       # but faster cadence than tape-outs once flying
+decay_mult = 0.6            # a reliable vehicle is a long-lived workhorse
+share_volatility = 0.12     # contract/reliability-driven, very sticky
+
+[satellite_constellations]
+starting_capacity = 3
+rd_diminishing_k = 0.78
+frontier_pull = 1.15
+max_concurrent_bets = 3     # constellations are big, capital-heavy bets
+build_cost_mult = 1.3       # capital-heavy buildout
+build_time_mult = 1.2       # long deployment timelines
+decay_mult = 0.8            # fleets refresh, but installed base earns steadily
+share_volatility = 0.16     # mixed: comms sticky, imaging more hype-exposed
+
+[space_stations]
+starting_capacity = 2
+rd_diminishing_k = 0.82     # building in orbit gets very hard at the top
+frontier_pull = 1.05        # few players, little shared frontier to catch
+max_concurrent_bets = 2     # the fewest parallel bets — each is colossal
+build_cost_mult = 1.5       # the most expensive builds of all six
+build_time_mult = 1.7       # and the slowest
+decay_mult = 0.5            # stations are generational infrastructure
+share_volatility = 0.18     # lumpy, tenant-driven revenue

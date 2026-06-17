@@ -1,0 +1,34 @@
+# content/rd_lines/launch_services.toml
+# 3 lines: propulsion/performance (how much you can lift) vs. reusability (the
+# cost moat — Vector Dynamics' whole advantage) vs. reliability (the thing that
+# turns a launch from a coin-flip into a contract-winning track record).
+
+[propulsion]
+id = "propulsion"
+sub_industry = "launch_services"
+name = "Propulsion & performance"
+description = "Engine power and efficiency — how much mass you can throw to orbit and how far. The raw capability lever that decides which payload classes and orbits you can even bid on. Bigger, hotter, more efficient engines open bigger contracts."
+icon = "flame"
+starting_level = 25
+base_cost_per_quarter = 7
+drives_specs = ["payload", "performance"]
+
+[reusability]
+id = "reusability"
+sub_industry = "launch_services"
+name = "Reusability"
+description = "Recovering and reflying hardware instead of throwing it away. The structural cost moat — get it right and your cost-per-kilogram drops below what anyone tossing their rockets can match. Rivals can't copy it by trying harder, only by catching up on the same curve."
+icon = "recycle"
+starting_level = 15
+base_cost_per_quarter = 6
+drives_specs = ["cost", "margin"]
+
+[reliability]
+id = "reliability"
+sub_industry = "launch_services"
+name = "Reliability"
+description = "How consistently you reach orbit without losing the vehicle. Every successful flight compounds into trust; every failure grounds you and scares the manifest. This is what turns launches from binary gambles into a bankable track record customers pay a premium for."
+icon = "check-shield"
+starting_level = 30
+base_cost_per_quarter = 5
+drives_specs = ["reliability", "performance"]

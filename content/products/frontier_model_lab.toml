@@ -1,0 +1,119 @@
+# content/products/frontier_model_lab.toml
+# 4-archetype progression. Note the contrast with chips: build_weeks are far
+# shorter, build_costs lower, decay HIGHER (the SOTA treadmill). A frontier lab
+# ships often and obsoletes fast — the opposite feel to silicon.
+
+[api_model]
+id = "api_model"
+sub_industry = "frontier_model_lab"
+name = "API model endpoint"
+tier = 1
+description = "A model you serve over an API by the token. Your beachhead — developers plug in, you meter usage, and you learn what people actually want before betting big. Low margin per call, but it scales the instant you ship and it's how the world first meets your lab."
+flavor_naming_hint = "e.g. 'Helio-mini', a version-numbered API name"
+
+[api_model.gates]
+scaling = 20
+data_quality = 25
+
+[api_model.economics]
+build_cost = 18
+build_weeks = 26
+unit_margin = 0.45
+capacity_type = "compute"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 900
+ramp_weeks = 16
+decay_per_quarter = 0.12
+
+[api_model.specs]
+capability = 0.5
+reliability = 0.3
+benchmark = 0.2
+
+[flagship_model]
+id = "flagship_model"
+sub_industry = "frontier_model_lab"
+name = "Flagship frontier model"
+tier = 2
+description = "The big one — the model that defines your lab and tops the leaderboard you want to own. A real training run with real compute behind it, the kind that draws press, talent, and term sheets when it lands. The AI-hype cycle can make it a sensation or a footnote overnight."
+flavor_naming_hint = "e.g. 'Helio-4', a flagship generation name"
+
+[flagship_model.gates]
+scaling = 50
+data_quality = 45
+alignment = 30
+
+[flagship_model.economics]
+build_cost = 90
+build_weeks = 52
+unit_margin = 0.58
+capacity_type = "compute"
+capacity_to_build = 3
+capacity_to_run = 2
+addressable_market = 7000
+ramp_weeks = 20
+decay_per_quarter = 0.16
+
+[flagship_model.specs]
+capability = 0.55
+benchmark = 0.25
+reliability = 0.20
+
+[enterprise_suite]
+id = "enterprise_suite"
+sub_industry = "frontier_model_lab"
+name = "Enterprise model suite"
+tier = 3
+description = "A trust-grade deployment for regulated industries — the same intelligence wrapped in reliability, compliance, and uptime guarantees. Lower hype, stickier revenue: NovaMind built a business on exactly this. Demands real alignment work, and rewards it with customers who don't churn on the next benchmark."
+flavor_naming_hint = "e.g. 'Helio Enterprise', a trust-forward brand"
+
+[enterprise_suite.gates]
+scaling = 55
+data_quality = 55
+alignment = 60
+
+[enterprise_suite.economics]
+build_cost = 120
+build_weeks = 60
+unit_margin = 0.66
+capacity_type = "compute"
+capacity_to_build = 2
+capacity_to_run = 3
+addressable_market = 8500
+ramp_weeks = 39
+decay_per_quarter = 0.07
+
+[enterprise_suite.specs]
+reliability = 0.45
+capability = 0.30
+safety = 0.25
+
+[agentic_platform]
+id = "agentic_platform"
+sub_industry = "frontier_model_lab"
+name = "Agentic platform"
+tier = 4
+description = "The frontier of the frontier — models that act, not just answer: planning, using tools, completing real work autonomously. The category-defining bet that needs everything firing at once. If it lands you're the platform everyone builds on; if alignment lags, it's also the riskiest thing you've shipped."
+flavor_naming_hint = "e.g. 'Helio Agents', a bold platform name"
+
+[agentic_platform.gates]
+scaling = 70
+data_quality = 65
+alignment = 70
+
+[agentic_platform.economics]
+build_cost = 200
+build_weeks = 78
+unit_margin = 0.64
+capacity_type = "compute"
+capacity_to_build = 4
+capacity_to_run = 4
+addressable_market = 18000
+ramp_weeks = 30
+decay_per_quarter = 0.14
+
+[agentic_platform.specs]
+capability = 0.45
+reliability = 0.30
+safety = 0.25

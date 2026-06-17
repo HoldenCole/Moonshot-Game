@@ -1,0 +1,33 @@
+# content/rd_lines/vertical_ai_saas.toml
+# 3 lines: domain depth (the vertical moat) vs. platform/integration (stickiness)
+# vs. model leverage (riding foundation models without being eaten by them).
+
+[domain_depth]
+id = "domain_depth"
+sub_industry = "vertical_ai_saas"
+name = "Domain expertise"
+description = "How deeply your product understands its industry — the workflows, the edge cases, the regulations a generic model never learns. This is the moat: the deeper it goes, the harder a horizontal foundation model can swallow you."
+icon = "book"
+starting_level = 30
+base_cost_per_quarter = 4
+drives_specs = ["fit", "moat"]
+
+[platform]
+id = "platform"
+sub_industry = "vertical_ai_saas"
+name = "Platform & integrations"
+description = "The connectors, data pipelines, and admin tooling that wire you into a customer's stack. Unglamorous plumbing, but it's what makes you sticky — once you're embedded in their systems, ripping you out is a project nobody wants."
+icon = "plug"
+starting_level = 25
+base_cost_per_quarter = 5
+drives_specs = ["stickiness", "reliability"]
+
+[model_leverage]
+id = "model_leverage"
+sub_industry = "vertical_ai_saas"
+name = "Model leverage"
+description = "How well you harness foundation models without being commoditized by them — orchestration, retrieval, and the thin proprietary layer on top. Get it right and every frontier advance is your tailwind; get it wrong and the next model release eats your feature."
+icon = "layers"
+starting_level = 25
+base_cost_per_quarter = 4
+drives_specs = ["fit", "reliability"]

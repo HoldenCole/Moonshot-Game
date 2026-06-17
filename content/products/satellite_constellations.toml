@@ -1,0 +1,91 @@
+# content/products/satellite_constellations.toml
+# constellations as products. Uses TWO capacity types: sat_manufacturing (to
+# build/replenish the fleet) and ground_network (to serve it). Capital-heavy
+# buildout, then recurring subscription revenue — moderate decay (fleets need
+# refreshing but a deployed network earns steadily).
+
+[comms_relay]
+id = "comms_relay"
+sub_industry = "satellite_constellations"
+name = "Comms relay constellation"
+tier = 1
+description = "A modest fleet providing point-to-point connectivity — backhaul, IoT, maritime. Your entry constellation: fewer birds, proven demand, and a way to get recurring revenue flowing while you learn to operate a network. Meridian Orbital started here before the capex hump."
+flavor_naming_hint = "e.g. 'LinkNet', a connectivity brand"
+
+[comms_relay.gates]
+satellite_tech = 25
+network = 25
+
+[comms_relay.economics]
+build_cost = 90
+build_weeks = 60
+unit_margin = 0.40
+capacity_type = "sat_manufacturing"
+capacity_to_build = 2
+capacity_to_run = 1
+addressable_market = 1800
+ramp_weeks = 39
+decay_per_quarter = 0.05
+
+[comms_relay.specs]
+coverage = 0.4
+capability = 0.35
+cost = 0.25
+
+[earth_observation]
+id = "earth_observation"
+sub_industry = "satellite_constellations"
+name = "Earth-observation constellation"
+tier = 2
+description = "A fleet of imaging satellites selling a daily picture of the planet — agriculture, defense, climate, finance. Higher-value data, and the AI-analytics layer on top is where Lumen Skies pitches its story. Demands sharper satellites and a network to move the imagery down."
+flavor_naming_hint = "e.g. 'Lumen-1', an imaging-fleet name"
+
+[earth_observation.gates]
+satellite_tech = 50
+mass_production = 40
+network = 45
+
+[earth_observation.economics]
+build_cost = 220
+build_weeks = 100
+unit_margin = 0.55
+capacity_type = "sat_manufacturing"
+capacity_to_build = 3
+capacity_to_run = 2
+addressable_market = 5500
+ramp_weeks = 44
+decay_per_quarter = 0.06
+
+[earth_observation.specs]
+capability = 0.45
+coverage = 0.35
+reliability = 0.20
+
+[broadband_mega]
+id = "broadband_mega"
+sub_industry = "satellite_constellations"
+name = "Broadband megaconstellation"
+tier = 3
+description = "The empire bet — hundreds of satellites delivering global broadband direct to customers. Staggering upfront capital and a manufacturing line that has to crank out birds like an assembly plant, but past the capex hump it's a recurring-revenue machine with planetary reach."
+flavor_naming_hint = "e.g. 'Meridian Global', a broadband brand"
+
+[broadband_mega.gates]
+satellite_tech = 60
+mass_production = 70
+network = 65
+
+[broadband_mega.economics]
+build_cost = 700
+build_weeks = 150
+unit_margin = 0.58
+capacity_type = "sat_manufacturing"
+capacity_to_build = 5
+capacity_to_run = 3
+addressable_market = 20000
+ramp_weeks = 60
+decay_per_quarter = 0.07
+
+[broadband_mega.specs]
+coverage = 0.45
+cost = 0.30
+capability = 0.25

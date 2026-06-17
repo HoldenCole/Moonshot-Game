@@ -1,0 +1,90 @@
+# content/products/vertical_ai_saas.toml
+# SaaS feel: cheap+fast builds, LOW decay (sticky subscriptions), capacity-light
+# (deployment infra is cheap). The strategic pressure here is go-to-market and
+# retention, not capital — products are workhorses that compound if you keep them fed.
+
+[point_solution]
+id = "point_solution"
+sub_industry = "vertical_ai_saas"
+name = "Point solution"
+tier = 1
+description = "A single sharp tool that nails one painful workflow — contract review, claims triage, whatever your vertical bleeds time on. Easy to sell because the value is obvious, and it gets your foot in the door. The wedge you expand from."
+flavor_naming_hint = "e.g. 'ClauseCheck', a workflow-named tool"
+
+[point_solution.gates]
+domain_depth = 20
+model_leverage = 15
+
+[point_solution.economics]
+build_cost = 8
+build_weeks = 18
+unit_margin = 0.72
+capacity_type = "deployment"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 600
+ramp_weeks = 20
+decay_per_quarter = 0.05
+
+[point_solution.specs]
+fit = 0.5
+reliability = 0.3
+stickiness = 0.2
+
+[workflow_suite]
+id = "workflow_suite"
+sub_industry = "vertical_ai_saas"
+name = "Workflow suite"
+tier = 2
+description = "Several connected tools that own an entire department's workflow end to end. Now you're not a feature, you're the system of record — and Lexiq's playbook shows where that leads: 128% net revenue retention because customers keep expanding into you."
+flavor_naming_hint = "e.g. 'LegalOS', a suite/platform name"
+
+[workflow_suite.gates]
+domain_depth = 40
+platform = 40
+model_leverage = 30
+
+[workflow_suite.economics]
+build_cost = 28
+build_weeks = 34
+unit_margin = 0.76
+capacity_type = "deployment"
+capacity_to_build = 1
+capacity_to_run = 2
+addressable_market = 3200
+ramp_weeks = 30
+decay_per_quarter = 0.04
+
+[workflow_suite.specs]
+fit = 0.4
+stickiness = 0.35
+reliability = 0.25
+
+[platform_play]
+id = "platform_play"
+sub_industry = "vertical_ai_saas"
+name = "Vertical platform"
+tier = 3
+description = "The category-defining bet: an extensible platform others build on top of, with your data network effect deepening every year. Hard to reach — it needs real domain depth and rock-solid integrations — but once you're the platform, you set the standard and the switching cost becomes almost total."
+flavor_naming_hint = "e.g. 'Lexiq Platform', a platform brand"
+
+[platform_play.gates]
+domain_depth = 65
+platform = 60
+model_leverage = 50
+
+[platform_play.economics]
+build_cost = 70
+build_weeks = 52
+unit_margin = 0.80
+capacity_type = "deployment"
+capacity_to_build = 2
+capacity_to_run = 3
+addressable_market = 9000
+ramp_weeks = 44
+decay_per_quarter = 0.03
+
+[platform_play.specs]
+moat = 0.4
+stickiness = 0.35
+fit = 0.25

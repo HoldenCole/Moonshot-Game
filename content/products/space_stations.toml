@@ -1,0 +1,90 @@
+# content/products/space_stations.toml
+# stations/modules as products. Long, expensive builds; low decay (a station is
+# infrastructure that lasts), but lumpy tenant-driven revenue is expressed via
+# slower ramps and the tuning's share volatility. Apex Station is the anchor flavor.
+
+[research_module]
+id = "research_module"
+sub_industry = "space_stations"
+name = "Research module"
+tier = 1
+description = "A single pressurized module leased to researchers and in-space manufacturing — microgravity labs, materials experiments, pharma. Your beachhead: one module, a handful of anchor tenants, and proof that commercial orbit pays. Apex Station started exactly here."
+flavor_naming_hint = "e.g. 'Lab-1', a research-module name"
+
+[research_module.gates]
+module_tech = 25
+assembly = 25
+
+[research_module.economics]
+build_cost = 110
+build_weeks = 78
+unit_margin = 0.44
+capacity_type = "module_construction"
+capacity_to_build = 2
+capacity_to_run = 1
+addressable_market = 1400
+ramp_weeks = 44
+decay_per_quarter = 0.03
+
+[research_module.specs]
+capability = 0.45
+capacity = 0.35
+cost = 0.20
+
+[tourism_habitat]
+id = "tourism_habitat"
+sub_industry = "space_stations"
+name = "Tourism habitat"
+tier = 2
+description = "A human-rated habitat for orbital tourism and private astronaut stays — the headline-grabbing, high-margin tenant class. It demands real life-support maturity (this is where human-rating bites), but a suite with a view of Earth commands prices nothing on the ground can touch."
+flavor_naming_hint = "e.g. 'Horizon Suites', a hospitality-in-orbit name"
+
+[tourism_habitat.gates]
+module_tech = 45
+life_support = 55
+assembly = 40
+
+[tourism_habitat.economics]
+build_cost = 260
+build_weeks = 110
+unit_margin = 0.58
+capacity_type = "module_construction"
+capacity_to_build = 3
+capacity_to_run = 2
+addressable_market = 4200
+ramp_weeks = 52
+decay_per_quarter = 0.04
+
+[tourism_habitat.specs]
+safety = 0.4
+capability = 0.35
+capacity = 0.25
+
+[full_station]
+id = "full_station"
+sub_industry = "space_stations"
+name = "Full commercial station"
+tier = 3
+description = "A complete multi-module station — research, habitation, manufacturing, and docking under one roof, leasing space at scale. The empire-in-orbit bet: enormous capital, years of on-orbit assembly, and a real-estate-in-space model where you're the landlord of a destination, not just a module."
+flavor_naming_hint = "e.g. 'Apex One', a flagship station name"
+
+[full_station.gates]
+module_tech = 65
+life_support = 65
+assembly = 70
+
+[full_station.economics]
+build_cost = 750
+build_weeks = 170
+unit_margin = 0.55
+capacity_type = "module_construction"
+capacity_to_build = 5
+capacity_to_run = 3
+addressable_market = 14000
+ramp_weeks = 65
+decay_per_quarter = 0.03
+
+[full_station.specs]
+capacity = 0.4
+capability = 0.35
+safety = 0.25

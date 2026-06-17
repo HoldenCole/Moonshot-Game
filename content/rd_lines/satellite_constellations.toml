@@ -1,0 +1,34 @@
+# content/rd_lines/satellite_constellations.toml
+# 3 lines: satellite tech (capability per bird) vs. manufacturing (mass-production
+# cost — constellations live or die on per-unit cost) vs. network/ground (the
+# system that turns a fleet into a service).
+
+[satellite_tech]
+id = "satellite_tech"
+sub_industry = "satellite_constellations"
+name = "Satellite technology"
+description = "The capability packed into each bird — sensors, transponders, power, station-keeping. Better satellites mean more coverage, more bandwidth, or sharper imagery per unit. The capability lever that decides what your constellation can actually sell."
+icon = "satellite"
+starting_level = 30
+base_cost_per_quarter = 6
+drives_specs = ["capability", "coverage"]
+
+[mass_production]
+id = "mass_production"
+sub_industry = "satellite_constellations"
+name = "Mass production"
+description = "Building satellites like products, not bespoke spacecraft. A constellation needs hundreds of them, so per-unit cost is everything — the difference between a viable network and a money pit. Driving manufacturing cost down is the unglamorous heart of the business."
+icon = "factory"
+starting_level = 20
+base_cost_per_quarter = 5
+drives_specs = ["cost", "margin"]
+
+[network]
+id = "network"
+sub_industry = "satellite_constellations"
+name = "Network & ground systems"
+description = "The inter-satellite links, ground stations, and software that turn a swarm of hardware into a service customers actually buy. Without it you have expensive metal in orbit; with it you have recurring revenue and a coverage map that fills in."
+icon = "globe"
+starting_level = 25
+base_cost_per_quarter = 5
+drives_specs = ["coverage", "reliability"]

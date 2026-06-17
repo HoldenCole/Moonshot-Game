@@ -1,0 +1,34 @@
+# content/rd_lines/ai_chips.toml
+# 3 lines that pull in different directions: chase the node (expensive, the
+# biggest lever) vs. bet on architecture (cheaper, directional) vs. perfect
+# yield (cheapest, protects margin). You can't fully fund all three.
+
+[process_node]
+id = "process_node"
+sub_industry = "ai_chips"
+name = "Process node"
+description = "How small you can etch. Each step down — 5nm, 3nm, 2nm — packs more compute per watt and is the single biggest driver of whether your silicon is competitive. Brutally expensive, slow, and the whole industry is sprinting."
+icon = "chip"
+starting_level = 20
+base_cost_per_quarter = 8
+drives_specs = ["performance", "efficiency"]
+
+[architecture]
+id = "architecture"
+sub_industry = "ai_chips"
+name = "Architecture"
+description = "Your core design — how the chip is laid out and what it's good at. A clever architecture can beat a smaller node. This is where you bet on a direction (general-purpose vs. AI-specialized) the market may or may not reward."
+icon = "blueprint"
+starting_level = 25
+base_cost_per_quarter = 6
+drives_specs = ["performance", "specialization"]
+
+[yield_line]
+id = "yield_line"
+sub_industry = "ai_chips"
+name = "Yield & packaging"
+description = "How many good chips you get per wafer, and how you package them. Unglamorous, but yield is margin. Low yield means you're scrapping silicon and bleeding cash on every batch."
+icon = "stack"
+starting_level = 30
+base_cost_per_quarter = 4
+drives_specs = ["margin", "cost"]

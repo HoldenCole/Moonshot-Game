@@ -1,0 +1,36 @@
+# content/capacity/vertical_ai_saas.toml
+# one capacity type (deployment/infra), deliberately CHEAP and fast — SaaS is
+# capacity-light per the spec. The constraint here is meant to bite far less
+# than fab lines or compute; the real game is go-to-market, not capital.
+
+[deployment]
+id = "deployment"
+sub_industry = "vertical_ai_saas"
+name = "Deployment infrastructure"
+unit_label = "environment"
+description = "The cloud infra, security, and customer environments your product runs in. Lighter than a fab or a GPU cluster — but each enterprise customer wants isolation, compliance, and headroom, so growth still costs something. Cheap to add relative to hardware businesses."
+
+[[deployment.rungs]]
+capacity = 4
+cost = 6
+build_weeks = 8
+[[deployment.rungs]]
+capacity = 8
+cost = 15
+build_weeks = 10
+[[deployment.rungs]]
+capacity = 14
+cost = 34
+build_weeks = 12
+[[deployment.rungs]]
+capacity = 22
+cost = 68
+build_weeks = 14
+[[deployment.rungs]]
+capacity = 32
+cost = 120
+build_weeks = 16
+[[deployment.rungs]]
+capacity = 45
+cost = 200
+build_weeks = 18

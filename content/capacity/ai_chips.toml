@@ -1,0 +1,34 @@
+# content/capacity/ai_chips.toml
+# one capacity type (fab lines), 6 rungs so it never caps out.
+
+[fab_line]
+id = "fab_line"
+sub_industry = "ai_chips"
+name = "Fab line"
+unit_label = "line"
+description = "Where silicon gets made. Each line is an enormous capital project that takes time to stand up — and your products can't ship or scale without one. Run out of lines and your best chip just sits in a queue."
+
+[[fab_line.rungs]]
+capacity = 2
+cost = 60
+build_weeks = 52
+[[fab_line.rungs]]
+capacity = 4
+cost = 140
+build_weeks = 60
+[[fab_line.rungs]]
+capacity = 7
+cost = 300
+build_weeks = 72
+[[fab_line.rungs]]
+capacity = 11
+cost = 560
+build_weeks = 84
+[[fab_line.rungs]]
+capacity = 16
+cost = 980
+build_weeks = 96
+[[fab_line.rungs]]
+capacity = 22
+cost = 1600
+build_weeks = 108
