@@ -127,8 +127,11 @@ export interface PlayerCompany {
     revenueLog?: number[];
   };
   capTable: CapTable;
-  /** Invested compute / facilities capacity (Operations). Raises execution on
-   *  the signature mechanic; absent until you invest. */
+  /** Compute / facilities build-out level (Operations): 0 = none … 3 = top tier.
+   *  Raises execution on the signature mechanic; absent until you build. */
+  capacityLevel?: number;
+  /** Legacy: pre-ladder accumulated capacity points. Kept for old-save safety;
+   *  no longer read. */
   capacity?: number;
   /** Outstanding debt facilities (non-dilutive financing); absent until drawn. */
   loans?: Loan[];

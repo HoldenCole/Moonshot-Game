@@ -4082,39 +4082,100 @@
   display: flex;
   gap: 8px;
 }
-.ops-tiers {
+/* Staffing gauge — headcount against the target your scale calls for. */
+.ops-gauge {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
-.ops-tier {
+.ops-gauge__track {
+  height: 7px;
+  border-radius: 4px;
+  background: var(--panel-2);
+  border: 0.5px solid var(--border-faint);
+  overflow: hidden;
+}
+.ops-gauge__fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.35s ease;
+}
+.ops-gauge__fill.is-understaffed {
+  background: var(--down);
+}
+.ops-gauge__fill.is-right {
+  background: var(--up);
+}
+.ops-gauge__fill.is-overstaffed {
+  background: var(--warn);
+}
+.ops-gauge__legend {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+}
+.ops-gauge__state {
+  font-size: 11.5px;
+  font-weight: 650;
+}
+.ops-gauge__state--up {
+  color: var(--up);
+}
+.ops-gauge__state--down {
+  color: var(--down);
+}
+.ops-gauge__state--warn {
+  color: var(--warn);
+}
+.ops-gauge__target {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* Compute / facilities build-out ladder — own each rung once, in order. */
+.ops-ladder {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ops-rung {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: center;
   gap: 10px;
-  padding: 8px 11px;
-  border: 0.5px solid var(--border);
-  border-radius: var(--r-sm);
-  background: none;
-  text-align: left;
+  padding: 6px 0;
 }
-.ops-tier:hover:not(:disabled) {
+.ops-rung__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  justify-self: center;
+}
+.ops-rung.is-owned .ops-rung__dot {
+  background: var(--accent);
   border-color: var(--accent);
-  background: var(--accent-soft);
 }
-.ops-tier:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.ops-rung.is-next .ops-rung__dot {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
-.ops-tier__name {
+.ops-rung__name {
   font-size: 12.5px;
   font-weight: 550;
+  color: var(--text-dim);
+}
+.ops-rung.is-owned .ops-rung__name,
+.ops-rung.is-next .ops-rung__name {
   color: var(--text);
 }
-.ops-tier__cost {
-  font-size: 11.5px;
+.ops-rung__cost {
+  font-size: 11px;
   color: var(--text-faint);
   white-space: nowrap;
+}
+.ops-rung.is-owned .ops-rung__cost {
+  color: var(--up);
 }
 
 /* ── New-game wizard (the marquee — more expressive than the in-game flat UI) ── */

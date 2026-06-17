@@ -92,8 +92,8 @@ interface GameStore {
   hireStaff: (count: number) => void;
   /** Cut the team (lowers burn + a small reputation hit). */
   trimTeam: (count: number) => void;
-  /** Invest in a compute / facilities capacity tier (capex + burn, lifts execution). */
-  investCapacity: (tierId: string) => void;
+  /** Commit to the next compute / facilities tier (capex + burn, lifts execution). */
+  investCapacity: () => void;
 
   /** Buy a personal stake in a public company (funded by personal cash). */
   buyStock: (companyId: string, amount: number) => void;
@@ -271,10 +271,10 @@ export const useGame = create<GameStore>((set, get) => ({
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
-  investCapacity: (tierId) =>
+  investCapacity: () =>
     set((s) => {
       if (!s.game) return s;
-      const a = withAch(engineInvestCapacity(s.game, tierId));
+      const a = withAch(engineInvestCapacity(s.game));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
