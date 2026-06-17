@@ -135,6 +135,10 @@ export interface PlayerCompany {
   capacity?: number;
   /** Outstanding debt facilities (non-dilutive financing); absent until drawn. */
   loans?: Loan[];
+  /** Strategic stakes the company treasury holds in other public companies — a
+   *  balance-sheet asset (kept out of net worth, like company cash). Absent until
+   *  the company invests. */
+  portfolio?: Holding[];
   /** The sub-industry signature process. */
   signature: SignatureState;
   /** Persistent quantities the signature mechanic builds up — keyed per

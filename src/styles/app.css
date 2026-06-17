@@ -4609,7 +4609,7 @@
 }
 
 /* ── Invest box ───────────────────────────────────────────────────────────────
-   Buy / sell a personal stake from the market detail drawer. */
+   Buy / sell a stake (personal cash or company treasury) from the detail drawer. */
 .invest-box {
   margin: 12px 0 4px;
   padding: 12px;
@@ -4619,13 +4619,19 @@
 }
 .invest-box__head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.invest-box__sub {
+  font-size: 11.5px;
+  color: var(--text-dim);
   margin-bottom: 10px;
 }
 .invest-box__cash {
-  font-size: 11.5px;
-  color: var(--text-dim);
+  font-weight: 600;
+  color: var(--text);
 }
 .invest-box__none {
   margin: 0;

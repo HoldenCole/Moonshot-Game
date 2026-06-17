@@ -18,7 +18,7 @@ import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/even
 import { applyPublicChoice } from "@/engine/earnings";
 import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } from "@/engine/debt";
 import { hireStaff as engineHireStaff, investCapacity as engineInvestCapacity, trimTeam as engineTrimTeam } from "@/engine/operations";
-import { buyStock as engineBuyStock, sellStock as engineSellStock } from "@/engine/investing";
+import { buyStock as engineBuyStock, sellStock as engineSellStock, type InvestAccount } from "@/engine/investing";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
@@ -95,10 +95,10 @@ interface GameStore {
   /** Commit to the next compute / facilities tier (capex + burn, lifts execution). */
   investCapacity: () => void;
 
-  /** Buy a personal stake in a public company (funded by personal cash). */
-  buyStock: (companyId: string, amount: number) => void;
-  /** Sell a fraction (0–1) of a personal holding at the current price. */
-  sellStock: (companyId: string, fraction: number) => void;
+  /** Buy a stake in a public company from the chosen pocket (personal / company cash). */
+  buyStock: (companyId: string, amount: number, account: InvestAccount) => void;
+  /** Sell a fraction (0–1) of a holding from the chosen pocket at the current price. */
+  sellStock: (companyId: string, fraction: number, account: InvestAccount) => void;
 
   startNegotiation: (leadInvestorId: string, openingTerms: RoundTerms) => void;
   counterOffer: (terms: RoundTerms) => void;
@@ -278,21 +278,21 @@ export const useGame = create<GameStore>((set, get) => ({
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
-  buyStock: (companyId, amount) =>
+  buyStock: (companyId, amount, account) =>
     set((s) => {
       if (!s.game) return s;
       const market = [...s.content.companies, ...s.game.market.companies];
       const company = market.find((c) => c.id === companyId);
       if (!company) return s;
-      const a = withAch(engineBuyStock(s.game, company, amount, s.game.world, s.game.clock.week));
+      const a = withAch(engineBuyStock(s.game, company, amount, account, s.game.world, s.game.clock.week));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
-  sellStock: (companyId, fraction) =>
+  sellStock: (companyId, fraction, account) =>
     set((s) => {
       if (!s.game) return s;
       const market = [...s.content.companies, ...s.game.market.companies];
-      const a = withAch(engineSellStock(s.game, companyId, fraction, market, s.game.world, s.game.clock.week));
+      const a = withAch(engineSellStock(s.game, companyId, fraction, account, market, s.game.world, s.game.clock.week));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 

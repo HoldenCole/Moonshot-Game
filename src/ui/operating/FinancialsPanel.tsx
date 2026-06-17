@@ -1,6 +1,7 @@
 import { useGame } from "@/state/store";
 import { eps, netIncomeAnnual, peRatio, revenueGrowth, stockPrice, valuationMark } from "@/engine/finance";
 import { marketReaction, quarterIndex, resultVerbose } from "@/engine/earnings";
+import { companyPortfolioValue, holdingGain } from "@/engine/investing";
 import { formatMoney } from "@/engine/format";
 import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Stat } from "@/ui/components/controls";
@@ -16,6 +17,8 @@ export function FinancialsPanel() {
   const growth = revenueGrowth(c);
   const ni = netIncomeAnnual(c);
   const e = c.earnings;
+  const invVal = companyPortfolioValue(game);
+  const invGain = (c.portfolio ?? []).reduce((s, h) => s + holdingGain(h), 0);
 
   return (
     <Panel className="financials-panel" coach="company">
@@ -35,6 +38,14 @@ export function FinancialsPanel() {
         <Stat label="Net income" value={`${formatMoney(ni)}/yr`} tone={ni >= 0 ? "up" : "down"} />
         {isPublic && <Stat label="EPS" value={`$${eps(c).toFixed(2)}`} tone={eps(c) >= 0 ? "up" : "down"} />}
         {isPublic && <Stat label="P/E" value={peRatio(c) != null ? `${peRatio(c)!.toFixed(0)}×` : "—"} />}
+        {invVal > 0 && (
+          <Stat
+            label="Investments"
+            value={formatMoney(invVal)}
+            sub={`${invGain >= 0 ? "+" : ""}${formatMoney(invGain)} unrealized`}
+            tone={invGain >= 0 ? "up" : "down"}
+          />
+        )}
       </div>
 
       {isPublic && e && (

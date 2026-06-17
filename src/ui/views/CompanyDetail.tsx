@@ -1,12 +1,13 @@
+import { useState } from "react";
 import { useGame } from "@/state/store";
 import type { Company } from "@/content/load";
 import type { CompanyGraph } from "@/engine/companyGraph";
 import { fundamentalValue, marketPrice, mispricing } from "@/engine/pricing";
-import { holdingGain } from "@/engine/investing";
+import { holdingGain, type InvestAccount } from "@/engine/investing";
 import { formatMoney, formatPct } from "@/engine/format";
 import { industryLabel, subIndustryLabel } from "@/domain/ids";
 import { Icon } from "@/ui/components/Icon";
-import { Button } from "@/ui/components/controls";
+import { Button, Segmented } from "@/ui/components/controls";
 
 /** The detail drawer for a selected market company: live price vs. fair value
  *  (the mispricing skill signal), quality, and its place in the relationship
@@ -111,13 +112,15 @@ export function CompanyDetail({
   );
 }
 
-/** Buy / sell a personal stake, funded by personal cash. */
+/** Buy / sell a stake, from either personal cash or the company treasury. */
 function InvestSection({ company }: { company: Company }) {
   const game = useGame((s) => s.game)!;
   const buy = useGame((s) => s.buyStock);
   const sell = useGame((s) => s.sellStock);
-  const cash = game.founder.personalCash;
-  const holding = game.founder.portfolio?.find((h) => h.companyId === company.id);
+  const [acct, setAcct] = useState<InvestAccount>("personal");
+  const isCo = acct === "company";
+  const cash = isCo ? game.company.financials.cash : game.founder.personalCash;
+  const holding = (isCo ? game.company.portfolio : game.founder.portfolio)?.find((h) => h.companyId === company.id);
   const canInvest = cash >= 0.1;
   const amt = (frac: number) => Math.round(cash * frac * 100) / 100;
 
@@ -125,22 +128,34 @@ function InvestSection({ company }: { company: Company }) {
     <div className="invest-box">
       <div className="invest-box__head">
         <span className="section-label">Invest</span>
-        <span className="invest-box__cash num">{formatMoney(cash)} to invest</span>
+        <Segmented
+          size="sm"
+          value={acct}
+          onChange={setAcct}
+          options={[
+            { value: "personal", label: "Personal" },
+            { value: "company", label: "Company" },
+          ]}
+        />
+      </div>
+      <div className="invest-box__sub">
+        <span className="invest-box__cash num">{formatMoney(cash)}</span>{" "}
+        {isCo ? `in ${game.company.name}'s treasury` : "personal cash"} to invest
       </div>
       {holding && (
         <div className="invest-pos">
           <span className="invest-pos__own">
-            You hold <strong className="num">{formatMoney(holding.value)}</strong>
+            {isCo ? game.company.name : "You"} hold <strong className="num">{formatMoney(holding.value)}</strong>
           </span>
           <span className={`invest-pos__gain num ${holdingGain(holding) >= 0 ? "up" : "down"}`}>
             {holdingGain(holding) >= 0 ? "+" : ""}
             {formatMoney(holdingGain(holding))}
           </span>
           <div className="invest-pos__sell">
-            <Button variant="subtle" size="sm" onClick={() => sell(company.id, 0.5)}>
+            <Button variant="subtle" size="sm" onClick={() => sell(company.id, 0.5, acct)}>
               Sell half
             </Button>
-            <Button variant="subtle" size="sm" onClick={() => sell(company.id, 1)}>
+            <Button variant="subtle" size="sm" onClick={() => sell(company.id, 1, acct)}>
               Sell all
             </Button>
           </div>
@@ -149,13 +164,17 @@ function InvestSection({ company }: { company: Company }) {
       {canInvest ? (
         <div className="invest-buy">
           {[0.1, 0.25, 0.5].map((frac) => (
-            <Button key={frac} variant="primary" size="sm" onClick={() => buy(company.id, amt(frac))} disabled={amt(frac) < 0.1}>
+            <Button key={frac} variant="primary" size="sm" onClick={() => buy(company.id, amt(frac), acct)} disabled={amt(frac) < 0.1}>
               Buy {formatMoney(amt(frac))}
             </Button>
           ))}
         </div>
       ) : (
-        <p className="invest-box__none dim">No personal capital to invest yet — exits and cash-outs build it.</p>
+        <p className="invest-box__none dim">
+          {isCo
+            ? "The treasury has no cash to invest right now."
+            : "No personal capital to invest yet — exits and cash-outs build it."}
+        </p>
       )}
     </div>
   );

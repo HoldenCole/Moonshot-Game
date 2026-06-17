@@ -1,18 +1,28 @@
-// Personal portfolio — the founder allocates personal capital into other public
-// companies (the capital-allocator / mogul arc). Funded by personal cash (so net
-// worth stays clean: cash and holdings are both yours, a buy is a wash, and
-// gains flow through). Holdings are marked to the live market each tick. Pure.
+// Investing — the founder and the operating company can each take stakes in
+// other public companies. Two pockets:
+//   • personal — funded by the founder's personal cash. Part of net worth: cash
+//     and holdings are both the founder's, so a buy is a wash and gains flow
+//     straight through.
+//   • company  — funded by the company treasury. A balance-sheet asset that does
+//     NOT feed net worth (company cash is excluded to avoid double-counting
+//     post-money rounds, so the holdings it buys are excluded too). Selling
+//     realizes gains back into company cash to fund the operating business.
+// Holdings are marked to the live market each tick. Pure + deterministic.
 
-import type { GameState, Holding } from "@/domain/state";
-import type { WorldState } from "@/domain/state";
+import type { GameState, Holding, WorldState } from "@/domain/state";
 import type { Company } from "@/content/load";
 import type { Money } from "@/domain/captable";
 import type { LogEntry } from "@/domain/log";
 import { marketPrice } from "./pricing";
 import { formatMoney } from "./format";
 
+/** Which pocket an investment is funded from / held in. */
+export type InvestAccount = "personal" | "company";
+
 /** Minimum trade size, $M. */
 export const MIN_TRADE: Money = 0.1;
+
+const r2 = (n: number) => Math.round(n * 100) / 100;
 
 /** Per-share price ($/share): market cap ($M) over shares out (millions). 0 for
  *  a private company (no public stock). */
@@ -20,79 +30,130 @@ export function pricePerShare(c: Company, world: WorldState, week: number): numb
   return c.financials.shares_out > 0 ? marketPrice(c, world, week) / c.financials.shares_out : 0;
 }
 
+/** The personal portfolio's market value — the only one that feeds net worth. */
 export function portfolioValue(state: GameState): Money {
   return (state.founder.portfolio ?? []).reduce((s, h) => s + h.value, 0);
 }
 
-export function holdingGain(h: Holding): Money {
-  return Math.round((h.value - h.costBasis) * 100) / 100;
+/** The company treasury portfolio's market value (a balance-sheet asset). */
+export function companyPortfolioValue(state: GameState): Money {
+  return (state.company.portfolio ?? []).reduce((s, h) => s + h.value, 0);
 }
 
-/** Buy `$amount` of a public company with personal cash. */
-export function buyStock(state: GameState, company: Company, amount: Money, world: WorldState, week: number): GameState {
+export function holdingGain(h: Holding): Money {
+  return r2(h.value - h.costBasis);
+}
+
+interface Pocket {
+  cash: Money;
+  portfolio: Holding[];
+}
+
+function readPocket(state: GameState, acct: InvestAccount): Pocket {
+  return acct === "company"
+    ? { cash: state.company.financials.cash, portfolio: state.company.portfolio ?? [] }
+    : { cash: state.founder.personalCash, portfolio: state.founder.portfolio ?? [] };
+}
+
+function writePocket(state: GameState, acct: InvestAccount, cash: Money, portfolio: Holding[]): GameState {
+  if (acct === "company") {
+    return { ...state, company: { ...state.company, portfolio, financials: { ...state.company.financials, cash } } };
+  }
+  return { ...state, founder: { ...state.founder, personalCash: cash, portfolio } };
+}
+
+/** Buy `$amount` of a public company from the chosen pocket's cash. */
+export function buyStock(
+  state: GameState,
+  company: Company,
+  amount: Money,
+  acct: InvestAccount,
+  world: WorldState,
+  week: number,
+): GameState {
   const pps = pricePerShare(company, world, week);
   if (pps <= 0) return state;
-  const spend = Math.round(Math.min(amount, state.founder.personalCash) * 100) / 100;
+  const pocket = readPocket(state, acct);
+  const spend = r2(Math.min(amount, pocket.cash));
   if (spend < MIN_TRADE) return state;
   const shares = spend / pps;
-  const portfolio = [...(state.founder.portfolio ?? [])];
+  const portfolio = [...pocket.portfolio];
   const i = portfolio.findIndex((h) => h.companyId === company.id);
   if (i >= 0) {
     const h = portfolio[i]!;
-    portfolio[i] = { ...h, shares: h.shares + shares, costBasis: h.costBasis + spend, value: h.value + spend };
+    portfolio[i] = { ...h, shares: h.shares + shares, costBasis: r2(h.costBasis + spend), value: r2(h.value + spend) };
   } else {
     portfolio.push({ companyId: company.id, shares, costBasis: spend, value: spend });
   }
+  const next = writePocket(state, acct, r2(pocket.cash - spend), portfolio);
   const entry: LogEntry = {
-    id: `buy-${company.id}-${week}`,
+    id: `buy-${acct}-${company.id}-${week}`,
     week,
     kind: "company",
     tone: "neutral",
-    headline: `Bought ${formatMoney(spend)} of ${company.name}`,
-    detail: `A personal stake at ${dollars(pps)}/share. Your portfolio will move with the market.`,
+    headline: `${who(state, acct)} bought ${formatMoney(spend)} of ${company.name}`,
+    detail: `A ${acct === "company" ? "treasury" : "personal"} stake at ${dollars(pps)}/share. It will move with the market.`,
   };
-  return { ...state, founder: { ...state.founder, personalCash: state.founder.personalCash - spend, portfolio }, log: [...state.log, entry] };
+  return { ...next, log: [...state.log, entry] };
 }
 
-/** Sell a fraction (0–1) of a holding at the current price, banking the proceeds. */
-export function sellStock(state: GameState, companyId: string, fraction: number, market: Company[], world: WorldState, week: number): GameState {
-  const portfolio = [...(state.founder.portfolio ?? [])];
+/** Sell a fraction (0–1) of a holding from the chosen pocket, banking proceeds
+ *  back into that pocket's cash. */
+export function sellStock(
+  state: GameState,
+  companyId: string,
+  fraction: number,
+  acct: InvestAccount,
+  market: Company[],
+  world: WorldState,
+  week: number,
+): GameState {
+  const pocket = readPocket(state, acct);
+  const portfolio = [...pocket.portfolio];
   const i = portfolio.findIndex((h) => h.companyId === companyId);
   if (i < 0) return state;
   const h = portfolio[i]!;
   const f = Math.max(0, Math.min(1, fraction));
   const company = market.find((c) => c.id === companyId);
   const pps = company ? pricePerShare(company, world, week) : h.shares > 0 ? h.value / h.shares : 0;
-  const proceeds = Math.round(h.shares * f * pps * 100) / 100;
+  const proceeds = r2(h.shares * f * pps);
   const soldCost = h.costBasis * f;
   if (f >= 0.999 || h.shares * (1 - f) < 1e-6) {
     portfolio.splice(i, 1);
   } else {
     const shares = h.shares * (1 - f);
-    portfolio[i] = { ...h, shares, costBasis: Math.round(h.costBasis * (1 - f) * 100) / 100, value: Math.round(shares * pps * 100) / 100 };
+    portfolio[i] = { ...h, shares, costBasis: r2(h.costBasis * (1 - f)), value: r2(shares * pps) };
   }
-  const gain = Math.round((proceeds - soldCost) * 100) / 100;
+  const next = writePocket(state, acct, r2(pocket.cash + proceeds), portfolio);
+  const gain = r2(proceeds - soldCost);
   const entry: LogEntry = {
-    id: `sell-${companyId}-${week}-${Math.round(f * 100)}`,
+    id: `sell-${acct}-${companyId}-${week}-${Math.round(f * 100)}`,
     week,
     kind: "company",
     tone: gain >= 0 ? "up" : "warn",
-    headline: `Sold ${company ? company.name : "a holding"} for ${formatMoney(proceeds)}`,
+    headline: `${who(state, acct)} sold ${company ? company.name : "a holding"} for ${formatMoney(proceeds)}`,
     detail: `${gain >= 0 ? "A gain" : "A loss"} of ${formatMoney(Math.abs(gain))} on the position.`,
   };
-  return { ...state, founder: { ...state.founder, personalCash: state.founder.personalCash + proceeds, portfolio }, log: [...state.log, entry] };
+  return { ...next, log: [...state.log, entry] };
 }
 
-/** Re-mark every holding to the live market (called each tick). */
-export function markPortfolio(state: GameState, market: Company[], world: WorldState, week: number): GameState {
-  const pf = state.founder.portfolio;
-  if (!pf || pf.length === 0) return state;
-  const byId = new Map(market.map((c) => [c.id, c]));
-  const portfolio = pf.map((h) => {
+function markOne(state: GameState, acct: InvestAccount, byId: Map<string, Company>, world: WorldState, week: number): GameState {
+  const pocket = readPocket(state, acct);
+  if (pocket.portfolio.length === 0) return state;
+  const portfolio = pocket.portfolio.map((h) => {
     const c = byId.get(h.companyId);
-    return c ? { ...h, value: Math.round(h.shares * pricePerShare(c, world, week) * 100) / 100 } : h;
+    return c ? { ...h, value: r2(h.shares * pricePerShare(c, world, week)) } : h;
   });
-  return { ...state, founder: { ...state.founder, portfolio } };
+  return writePocket(state, acct, pocket.cash, portfolio);
 }
 
+/** Re-mark both pockets to the live market (called each tick). */
+export function markPortfolios(state: GameState, market: Company[], world: WorldState, week: number): GameState {
+  const byId = new Map(market.map((c) => [c.id, c]));
+  let next = markOne(state, "personal", byId, world, week);
+  next = markOne(next, "company", byId, world, week);
+  return next;
+}
+
+const who = (state: GameState, acct: InvestAccount) => (acct === "company" ? state.company.name : "You");
 const dollars = (n: number) => `$${n >= 100 ? Math.round(n) : n.toFixed(2)}`;
