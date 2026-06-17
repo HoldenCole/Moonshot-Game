@@ -105,7 +105,8 @@ export function NewGameScreen() {
     [hasCarry],
   );
   const [stepIdx, setStepIdx] = useState(0);
-  const step = STEPS[stepIdx]!;
+  const safeIdx = Math.min(stepIdx, STEPS.length - 1); // STEPS length depends on carry-over
+  const step = STEPS[safeIdx]!;
 
   const preset = matchingPreset(axes);
   const suggestedCompany = sub ? NAME_SUGGESTIONS[sub] : "";
@@ -161,7 +162,7 @@ export function NewGameScreen() {
   const goBack = () => setStepIdx((i) => Math.max(0, i - 1));
 
   const contentSteps = STEPS.slice(1);
-  const contentIdx = stepIdx - 1;
+  const contentIdx = safeIdx - 1;
 
   return (
     <div className={`ng ng--${step}`}>
@@ -176,15 +177,15 @@ export function NewGameScreen() {
             <Icon name="rocket" size={20} /> <span>Moonshot Inc</span>
           </div>
           {step !== "welcome" && (
-            <div className="ng-progress" role="tablist" aria-label="Setup steps">
+            <div className="ng-progress" role="group" aria-label="Setup progress">
               {contentSteps.map((s, i) => (
                 <button
                   key={s}
                   className={`ng-progress__dot${i === contentIdx ? " is-active" : ""}${i < contentIdx ? " is-done" : ""}`}
                   onClick={() => i <= contentIdx && setStepIdx(i + 1)}
                   disabled={i > contentIdx}
-                  aria-label={`Step ${i + 1}`}
-                  aria-selected={i === contentIdx}
+                  aria-label={`Go to step ${i + 1} of ${contentSteps.length}`}
+                  aria-current={i === contentIdx ? "step" : undefined}
                 />
               ))}
             </div>

@@ -39,12 +39,14 @@ function Ipo() {
   const price = useGame((s) => s.ipoPrice);
   const list = useGame((s) => s.ipoList);
   const cancel = useGame((s) => s.cancelExit);
-  if (flow.kind !== "ipo") return null;
-
+  // All hooks run unconditionally — the kind guard sits below them — so a flow
+  // transition can't desync the hook order (Rules of Hooks).
+  const bankId = flow.kind === "ipo" ? flow.bankId : undefined;
+  const bank = bankId ? banks.find((b) => b.id === bankId) : undefined;
   const eligible = useMemo(() => eligibleBanks(banks, game), [banks, game]);
-  const bank = flow.bankId ? banks.find((b) => b.id === flow.bankId) : undefined;
   const pricing = useMemo(() => (bank ? ipoPricing(game, bank) : null), [bank, game]);
   const [priced, setPriced] = useState(0);
+  if (flow.kind !== "ipo") return null;
 
   return (
     <>

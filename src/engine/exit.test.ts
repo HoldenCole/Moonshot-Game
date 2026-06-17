@@ -21,6 +21,7 @@ import {
   weeksToUnlock,
 } from "./exit.ts";
 import { applyRound, exitWaterfall } from "./captable.ts";
+import { netWorth, valuationMark } from "./finance.ts";
 import { createNewGame } from "@/state/newgame";
 import { makeRng } from "./rng.ts";
 import type { GameState } from "@/domain/state";
@@ -80,6 +81,18 @@ test("a self-financed company can IPO on valuation alone — raising is never re
   assert.ok(ipoTargetRaise(g) > 0);
   assert.equal(eligibleBanks([bank], g).length, 1);
   assert.ok(ipoPricing(g, bank).fair > 0);
+});
+
+test("a public company's mark and net worth track the live cap, not the IPO price", () => {
+  const g = grown();
+  const ipo = applyIpo(g, bank, revealIpo(g, bank, ipoPricing(g, bank).fair, makeRng(1)));
+  const ipoPost = ipo.company.capTable.rounds[ipo.company.capTable.rounds.length - 1]!.postMoney;
+  // The stock slides well below the IPO price.
+  const fallen = { ...ipo, company: { ...ipo.company, financials: { ...ipo.company.financials, valuation: Math.round(ipoPost * 0.6) } } };
+  assert.equal(valuationMark(fallen.company), fallen.company.financials.valuation, "mark = live cap, not floored at the IPO post-money");
+  assert.ok(valuationMark(fallen.company) < ipoPost, "mark actually fell below the IPO price");
+  // Net worth uses the live mark, so it matches what cashing out would actually pay.
+  assert.ok(Math.abs(netWorth(fallen) - (cashOutProceeds(fallen) + fallen.founder.personalCash)) < 1e-6);
 });
 
 test("ipoReadiness surfaces each criterion and what's missing", () => {

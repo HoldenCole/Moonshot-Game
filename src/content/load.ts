@@ -263,7 +263,9 @@ export function loadContent(): ContentDB {
   const companies = loadDir<Company>(companyGlob, (p) => (p as CompanyContent).company);
   // The 7 authored anchors, plus a procedural roster generated from them as
   // archetypes — so fundraising has eligible leads at every stage.
-  const anchorInvestors = loadDir<Investor>(investorGlob, (p) => (p as InvestorContent).firm);
+  // Sort before generating so the procedural roster is deterministic regardless
+  // of glob iteration order (not reliant on the bundler's key ordering).
+  const anchorInvestors = loadDir<Investor>(investorGlob, (p) => (p as InvestorContent).firm).sort((a, b) => a.id.localeCompare(b.id));
   const investors = [...anchorInvestors, ...generateInvestors(INVESTOR_SEED, anchorInvestors, INVESTOR_TARGET)];
   const banks = loadDir<Bank>(bankGlob, (p) => (p as BankContent).bank);
   const events = loadEvents(eventGlob);

@@ -2,8 +2,8 @@
 // Each is a pure predicate over game state; once unlocked it stays unlocked.
 
 import type { GameState } from "@/domain/state";
-import { founderOwnership, latestPostMoney } from "./captable";
-import { netWorth } from "./finance";
+import { founderOwnership } from "./captable";
+import { netWorth, valuationMark } from "./finance";
 import { stageRank } from "@/domain/ids";
 
 export type AchTier = "bronze" | "silver" | "gold";
@@ -28,8 +28,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "dealmaker", name: "Dealmaker", desc: "Close three rounds.", tier: "silver", test: (g) => pricedRounds(g) >= 3 },
   { id: "clean_cap", name: "Still in Control", desc: "Hold 51%+ at Series A.", tier: "silver", test: (g) => stageAtLeast(g, "series_a") && founderOwnership(g.company.capTable) >= 0.51 },
 
-  { id: "unicorn", name: "Unicorn", desc: "Reach a $1B valuation.", tier: "gold", test: (g) => latestPostMoney(g.company.capTable) >= 1000 },
-  { id: "decacorn", name: "Decacorn", desc: "Reach a $10B valuation.", tier: "gold", test: (g) => latestPostMoney(g.company.capTable) >= 10000 },
+  { id: "unicorn", name: "Unicorn", desc: "Reach a $1B valuation.", tier: "gold", test: (g) => valuationMark(g.company) >= 1000 },
+  { id: "decacorn", name: "Decacorn", desc: "Reach a $10B valuation.", tier: "gold", test: (g) => valuationMark(g.company) >= 10000 },
   { id: "ipo", name: "Ring the Bell", desc: "Take a company public.", tier: "gold", test: (g) => g.company.stage === "public" },
   { id: "first_exit", name: "Exit", desc: "Complete your first exit.", tier: "gold", test: (g) => g.runOutcome != null },
 

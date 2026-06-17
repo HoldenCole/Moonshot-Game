@@ -35,9 +35,12 @@ export function privateValuationMark(c: PlayerCompany, world: WorldState): Money
   return Math.round(Math.max(latestPostMoney(c.capTable), revMark));
 }
 
-/** The live equity mark used for net worth and exit gating: the marked valuation,
- *  never below the last round. (Robust when `financials.valuation` is stale.) */
+/** The live equity mark used for net worth and exit gating. For a public company
+ *  the repriced market cap is authoritative (it can fall below the IPO price). For
+ *  a private company it's the live mark, floored at the last round (and robust
+ *  when `financials.valuation` hasn't been stamped by a tick yet). */
 export function valuationMark(c: PlayerCompany): Money {
+  if (c.stage === "public") return c.financials.valuation;
   return Math.max(latestPostMoney(c.capTable), c.financials.valuation);
 }
 

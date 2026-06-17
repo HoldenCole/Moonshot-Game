@@ -8,7 +8,7 @@ import type { Industry } from "@/domain/ids";
 import type { Money, RoundTerms } from "@/domain/captable";
 import type { Bank } from "@/content/load";
 import type { Company } from "@/content/load";
-import { applyRound, exitWaterfall, founderOwnership, latestPostMoney } from "./captable";
+import { applyRound, exitWaterfall, founderOwnership } from "./captable";
 import { valuationMark } from "./finance";
 import { formatMoney } from "./format";
 import { type Rng, nextNoise, nextRange, pick } from "./rng";
@@ -82,7 +82,7 @@ export function ipoPricing(state: GameState, bank: Bank): IpoPricing {
   const windowMult = state.world.ipoWindow === "open" ? 1.12 : 0.86;
   const hypeMult = 1 + (hype - 60) / 100 * 0.6;
   const quality = bank.underwriting.pricing_quality / 100;
-  const fair = Math.round(base * windowMult * hypeMult);
+  const fair = Math.max(1, Math.round(base * windowMult * hypeMult));
   const spread = 0.22 - quality * 0.1; // better banks → tighter book
   const demand = hype > 78 && state.world.ipoWindow === "open" ? "strong" : hype < 50 ? "soft" : "fair";
   return { fair, low: Math.round(fair * (1 - spread)), high: Math.round(fair * (1 + spread)), demand };
@@ -223,7 +223,7 @@ export interface AcquisitionOffer {
  *  all-stock alternative: a richer headline (upside-sharing, scaled by the
  *  acquirer's vigor) taken as a stake in the buyer. */
 export function acquisitionOffer(state: GameState, market: Company[], rng: Rng): AcquisitionOffer {
-  const base = Math.max(latestPostMoney(state.company.capTable), state.company.financials.valuation, 5);
+  const base = Math.max(valuationMark(state.company), 5);
   const climateMult = 0.85 + (state.world.vcClimate / 100) * 0.5;
   const premium = nextRange(rng, 0.1, 0.6) * climateMult;
   const exitValue = Math.round(base * (1 + premium));

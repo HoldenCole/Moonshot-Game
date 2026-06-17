@@ -33,7 +33,9 @@ test("closing a round unlocks 'first money' and 'millionaire'", () => {
 
 test("going public and crossing $1B net worth unlock the gold tier", () => {
   const g = fresh();
-  g.company = { ...g.company, stage: "public" };
+  // A real IPO stamps the live market cap onto financials (what a public company
+  // is marked at); valuationMark reads that for a public company.
+  g.company = { ...g.company, stage: "public", financials: { ...g.company.financials, valuation: 5000 } };
   g.company.capTable = applyRound(g.company.capTable, {
     terms: { valuation: 4000, roundSize: 1000, liquidationPref: 0, participating: false, boardSeats: 0, optionPoolPct: 0 },
     stage: "public",
@@ -45,6 +47,13 @@ test("going public and crossing $1B net worth unlock the gold tier", () => {
   assert.ok(ids.includes("ipo"));
   assert.ok(ids.includes("billionaire"));
   assert.ok(ids.includes("unicorn"));
+});
+
+test("a bootstrapped $1B company unlocks Unicorn without ever raising a round", () => {
+  const g = fresh();
+  g.company.financials.valuation = 1200; // grew into a $1.2B live mark on revenue
+  assert.equal(g.company.capTable.rounds.filter((r) => r.postMoney > 0).length, 0, "never raised a priced round");
+  assert.ok(checkAchievements(g).includes("unicorn"));
 });
 
 test("newlyUnlocked excludes already-recorded achievements", () => {

@@ -104,6 +104,7 @@ function DashItem({
       <button
         type="button"
         className="dash-item__handle"
+        data-handle={id}
         draggable
         onDragStart={(e) => {
           onPick(id);
@@ -251,7 +252,12 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
               setDragId(null);
               setOverId(null);
             }}
-            onNudge={(pid, dir) => commitVisible(swap(visible, pid, dir))}
+            onNudge={(pid, dir) => {
+              commitVisible(swap(visible, pid, dir));
+              // Keep focus on the handle after the list reorders, so arrow-key
+              // reordering works repeatedly without re-tabbing.
+              requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-handle="${pid}"]`)?.focus());
+            }}
           >
             {renderPanel(id)}
           </DashItem>
