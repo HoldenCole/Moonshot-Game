@@ -86,8 +86,11 @@ export function SignatureWidget() {
       <p className="sigwidget__note">{selected.blurb}</p>
 
       <div className="sig-commit">
-        <span className={`sig-commit__odds sig-commit__odds--${oddsTone(odds)}`} title="Estimated odds of a strong outcome">
-          {oddsLabel(odds)}
+        <span
+          className={`sig-commit__odds sig-commit__odds--${oddsTone(odds)}`}
+          title="Your odds at today's scale — growing the team and compute raises them, even after you commit"
+        >
+          {oddsLabel(odds)} now
         </span>
         <Button
           variant="primary"

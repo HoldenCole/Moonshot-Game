@@ -14,6 +14,7 @@ export function GuidedTutorial() {
   const game = useGame((s) => s.game);
   const script = useGame((s) => s.content.tutorial);
   const view = useUi((s) => s.view);
+  const newGameStep = useUi((s) => s.newGameStep);
   const tutorialEnabled = usePrefs((s) => s.tutorialEnabled);
   const guidedDone = usePrefs((s) => s.guidedDone);
   const guidedStep = usePrefs((s) => s.guidedStep);
@@ -116,7 +117,7 @@ export function GuidedTutorial() {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
     };
-  }, [step, gateOk, anchor, view, hasGame, week, rounds, sigRunning]);
+  }, [step, gateOk, anchor, view, newGameStep, hasGame, week, rounds, sigRunning]);
 
   if (!active || blocked || !step || !gateOk || !anchorEl) return null;
 

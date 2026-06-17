@@ -10,6 +10,10 @@ interface UiStore {
   setView: (v: View) => void;
   paletteOpen: boolean;
   setPaletteOpen: (b: boolean) => void;
+  /** Current step of the new-game wizard, so the guided tour can re-resolve its
+   *  anchors as the player moves between steps (the wizard hides per-step DOM). */
+  newGameStep: string;
+  setNewGameStep: (s: string) => void;
 }
 
 export const useUi = create<UiStore>((set) => ({
@@ -17,4 +21,6 @@ export const useUi = create<UiStore>((set) => ({
   setView: (view) => set({ view }),
   paletteOpen: false,
   setPaletteOpen: (paletteOpen) => set({ paletteOpen }),
+  newGameStep: "welcome",
+  setNewGameStep: (newGameStep) => set({ newGameStep }),
 }));

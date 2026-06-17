@@ -4,6 +4,7 @@ import { useUi } from "@/state/ui";
 import { WealthPopover } from "./WealthPopover";
 import { founderOwnership } from "@/engine/captable";
 import { runwayMonths, valuationMark } from "@/engine/finance";
+import { nextBalloon } from "@/engine/debt";
 import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
 import { industryLabel } from "@/domain/ids";
@@ -53,9 +54,14 @@ export function TopBar() {
 
   const pendingDecision = game.alerts.length > 0 || game.pendingEvent != null;
   const wksCritical = weeksToCritical(game, tuning);
+  // A balloon principal due soon is a separate constraint from operating runway,
+  // so surface it even when the runway looks fine.
+  const balloon = nextBalloon(company, clock.week);
+  const balloonSoon = balloon != null && balloon.weeks <= 26;
+  const balloonAlert = balloonSoon && company.financials.cash < balloon!.principal;
   // News Cycle governs how much foresight you get: the exact week forecast is an
   // "Easy" affordance; otherwise you get a qualitative read.
-  const hint = pendingDecision
+  const baseHint = pendingDecision
     ? "Decision pending"
     : runway === Infinity
       ? "Cash-flow positive"
@@ -64,6 +70,7 @@ export function TopBar() {
         : showsRunwayForecast(game.difficulty)
           ? `~${wksCritical} wks to runway pressure`
           : "Runway tightening";
+  const hint = balloonSoon ? `${baseHint} · ${formatMoney(balloon!.principal)} debt due in ${balloon!.weeks}w` : baseHint;
 
   return (
     <header className="topbar">
@@ -97,7 +104,7 @@ export function TopBar() {
           <Icon name="clock" size={14} />
           W{clock.week}
         </div>
-        <span className={`time-hint${pendingDecision ? " time-hint--alert" : ""}`}>{hint}</span>
+        <span className={`time-hint${pendingDecision || balloonAlert ? " time-hint--alert" : ""}`}>{hint}</span>
       </div>
 
       <div className="topbar__gauges" data-guide="top-bar-gauges">

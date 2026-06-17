@@ -1,5 +1,6 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useGame } from "@/state/store";
+import { useUi } from "@/state/ui";
 import {
   PLAYABLE_INDUSTRIES,
   SUB_INDUSTRY_LABELS,
@@ -88,6 +89,7 @@ export function NewGameScreen() {
   const [archetypeId, setArchetypeId] = useState<string | null>(null);
   const [customAttrs, setCustomAttrs] = useState<Record<CustomKey, number>>(NEUTRAL_ATTRS);
   const [relaxedBudget, setRelaxedBudget] = useState(false);
+  const [founderCapital, setFounderCapital] = useState(1); // personal cash multiplier (decoupled from difficulty)
   const [age, setAge] = useState(35);
   const [founderName, setFounderName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -108,6 +110,12 @@ export function NewGameScreen() {
   const safeIdx = Math.min(stepIdx, STEPS.length - 1); // STEPS length depends on carry-over
   const step = STEPS[safeIdx]!;
 
+  // Tell the guided tour which wizard step is showing, so it re-resolves its
+  // coachmark anchors as the player moves between steps (anchors live on
+  // different steps now).
+  const setNewGameStep = useUi((s) => s.setNewGameStep);
+  useEffect(() => setNewGameStep(step), [step, setNewGameStep]);
+
   const preset = matchingPreset(axes);
   const suggestedCompany = sub ? NAME_SUGGESTIONS[sub] : "";
   const effectiveCompany = companyTouched ? companyName : suggestedCompany;
@@ -115,7 +123,7 @@ export function NewGameScreen() {
   const overBudget = archetypeId === "custom" && !relaxedBudget && tiltUsed > TILT_BUDGET;
   const subs = useMemo(() => (industry ? SUBS[industry] : []), [industry]);
 
-  const archMult = archetypeId === "custom" ? 1 : founders.find((f) => f.id === archetypeId)?.modifiers.starting_cash_mult ?? 1;
+  const archMult = archetypeId === "custom" ? founderCapital : founders.find((f) => f.id === archetypeId)?.modifiers.starting_cash_mult ?? 1;
   const baseCash = Math.round(0.75 * axes.startingCapital * archMult * 100) / 100;
 
   const customFounder = (): FounderContent => ({
@@ -125,7 +133,7 @@ export function NewGameScreen() {
     playstyle_hint: "Custom",
     modifiers: {
       starting_reputation: customAttrs.reputation,
-      starting_cash_mult: 1.0,
+      starting_cash_mult: founderCapital,
       investor_warmth: customAttrs.warmth,
       integrity_baseline: customAttrs.integrity,
       signature_lean: customAttrs.signature,
@@ -329,13 +337,13 @@ export function NewGameScreen() {
                         ))}
                         <Slider
                           label="Starting capital"
-                          value={Math.round(0.75 * axes.startingCapital * 100) / 100}
+                          value={Math.round(0.75 * axes.startingCapital * founderCapital * 100) / 100}
                           min={0.4}
-                          max={1.35}
+                          max={1.5}
                           step={0.05}
-                          onChange={(v) => setAxes({ ...axes, startingCapital: v / 0.75 })}
+                          onChange={(v) => setFounderCapital(v / (0.75 * axes.startingCapital))}
                           format={(v) => formatMoney(v)}
-                          hint="Your founder/F&F capital — shared with the Starting Capital difficulty slider."
+                          hint="Your personal founding capital — separate from the world's difficulty."
                         />
                         <Slider
                           label="Age"

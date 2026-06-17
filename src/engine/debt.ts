@@ -105,6 +105,18 @@ export function weeksToMaturity(loan: Loan, week: number): number {
   return loan.startWeek + loan.termWeeks - week;
 }
 
+/** The soonest-maturing loan's balloon: weeks until it's due + the principal.
+ *  Null when there's no outstanding debt. The runway hint reads this so a lump
+ *  principal can't ambush a company whose operating runway looks fine. */
+export function nextBalloon(c: PlayerCompany, week: number): { weeks: number; principal: Money } | null {
+  let soonest: { weeks: number; principal: Money } | null = null;
+  for (const l of c.loans ?? []) {
+    const w = Math.max(0, l.startWeek + l.termWeeks - week);
+    if (!soonest || w < soonest.weeks) soonest = { weeks: w, principal: l.principal };
+  }
+  return soonest;
+}
+
 /** Draw a loan: cash in now, a balloon principal due at maturity. */
 export function takeLoan(state: GameState, offer: DebtOffer, amount: Money, termWeeks: number): GameState {
   const principal = round1(clamp(amount, MIN_LOAN, offer.capacity));

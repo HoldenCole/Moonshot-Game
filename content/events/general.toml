@@ -477,7 +477,7 @@ tone = "neutral"
 [[g_culture_inflection.choices]]
 label = "Invest in culture and process"
 detail = "Managers, onboarding, the connective tissue"
-effects = "You spend to build the connective tissue, and it keeps the team and steadies retention. It costs cash and some velocity."
+effects = "You spend to build the connective tissue — it steadies retention and builds your credibility as an employer. It costs cash and some velocity."
 outcome_ref = "culture_invest"
 
 [[g_culture_inflection.choices]]
