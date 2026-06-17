@@ -57,6 +57,36 @@ export function marketReaction(r: string): string {
   return r === "beat" ? "The stock popped on the print." : r === "met" ? "Shares barely moved." : "The stock sold off after hours.";
 }
 
+/** The stock's move (fraction) in reaction to a print. */
+export function earningsMove(r: "beat" | "met" | "missed"): number {
+  return r === "beat" ? 0.08 : r === "missed" ? -0.1 : 0.01;
+}
+
+/** The exact week a quarter closes — fires once per quarter (vs. the 3-week
+ *  window `quarterCloseTick` uses to reliably catch the earnings event). */
+export function justClosedQuarter(state: GameState): boolean {
+  const wp = weeksPublic(state);
+  return state.company.stage === "public" && wp >= QUARTER && wp % QUARTER === 0;
+}
+
+/** Settle the quarter at close: lock in the print, react the stock to it, and
+ *  record both for the earnings report. */
+export function settleQuarter(state: GameState): GameState {
+  const e = state.company.earnings;
+  if (!e) return state;
+  const result = earningsResult(state);
+  const move = earningsMove(result);
+  const valuation = Math.max(1, Math.round(state.company.financials.valuation * (1 + move)));
+  return {
+    ...state,
+    company: {
+      ...state.company,
+      financials: { ...state.company.financials, valuation },
+      earnings: { ...e, lastResult: result, lastMove: move },
+    },
+  };
+}
+
 export function cashSurplus(state: GameState): "none" | "modest" | "large" {
   const c = state.company.financials.cash;
   return c > 120 ? "large" : c > 35 ? "modest" : "none";

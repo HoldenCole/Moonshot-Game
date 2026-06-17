@@ -1,0 +1,63 @@
+import { useGame } from "@/state/store";
+import { eps, netIncomeAnnual, peRatio, revenueGrowth, stockPrice, valuationMark } from "@/engine/finance";
+import { marketReaction, quarterIndex, resultVerbose } from "@/engine/earnings";
+import { formatMoney } from "@/engine/format";
+import { Panel, PanelHeader } from "@/ui/components/Panel";
+import { Stat } from "@/ui/components/controls";
+
+/** The numbers behind the valuation — stock price, revenue + growth, net income,
+ *  EPS / P-E, and (when public) the quarter's earnings report. */
+export function FinancialsPanel() {
+  const game = useGame((s) => s.game);
+  if (!game) return null;
+  const c = game.company;
+  const f = c.financials;
+  const isPublic = c.stage === "public";
+  const growth = revenueGrowth(c);
+  const ni = netIncomeAnnual(c);
+  const e = c.earnings;
+
+  return (
+    <Panel className="financials-panel" coach="company">
+      <PanelHeader
+        title="Financials"
+        sub={isPublic ? "The numbers the street watches" : "The numbers behind your valuation"}
+      />
+      <div className="fin-grid">
+        <Stat label={isPublic ? "Stock price" : "Valuation"} value={isPublic ? `$${stockPrice(c).toFixed(2)}` : formatMoney(valuationMark(c))} />
+        <Stat label="Market cap" value={formatMoney(valuationMark(c))} />
+        <Stat
+          label="Revenue"
+          value={f.revenue > 0 ? `${formatMoney(f.revenue)}/yr` : "Pre-rev"}
+          sub={growth != null ? `${growth >= 0 ? "+" : ""}${Math.round(growth * 100)}% QoQ` : "growth: —"}
+          tone={growth != null ? (growth >= 0 ? "up" : "down") : undefined}
+        />
+        <Stat label="Net income" value={`${formatMoney(ni)}/yr`} tone={ni >= 0 ? "up" : "down"} />
+        {isPublic && <Stat label="EPS" value={`$${eps(c).toFixed(2)}`} tone={eps(c) >= 0 ? "up" : "down"} />}
+        {isPublic && <Stat label="P/E" value={peRatio(c) != null ? `${peRatio(c)!.toFixed(0)}×` : "—"} />}
+      </div>
+
+      {isPublic && e && (
+        <div className="fin-earnings">
+          <div className="fin-earnings__head">
+            <span className="section-label">Latest earnings</span>
+            <span className="fin-earnings__meta num">Q{Math.max(1, quarterIndex(game) - 1)} · guidance {e.guidance}</span>
+          </div>
+          {e.lastResult ? (
+            <p className="fin-earnings__report">
+              <strong className={`fin-result fin-result--${e.lastResult}`}>{e.lastResult.toUpperCase()}</strong> — {resultVerbose(e.lastResult)}.{" "}
+              {marketReaction(e.lastResult)}{" "}
+              <span className={`num ${(e.lastMove ?? 0) >= 0 ? "up" : "down"}`}>
+                {(e.lastMove ?? 0) >= 0 ? "+" : ""}
+                {Math.round((e.lastMove ?? 0) * 100)}%
+              </span>{" "}
+              on the print.
+            </p>
+          ) : (
+            <p className="fin-earnings__report dim">Your first earnings report lands at the end of this quarter.</p>
+          )}
+        </div>
+      )}
+    </Panel>
+  );
+}

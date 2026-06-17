@@ -15,6 +15,7 @@ import { serviceDebt } from "./debt";
 import { bandWorsened, netBurnMonthly, netWorth, privateValuationMark, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
 import { tickProcess } from "./signature";
+import { justClosedQuarter, marketReaction, quarterIndex, resultVerbose, settleQuarter } from "./earnings";
 import { applyOutcome as applyEventOutcome, resolveOutcome, scaleByExec } from "./eventOutcomes";
 import { autoResolveChoice, delegationReport, eventArea, isDelegated, shouldEscalate } from "./delegation";
 
@@ -160,6 +161,27 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
       }
     }
   }
+
+  // 6 — Earnings: at a public company's quarter close, lock in the print, react
+  //     the stock, and log it (the report surfaces it). A stop-worthy beat/miss.
+  if (justClosedQuarter(next)) {
+    next = settleQuarter(next);
+    const e = next.company.earnings!;
+    const r = e.lastResult!;
+    entries.push({
+      id: `w${week}-earnings-${quarterIndex(next)}`,
+      week,
+      kind: "company",
+      tone: r === "beat" ? "opportunity" : r === "missed" ? "crisis" : "neutral",
+      headline: `Q${quarterIndex(next) - 1} earnings — ${resultVerbose(r)}`,
+      detail: `${marketReaction(r)} ${e.lastMove! >= 0 ? "+" : ""}${Math.round(e.lastMove! * 100)}% on the print.`,
+    });
+    if (r !== "met") decision = true;
+  }
+
+  // 7 — Revenue history (capped) so growth can be derived for the readouts.
+  const revLog = [...(next.company.financials.revenueLog ?? []), next.company.financials.revenue].slice(-16);
+  next = { ...next, company: { ...next.company, financials: { ...next.company.financials, revenueLog: revLog } } };
 
   next = { ...next, log: [...next.log, ...entries], alerts: mergeAlerts(next.alerts, alerts) };
   return { state: next, entries, alerts, decision, outOfCash: newBand === "empty", eventFired: eventFired || processResolved };

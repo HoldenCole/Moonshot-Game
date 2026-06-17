@@ -28,6 +28,9 @@ export function CompanyDetail({
   const fair = fundamentalValue(company);
   const price = marketPrice(company, game.world, game.clock.week);
   const mis = mispricing(company, game.world, game.clock.week);
+  // shares_out is in millions, so cap ($M) / shares (M) is $/share. Private
+  // companies carry 0 shares out — no public stock price.
+  const perShare = company.financials.shares_out > 0 ? price / company.financials.shares_out : null;
   const names = (ids: string[]) => ids.map((id) => byId.get(id)?.name ?? id);
 
   const investors = graph.investorsOf(company.id);
@@ -51,6 +54,12 @@ export function CompanyDetail({
       <p className="market-detail__tag">{company.identity.tagline}</p>
 
       <div className="market-detail__price">
+        {perShare != null && (
+          <div>
+            <div className="kv__label">Stock price</div>
+            <div className="kv__big num">${perShare.toFixed(2)}</div>
+          </div>
+        )}
         <div>
           <div className="kv__label">Market cap</div>
           <div className="kv__big num">{formatMoney(price)}</div>

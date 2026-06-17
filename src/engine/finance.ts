@@ -4,8 +4,11 @@ import type { GameState, PlayerCompany, WorldState } from "@/domain/state";
 import type { Money } from "@/domain/captable";
 import type { RunwayBand } from "@/domain/log";
 import type { Tuning } from "@/domain/tuning";
-import { founderOwnership, latestPostMoney } from "./captable";
+import { founderOwnership, latestPostMoney, totalShares } from "./captable";
 import { monthlyDebtService } from "./debt";
+
+/** Shares are absolute integers; valuation/income are $M — bridge to per-share $. */
+const PER_M = 1_000_000;
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
@@ -47,6 +50,39 @@ export function valuationMark(c: PlayerCompany): Money {
 /** Founder net worth ($M): equity stake at the live mark + personal cash. */
 export function netWorth(state: GameState): Money {
   return founderOwnership(state.company.capTable) * valuationMark(state.company) + state.founder.personalCash;
+}
+
+/** Annual net income ($M): revenue minus operating costs and debt service.
+ *  (Net burn is costs−revenue, so income is its negative, annualized.) */
+export function netIncomeAnnual(c: PlayerCompany): Money {
+  return Math.round(-netBurnMonthly(c) * 12 * 100) / 100;
+}
+
+/** Price per share, in dollars, at the live mark. */
+export function stockPrice(c: PlayerCompany): number {
+  const sh = totalShares(c.capTable);
+  return sh > 0 ? (valuationMark(c) * PER_M) / sh : 0;
+}
+
+/** Trailing earnings per share, in dollars (negative while loss-making). */
+export function eps(c: PlayerCompany): number {
+  const sh = totalShares(c.capTable);
+  return sh > 0 ? (netIncomeAnnual(c) * PER_M) / sh : 0;
+}
+
+/** Price/earnings multiple, or null until the company is profitable. */
+export function peRatio(c: PlayerCompany): number | null {
+  const ni = netIncomeAnnual(c);
+  return ni > 0 ? valuationMark(c) / ni : null;
+}
+
+/** Revenue growth over the trailing ~quarter (13 weeks); null without history. */
+export function revenueGrowth(c: PlayerCompany): number | null {
+  const log = c.financials.revenueLog;
+  if (!log || log.length < 14) return null;
+  const base = log[log.length - 14]!;
+  if (base <= 0) return c.financials.revenue > 0 ? 1 : null;
+  return (c.financials.revenue - base) / base;
 }
 
 export function runwayBand(c: PlayerCompany, tuning: Tuning): RunwayBand {

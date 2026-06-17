@@ -3,9 +3,12 @@ import assert from "node:assert/strict";
 
 import {
   applyPublicChoice,
+  earningsMove,
   earningsResult,
   guidanceWindowOpen,
+  justClosedQuarter,
   quarterCloseTick,
+  settleQuarter,
   weeksPublic,
 } from "./earnings.ts";
 import { createNewGame } from "@/state/newgame";
@@ -32,6 +35,17 @@ test("the quarterly clock: guidance window mid-quarter, results at close", () =>
   assert.equal(quarterCloseTick(at(13)), true); // first quarter closes
   assert.equal(quarterCloseTick(at(26)), true);
   assert.equal(quarterCloseTick(at(4)), false); // before the first full quarter
+});
+
+test("a quarter close settles the print, reacts the stock, and records both", () => {
+  const g = publicCo();
+  assert.equal(justClosedQuarter({ ...g, clock: { week: 13 } }), true);
+  assert.equal(justClosedQuarter({ ...g, clock: { week: 7 } }), false); // mid-quarter
+  const after = settleQuarter({ ...g, clock: { week: 13 } });
+  const e = after.company.earnings!;
+  assert.ok(["beat", "met", "missed"].includes(e.lastResult!));
+  assert.equal(e.lastMove, earningsMove(e.lastResult!));
+  assert.equal(after.company.financials.valuation, Math.max(1, Math.round(g.company.financials.valuation * (1 + e.lastMove!))));
 });
 
 test("engineering the beat widens the hidden gap and costs integrity", () => {

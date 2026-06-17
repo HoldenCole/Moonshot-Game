@@ -14,6 +14,7 @@ import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
 import { SignatureWidget } from "@/ui/operating/SignatureWidget";
 import { OperationsPanel } from "@/ui/operating/OperationsPanel";
+import { FinancialsPanel } from "@/ui/operating/FinancialsPanel";
 import { ExitActions } from "@/ui/exit/ExitActions";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
 import {
@@ -181,6 +182,8 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
     switch (id) {
       case "financials":
         return <FinancialBand company={game.company} />;
+      case "statement":
+        return <FinancialsPanel />;
       case "signature":
         return <SignatureWidget />;
       case "operations":

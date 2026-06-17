@@ -109,6 +109,8 @@ export interface PlayerCompany {
     headcount: number;
     /** Latest post-money valuation, $M. */
     valuation: Money;
+    /** Recent weekly revenue samples (capped), so growth can be derived. */
+    revenueLog?: number[];
   };
   capTable: CapTable;
   /** Invested compute / facilities capacity (Operations). Raises execution on
@@ -128,8 +130,9 @@ export interface PlayerCompany {
   delegation: Record<ExecArea, Autonomy>;
   /** Week the company went public (set at IPO); drives the post-IPO lockup. */
   publicSince?: number;
-  /** Public-company earnings-management state (set at IPO). */
-  earnings?: { gap: number; guidance: GuidanceStance };
+  /** Public-company earnings-management state (set at IPO). `lastResult`/`lastMove`
+   *  record the most recent quarter's print and the stock's reaction to it. */
+  earnings?: { gap: number; guidance: GuidanceStance; lastResult?: "beat" | "met" | "missed"; lastMove?: number };
 }
 
 /** The bar a public company sets itself for the next quarter. */

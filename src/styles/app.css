@@ -4502,3 +4502,47 @@
   width: 100%;
   margin-top: auto;
 }
+
+/* ── Financials panel ─────────────────────────────────────────────────────────
+   The numbers behind the valuation, plus the quarterly earnings report. */
+.fin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 14px 20px;
+  padding-top: 2px;
+}
+.fin-earnings {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--border);
+}
+.fin-earnings__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.fin-earnings__meta {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  text-transform: capitalize;
+}
+.fin-earnings__report {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.fin-result {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.fin-result--beat {
+  color: var(--up);
+}
+.fin-result--met {
+  color: var(--text-dim);
+}
+.fin-result--missed {
+  color: var(--down);
+}
