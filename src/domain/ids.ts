@@ -25,6 +25,16 @@ export type PlayableSubIndustry =
   | "satellite_constellations"
   | "space_stations";
 
+/** The six playable sub-industries as a value (e.g. for content coverage checks). */
+export const PLAYABLE_SUB_INDUSTRIES: readonly PlayableSubIndustry[] = [
+  "frontier_model_lab",
+  "vertical_ai_saas",
+  "ai_chips",
+  "launch_services",
+  "satellite_constellations",
+  "space_stations",
+] as const;
+
 /** Light/investment-only industries carry free-form sub-industry tags. */
 export type SubIndustry = PlayableSubIndustry | (string & {});
 

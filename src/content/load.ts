@@ -5,17 +5,23 @@
 import { parse } from "smol-toml";
 import type {
   BankContent,
+  CapacityType,
   CompanyContent,
   EventContent,
   EventFile,
   FounderContent,
   FounderFile,
   InvestorContent,
+  ProductArchetype,
+  ProductTuning,
+  RDLine,
   TutorialFile,
   TutorialScript,
 } from "@/domain/content";
 import type { Tuning } from "@/domain/tuning";
+import { PLAYABLE_SUB_INDUSTRIES } from "@/domain/ids";
 import { generateInvestors } from "@/engine/investorgen";
+import { isCapacityType, isProductArchetype, isRDLine, validateProducts } from "./productsValidation";
 
 /** The roster grows from the 7 hand-authored anchors to this many firms by
  *  procedurally generating the rest from the anchors as archetypes (a fixed seed
@@ -44,6 +50,15 @@ export interface ContentDB {
   bankById: Map<string, Bank>;
   eventById: Map<string, GameEvent>;
   founderById: Map<string, Founder>;
+  // Products / R&D / Capacity (the depth system) — grouped per sub-industry,
+  // plus flat id indexes. Empty until the content files are authored.
+  rdLinesBySub: Map<string, RDLine[]>;
+  productsBySub: Map<string, ProductArchetype[]>;
+  capacityBySub: Map<string, CapacityType[]>;
+  productTuningBySub: Map<string, ProductTuning>;
+  rdLineById: Map<string, RDLine>;
+  productById: Map<string, ProductArchetype>;
+  capacityById: Map<string, CapacityType>;
   /** Cross-reference issues found at load (unresolved ids). Empty when clean. */
   warnings: string[];
 }
@@ -101,6 +116,65 @@ const tutorialGlob = import.meta.glob("/content/tutorial/*.toml", {
   import: "default",
   eager: true,
 }) as Record<string, string>;
+
+const rdLinesGlob = import.meta.glob("/content/rd_lines/*.toml", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+// Both product archetypes and the shared _tuning.toml live here; split by name.
+const productsGlob = import.meta.glob("/content/products/*.toml", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+const capacityGlob = import.meta.glob("/content/capacity/*.toml", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+/** Parse keyed-table files, keeping only values that match the entity shape. */
+function loadKeyed<T>(entries: [string, string][], isT: (v: unknown) => v is T): T[] {
+  const out: T[] = [];
+  for (const [path, raw] of entries) {
+    let parsed: unknown;
+    try {
+      parsed = parse(raw);
+    } catch (err) {
+      throw new Error(`Failed to parse ${path}: ${(err as Error).message}`);
+    }
+    for (const v of Object.values(parsed as Record<string, unknown>)) if (isT(v)) out.push(v);
+  }
+  return out;
+}
+
+/** Parse content/products/_tuning.toml — one table per sub-industry. */
+function loadProductTuning(glob: Record<string, string>): Map<string, ProductTuning> {
+  const m = new Map<string, ProductTuning>();
+  const entry = Object.entries(glob).find(([p]) => p.endsWith("_tuning.toml"));
+  if (!entry) return m;
+  let parsed: Record<string, ProductTuning>;
+  try {
+    parsed = parse(entry[1]) as unknown as Record<string, ProductTuning>;
+  } catch (err) {
+    throw new Error(`Failed to parse ${entry[0]}: ${(err as Error).message}`);
+  }
+  for (const [sub, t] of Object.entries(parsed)) if (t && typeof t === "object") m.set(sub, t);
+  return m;
+}
+
+function groupBySub<T extends { sub_industry: string }>(items: T[]): Map<string, T[]> {
+  const m = new Map<string, T[]>();
+  for (const it of items) {
+    const arr = m.get(it.sub_industry);
+    if (arr) arr.push(it);
+    else m.set(it.sub_industry, [it]);
+  }
+  return m;
+}
 
 /** Map the snake_case tuning TOML into the camelCase `Tuning` shape. */
 function loadTuning(glob: Record<string, string>): Tuning {
@@ -271,6 +345,14 @@ export function loadContent(): ContentDB {
   const events = loadEvents(eventGlob);
   const founders = loadFounders(founderGlob);
 
+  // Products / R&D / Capacity. The products dir also holds _tuning.toml, so the
+  // archetypes exclude it by name; tuning is parsed separately.
+  const rdLines = loadKeyed<RDLine>(Object.entries(rdLinesGlob), isRDLine);
+  const productEntries = Object.entries(productsGlob).filter(([p]) => !p.endsWith("_tuning.toml"));
+  const products = loadKeyed<ProductArchetype>(productEntries, isProductArchetype);
+  const capacityTypes = loadKeyed<CapacityType>(Object.entries(capacityGlob), isCapacityType);
+  const productTuningBySub = loadProductTuning(productsGlob);
+
   const base = {
     companies,
     investors,
@@ -284,8 +366,22 @@ export function loadContent(): ContentDB {
     bankById: indexBy(banks),
     eventById: indexBy(events),
     founderById: indexBy(founders),
+    rdLinesBySub: groupBySub(rdLines),
+    productsBySub: groupBySub(products),
+    capacityBySub: groupBySub(capacityTypes),
+    productTuningBySub,
+    rdLineById: indexBy(rdLines),
+    productById: indexBy(products),
+    capacityById: indexBy(capacityTypes),
   };
 
-  cached = { ...base, warnings: validate(base) };
+  // Only validate the depth system once any of its content is present, so an
+  // un-authored feature doesn't spew "missing" warnings.
+  const hasProductContent = rdLines.length > 0 || products.length > 0 || capacityTypes.length > 0 || productTuningBySub.size > 0;
+  const productWarnings = hasProductContent
+    ? validateProducts({ rdLines, products, capacityTypes, tuningBySub: productTuningBySub, subIndustries: PLAYABLE_SUB_INDUSTRIES })
+    : [];
+
+  cached = { ...base, warnings: [...validate(base), ...productWarnings] };
   return cached;
 }

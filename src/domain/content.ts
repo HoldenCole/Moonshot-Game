@@ -260,3 +260,88 @@ export interface TutorialScript {
 export interface TutorialFile {
   tutorial: TutorialScript;
 }
+
+// ── Products / R&D / Capacity (the depth system) ─────────────────────────────
+// Four content shapes, one set of files per playable sub-industry. R&D lines
+// accumulate tech levels that gate product archetypes; products are bets that
+// consume capacity; per-industry tuning shapes the economics. (See doc 07.)
+
+/** A free-form quality dimension, consistent within a sub-industry. */
+export type SpecTag = string;
+
+/** content/rd_lines/<sub>.toml — keyed tables, one per line. */
+export interface RDLine {
+  id: string;
+  sub_industry: SubIndustry;
+  name: string;
+  description: string;
+  icon?: string;
+  /** Tech level the line starts at (0–100+). */
+  starting_level: number;
+  /** $M anchor cost to advance ~1 level/quarter at low levels. */
+  base_cost_per_quarter: number;
+  /** The spec tags this line feeds into product quality. */
+  drives_specs: SpecTag[];
+}
+
+/** content/products/<sub>.toml — keyed tables, one per archetype. */
+export interface ProductArchetype {
+  id: string;
+  sub_industry: SubIndustry;
+  name: string;
+  /** Tier 1..N, contiguous within a sub-industry. */
+  tier: number;
+  description: string;
+  flavor_naming_hint?: string;
+  /** Required tech level per R&D line id (gates creation). */
+  gates: Record<string, number>;
+  economics: {
+    build_cost: number; // $M, one-time bet cost
+    build_weeks: number; // bet duration
+    unit_margin: number; // 0–1 gross margin at launch
+    capacity_type: string; // capacity id in the same sub-industry
+    capacity_to_build: number; // units tied up DURING the bet
+    capacity_to_run: number; // units a shipped product occupies while live
+    addressable_market: number; // $M/yr ceiling for the product class
+    ramp_weeks: number; // ship → peak revenue
+    decay_per_quarter: number; // obsolescence rate once mature
+  };
+  /** Weights mapping spec tags → quality; sum ≈ 1.0. */
+  specs: Record<SpecTag, number>;
+}
+
+export interface CapacityRung {
+  capacity: number; // delta added to owned capacity when built
+  cost: number; // $M
+  build_weeks: number;
+}
+
+/** content/capacity/<sub>.toml — keyed tables, one per capacity type. */
+export interface CapacityType {
+  id: string;
+  sub_industry: SubIndustry;
+  name: string;
+  unit_label: string;
+  description: string;
+  /** ≥6 rungs, monotonic — so capacity never caps out. */
+  rungs: CapacityRung[];
+}
+
+/** content/products/_tuning.toml — one block per sub-industry (table key = sub). */
+export interface ProductTuning {
+  starting_capacity: number;
+  rd_diminishing_k: number; // 0–1; higher = harsher diminishing returns
+  frontier_pull: number; // ≥1; R&D catch-up bonus when behind the frontier
+  max_concurrent_bets: number;
+  build_cost_mult: number;
+  build_time_mult: number;
+  decay_mult: number;
+  share_volatility: number; // how fast share can swing vs. rivals
+}
+
+/** Keyed-table TOML files (one table per entity). */
+export type RDLineFile = Record<string, RDLine>;
+export type ProductFile = Record<string, ProductArchetype>;
+export type CapacityFile = Record<string, CapacityType>;
+/** _tuning.toml: one table per sub-industry. */
+export type ProductTuningFile = Record<string, ProductTuning>;
