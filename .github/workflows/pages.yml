@@ -36,11 +36,9 @@ jobs:
         run: npm ci
 
       - name: Configure Pages
-        id: pages
         uses: actions/configure-pages@v5
-        with:
-          # Enable Pages (source = GitHub Actions) on first run if it isn't yet.
-          enablement: true
+        # Pages must be enabled once by hand (Settings → Pages → Source:
+        # "GitHub Actions"); the Actions token can't create the site itself.
 
       - name: Build
         run: npm run build
