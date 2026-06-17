@@ -6,7 +6,9 @@
 // (a forced guidance cut) arrives. Pure + deterministic; ties into the ethics score.
 
 import type { GameState, GuidanceStance } from "@/domain/state";
+import type { Money } from "@/domain/captable";
 import { founderOwnership } from "./captable";
+import { eps, stockPrice } from "./finance";
 
 const QUARTER = 13;
 const CLOSE_WINDOW = 2; // weeks 0..2 of a new quarter count as "just closed"
@@ -84,6 +86,47 @@ export function settleQuarter(state: GameState): GameState {
       financials: { ...state.company.financials, valuation },
       earnings: { ...e, lastResult: result, lastMove: move },
     },
+  };
+}
+
+export type EarningsQuality = "clean" | "managed" | "stretched";
+
+/** A qualitative read of the hidden engineered-vs-real gap — how flattered the
+ *  print is. The wider the gap, the bigger the eventual reckoning. */
+export function qualityOfEarnings(gap: number): EarningsQuality {
+  return gap >= 0.5 ? "stretched" : gap >= 0.2 ? "managed" : "clean";
+}
+
+export interface EarningsReport {
+  quarter: number;
+  result: "beat" | "met" | "missed";
+  move: number; // stock reaction to the print, fraction
+  guidance: GuidanceStance;
+  reaction: string;
+  revenue: Money; // annualized, $M
+  eps: number; // $/share
+  stockPrice: number; // $/share
+  quality: EarningsQuality; // the engineered-vs-real read
+}
+
+/** The structured figures behind a public company's latest print — for the
+ *  quarter-close earnings popup. Null for a private company. Prefers the settled
+ *  result/move, else recomputes deterministically. */
+export function earningsReport(state: GameState): EarningsReport | null {
+  const c = state.company;
+  const e = c.earnings;
+  if (c.stage !== "public" || !e) return null;
+  const result = e.lastResult ?? earningsResult(state);
+  return {
+    quarter: Math.max(1, quarterIndex(state) - 1),
+    result,
+    move: e.lastMove ?? earningsMove(result),
+    guidance: e.guidance,
+    reaction: marketReaction(result),
+    revenue: c.financials.revenue,
+    eps: eps(c),
+    stockPrice: stockPrice(c),
+    quality: qualityOfEarnings(e.gap),
   };
 }
 

@@ -46,6 +46,22 @@ export function NegotiationPanel() {
 
   if (!game) return null;
 
+  // Once public, capital comes from the markets — a priced private round would
+  // revert the company to private, so the round flow is closed off here.
+  if (game.company.stage === "public") {
+    return (
+      <Panel className="negotiation">
+        <div className="neg-public">
+          <div className="neg-public__title">{game.company.name} is public.</div>
+          <p className="neg-public__body">
+            Private rounds are behind you — you now raise through the public markets. Manage the stock from the Financials and
+            cap-table panels; follow-on offerings aren&apos;t part of this build.
+          </p>
+        </div>
+      </Panel>
+    );
+  }
+
   const activeFirmId = negotiation?.agentId ?? leadId;
   const firm = content.investorById.get(activeFirmId) ?? eligible[0];
   if (!firm) return null;

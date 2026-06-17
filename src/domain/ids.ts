@@ -80,6 +80,8 @@ export function nextStage(stage: Stage): Stage {
       return "growth";
     case "growth":
       return "late_stage";
+    case "public":
+      return "public"; // terminal — a public company never reverts to a private stage
     default:
       return "late_stage";
   }

@@ -299,6 +299,9 @@ export const useGame = create<GameStore>((set, get) => ({
   startNegotiation: (leadInvestorId, openingTerms) => {
     const s = get();
     if (!s.game) return;
+    // A public company raises through the public markets, not a priced private
+    // round — never run the round flow (it would revert the company to private).
+    if (s.game.company.stage === "public") return;
     const firm = s.content.investorById.get(leadInvestorId);
     if (!firm) return;
     const agent = agentFromFirm(firm);
