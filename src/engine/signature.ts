@@ -76,7 +76,10 @@ const CONFIG: Record<string, SignatureConfig> = {
   frontier_model_lab: {
     noun: "training run", commitVerb: "Commit a training run", metricLabel: "loss",
     durationWeeks: [8, 12], costFraction: 0.35, costFloor: 0.3, binary: false,
-    reward: { hype: 8, revenue: 0.6, reputation: 6 },
+    // The shortest, cheapest, most reliable cadence of any sub-industry, so its
+    // per-win revenue is the lowest — it stays the easiest path without the
+    // top line running away from a couple of training runs.
+    reward: { hype: 8, revenue: 0.4, reputation: 6 },
     defaultApproachId: "scaling",
     approaches: [
       { id: "targeted", label: "Targeted run", blurb: "A focused, cheaper run — reliable, incremental capability.", costMult: 0.55, durationMult: 0.8, oddsShift: 0.13, rewardMult: 0.55, gainMult: 1, variance: 0 },
