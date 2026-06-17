@@ -145,38 +145,38 @@ gate = "company.can_raise == true"
 hint_fallback = "Open the Fundraising tab to start a round whenever you like — it's optional."
 
 # ===========================================================================
-# BEAT 8 — First raise: read the term sheet
+# BEAT 8 — First raise: compose and send your term sheet
 # ===========================================================================
 [[tutorial.steps]]
-id = "raise_read_terms"
+id = "raise_send"
 order = 8
 anchor = "term-sheet-panel"
 placement = "left"
-title = "Read the offer"
-body = """An investor's made an offer: how much they'll invest, at what \
-valuation, for how much of your company. Higher valuation means you give up \
-less. Don't over-think your first one — read it, get a feel for the shape."""
-advance_on = "ack"
+title = "Compose your offer"
+body = """You set the terms first: pick a lead investor, then choose how much to \
+raise and at what valuation. The preview shows the stake you'd hand over — a higher \
+valuation means you give up less. Send the term sheet when it looks right."""
+advance_on = "action:term_sheet_sent"
 allow_skip = true
 gate = "screen == fundraising"
-hint_fallback = "This is a term sheet. Check the valuation and the equity you'd give up, then decide."
+hint_fallback = "Pick an investor, set how much to raise and your valuation, then send the term sheet."
 
 # ===========================================================================
-# BEAT 9 — First raise: accept
+# BEAT 9 — First raise: take their counter and close
 # ===========================================================================
 [[tutorial.steps]]
-id = "raise_accept"
+id = "raise_close"
 order = 9
 anchor = "term-sheet-accept"
 placement = "top"
-title = "Take the deal"
-body = """If the offer looks fair, accept it — the cash hits your balance and that \
-investor joins your cap table. You can always negotiate harder on future rounds; \
-for now, this is how a round closes."""
+title = "Close the round"
+body = """The investor weighs your offer and usually counters. When the deal looks \
+fair, accept their terms — the cash hits your balance and they join your cap table. \
+You can always push harder on the rounds that follow."""
 advance_on = "action:round_closed"
 allow_skip = true
 gate = "screen == fundraising"
-hint_fallback = "Accept a term sheet to close the round and add the cash to your company."
+hint_fallback = "Accept the investor's terms to close the round — the cash lands in your company."
 
 # ===========================================================================
 # BEAT 10 — First signature

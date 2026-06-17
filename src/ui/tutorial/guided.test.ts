@@ -126,3 +126,28 @@ test("the authored first-run script honors the harness contract", () => {
   // Handoff re-arms the ambient hint system.
   assert.equal(tutorial.handoff.enable_hint_system, true);
 });
+
+test("the fundraising beats follow the real founder-initiated flow", () => {
+  const path = fileURLToPath(new URL("../../../content/tutorial/first_run.toml", import.meta.url));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { tutorial } = parse(readFileSync(path, "utf8")) as any;
+  const byId = (id: string) => tutorial.steps.find((s: TutorialStep) => s.id === id);
+
+  // You compose and SEND your own term sheet first — advancing the beat the
+  // moment a negotiation opens (not on an investor-initiated "offer").
+  const send = byId("raise_send");
+  assert.ok(send, "the send-term-sheet beat exists");
+  assert.equal(send.advance_on, "action:term_sheet_sent");
+  assert.equal(send.anchor, "term-sheet-panel");
+
+  // Then you take their counter to close the round.
+  const close = byId("raise_close");
+  assert.ok(close, "the close-round beat exists");
+  assert.equal(close.advance_on, "action:round_closed");
+  assert.equal(close.anchor, "term-sheet-accept");
+});
+
+test("advancesOn recognizes the term_sheet_sent action", () => {
+  assert.equal(advancesOn(step({ advance_on: "action:term_sheet_sent" }), "term_sheet_sent"), true);
+  assert.equal(advancesOn(step({ advance_on: "action:term_sheet_sent" }), "round_closed"), false);
+});

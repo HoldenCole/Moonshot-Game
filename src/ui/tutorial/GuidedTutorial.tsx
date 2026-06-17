@@ -13,6 +13,7 @@ import { advancesOn, gateContext, gatePasses, interpolate, isAck, nextReachable,
 export function GuidedTutorial() {
   const game = useGame((s) => s.game);
   const script = useGame((s) => s.content.tutorial);
+  const negotiation = useGame((s) => s.negotiation);
   const view = useUi((s) => s.view);
   const newGameStep = useUi((s) => s.newGameStep);
   const tutorialEnabled = usePrefs((s) => s.tutorialEnabled);
@@ -32,6 +33,7 @@ export function GuidedTutorial() {
   const week = game?.clock.week ?? 0;
   const rounds = game?.company.capTable.rounds.length ?? 0;
   const sigRunning = game?.company.signature.status === "running";
+  const negotiationOpen = !!negotiation;
   const ctx = gateContext(hasGame, view, game);
 
   // Advance one beat; finishing the last beat ends the tour.
@@ -70,7 +72,7 @@ export function GuidedTutorial() {
   // State- and screen-derived actions. Founding always lands the player on the
   // dashboard, so it fast-forwards past any unfinished pre-founding beats (the
   // player may have quick-started past the archetype beat).
-  const prev = useRef({ hasGame, week, rounds, sigRunning, view });
+  const prev = useRef({ hasGame, week, rounds, sigRunning, view, negotiationOpen });
   useEffect(() => {
     const p = prev.current;
     if (hasGame && !p.hasGame) {
@@ -82,8 +84,10 @@ export function GuidedTutorial() {
     if (rounds > p.rounds) maybeAdvance("round_closed");
     if (sigRunning && !p.sigRunning) maybeAdvance("signature_committed");
     if (view === "fundraising" && p.view !== "fundraising") maybeAdvance("fundraise_opened");
-    prev.current = { hasGame, week, rounds, sigRunning, view };
-  }, [hasGame, week, rounds, sigRunning, view, steps, setGuidedStep, maybeAdvance]);
+    // Opening a negotiation = the player sent their term sheet (founder-initiated).
+    if (negotiationOpen && !p.negotiationOpen) maybeAdvance("term_sheet_sent");
+    prev.current = { hasGame, week, rounds, sigRunning, view, negotiationOpen };
+  }, [hasGame, week, rounds, sigRunning, view, negotiationOpen, steps, setGuidedStep, maybeAdvance]);
 
   // Actions emitted from local component state (archetype selection).
   useEffect(() => onGuided(maybeAdvance), [maybeAdvance]);
@@ -117,7 +121,7 @@ export function GuidedTutorial() {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
     };
-  }, [step, gateOk, anchor, view, newGameStep, hasGame, week, rounds, sigRunning]);
+  }, [step, gateOk, anchor, view, newGameStep, hasGame, week, rounds, sigRunning, negotiationOpen]);
 
   if (!active || blocked || !step || !gateOk || !anchorEl) return null;
 
