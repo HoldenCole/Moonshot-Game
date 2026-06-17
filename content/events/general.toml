@@ -1,0 +1,520 @@
+# Events — GENERAL (cross-cutting, industry-agnostic)
+# These fire across any run and most stages, so a given playthrough sees more
+# variety than the AI/Space/macro/public sets alone. Each choice's prose carries
+# the mechanical keywords the outcome engine reads (cost/ethics/rep/hype/
+# headcount/revenue). Ethics-laden ids (breach/regulat/scandal) stay the
+# founder's own call (never auto-delegated). No unresolved {slots}.
+
+# ---------------------------------------------------------------------------
+# G1 — A star you can land
+# ---------------------------------------------------------------------------
+[g_talent_star_offer]
+id = "g_talent_star_offer"
+category = "talent"
+weight = 8
+cooldown_weeks = 26
+one_shot = false
+
+[g_talent_star_offer.trigger]
+type = "random"
+conditions = ["world.star_talent_available == true", "company.stage <= series_b"]
+
+[g_talent_star_offer.framing]
+headline = "A genuine star is on the market"
+body = """A name everyone in the field knows just became available — the kind of \
+hire that changes what your team can attempt. They have other offers. Landing \
+them takes a real package, and it sends a signal either way."""
+tone = "opportunity"
+
+[[g_talent_star_offer.choices]]
+label = "Make the aggressive offer"
+detail = "Top of band, real equity, move fast"
+effects = "You hire the star and grow the team; the talent pull and buzz follow. It costs cash and stretches the comp band."
+outcome_ref = "talent_star_land"
+
+[[g_talent_star_offer.choices]]
+label = "Make a measured offer"
+detail = "Fair, not eye-watering — see if they choose the mission"
+effects = "A fair, free pitch on the work itself. They may pick a bigger number, and you stay lean."
+outcome_ref = "talent_star_measured"
+
+[[g_talent_star_offer.choices]]
+label = "Pass for now"
+detail = "Hold your powder; this can wait"
+effects = "Holds off for now. You skip the hire and stay small while it matters most."
+outcome_ref = "talent_star_pass"
+
+# ---------------------------------------------------------------------------
+# G2 — A rival tries to poach your lead
+# ---------------------------------------------------------------------------
+[g_talent_poach_defense]
+id = "g_talent_poach_defense"
+category = "talent"
+weight = 7
+cooldown_weeks = 39
+one_shot = false
+
+[g_talent_poach_defense.trigger]
+type = "random"
+conditions = ["company.has_key_researcher == true"]
+
+[g_talent_poach_defense.framing]
+headline = "A competitor is circling your best engineer"
+body = """One of your most important people has a term sheet from a deeper-pocketed \
+rival sitting in their inbox. They came to you first, which is its own kind of \
+loyalty — but loyalty has a price, and so does losing them."""
+tone = "threat"
+
+[[g_talent_poach_defense.choices]]
+label = "Counter with a retention grant"
+detail = "Refresh equity and pay to keep them"
+effects = "A retention grant keeps the engineer and steadies the team. It costs cash and resets expectations for the next person."
+outcome_ref = "poach_retain"
+
+[[g_talent_poach_defense.choices]]
+label = "Make the human case"
+detail = "Sell the mission and the trajectory, not the money"
+effects = "An honest, free conversation that builds trust. It might not be enough against a bigger number."
+outcome_ref = "poach_pitch"
+
+[[g_talent_poach_defense.choices]]
+label = "Let them go"
+detail = "Wish them well and backfill"
+effects = "The engineer walks and you lose a senior teammate. No cash out the door, but a real gap to fill."
+outcome_ref = "poach_release"
+
+# ---------------------------------------------------------------------------
+# G3 — A marquee account is in reach
+# ---------------------------------------------------------------------------
+[g_marquee_customer]
+id = "g_marquee_customer"
+category = "growth"
+weight = 8
+cooldown_weeks = 26
+one_shot = false
+
+[g_marquee_customer.trigger]
+type = "random"
+conditions = ["company.stage >= seed"]
+
+[g_marquee_customer.framing]
+headline = "A marquee customer wants to talk"
+body = """A logo everyone would recognize is evaluating you. Winning it would be a \
+reference that opens a dozen more doors — but they want commitments, a custom \
+build, and a level of hand-holding that pulls the team off the roadmap."""
+tone = "opportunity"
+
+[[g_marquee_customer.choices]]
+label = "Win the logo"
+detail = "Do the custom build and land them"
+effects = "You win the marquee account and recurring revenue climbs. The custom build costs cash and bends the roadmap."
+outcome_ref = "marquee_win"
+
+[[g_marquee_customer.choices]]
+label = "Offer the standard product"
+detail = "Hold the line on scope; take it or leave it"
+effects = "A disciplined, free stance that protects focus. They may walk, and you let the reference go."
+outcome_ref = "marquee_standard"
+
+# ---------------------------------------------------------------------------
+# G4 — A rival undercuts your pricing
+# ---------------------------------------------------------------------------
+[g_pricing_undercut]
+id = "g_pricing_undercut"
+category = "competition"
+weight = 7
+cooldown_weeks = 39
+one_shot = false
+
+[g_pricing_undercut.trigger]
+type = "random"
+conditions = ["company.has_competitor == true", "company.stage >= seed"]
+
+[g_pricing_undercut.framing]
+headline = "A competitor just undercut you on price"
+body = """A rival went public with pricing well below yours, and your sales team is \
+suddenly on the back foot. Match it and you protect the pipeline but bleed \
+margin; hold firm and you defend the business but may cede deals."""
+tone = "threat"
+
+[[g_pricing_undercut.choices]]
+label = "Match their price"
+detail = "Discount aggressively and keep the pipeline"
+effects = "You discount aggressively and protect volume, but bleed margin and worse economics follow."
+outcome_ref = "undercut_match"
+
+[[g_pricing_undercut.choices]]
+label = "Hold the line"
+detail = "Compete on quality, not price"
+effects = "A free, disciplined stance that protects margin. In the short run you cede share on price-sensitive deals."
+outcome_ref = "undercut_hold"
+
+[[g_pricing_undercut.choices]]
+label = "Differentiate harder"
+detail = "Invest in the moat that justifies the premium"
+effects = "A custom build that deepens the moat and your credibility. It costs cash now to defend the price later."
+outcome_ref = "undercut_differentiate"
+
+# ---------------------------------------------------------------------------
+# G5 — The lease decision
+# ---------------------------------------------------------------------------
+[g_office_lease]
+id = "g_office_lease"
+category = "operations"
+weight = 6
+cooldown_weeks = 104
+one_shot = false
+
+[g_office_lease.trigger]
+type = "random"
+conditions = ["company.stage >= seed", "game.year >= 1"]
+
+[g_office_lease.framing]
+headline = "The team has outgrown the space"
+body = """People are working in hallways. A proper headquarters would give you room \
+to grow and a place to build culture — and it would also lock you into a lease \
+and a burn you can't easily walk back."""
+tone = "neutral"
+
+[[g_office_lease.choices]]
+label = "Sign the headquarters lease"
+detail = "Commit to a real space and room to grow"
+effects = "A proper HQ that lets you build out the team and morale. It costs cash and adds fixed burn."
+outcome_ref = "lease_sign"
+
+[[g_office_lease.choices]]
+label = "Stay lean and distributed"
+detail = "Keep it remote-first; spend the money on people"
+effects = "A free, low-profile choice that protects runway. You give up the gravitational pull of a real HQ."
+outcome_ref = "lease_lean"
+
+# ---------------------------------------------------------------------------
+# G6 — A viral moment
+# ---------------------------------------------------------------------------
+[g_viral_moment]
+id = "g_viral_moment"
+category = "growth"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[g_viral_moment.trigger]
+type = "random"
+conditions = ["sector.hype >= 50", "company.stage >= seed"]
+
+[g_viral_moment.framing]
+headline = "Something you shipped is having a moment"
+body = """A demo, a thread, a feature — whatever it was, it caught fire, and the \
+internet is paying attention to you this week. Attention is fuel, but it burns \
+fast and it cuts both ways."""
+tone = "opportunity"
+
+[[g_viral_moment.choices]]
+label = "Ride the wave"
+detail = "Ship loud, do the press, lean into the spotlight"
+effects = "You ship loud and the buzz and talent pull spike. Expectations climb for whatever ships next."
+outcome_ref = "viral_ride"
+
+[[g_viral_moment.choices]]
+label = "Stay heads-down"
+detail = "Let the work speak; don't chase the moment"
+effects = "A quieter choice that keeps your focus. You let the moment pass and stay out of the noise."
+outcome_ref = "viral_quiet"
+
+# ---------------------------------------------------------------------------
+# G7 — A security breach (founder's own call)
+# ---------------------------------------------------------------------------
+[g_security_breach]
+id = "g_security_breach"
+category = "trust"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[g_security_breach.trigger]
+type = "random"
+conditions = ["company.stage >= seed"]
+
+[g_security_breach.framing]
+headline = "You've been breached"
+body = """Security found an intrusion — some customer data was exposed. The clock \
+on how you respond is already running, and the difference between handling it \
+properly and hoping it fades is the difference between a footnote and a \
+headline."""
+tone = "crisis"
+
+[[g_security_breach.choices]]
+label = "Disclose it transparently"
+detail = "Notify everyone affected and own it publicly"
+effects = "You own it properly and disclose transparently — it builds trust and credibility over time. Remediation costs cash."
+outcome_ref = "breach_disclose"
+
+[[g_security_breach.choices]]
+label = "Quietly patch and downplay"
+detail = "Fix it; say as little as possible"
+effects = "You downplay it and hope it fades — a shortcut that erodes goodwill and is a liability if it surfaces. Cheap today."
+outcome_ref = "breach_downplay"
+
+# ---------------------------------------------------------------------------
+# G8 — Regulators come knocking (founder's own call)
+# ---------------------------------------------------------------------------
+[g_regulatory_inquiry]
+id = "g_regulatory_inquiry"
+category = "trust"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[g_regulatory_inquiry.trigger]
+type = "random"
+conditions = ["company.stage >= series_a"]
+
+[g_regulatory_inquiry.framing]
+headline = "A regulator has questions"
+body = """A formal inquiry landed — nothing alleged yet, but they want documents, \
+and how you engage sets the tone for everything that follows. Cooperation is \
+expensive and slow; resistance is cheaper and riskier."""
+tone = "threat"
+
+[[g_regulatory_inquiry.choices]]
+label = "Cooperate fully"
+detail = "Open the books, engage in good faith"
+effects = "You cooperate transparently and act like a model citizen — defensible, and it builds credibility. The legal and compliance work costs cash."
+outcome_ref = "regulator_cooperate"
+
+[[g_regulatory_inquiry.choices]]
+label = "Stonewall and delay"
+detail = "Give them the minimum and run out the clock"
+effects = "You stonewall and deflect — cheaper now, but it erodes goodwill and is a liability that invites scrutiny."
+outcome_ref = "regulator_stonewall"
+
+# ---------------------------------------------------------------------------
+# G9 — Open-source dilemma
+# ---------------------------------------------------------------------------
+[g_open_source_oss]
+id = "g_open_source_oss"
+category = "strategy"
+weight = 6
+cooldown_weeks = 78
+one_shot = false
+
+[g_open_source_oss.trigger]
+type = "random"
+conditions = ["company.stage >= seed"]
+
+[g_open_source_oss.framing]
+headline = "Open-source the core?"
+body = """There's a real case for opening up a piece of your stack: goodwill, \
+adoption, a developer community that does your recruiting for you. There's an \
+equally real case that you'd be giving away the thing you charge for."""
+tone = "neutral"
+
+[[g_open_source_oss.choices]]
+label = "Open it up"
+detail = "Release it; win the developers"
+effects = "A loud, community-building move — buzz and a recruiting halo and real visibility. It means worse economics on the layer you used to charge for."
+outcome_ref = "oss_open"
+
+[[g_open_source_oss.choices]]
+label = "Keep it proprietary"
+detail = "Protect the crown jewels"
+effects = "A free, disciplined call that protects revenue and the moat. You stay quieter and give up the developer mindshare."
+outcome_ref = "oss_closed"
+
+# ---------------------------------------------------------------------------
+# G10 — An acquihire on the table
+# ---------------------------------------------------------------------------
+[g_acquihire_talent]
+id = "g_acquihire_talent"
+category = "talent"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[g_acquihire_talent.trigger]
+type = "random"
+conditions = ["company.stage >= series_a"]
+
+[g_acquihire_talent.framing]
+headline = "A small team is looking for a home"
+body = """A tiny, excellent startup is winding down, and its founders would join you \
+as a unit — a year of hiring compressed into one deal. It isn't cheap, and \
+integration is never as clean as the pitch."""
+tone = "opportunity"
+
+[[g_acquihire_talent.choices]]
+label = "Bring them aboard"
+detail = "Acquihire the team and expand fast"
+effects = "You buy the team and a talent influx grows the team overnight. It costs cash and asks a lot of your culture."
+outcome_ref = "acquihire_buy"
+
+[[g_acquihire_talent.choices]]
+label = "Pass"
+detail = "Grow your own way, on your own timeline"
+effects = "A free, disciplined choice that keeps the culture intact. You forgo a fast injection of talent."
+outcome_ref = "acquihire_pass"
+
+# ---------------------------------------------------------------------------
+# G11 — A PR firestorm (founder's own call)
+# ---------------------------------------------------------------------------
+[g_pr_scandal]
+id = "g_pr_scandal"
+category = "trust"
+weight = 5
+cooldown_weeks = 78
+one_shot = false
+
+[g_pr_scandal.trigger]
+type = "random"
+conditions = ["founder.reputation >= 45"]
+
+[g_pr_scandal.framing]
+headline = "A firestorm with your name on it"
+body = """A clumsy post, a leaked message, a quote taken at its worst — it's spreading, \
+and people are waiting to see whether you face it or hide from it. The story will \
+be written either way; the only question is by whom."""
+tone = "crisis"
+
+[[g_pr_scandal.choices]]
+label = "Own it publicly"
+detail = "Front it honestly, apologize where due"
+effects = "You own it properly and respond transparently — it earns credibility and rebuilds trust. A hard, free thing to do."
+outcome_ref = "scandal_own"
+
+[[g_pr_scandal.choices]]
+label = "Deflect and downplay"
+detail = "Spin it; wait for the next news cycle"
+effects = "You deflect and downplay and hope it fades — it erodes goodwill, and the scrutiny and backlash sharpen."
+outcome_ref = "scandal_deflect"
+
+# ---------------------------------------------------------------------------
+# G12 — A supplier fails you
+# ---------------------------------------------------------------------------
+[g_supply_shock]
+id = "g_supply_shock"
+category = "operations"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[g_supply_shock.trigger]
+type = "random"
+conditions = ["company.has_supplier == true"]
+
+[g_supply_shock.framing]
+headline = "A key supplier just fell over"
+body = """A vendor you depend on missed badly — a shortage, a quality failure, a \
+bankruptcy rumor. Your roadmap runs through them, and the clock is ticking on \
+whether you find another path or absorb the delay."""
+tone = "threat"
+
+[[g_supply_shock.choices]]
+label = "Qualify an alternative fast"
+detail = "Pay up to stand up a second source"
+effects = "You qualify an alternative and protect the roadmap. Standing up a new source costs cash and a premium."
+outcome_ref = "supply_alt"
+
+[[g_supply_shock.choices]]
+label = "Wait it out"
+detail = "Ride the disruption; don't overreact"
+effects = "Patient, but the delay slips your roadmap and cedes ground to faster rivals."
+outcome_ref = "supply_wait"
+
+# ---------------------------------------------------------------------------
+# G13 — Spend to accelerate?
+# ---------------------------------------------------------------------------
+[g_growth_capital]
+id = "g_growth_capital"
+category = "growth"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[g_growth_capital.trigger]
+type = "random"
+conditions = ["company.stage >= series_a"]
+
+[g_growth_capital.framing]
+headline = "A window to step on the gas"
+body = """The plan is working, and there's an obvious way to make it work faster — \
+pour capital into growth now and pull demand forward. The upside is real. So is \
+the burn, and the risk of buying growth that doesn't stick."""
+tone = "neutral"
+
+[[g_growth_capital.choices]]
+label = "Pour capital into growth"
+detail = "Spend hard to pull demand forward"
+effects = "You pour cash into growth — it grows the team and revenue climbs, and it burns cash fast."
+outcome_ref = "growth_spend"
+
+[[g_growth_capital.choices]]
+label = "Stay disciplined"
+detail = "Grow into the demand, protect the runway"
+effects = "A free, disciplined call that protects runway. You grow slower and leave some upside on the table."
+outcome_ref = "growth_discipline"
+
+# ---------------------------------------------------------------------------
+# G14 — Culture at the inflection point
+# ---------------------------------------------------------------------------
+[g_culture_inflection]
+id = "g_culture_inflection"
+category = "operations"
+weight = 5
+cooldown_weeks = 104
+one_shot = false
+
+[g_culture_inflection.trigger]
+type = "random"
+conditions = ["company.stage >= series_a", "game.year >= 2"]
+
+[g_culture_inflection.framing]
+headline = "The culture is starting to drift"
+body = """You've crossed the size where everyone knew everyone. The scrappy thing \
+that got you here doesn't scale on its own anymore, and the early team can feel \
+it. What you invest in now sets the tone for the next hundred people."""
+tone = "neutral"
+
+[[g_culture_inflection.choices]]
+label = "Invest in culture and process"
+detail = "Managers, onboarding, the connective tissue"
+effects = "You spend to build the connective tissue, and it keeps the team and steadies retention. It costs cash and some velocity."
+outcome_ref = "culture_invest"
+
+[[g_culture_inflection.choices]]
+label = "Keep moving fast"
+detail = "Lean on the team; don't over-engineer it"
+effects = "A free call that preserves speed. Left to drift, you risk attrition as the early team feels the company change around them."
+outcome_ref = "culture_drift"
+
+# ---------------------------------------------------------------------------
+# G15 — A strategic partnership offer
+# ---------------------------------------------------------------------------
+[g_partnership_deal]
+id = "g_partnership_deal"
+category = "growth"
+weight = 6
+cooldown_weeks = 52
+one_shot = false
+
+[g_partnership_deal.trigger]
+type = "random"
+conditions = ["company.stage >= seed"]
+
+[g_partnership_deal.framing]
+headline = "A bigger company wants to partner"
+body = """An incumbent with real distribution is offering a partnership — their \
+reach, your product. It could be a step-change in growth, or a slow handing-over \
+of the customer relationship to a partner who could one day be a rival."""
+tone = "opportunity"
+
+[[g_partnership_deal.choices]]
+label = "Sign the partnership"
+detail = "Take the distribution and the deal"
+effects = "You land the deal and the partner's reach lifts recurring revenue. It trades some independence and customer ownership."
+outcome_ref = "partner_sign"
+
+[[g_partnership_deal.choices]]
+label = "Stay independent"
+detail = "Own your channel and your customers"
+effects = "A free, disciplined choice that protects your independence. You grow slower without the partner's distribution."
+outcome_ref = "partner_decline"
