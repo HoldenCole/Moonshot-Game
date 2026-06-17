@@ -27,6 +27,7 @@ import {
   applyAcquisition,
   applyCashOut,
   applyIpo,
+  applyStepBack,
   lockupExpired,
   revealIpo,
   type AcquisitionOffer,
@@ -106,6 +107,8 @@ interface GameStore {
   ipoList: () => void;
   exploreSale: () => void;
   acceptAcquisition: () => void;
+  /** Take the all-stock deal: merge, hold a stake in the acquirer, step back. */
+  acceptStepBack: () => void;
   /** Sell the public stake after lockup — banks the proceeds and ends the run. */
   cashOut: () => void;
   cancelExit: () => void;
@@ -365,6 +368,14 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       if (!s.game || s.exitFlow?.kind !== "acquisition") return s;
       const { state, outcome } = applyAcquisition(s.game, s.exitFlow.offer);
+      const a = withAch({ ...state, runOutcome: outcome });
+      return { game: a.game, exitFlow: null, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  acceptStepBack: () =>
+    set((s) => {
+      if (!s.game || s.exitFlow?.kind !== "acquisition") return s;
+      const { state, outcome } = applyStepBack(s.game, s.exitFlow.offer);
       const a = withAch({ ...state, runOutcome: outcome });
       return { game: a.game, exitFlow: null, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),

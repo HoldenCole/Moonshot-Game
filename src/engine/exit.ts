@@ -203,14 +203,23 @@ function ipoTerms(valuation: Money, raise: Money): RoundTerms {
 
 export interface AcquisitionOffer {
   buyerName: string;
+  /** The acquirer's market cap, $M (basis for the step-back stake %). */
+  buyerValuation: Money;
   exitValue: Money;
   premiumPct: number;
-  /** What the founder personally walks away with, $M (after the waterfall). */
+  /** What the founder personally walks away with in a cash deal, $M (waterfall). */
   founderTake: Money;
+  /** Headline value of an all-stock "step back" deal — higher, sharing upside. */
+  stockExitValue: Money;
+  /** The founder's proceeds taken as acquirer stock, $M. */
+  founderStockValue: Money;
+  /** The stake in the acquirer the founder ends up holding, 0–1. */
+  founderStakePct: number;
 }
 
-/** A procedural buyer's offer — a premium to the current mark, scaled by the
- *  market mood. */
+/** A procedural buyer's offer — a cash premium to the current mark, plus an
+ *  all-stock alternative: a richer headline (upside-sharing, scaled by the
+ *  acquirer's vigor) taken as a stake in the buyer. */
 export function acquisitionOffer(state: GameState, market: Company[], rng: Rng): AcquisitionOffer {
   const base = Math.max(latestPostMoney(state.company.capTable), state.company.financials.valuation, 5);
   const climateMult = 0.85 + (state.world.vcClimate / 100) * 0.5;
@@ -222,10 +231,27 @@ export function acquisitionOffer(state: GameState, market: Company[], rng: Rng):
   const buyers = market
     .filter((c) => c.stage.status === "public" && c.financials.valuation > exitValue * 1.5)
     .sort((a, b) => (a.industry === ind ? 0 : 1) - (b.industry === ind ? 0 : 1));
-  const buyer = pick(rng, buyers.length ? buyers : market) ?? { name: "a strategic acquirer" };
+  const buyer = (buyers.length ? pick(rng, buyers) : pick(rng, market)) ?? null;
+  const buyerName = buyer?.name ?? "a strategic acquirer";
+  const buyerValuation = buyer?.financials.valuation ?? Math.round(exitValue * nextRange(rng, 3, 6));
+  const buyerHype = buyer ? state.world.hype[buyer.industry] ?? 55 : 55;
 
-  const founderTake = founderTakeAt(state, exitValue);
-  return { buyerName: buyer.name, exitValue, premiumPct: premium, founderTake };
+  // Stock deals price a touch higher — you're sharing in the acquirer's upside.
+  const stockMult = 1.06 + clamp((buyerHype - 55) / 100, -0.04, 0.16);
+  const stockExitValue = Math.round(exitValue * stockMult);
+  const founderStockValue = founderTakeAt(state, stockExitValue);
+  const founderStakePct = clamp(founderStockValue / Math.max(1, buyerValuation), 0.001, 0.9);
+
+  return {
+    buyerName,
+    buyerValuation,
+    exitValue,
+    premiumPct: premium,
+    founderTake: founderTakeAt(state, exitValue),
+    stockExitValue,
+    founderStockValue,
+    founderStakePct,
+  };
 }
 
 /** The founder + co-founder proceeds at a given exit value, via the waterfall. */
@@ -254,6 +280,28 @@ export function applyAcquisition(state: GameState, offer: AcquisitionOffer): { s
       ...state,
       founder: { ...state.founder, personalCash, reputation: Math.min(100, state.founder.reputation + 8) },
     },
+    outcome,
+  };
+}
+
+/** Take the all-stock deal: merge into the acquirer and step back, holding a
+ *  stake in the buyer. The stake's value banks as personal wealth (so it counts
+ *  toward net worth and carries into the next company), and the run ends. */
+export function applyStepBack(state: GameState, offer: AcquisitionOffer): { state: GameState; outcome: RunOutcome } {
+  const proceeds = offer.founderStockValue;
+  const personalCash = state.founder.personalCash + proceeds;
+  const outcome: RunOutcome = {
+    kind: "merger",
+    company: state.company.name,
+    exitValue: offer.stockExitValue,
+    founderProceeds: proceeds,
+    finalNetWorth: personalCash,
+    week: state.clock.week,
+    headline: `${state.company.name} merged into ${offer.buyerName} at ${offer.stockExitValue}`,
+    stake: { company: offer.buyerName, pct: offer.founderStakePct, value: proceeds },
+  };
+  return {
+    state: { ...state, founder: { ...state.founder, personalCash, reputation: Math.min(100, state.founder.reputation + 6) } },
     outcome,
   };
 }

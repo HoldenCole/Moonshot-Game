@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useGame } from "@/state/store";
 import { eligibleBanks, ipoPricing, ipoTargetRaise, firstDayWord } from "@/engine/exit";
-import { founderOwnership, latestPostMoney } from "@/engine/captable";
 import { formatMoney, formatPct } from "@/engine/format";
 import { Button, Slider, Tag } from "@/ui/components/controls";
 import { useModalA11y } from "@/ui/components/useModalA11y";
@@ -129,28 +128,43 @@ function Acquisition() {
   const game = useGame((s) => s.game)!;
   const flow = useGame((s) => s.exitFlow)!;
   const accept = useGame((s) => s.acceptAcquisition);
+  const stepBack = useGame((s) => s.acceptStepBack);
   const cancel = useGame((s) => s.cancelExit);
   if (flow.kind !== "acquisition") return null;
   const o = flow.offer;
-  const stake = founderOwnership(game.company.capTable) * latestPostMoney(game.company.capTable);
 
   return (
     <>
       <div className="exit-modal__cat">Acquisition offer · {game.company.name}</div>
       <h2 className="exit-modal__headline">{o.buyerName} wants to buy {game.company.name}</h2>
       <p className="exit-modal__body">
-        They're offering <strong>{formatMoney(o.exitValue)}</strong> — a {formatPct(o.premiumPct, 0)} premium
-        to your last mark. After the liquidation waterfall, you'd personally walk away with{" "}
-        <strong>{formatMoney(o.founderTake)}</strong>. Accepting ends this chapter.
+        A <strong>{formatPct(o.premiumPct, 0)}</strong> premium to your last mark. Take it in cash and
+        walk — or take stock in {o.buyerName} and step back, holding a piece of the bigger company.
       </p>
-      <div className="exit-reveal">
-        <Stat k="Offer" v={formatMoney(o.exitValue)} />
-        <Stat k="Your current stake" v={formatMoney(stake)} />
-        <Stat k="You walk with" v={formatMoney(o.founderTake)} tone="up" />
+      <div className="deal-choice">
+        <div className="deal-choice__opt">
+          <div className="deal-choice__head">Cash</div>
+          <div className="deal-choice__big num">{formatMoney(o.founderTake)}</div>
+          <div className="deal-choice__sub">{formatMoney(o.exitValue)} all-cash · a clean break</div>
+          <Button variant="primary" size="md" className="deal-choice__cta" onClick={accept}>
+            Take the cash
+          </Button>
+        </div>
+        <div className="deal-choice__opt deal-choice__opt--stock">
+          <div className="deal-choice__head">Stock — step back</div>
+          <div className="deal-choice__big num">{formatMoney(o.founderStockValue)}</div>
+          <div className="deal-choice__sub">
+            {formatPct(o.founderStakePct)} of {o.buyerName} · {formatMoney(o.stockExitValue)} merger
+          </div>
+          <Button variant="primary" size="md" className="deal-choice__cta" onClick={stepBack}>
+            Merge &amp; step back
+          </Button>
+        </div>
       </div>
       <div className="exit-modal__actions">
-        <Button variant="primary" size="md" onClick={accept}>Accept — walk with {formatMoney(o.founderTake)}</Button>
-        <Button variant="ghost" size="md" onClick={cancel}>Keep building <Tag>independent</Tag></Button>
+        <Button variant="ghost" size="md" onClick={cancel}>
+          Keep building <Tag>independent</Tag>
+        </Button>
       </div>
     </>
   );

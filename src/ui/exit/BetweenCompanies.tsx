@@ -1,5 +1,5 @@
 import { useGame } from "@/state/store";
-import { formatMoney } from "@/engine/format";
+import { formatMoney, formatPct } from "@/engine/format";
 import { Icon } from "@/ui/components/Icon";
 import { Button } from "@/ui/components/controls";
 
@@ -18,17 +18,31 @@ export function BetweenCompanies() {
         <div className="between__brand">
           <Icon name="rocket" size={26} /> <span>Moonshot Inc</span>
         </div>
-        <div className="between__kicker">{o.kind === "acquisition" ? "Acquired" : "Public"}</div>
+        <div className="between__kicker">{o.kind === "merger" ? "Merged" : o.kind === "acquisition" ? "Acquired" : "Public"}</div>
         <h1 className="between__title">{o.headline.replace(/\d+$/, formatMoney(o.exitValue))}</h1>
         <p className="between__lede">
-          Over {years} years you took {o.company} from an idea to a {formatMoney(o.exitValue)} exit. You
-          walk away with <strong>{formatMoney(o.founderProceeds)}</strong> and a reputation that opens
-          doors the next time.
+          Over {years} years you took {o.company} from an idea to a {formatMoney(o.exitValue)}{" "}
+          {o.kind === "merger" ? "merger" : "exit"}.{" "}
+          {o.stake ? (
+            <>
+              You stepped back holding <strong>{formatPct(o.stake.pct)}</strong> of {o.stake.company} — worth{" "}
+              <strong>{formatMoney(o.stake.value)}</strong> — and a reputation that opens doors.
+            </>
+          ) : (
+            <>
+              You walk away with <strong>{formatMoney(o.founderProceeds)}</strong> and a reputation that opens
+              doors the next time.
+            </>
+          )}
         </p>
 
         <div className="between__stats">
-          <Stat k="Exit value" v={formatMoney(o.exitValue)} />
-          <Stat k="Your proceeds" v={formatMoney(o.founderProceeds)} tone="up" />
+          <Stat k={o.stake ? "Merger value" : "Exit value"} v={formatMoney(o.exitValue)} />
+          {o.stake ? (
+            <Stat k={`Stake in ${o.stake.company}`} v={`${formatPct(o.stake.pct)} · ${formatMoney(o.stake.value)}`} tone="up" />
+          ) : (
+            <Stat k="Your proceeds" v={formatMoney(o.founderProceeds)} tone="up" />
+          )}
           <Stat k="Founder reputation" v={String(Math.round(game.founder.reputation))} />
         </div>
 

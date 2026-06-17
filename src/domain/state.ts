@@ -189,15 +189,18 @@ export interface GameClock {
   week: number;
 }
 
-/** The outcome that ends a run (acquisition, or a chosen post-IPO cash-out). */
+/** The outcome that ends a run (acquisition, a stock-swap merger, or a chosen
+ *  post-IPO cash-out). */
 export interface RunOutcome {
-  kind: "ipo" | "acquisition";
+  kind: "ipo" | "acquisition" | "merger";
   company: string;
   exitValue: Money;
   founderProceeds: Money;
   finalNetWorth: Money;
   week: number;
   headline: string;
+  /** A stock-swap "step back": the stake the founder holds in the acquirer. */
+  stake?: { company: string; pct: number; value: Money };
 }
 
 /** Locked-at-start difficulty: a preset (or "custom" once a slider moves), the

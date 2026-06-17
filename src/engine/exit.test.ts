@@ -7,6 +7,7 @@ import {
   applyAcquisition,
   applyCashOut,
   applyIpo,
+  applyStepBack,
   cashOutProceeds,
   founderTakeAt,
   ipoEligible,
@@ -139,4 +140,21 @@ test("acquisition pays the founder their waterfall take and ends the run", () =>
   assert.equal(outcome.kind, "acquisition");
   assert.ok(state.founder.personalCash >= offer.founderTake);
   assert.equal(outcome.founderProceeds, offer.founderTake);
+});
+
+test("a stock-swap step-back banks an acquirer stake and ends the run as a merger", () => {
+  const g = grown();
+  const offer = acquisitionOffer(g, [], makeRng(5));
+  // The all-stock deal is a richer headline, taken as a stake in the buyer.
+  assert.ok(offer.stockExitValue >= offer.exitValue);
+  assert.ok(offer.founderStakePct > 0 && offer.founderStakePct <= 0.9);
+  assert.ok(offer.founderStockValue > 0);
+
+  const { state, outcome } = applyStepBack(g, offer);
+  assert.equal(outcome.kind, "merger");
+  assert.equal(outcome.exitValue, offer.stockExitValue);
+  assert.ok(outcome.stake);
+  assert.equal(outcome.stake!.pct, offer.founderStakePct);
+  assert.equal(outcome.stake!.value, offer.founderStockValue);
+  assert.ok(state.founder.personalCash >= offer.founderStockValue);
 });
