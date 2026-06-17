@@ -78,3 +78,25 @@ test("archetype deltas clamp into the valid range", () => {
   const g = mk(harsh);
   assert.ok(g.founder.reputation >= 0 && g.founder.ethics >= 0);
 });
+
+test("reinvesting carried wealth funds the company and leaves the rest personal", () => {
+  const choices = {
+    founderName: "You",
+    companyName: "Co",
+    industry: "ai" as const,
+    subIndustry: "frontier_model_lab" as const,
+    color: "#fff",
+    seed: 1,
+    carryOver: { reputation: 50, personalCash: 100 },
+  };
+  const baseline = createNewGame({ ...choices, carryOver: undefined }, "2026-01-01T00:00:00Z");
+
+  const g = createNewGame({ ...choices, reinvest: 60 }, "2026-01-01T00:00:00Z");
+  assert.equal(g.founder.personalCash, 40); // 100 carried − 60 reinvested
+  assert.ok(Math.abs(g.company.financials.cash - (baseline.company.financials.cash + 60)) < 1e-6);
+
+  // Reinvest is clamped to what was actually carried over.
+  const over = createNewGame({ ...choices, reinvest: 999 }, "2026-01-01T00:00:00Z");
+  assert.equal(over.founder.personalCash, 0);
+  assert.ok(Math.abs(over.company.financials.cash - (baseline.company.financials.cash + 100)) < 1e-6);
+});

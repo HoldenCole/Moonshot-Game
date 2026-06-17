@@ -15,6 +15,7 @@ export type IconName =
   | "moon"
   | "motion"
   | "team"
+  | "cpu"
   | "grip"
   | "sliders";
 
@@ -88,6 +89,13 @@ const PATHS: Record<IconName, JSX.Element> = {
       <circle cx="9" cy="8" r="3" />
       <path d="M3 20a6 6 0 0 1 12 0" />
       <path d="M16 5.5a3 3 0 0 1 0 5.5M21 20a6 6 0 0 0-5-5.9" />
+    </>
+  ),
+  cpu: (
+    <>
+      <rect x="6" y="6" width="12" height="12" rx="1.5" />
+      <rect x="9.5" y="9.5" width="5" height="5" rx="0.5" />
+      <path d="M9 2.5v2M15 2.5v2M9 19.5v2M15 19.5v2M2.5 9h2M2.5 15h2M19.5 9h2M19.5 15h2" />
     </>
   ),
   grip: (

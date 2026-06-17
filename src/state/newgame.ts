@@ -30,6 +30,9 @@ export interface FoundingChoices {
   age?: number;
   /** New Game Plus: reputation + personal wealth carried from a prior run. */
   carryOver?: { reputation: number; personalCash: number };
+  /** How much of the carried-over personal wealth to pour into the new company
+   *  as starting cash (the rest stays personal). Clamped to what's carried. */
+  reinvest?: number;
 }
 
 /** Build the genesis save from founding choices. The company starts pre-seed
@@ -58,9 +61,14 @@ export function createNewGame(
   // Founder archetype tilts the opening board over the difficulty baselines.
   const m = choices.archetype?.modifiers;
   const burnEff = m?.sub_system_lean === "burn_efficiency" ? 0.92 : 1;
+  // A returning founder can pour part of their personal fortune into the new
+  // company; the rest stays personal wealth.
+  const carriedCash = choices.carryOver?.personalCash ?? 0;
+  const reinvest = Math.max(0, Math.min(choices.reinvest ?? 0, carriedCash));
   // Founding capital and opening burn scale with difficulty (and the archetype) —
   // more cushion and a lighter burn on Forgiving / capital-efficient founders.
-  const startingCash = Math.round(0.75 * axes.startingCapital * (m?.starting_cash_mult ?? 1) * 100) / 100;
+  const startingCash =
+    Math.round(0.75 * axes.startingCapital * (m?.starting_cash_mult ?? 1) * 100) / 100 + reinvest;
   const startingBurn = Math.round(0.08 * axes.burnRate * burnEff * 1000) / 1000;
 
   // Opening "weather": a healthy late-expansion, all eight industries seeded
@@ -106,7 +114,7 @@ export function createNewGame(
       // A proven serial founder carries reputation (and exit wealth) forward;
       // the archetype tilts reputation/integrity over that baseline.
       reputation: clampScore((choices.carryOver?.reputation ?? 30) + (m?.starting_reputation ?? 0)),
-      personalCash: choices.carryOver?.personalCash ?? 0,
+      personalCash: carriedCash - reinvest,
       ethics: clampScore(60 + (m?.integrity_baseline ?? 0)),
       investorWarmth: m?.investor_warmth ?? 0,
       signatureLean: m?.signature_lean ?? 0,
