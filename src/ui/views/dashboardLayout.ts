@@ -11,6 +11,7 @@ export interface DashPanelMeta {
 export const DASH_PANELS: DashPanelMeta[] = [
   { id: "financials", label: "Financials" },
   { id: "signature", label: "Signature" },
+  { id: "operations", label: "Operations" },
   { id: "captable", label: "Cap Table" },
   { id: "fundraising", label: "Fundraising" },
 ];

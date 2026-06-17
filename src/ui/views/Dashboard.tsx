@@ -13,6 +13,7 @@ import { Icon } from "@/ui/components/Icon";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
 import { SignatureWidget } from "@/ui/operating/SignatureWidget";
+import { OperationsPanel } from "@/ui/operating/OperationsPanel";
 import { ExitActions } from "@/ui/exit/ExitActions";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
 import {
@@ -181,6 +182,8 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
         return <FinancialBand company={game.company} />;
       case "signature":
         return <SignatureWidget />;
+      case "operations":
+        return <OperationsPanel />;
       case "captable":
         return <CapTablePanel capTable={game.company.capTable} />;
       case "fundraising":

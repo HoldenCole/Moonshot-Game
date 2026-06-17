@@ -11,6 +11,7 @@ import type { GameState, SignatureState } from "@/domain/state";
 import type { Money } from "@/domain/captable";
 import type { LogEntry } from "@/domain/log";
 import { stageRank, type SubIndustry } from "@/domain/ids";
+import { opsExecutionBoost } from "./operations";
 import { type Rng, nextFloat, nextInt } from "./rng";
 
 /** A commit-time strategic lever. Shifts cost/time/odds/reward and accumulator
@@ -369,13 +370,12 @@ function applyResolution(
 }
 
 function companyExecution(state: GameState): number {
-  // Proxy for execution quality, 0–1: a maturer company with a bigger team
-  // lands its big bets more reliably.
+  // Proxy for execution quality, 0–1: a maturer company that's invested in team
+  // and compute lands its big bets more reliably.
   const stageBoost = Math.min(0.35, stageRank(state.company.stage) / 22);
-  const teamBoost = Math.min(0.2, state.company.financials.headcount / 80);
   // A technical founder (Engineer/Academic) gets a small head start in the lab.
   const founderLean = (state.founder.signatureLean ?? 0) / 100;
-  return Math.min(0.9, 0.28 + stageBoost + teamBoost + founderLean);
+  return Math.min(0.9, 0.28 + stageBoost + opsExecutionBoost(state.company) + founderLean);
 }
 
 function processName(company: string, cfg: SignatureConfig, gen: number): string {

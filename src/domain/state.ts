@@ -111,6 +111,9 @@ export interface PlayerCompany {
     valuation: Money;
   };
   capTable: CapTable;
+  /** Invested compute / facilities capacity (Operations). Raises execution on
+   *  the signature mechanic; absent until you invest. */
+  capacity?: number;
   /** Outstanding debt facilities (non-dilutive financing); absent until drawn. */
   loans?: Loan[];
   /** The sub-industry signature process. */

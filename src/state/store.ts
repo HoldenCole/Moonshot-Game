@@ -17,6 +17,7 @@ import { applyWorldDifficulty, difficultyProfile } from "@/engine/difficulty";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
 import { applyPublicChoice } from "@/engine/earnings";
 import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } from "@/engine/debt";
+import { hireStaff as engineHireStaff, investCapacity as engineInvestCapacity, trimTeam as engineTrimTeam } from "@/engine/operations";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
@@ -84,6 +85,13 @@ interface GameStore {
   takeLoan: (bankId: string, amount: number, termWeeks: number) => void;
   /** Repay an outstanding loan's principal in full. */
   repayLoan: (loanId: string) => void;
+
+  /** Grow the team (raises headcount + burn, lifts execution). */
+  hireStaff: (count: number) => void;
+  /** Cut the team (lowers burn + a small reputation hit). */
+  trimTeam: (count: number) => void;
+  /** Invest in a compute / facilities capacity tier (capex + burn, lifts execution). */
+  investCapacity: (tierId: string) => void;
 
   startNegotiation: (leadInvestorId: string, openingTerms: RoundTerms) => void;
   counterOffer: (terms: RoundTerms) => void;
@@ -237,6 +245,27 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       if (!s.game) return s;
       const a = withAch(engineRepayLoan(s.game, loanId));
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  hireStaff: (count) =>
+    set((s) => {
+      if (!s.game) return s;
+      const a = withAch(engineHireStaff(s.game, count));
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  trimTeam: (count) =>
+    set((s) => {
+      if (!s.game) return s;
+      const a = withAch(engineTrimTeam(s.game, count));
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  investCapacity: (tierId) =>
+    set((s) => {
+      if (!s.game) return s;
+      const a = withAch(engineInvestCapacity(s.game, tierId));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
