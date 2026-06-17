@@ -33,8 +33,9 @@ export interface IpoCriterion {
 }
 
 /** The IPO gating, made legible: scale (a live valuation bar), an operating
- *  track record, and an open window. Revenue lifts the valuation mark, so a
- *  growing company becomes IPO-ready without forcing another priced round. */
+ *  track record, and an open window — and nothing else. Raising is funding, not
+ *  a gate, so a self-financed company that grows into the valuation can go
+ *  public without ever taking a round. */
 export function ipoReadiness(state: GameState): IpoCriterion[] {
   const mark = valuationMark(state.company);
   const age = state.clock.week - state.company.foundedWeek;
@@ -60,9 +61,10 @@ export function eligibleBanks(banks: Bank[], state: GameState): Bank[] {
     .sort((a, b) => b.underwriting.prestige - a.underwriting.prestige);
 }
 
-/** Indicative primary raise (~12% of the company). */
+/** Indicative primary raise (~12% of the company), off the live valuation — so a
+ *  self-financed company prices a real book without a prior round. */
 export function ipoTargetRaise(state: GameState): Money {
-  return Math.round(latestPostMoney(state.company.capTable) * 0.12);
+  return Math.round(valuationMark(state.company) * 0.12);
 }
 
 export interface IpoPricing {
@@ -75,7 +77,7 @@ export interface IpoPricing {
 /** The roadshow read: a fair value and a price range, shaped by the window,
  *  sector hype, and the bank's pricing quality. */
 export function ipoPricing(state: GameState, bank: Bank): IpoPricing {
-  const base = latestPostMoney(state.company.capTable);
+  const base = valuationMark(state.company);
   const hype = state.world.hype[state.company.industry] ?? 55;
   const windowMult = state.world.ipoWindow === "open" ? 1.12 : 0.86;
   const hypeMult = 1 + (hype - 60) / 100 * 0.6;

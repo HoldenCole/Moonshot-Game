@@ -9,10 +9,12 @@ import {
   applyIpo,
   applyStepBack,
   cashOutProceeds,
+  eligibleBanks,
   founderTakeAt,
   ipoEligible,
   ipoReadiness,
   ipoPricing,
+  ipoTargetRaise,
   lockupExpired,
   repricePublic,
   revealIpo,
@@ -63,6 +65,21 @@ test("IPO eligibility needs scale, a track record, and an open window", () => {
   const closed = grown();
   closed.world.ipoWindow = "closed";
   assert.equal(ipoEligible(closed), false);
+});
+
+test("a self-financed company can IPO on valuation alone — raising is never required", () => {
+  const g = createNewGame(
+    { founderName: "You", companyName: "Bootstrapped", industry: "ai", subIndustry: "frontier_model_lab", color: "#fff", seed: 9 },
+    "2026-01-01T00:00:00Z",
+  );
+  g.company.financials.valuation = 600; // grew into a real mark on revenue
+  g.clock.week = 60;
+  assert.equal(g.company.capTable.rounds.filter((r) => r.postMoney > 0).length, 0, "never raised a priced round");
+  assert.equal(ipoEligible(g), true, "eligible on valuation + track record + window");
+  // And the offering actually prices: a bank takes it and the book is non-zero.
+  assert.ok(ipoTargetRaise(g) > 0);
+  assert.equal(eligibleBanks([bank], g).length, 1);
+  assert.ok(ipoPricing(g, bank).fair > 0);
 });
 
 test("ipoReadiness surfaces each criterion and what's missing", () => {
