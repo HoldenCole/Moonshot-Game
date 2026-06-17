@@ -60,6 +60,7 @@ test("exit-ready fires only when IPO-eligible", () => {
   assert.ok(!ids(g).includes("exit-ready"), "not at pre-seed");
   g.company.stage = "series_b";
   g.company.capTable.rounds[0]!.postMoney = 300; // >= the $250M IPO bar
+  g.clock.week = 60; // and an operating track record
   assert.ok(ids(g).includes("exit-ready"), "fires once public-ready");
 });
 

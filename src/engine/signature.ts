@@ -346,7 +346,9 @@ function applyResolution(
     fleetRevenue = acc.revenuePerUnit * Math.max(0, nextUnits - units);
   }
 
-  const baseRevenue = cfg.reward.revenue * Math.max(0, mult) * appr.rewardMult * 12;
+  // Annualize the reward, but more gently than before — signature wins shouldn't
+  // vault a company cash-flow positive in a couple of bets.
+  const baseRevenue = cfg.reward.revenue * Math.max(0, mult) * appr.rewardMult * 6;
   const revenue = Math.max(0, f.revenue + baseRevenue + fleetRevenue);
 
   return {

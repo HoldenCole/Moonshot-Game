@@ -8,8 +8,9 @@ import type { Industry } from "@/domain/ids";
 import type { Money, RoundTerms } from "@/domain/captable";
 import type { Bank } from "@/content/load";
 import type { Company } from "@/content/load";
-import { stageRank } from "@/domain/ids";
 import { applyRound, exitWaterfall, founderOwnership, latestPostMoney } from "./captable";
+import { valuationMark } from "./finance";
+import { formatMoney } from "./format";
 import { type Rng, nextNoise, nextRange, pick } from "./rng";
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
@@ -19,14 +20,35 @@ export const LOCKUP_WEEKS = 26;
 
 // ── IPO ──────────────────────────────────────────────────────────────────────
 
-/** IPO is for grown companies in a live window. */
+/** The scale (live valuation) a company needs to go public. */
+export const IPO_VALUATION_BAR: Money = 250;
+/** Minimum operating history before an IPO (a track record), in weeks. */
+export const IPO_MIN_WEEKS = 26;
+
+export interface IpoCriterion {
+  id: "scale" | "track" | "window";
+  label: string;
+  met: boolean;
+  detail: string;
+}
+
+/** The IPO gating, made legible: scale (a live valuation bar), an operating
+ *  track record, and an open window. Revenue lifts the valuation mark, so a
+ *  growing company becomes IPO-ready without forcing another priced round. */
+export function ipoReadiness(state: GameState): IpoCriterion[] {
+  const mark = valuationMark(state.company);
+  const age = state.clock.week - state.company.foundedWeek;
+  const win = state.world.ipoWindow;
+  return [
+    { id: "scale", label: "Scale", met: mark >= IPO_VALUATION_BAR, detail: `${formatMoney(mark)} valuation · need ${formatMoney(IPO_VALUATION_BAR)}` },
+    { id: "track", label: "Track record", met: age >= IPO_MIN_WEEKS, detail: `${Math.max(0, age)} / ${IPO_MIN_WEEKS} weeks operating` },
+    { id: "window", label: "IPO window", met: win !== "closed", detail: win === "open" ? "open" : win === "cracking" ? "cracking — tight" : "closed" },
+  ];
+}
+
+/** IPO is for companies that clear every readiness criterion. */
 export function ipoEligible(state: GameState): boolean {
-  return (
-    state.company.stage !== "public" &&
-    stageRank(state.company.stage) >= stageRank("series_b") &&
-    latestPostMoney(state.company.capTable) >= 250 &&
-    state.world.ipoWindow !== "closed"
-  );
+  return state.company.stage !== "public" && ipoReadiness(state).every((c) => c.met);
 }
 
 /** Banks that will underwrite this deal (meet their minimum raise, sector ok). */
@@ -236,9 +258,10 @@ export function applyAcquisition(state: GameState, offer: AcquisitionOffer): { s
   };
 }
 
-/** Is a sale worth exploring? (Always available once you've raised.) */
+/** Is a sale worth exploring? (Available once the company has any value —
+ *  including bootstrapped companies that grew on revenue without raising.) */
 export function canExplore(state: GameState): boolean {
-  return latestPostMoney(state.company.capTable) > 0;
+  return valuationMark(state.company) > 0;
 }
 
 /** Random-ish first-day descriptor for the reveal copy. */

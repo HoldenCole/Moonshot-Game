@@ -10,6 +10,7 @@ import {
   cashOutProceeds,
   founderTakeAt,
   ipoEligible,
+  ipoReadiness,
   ipoPricing,
   lockupExpired,
   repricePublic,
@@ -37,6 +38,7 @@ function grown(stage: Stage = "growth", post = 1000): GameState {
     leadInvestorName: "Frontier Partners",
   });
   g.company = { ...g.company, stage, capTable, financials: { ...g.company.financials, valuation: post, cash: 50 } };
+  g.clock = { week: 60 }; // a grown company has an operating track record
   return g;
 }
 
@@ -48,12 +50,27 @@ const bank: Bank = {
   financials: { status: "public", revenue: 48000, valuation: 180000, fundamentals: 80, hype_exposure: 0.2 },
 };
 
-test("IPO eligibility needs scale and an open window", () => {
+test("IPO eligibility needs scale, a track record, and an open window", () => {
   assert.equal(ipoEligible(grown()), true);
-  assert.equal(ipoEligible(grown("seed", 1000)), false); // too early
+  // Too small — a low valuation can't clear the scale bar (stage no longer gates).
+  assert.equal(ipoEligible(grown("series_b", 100)), false);
+  // No operating history yet.
+  const young = grown();
+  young.clock = { week: 5 };
+  assert.equal(ipoEligible(young), false);
+  // A closed window blocks it.
   const closed = grown();
   closed.world.ipoWindow = "closed";
   assert.equal(ipoEligible(closed), false);
+});
+
+test("ipoReadiness surfaces each criterion and what's missing", () => {
+  const small = grown("series_b", 100); // old + window open, but only a $100M mark
+  const r = ipoReadiness(small);
+  assert.equal(r.find((c) => c.id === "scale")!.met, false); // $100M < $250M bar
+  assert.equal(r.find((c) => c.id === "track")!.met, true); // 60 weeks operating
+  assert.equal(r.find((c) => c.id === "window")!.met, true);
+  assert.equal(ipoReadiness(grown()).every((c) => c.met), true); // a grown co clears all
 });
 
 test("pricing gives a range around fair, with demand from hype", () => {

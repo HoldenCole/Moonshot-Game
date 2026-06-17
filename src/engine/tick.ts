@@ -12,7 +12,7 @@ import { makeRng } from "./rng";
 import { snapshotWorld, stepWorld } from "./world";
 import { repricePublic } from "./exit";
 import { serviceDebt } from "./debt";
-import { bandWorsened, netBurnMonthly, netWorth, runwayBand, runwayMonths } from "./finance";
+import { bandWorsened, netBurnMonthly, netWorth, privateValuationMark, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
 import { tickProcess } from "./signature";
 import { applyOutcome as applyEventOutcome, resolveOutcome, scaleByExec } from "./eventOutcomes";
@@ -82,10 +82,13 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   const f = state.company.financials;
   const months = 1 / WEEKS_PER_MONTH;
   const netBurn = (f.burnMonthly - f.revenue / 12) * months;
+  // Public companies re-rate with the market; private ones now carry a live mark
+  // that tracks revenue + hype (floored at the last round), so growing the
+  // business actually moves the valuation, net worth, and IPO-readiness.
   const valuation =
     state.company.stage === "public"
       ? repricePublic(f.valuation, drift.world, state.company.industry, rng)
-      : f.valuation;
+      : privateValuationMark(state.company, drift.world);
   const company = { ...state.company, financials: { ...f, cash: f.cash - netBurn, valuation } };
 
   const worldHistory = [...state.worldHistory, snapshotWorld(drift.world, week)].slice(-WORLD_HISTORY_CAP);

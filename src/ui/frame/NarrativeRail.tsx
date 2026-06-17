@@ -1,7 +1,7 @@
 import { useGame } from "@/state/store";
 import { usePrefs } from "@/state/prefs";
-import { founderOwnership, latestPostMoney } from "@/engine/captable";
-import { runwayMonths } from "@/engine/finance";
+import { founderOwnership } from "@/engine/captable";
+import { runwayMonths, valuationMark } from "@/engine/finance";
 import { generateNarrative } from "@/engine/narrative";
 import { climateLabel } from "@/engine/world";
 import { formatMoney, formatPct } from "@/engine/format";
@@ -30,7 +30,7 @@ export function NarrativeRail() {
   const { company, clock } = game;
   const n = generateNarrative(game, content);
   const founderPct = founderOwnership(company.capTable);
-  const post = latestPostMoney(company.capTable);
+  const post = valuationMark(company);
   const runway = runwayMonths(company);
   const rounds = company.capTable.rounds.filter((r) => r.postMoney > 0);
   const last = rounds[rounds.length - 1];

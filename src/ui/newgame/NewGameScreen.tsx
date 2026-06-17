@@ -65,7 +65,10 @@ const CUSTOM_ATTRS = [
   { key: "exec", label: "Team Builder", min: 0, max: 10, hint: "The quality of your first executive hires." },
 ] as const;
 type CustomKey = (typeof CUSTOM_ATTRS)[number]["key"];
-const TILT_BUDGET = 22;
+// A tight budget by default, so a hand-built founder trades weaknesses for
+// strengths rather than min-maxing everything. The "relaxed" opt-out lifts the
+// cap for players who want an easy time.
+const TILT_BUDGET = 14;
 const NEUTRAL_ATTRS: Record<CustomKey, number> = { reputation: 0, warmth: 0, integrity: 0, signature: 0, exec: 0 };
 
 export function NewGameScreen() {
@@ -77,6 +80,7 @@ export function NewGameScreen() {
   const [sub, setSub] = useState<PlayableSubIndustry | null>(null);
   const [archetypeId, setArchetypeId] = useState<string | null>(null);
   const [customAttrs, setCustomAttrs] = useState<Record<CustomKey, number>>(NEUTRAL_ATTRS);
+  const [relaxedBudget, setRelaxedBudget] = useState(false);
   const [age, setAge] = useState(35);
   const [founderName, setFounderName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -89,7 +93,7 @@ export function NewGameScreen() {
   const suggestedCompany = sub ? NAME_SUGGESTIONS[sub] : "";
   const effectiveCompany = companyTouched ? companyName : suggestedCompany;
   const tiltUsed = CUSTOM_ATTRS.reduce((s, a) => s + customAttrs[a.key], 0);
-  const overBudget = archetypeId === "custom" && tiltUsed > TILT_BUDGET;
+  const overBudget = archetypeId === "custom" && !relaxedBudget && tiltUsed > TILT_BUDGET;
   const ready = Boolean(industry && sub && founderName.trim() && effectiveCompany.trim() && !overBudget);
 
   const subs = useMemo(() => (industry ? SUBS[industry] : []), [industry]);
@@ -238,15 +242,21 @@ export function NewGameScreen() {
                         <span
                           className="founder-custom__fill"
                           style={{
-                            width: `${Math.max(0, Math.min(100, (tiltUsed / TILT_BUDGET) * 100))}%`,
-                            background: overBudget ? "var(--down)" : "var(--accent)",
+                            width: relaxedBudget ? "100%" : `${Math.max(0, Math.min(100, (tiltUsed / TILT_BUDGET) * 100))}%`,
+                            background: overBudget ? "var(--down)" : relaxedBudget ? "var(--text-faint)" : "var(--accent)",
                           }}
                         />
                       </span>
                       <span className={`founder-custom__budget-val${overBudget ? " down" : ""}`}>
-                        {tiltUsed} / {TILT_BUDGET}
+                        {relaxedBudget ? `${tiltUsed} · free` : `${tiltUsed} / ${TILT_BUDGET}`}
                       </span>
                     </div>
+                    <label className="founder-custom__relaxed">
+                      <input type="checkbox" checked={relaxedBudget} onChange={(e) => setRelaxedBudget(e.target.checked)} />
+                      <span>
+                        Relaxed budget <em>— ignore the cap (easier; min-max your founder)</em>
+                      </span>
+                    </label>
                     <div className="founder-custom__sliders">
                       {CUSTOM_ATTRS.map((a) => (
                         <Slider

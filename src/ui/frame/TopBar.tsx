@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
 import { WealthPopover } from "./WealthPopover";
-import { latestPostMoney, founderOwnership } from "@/engine/captable";
-import { runwayMonths } from "@/engine/finance";
+import { founderOwnership } from "@/engine/captable";
+import { runwayMonths, valuationMark } from "@/engine/finance";
 import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
 import { industryLabel } from "@/domain/ids";
@@ -45,8 +45,7 @@ export function TopBar() {
   if (!game) return null;
 
   const { world, company, founder, clock } = game;
-  const post = latestPostMoney(company.capTable);
-  const nw = founderOwnership(company.capTable) * post + founder.personalCash;
+  const nw = founderOwnership(company.capTable) * valuationMark(company) + founder.personalCash;
   const hype = world.hype[company.industry] ?? 50;
   const runway = runwayMonths(company);
 

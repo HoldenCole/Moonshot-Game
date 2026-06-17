@@ -121,6 +121,15 @@ test("tickWeek is a pure step (does not mutate the input state)", () => {
   assert.equal(g.clock.week, 0);
 });
 
+test("a private company's valuation tracks revenue, not just rounds", () => {
+  const g = base(5, 0);
+  g.company.financials.revenue = 80; // $80M revenue, no priced round
+  g.company.financials.valuation = 0;
+  const r = advance(g, TUNING, { type: "weeks", weeks: 1 });
+  // Marked at a sector revenue multiple — comfortably past the IPO scale bar.
+  assert.ok(r.state.company.financials.valuation > 250, `valuation ${r.state.company.financials.valuation}`);
+});
+
 test("a drawn loan services interest through the tick and settles at maturity", () => {
   const g = base(20, 0); // ample cash, no operating burn — isolate debt service
   const loan: Loan = { id: "L", lenderId: "b", lenderName: "Bank", principal: 10, rateAnnual: 5.2, startWeek: 0, termWeeks: 3 };

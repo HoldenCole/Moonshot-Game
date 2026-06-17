@@ -1,14 +1,15 @@
 // Personal wealth — the motivational spine made legible. Net worth splits into
-// your equity stake (illiquid, marked at the latest post-money) and personal
+// your equity stake (illiquid, marked at the live valuation) and personal
 // liquid cash; milestones are the founder→magnate ladder.
 
 import type { GameState } from "@/domain/state";
 import type { Money } from "@/domain/captable";
 import type { Tuning } from "@/domain/tuning";
-import { founderOwnership, latestPostMoney } from "./captable";
+import { founderOwnership } from "./captable";
+import { valuationMark } from "./finance";
 
 export interface WealthBreakdown {
-  /** Value of your company stake at the latest post-money, $M (illiquid). */
+  /** Value of your company stake at the live valuation, $M (illiquid). */
   equity: Money;
   /** Personal liquid wealth, $M. */
   cash: Money;
@@ -16,7 +17,7 @@ export interface WealthBreakdown {
 }
 
 export function wealthBreakdown(state: GameState): WealthBreakdown {
-  const equity = founderOwnership(state.company.capTable) * latestPostMoney(state.company.capTable);
+  const equity = founderOwnership(state.company.capTable) * valuationMark(state.company);
   const cash = state.founder.personalCash;
   return { equity, cash, total: equity + cash };
 }

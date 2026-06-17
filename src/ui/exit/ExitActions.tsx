@@ -1,11 +1,12 @@
 import { useGame } from "@/state/store";
-import { canExplore, cashOutProceeds, ipoEligible, lockupExpired, weeksToUnlock } from "@/engine/exit";
+import { canExplore, cashOutProceeds, ipoEligible, ipoReadiness, lockupExpired, weeksToUnlock } from "@/engine/exit";
 import { formatMoney } from "@/engine/format";
 import { Panel } from "@/ui/components/Panel";
 import { Button } from "@/ui/components/controls";
 
-/** Exit CTAs. Pre-IPO: take the company public or field a sale. Post-IPO: a
- *  live public company you can ride, cash out of (after lockup), or sell. */
+/** Exit CTAs. Pre-IPO: a transparent IPO-readiness checklist (so you always know
+ *  what's blocking the IPO) plus the option to field a sale. Post-IPO: a live
+ *  public company you can ride, cash out of (after lockup), or sell. */
 export function ExitActions() {
   const game = useGame((s) => s.game);
   const openIpo = useGame((s) => s.openIpo);
@@ -44,6 +45,7 @@ export function ExitActions() {
   const ipoOk = ipoEligible(game);
   const saleOk = canExplore(game);
   if (!ipoOk && !saleOk) return null;
+  const readiness = ipoReadiness(game);
 
   return (
     <Panel className="exit-actions" coach="exit">
@@ -52,9 +54,20 @@ export function ExitActions() {
           <div className="section-label">Exit</div>
           <p className="exit-actions__note">
             {ipoOk
-              ? "You're public-ready and the window is open. Or take an offer."
-              : "Not yet IPO-ready, but a buyer may still come knocking."}
+              ? "You're public-ready and the window is open — or take an offer."
+              : "Your path to an IPO is below; a buyer may also come knocking."}
           </p>
+          {!ipoOk && (
+            <ul className="ipo-readiness">
+              {readiness.map((c) => (
+                <li key={c.id} className={`ipo-readiness__item${c.met ? " is-met" : ""}`}>
+                  <span className="ipo-readiness__mark">{c.met ? "✓" : "○"}</span>
+                  <span className="ipo-readiness__label">{c.label}</span>
+                  <span className="ipo-readiness__detail num">{c.detail}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="exit-actions__btns">
           {ipoOk && (

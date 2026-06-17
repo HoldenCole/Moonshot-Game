@@ -3979,3 +3979,60 @@
   color: var(--text-dim);
   font-weight: 550;
 }
+
+/* ── IPO readiness checklist ──────────────────────────────────────────────────
+   The transparent pre-IPO gating: scale, track record, open window. */
+.ipo-readiness {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.ipo-readiness__item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+.ipo-readiness__mark {
+  width: 13px;
+  color: var(--text-faint);
+  font-weight: 700;
+}
+.ipo-readiness__item.is-met .ipo-readiness__mark {
+  color: var(--up);
+}
+.ipo-readiness__label {
+  min-width: 86px;
+  color: var(--text);
+  font-weight: 550;
+}
+.ipo-readiness__item.is-met .ipo-readiness__label {
+  color: var(--text-dim);
+}
+.ipo-readiness__detail {
+  color: var(--text-faint);
+  font-size: 11.5px;
+}
+
+/* Custom-founder "relaxed budget" opt-out of the tilt cap. */
+.founder-custom__relaxed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.founder-custom__relaxed input {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.founder-custom__relaxed em {
+  color: var(--text-faint);
+  font-style: normal;
+}
