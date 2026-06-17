@@ -16,6 +16,7 @@ import { bandWorsened, netBurnMonthly, netWorth, privateValuationMark, runwayBan
 import { evaluateEvents } from "./events";
 import { tickProcess } from "./signature";
 import { justClosedQuarter, marketReaction, quarterIndex, resultVerbose, settleQuarter } from "./earnings";
+import { markPortfolio } from "./investing";
 import { applyOutcome as applyEventOutcome, resolveOutcome, scaleByExec } from "./eventOutcomes";
 import { autoResolveChoice, delegationReport, eventArea, isDelegated, shouldEscalate } from "./delegation";
 
@@ -182,6 +183,9 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   // 7 — Revenue history (capped) so growth can be derived for the readouts.
   const revLog = [...(next.company.financials.revenueLog ?? []), next.company.financials.revenue].slice(-16);
   next = { ...next, company: { ...next.company, financials: { ...next.company.financials, revenueLog: revLog } } };
+
+  // 8 — Mark the founder's personal portfolio to the live market.
+  if (env) next = markPortfolio(next, env.market, next.world, week);
 
   next = { ...next, log: [...next.log, ...entries], alerts: mergeAlerts(next.alerts, alerts) };
   return { state: next, entries, alerts, decision, outOfCash: newBand === "empty", eventFired: eventFired || processResolved };

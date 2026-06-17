@@ -47,9 +47,11 @@ export function valuationMark(c: PlayerCompany): Money {
   return Math.max(latestPostMoney(c.capTable), c.financials.valuation);
 }
 
-/** Founder net worth ($M): equity stake at the live mark + personal cash. */
+/** Founder net worth ($M): equity stake at the live mark + personal cash + the
+ *  marked value of any personal portfolio holdings. */
 export function netWorth(state: GameState): Money {
-  return founderOwnership(state.company.capTable) * valuationMark(state.company) + state.founder.personalCash;
+  const portfolio = (state.founder.portfolio ?? []).reduce((s, h) => s + h.value, 0);
+  return founderOwnership(state.company.capTable) * valuationMark(state.company) + state.founder.personalCash + portfolio;
 }
 
 /** Annual net income ($M): revenue minus operating costs and debt service.

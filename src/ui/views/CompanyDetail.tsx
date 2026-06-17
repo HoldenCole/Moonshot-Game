@@ -2,9 +2,11 @@ import { useGame } from "@/state/store";
 import type { Company } from "@/content/load";
 import type { CompanyGraph } from "@/engine/companyGraph";
 import { fundamentalValue, marketPrice, mispricing } from "@/engine/pricing";
+import { holdingGain } from "@/engine/investing";
 import { formatMoney, formatPct } from "@/engine/format";
 import { industryLabel, subIndustryLabel } from "@/domain/ids";
 import { Icon } from "@/ui/components/Icon";
+import { Button } from "@/ui/components/controls";
 
 /** The detail drawer for a selected market company: live price vs. fair value
  *  (the mispricing skill signal), quality, and its place in the relationship
@@ -84,6 +86,8 @@ export function CompanyDetail({
             : "Trading at a discount to fundamentals — potentially mispriced."}
       </p>
 
+      {perShare != null && <InvestSection company={company} />}
+
       <Section label="Quality">
         <Bar label="Fundamentals" value={company.quality.fundamentals} />
         <Bar label="Moat" value={company.quality.moat} />
@@ -104,6 +108,56 @@ export function CompanyDetail({
       <RelRow label="Customers" names={names(graph.customersOf(company.id))} />
       <RelRow label="Investors" names={investors.map((f) => firmById.get(f)?.name ?? f)} highlight={sharedWithYou.map((f) => firmById.get(f)?.name ?? f)} />
     </aside>
+  );
+}
+
+/** Buy / sell a personal stake, funded by personal cash. */
+function InvestSection({ company }: { company: Company }) {
+  const game = useGame((s) => s.game)!;
+  const buy = useGame((s) => s.buyStock);
+  const sell = useGame((s) => s.sellStock);
+  const cash = game.founder.personalCash;
+  const holding = game.founder.portfolio?.find((h) => h.companyId === company.id);
+  const canInvest = cash >= 0.1;
+  const amt = (frac: number) => Math.round(cash * frac * 100) / 100;
+
+  return (
+    <div className="invest-box">
+      <div className="invest-box__head">
+        <span className="section-label">Invest</span>
+        <span className="invest-box__cash num">{formatMoney(cash)} to invest</span>
+      </div>
+      {holding && (
+        <div className="invest-pos">
+          <span className="invest-pos__own">
+            You hold <strong className="num">{formatMoney(holding.value)}</strong>
+          </span>
+          <span className={`invest-pos__gain num ${holdingGain(holding) >= 0 ? "up" : "down"}`}>
+            {holdingGain(holding) >= 0 ? "+" : ""}
+            {formatMoney(holdingGain(holding))}
+          </span>
+          <div className="invest-pos__sell">
+            <Button variant="subtle" size="sm" onClick={() => sell(company.id, 0.5)}>
+              Sell half
+            </Button>
+            <Button variant="subtle" size="sm" onClick={() => sell(company.id, 1)}>
+              Sell all
+            </Button>
+          </div>
+        </div>
+      )}
+      {canInvest ? (
+        <div className="invest-buy">
+          {[0.1, 0.25, 0.5].map((frac) => (
+            <Button key={frac} variant="primary" size="sm" onClick={() => buy(company.id, amt(frac))} disabled={amt(frac) < 0.1}>
+              Buy {formatMoney(amt(frac))}
+            </Button>
+          ))}
+        </div>
+      ) : (
+        <p className="invest-box__none dim">No personal capital to invest yet — exits and cash-outs build it.</p>
+      )}
+    </div>
   );
 }
 

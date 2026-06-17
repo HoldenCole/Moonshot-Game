@@ -18,6 +18,7 @@ import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/even
 import { applyPublicChoice } from "@/engine/earnings";
 import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } from "@/engine/debt";
 import { hireStaff as engineHireStaff, investCapacity as engineInvestCapacity, trimTeam as engineTrimTeam } from "@/engine/operations";
+import { buyStock as engineBuyStock, sellStock as engineSellStock } from "@/engine/investing";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
@@ -93,6 +94,11 @@ interface GameStore {
   trimTeam: (count: number) => void;
   /** Invest in a compute / facilities capacity tier (capex + burn, lifts execution). */
   investCapacity: (tierId: string) => void;
+
+  /** Buy a personal stake in a public company (funded by personal cash). */
+  buyStock: (companyId: string, amount: number) => void;
+  /** Sell a fraction (0–1) of a personal holding at the current price. */
+  sellStock: (companyId: string, fraction: number) => void;
 
   startNegotiation: (leadInvestorId: string, openingTerms: RoundTerms) => void;
   counterOffer: (terms: RoundTerms) => void;
@@ -269,6 +275,24 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       if (!s.game) return s;
       const a = withAch(engineInvestCapacity(s.game, tierId));
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  buyStock: (companyId, amount) =>
+    set((s) => {
+      if (!s.game) return s;
+      const market = [...s.content.companies, ...s.game.market.companies];
+      const company = market.find((c) => c.id === companyId);
+      if (!company) return s;
+      const a = withAch(engineBuyStock(s.game, company, amount, s.game.world, s.game.clock.week));
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  sellStock: (companyId, fraction) =>
+    set((s) => {
+      if (!s.game) return s;
+      const market = [...s.content.companies, ...s.game.market.companies];
+      const a = withAch(engineSellStock(s.game, companyId, fraction, market, s.game.world, s.game.clock.week));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 

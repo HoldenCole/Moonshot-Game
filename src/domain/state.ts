@@ -27,6 +27,8 @@ export interface FounderState {
   investorWarmth?: number;
   signatureLean?: number;
   execQualityFloor?: number;
+  /** Personal stakes in other public companies (absent until you invest). */
+  portfolio?: Holding[];
 }
 
 /** Two-tier investor memory: a numeric score plus, for hand-crafted firms, an
@@ -38,6 +40,18 @@ export interface FirmRelationship {
 }
 
 export const NEUTRAL_RELATIONSHIP = 50;
+
+/** A founder's personal stake in another public company (the capital-allocator
+ *  arc). Marked to market each tick. */
+export interface Holding {
+  companyId: string;
+  /** Shares held, in millions (matching market companies' shares_out unit). */
+  shares: number;
+  /** Total invested so far, $M. */
+  costBasis: Money;
+  /** Current market value, $M — re-marked each week. */
+  value: Money;
+}
 
 /** The sub-industry signature process (Phase 9): a commit→anticipate→resolve
  *  loop that gives the player something to advance toward. */

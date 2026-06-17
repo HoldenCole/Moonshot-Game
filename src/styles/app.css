@@ -2623,7 +2623,7 @@
 }
 .market-detail__price {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
   gap: 10px;
   padding: 12px 0;
   border-top: 0.5px solid var(--border);
@@ -4544,5 +4544,137 @@
   color: var(--text-dim);
 }
 .fin-result--missed {
+  color: var(--down);
+}
+
+/* ── Invest box ───────────────────────────────────────────────────────────────
+   Buy / sell a personal stake from the market detail drawer. */
+.invest-box {
+  margin: 12px 0 4px;
+  padding: 12px;
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-2);
+}
+.invest-box__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.invest-box__cash {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.invest-box__none {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.invest-pos {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border-faint);
+}
+.invest-pos__own {
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+.invest-pos__gain {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: right;
+}
+.invest-pos__gain.up {
+  color: var(--up);
+}
+.invest-pos__gain.down {
+  color: var(--down);
+}
+.invest-pos__sell {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.invest-buy {
+  display: flex;
+  gap: 8px;
+}
+.invest-buy > * {
+  flex: 1;
+}
+
+/* ── Portfolio panel ──────────────────────────────────────────────────────────
+   The founder's personal stakes in other public companies, marked to market. */
+.portfolio__empty {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.portfolio__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 6px 0 12px;
+  margin-bottom: 10px;
+  border-bottom: 0.5px solid var(--border);
+}
+.portfolio__total-v {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.portfolio__total-g {
+  font-size: 13px;
+  font-weight: 600;
+}
+.portfolio__total-g.up {
+  color: var(--up);
+}
+.portfolio__total-g.down {
+  color: var(--down);
+}
+.portfolio__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.portfolio__row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 14px;
+  padding: 7px 0;
+  border-bottom: 0.5px solid var(--border-faint);
+}
+.portfolio__row:last-child {
+  border-bottom: none;
+}
+.portfolio__name {
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.portfolio__val {
+  font-size: 13px;
+  font-weight: 600;
+}
+.portfolio__gain {
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 56px;
+  text-align: right;
+}
+.portfolio__gain.up {
+  color: var(--up);
+}
+.portfolio__gain.down {
   color: var(--down);
 }

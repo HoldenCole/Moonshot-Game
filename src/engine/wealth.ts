@@ -13,13 +13,16 @@ export interface WealthBreakdown {
   equity: Money;
   /** Personal liquid wealth, $M. */
   cash: Money;
+  /** Marked value of personal stakes in other public companies, $M. */
+  portfolio: Money;
   total: Money;
 }
 
 export function wealthBreakdown(state: GameState): WealthBreakdown {
   const equity = founderOwnership(state.company.capTable) * valuationMark(state.company);
   const cash = state.founder.personalCash;
-  return { equity, cash, total: equity + cash };
+  const portfolio = (state.founder.portfolio ?? []).reduce((s, h) => s + h.value, 0);
+  return { equity, cash, portfolio, total: equity + cash + portfolio };
 }
 
 export interface MilestoneProgress {

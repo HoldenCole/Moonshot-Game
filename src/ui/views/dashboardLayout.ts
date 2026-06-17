@@ -15,6 +15,7 @@ export const DASH_PANELS: DashPanelMeta[] = [
   { id: "operations", label: "Operations" },
   { id: "captable", label: "Cap Table" },
   { id: "fundraising", label: "Fundraising" },
+  { id: "portfolio", label: "Portfolio" },
 ];
 
 export const DASH_PANEL_IDS: string[] = DASH_PANELS.map((p) => p.id);

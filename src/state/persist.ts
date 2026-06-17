@@ -7,8 +7,7 @@ import type { GameState } from "@/domain/state";
 import { SCHEMA_VERSION } from "@/domain/state";
 import { INITIAL_EVENT_STATE } from "@/domain/events";
 import { normalizeDifficulty } from "@/engine/difficulty";
-import { founderOwnership } from "@/engine/captable";
-import { valuationMark } from "@/engine/finance";
+import { netWorth as computeNetWorth } from "@/engine/finance";
 import { IDLE_SIGNATURE } from "@/engine/signature";
 import { saveBackend } from "./saveBackend";
 
@@ -57,8 +56,7 @@ export interface SaveSummary {
 export function saveSummary(): SaveSummary | null {
   const game = loadGame();
   if (!game) return null;
-  const netWorth = founderOwnership(game.company.capTable) * valuationMark(game.company) + game.founder.personalCash;
-  return { company: game.company.name, week: game.clock.week, netWorth, savedAt: readSavedAt() ?? "" };
+  return { company: game.company.name, week: game.clock.week, netWorth: computeNetWorth(game), savedAt: readSavedAt() ?? "" };
 }
 
 function readSavedAt(): string | null {

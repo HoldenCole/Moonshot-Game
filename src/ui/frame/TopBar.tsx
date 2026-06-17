@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
 import { WealthPopover } from "./WealthPopover";
-import { founderOwnership } from "@/engine/captable";
-import { runwayMonths, valuationMark } from "@/engine/finance";
+import { netWorth, runwayMonths } from "@/engine/finance";
 import { nextBalloon } from "@/engine/debt";
 import { WEEKS_PER_MONTH, weeksToCritical } from "@/engine/tick";
 import { formatMoney } from "@/engine/format";
@@ -45,8 +44,8 @@ export function TopBar() {
   const openPalette = useUi((s) => s.setPaletteOpen);
   if (!game) return null;
 
-  const { world, company, founder, clock } = game;
-  const nw = founderOwnership(company.capTable) * valuationMark(company) + founder.personalCash;
+  const { world, company, clock } = game;
+  const nw = netWorth(game);
   const hype = world.hype[company.industry] ?? 50;
   const runway = runwayMonths(company);
 

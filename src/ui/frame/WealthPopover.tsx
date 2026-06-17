@@ -36,6 +36,13 @@ export function WealthPopover({ onClose }: { onClose: () => void }) {
             <span className="wealth-pop__sub">liquid</span>
             <span className="wealth-pop__v num">{formatMoney(w.cash)}</span>
           </div>
+          {w.portfolio > 0 && (
+            <div className="wealth-pop__row">
+              <span className="wealth-pop__k">Market portfolio</span>
+              <span className="wealth-pop__sub">stakes in public companies</span>
+              <span className="wealth-pop__v num">{formatMoney(w.portfolio)}</span>
+            </div>
+          )}
         </div>
 
         {ms ? (
