@@ -16,8 +16,8 @@ propulsion = 20
 reliability = 25
 
 [small_lift.economics]
-build_cost = 35
-build_weeks = 44
+build_cost = 8
+build_weeks = 36
 unit_margin = 0.30
 capacity_type = "launch_capacity"
 capacity_to_build = 1
@@ -45,8 +45,8 @@ reusability = 45
 reliability = 45
 
 [medium_lift.economics]
-build_cost = 140
-build_weeks = 78
+build_cost = 30
+build_weeks = 60
 unit_margin = 0.48
 capacity_type = "launch_capacity"
 capacity_to_build = 2
@@ -74,8 +74,8 @@ reusability = 60
 reliability = 70
 
 [heavy_human.economics]
-build_cost = 420
-build_weeks = 130
+build_cost = 80
+build_weeks = 90
 unit_margin = 0.52
 capacity_type = "launch_capacity"
 capacity_to_build = 3

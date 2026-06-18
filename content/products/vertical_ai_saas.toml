@@ -16,8 +16,8 @@ domain_depth = 20
 model_leverage = 15
 
 [point_solution.economics]
-build_cost = 8
-build_weeks = 18
+build_cost = 2
+build_weeks = 14
 unit_margin = 0.72
 capacity_type = "deployment"
 capacity_to_build = 1

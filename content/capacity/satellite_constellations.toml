@@ -13,28 +13,28 @@ description = "Your assembly throughput — how many satellites you can build an
 
 [[sat_manufacturing.rungs]]
 capacity = 3
-cost = 50
-build_weeks = 44
+cost = 8
+build_weeks = 28
 [[sat_manufacturing.rungs]]
 capacity = 6
-cost = 120
-build_weeks = 52
+cost = 22
+build_weeks = 34
 [[sat_manufacturing.rungs]]
 capacity = 10
-cost = 260
-build_weeks = 60
+cost = 55
+build_weeks = 42
 [[sat_manufacturing.rungs]]
 capacity = 16
-cost = 500
-build_weeks = 70
+cost = 110
+build_weeks = 52
 [[sat_manufacturing.rungs]]
 capacity = 23
-cost = 880
-build_weeks = 80
+cost = 200
+build_weeks = 62
 [[sat_manufacturing.rungs]]
 capacity = 32
-cost = 1450
-build_weeks = 90
+cost = 350
+build_weeks = 72
 
 [ground_network]
 id = "ground_network"
@@ -45,25 +45,25 @@ description = "The ground stations and network operations that bring your fleet'
 
 [[ground_network.rungs]]
 capacity = 2
-cost = 20
-build_weeks = 24
+cost = 5
+build_weeks = 16
 [[ground_network.rungs]]
 capacity = 5
-cost = 55
-build_weeks = 30
+cost = 14
+build_weeks = 20
 [[ground_network.rungs]]
 capacity = 9
+cost = 32
+build_weeks = 24
+[[ground_network.rungs]]
+capacity = 14
+cost = 65
+build_weeks = 30
+[[ground_network.rungs]]
+capacity = 20
 cost = 120
 build_weeks = 36
 [[ground_network.rungs]]
-capacity = 14
-cost = 230
-build_weeks = 42
-[[ground_network.rungs]]
-capacity = 20
-cost = 400
-build_weeks = 48
-[[ground_network.rungs]]
 capacity = 28
-cost = 660
-build_weeks = 54
+cost = 210
+build_weeks = 42

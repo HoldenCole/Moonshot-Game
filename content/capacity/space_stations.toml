@@ -12,25 +12,25 @@ description = "Your in-orbit construction and berthing capacity — the assembly
 
 [[module_construction.rungs]]
 capacity = 3
-cost = 70
-build_weeks = 60
+cost = 18
+build_weeks = 44
 [[module_construction.rungs]]
 capacity = 6
-cost = 160
-build_weeks = 70
+cost = 45
+build_weeks = 52
 [[module_construction.rungs]]
 capacity = 10
-cost = 340
-build_weeks = 82
+cost = 100
+build_weeks = 62
 [[module_construction.rungs]]
 capacity = 15
-cost = 640
-build_weeks = 94
+cost = 200
+build_weeks = 72
 [[module_construction.rungs]]
 capacity = 21
-cost = 1100
-build_weeks = 106
+cost = 380
+build_weeks = 84
 [[module_construction.rungs]]
 capacity = 28
-cost = 1800
-build_weeks = 118
+cost = 680
+build_weeks = 96

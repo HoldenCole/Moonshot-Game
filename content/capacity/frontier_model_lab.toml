@@ -12,29 +12,29 @@ description = "The GPUs and pods your models train and serve on. Every training 
 
 [[compute.rungs]]
 capacity = 3
-cost = 30
-build_weeks = 20
+cost = 4
+build_weeks = 10
 [[compute.rungs]]
 capacity = 6
-cost = 75
-build_weeks = 26
+cost = 12
+build_weeks = 16
 [[compute.rungs]]
 capacity = 10
-cost = 160
-build_weeks = 32
+cost = 30
+build_weeks = 22
 [[compute.rungs]]
 capacity = 16
-cost = 320
-build_weeks = 38
+cost = 80
+build_weeks = 28
 [[compute.rungs]]
 capacity = 24
-cost = 600
-build_weeks = 44
+cost = 175
+build_weeks = 34
 [[compute.rungs]]
 capacity = 34
-cost = 1050
-build_weeks = 50
+cost = 380
+build_weeks = 40
 [[compute.rungs]]
 capacity = 46
-cost = 1750
-build_weeks = 56
+cost = 750
+build_weeks = 46

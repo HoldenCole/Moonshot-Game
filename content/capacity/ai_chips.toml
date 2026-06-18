@@ -10,25 +10,25 @@ description = "Where silicon gets made. Each line is an enormous capital project
 
 [[fab_line.rungs]]
 capacity = 2
-cost = 60
-build_weeks = 52
+cost = 15
+build_weeks = 40
 [[fab_line.rungs]]
 capacity = 4
-cost = 140
-build_weeks = 60
+cost = 40
+build_weeks = 48
 [[fab_line.rungs]]
 capacity = 7
-cost = 300
-build_weeks = 72
+cost = 90
+build_weeks = 56
 [[fab_line.rungs]]
 capacity = 11
-cost = 560
-build_weeks = 84
+cost = 180
+build_weeks = 64
 [[fab_line.rungs]]
 capacity = 16
-cost = 980
-build_weeks = 96
+cost = 320
+build_weeks = 72
 [[fab_line.rungs]]
 capacity = 22
-cost = 1600
-build_weeks = 108
+cost = 520
+build_weeks = 84
