@@ -19,6 +19,7 @@ import { applyPublicChoice } from "@/engine/earnings";
 import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } from "@/engine/debt";
 import { hireStaff as engineHireStaff, investCapacity as engineInvestCapacity, trimTeam as engineTrimTeam } from "@/engine/operations";
 import { buyStock as engineBuyStock, sellStock as engineSellStock, type InvestAccount } from "@/engine/investing";
+import { initProductsRuntime, subContentFor } from "@/engine/productsRuntime";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
@@ -146,18 +147,18 @@ export const useGame = create<GameStore>((set, get) => ({
   achievementToast: null,
 
   newGame: (choices) =>
-    set((s) => ({
-      carryOver: null,
-      exitFlow: null,
-      game: createNewGame(
+    set((s) => {
+      const game = createNewGame(
         { ...choices, carryOver: s.carryOver ?? undefined },
         new Date().toISOString(),
         s.content.companies,
         s.content.investors.map((i) => i.id),
-      ),
-      lastAdvance: null,
-      negotiation: null,
-    })),
+      );
+      // Attach the depth-system runtime for the chosen sub-industry.
+      const sc = subContentFor(s.content, game.company.subIndustry);
+      const withProducts = sc ? { ...game, company: { ...game.company, products: initProductsRuntime(sc) } } : game;
+      return { carryOver: null, exitFlow: null, game: withProducts, lastAdvance: null, negotiation: null };
+    }),
 
   continueGame: () => set({ game: loadGame(), negotiation: null, exitFlow: null, lastAdvance: null }),
 

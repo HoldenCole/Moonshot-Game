@@ -5,6 +5,7 @@ import type { Industry, Stage, SubIndustry } from "./ids";
 import type { CapTable, Money } from "./captable";
 import type { Alert, LogEntry, RunwayBand } from "./log";
 import type { CompanyContent } from "./content";
+import type { ProductsRuntime } from "./products";
 import type { EventState, ResolvedEvent } from "./events";
 
 export const SCHEMA_VERSION = 1;
@@ -139,6 +140,10 @@ export interface PlayerCompany {
    *  balance-sheet asset (kept out of net worth, like company cash). Absent until
    *  the company invests. */
   portfolio?: Holding[];
+  /** The Products / R&D / Capacity depth system runtime — R&D lines, capacity,
+   *  in-flight bets, and shipped products. Absent for a sub-industry with no
+   *  authored depth content. */
+  products?: ProductsRuntime;
   /** The sub-industry signature process. */
   signature: SignatureState;
   /** Persistent quantities the signature mechanic builds up — keyed per
