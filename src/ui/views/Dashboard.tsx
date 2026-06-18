@@ -12,7 +12,7 @@ import { FlashNum } from "@/ui/components/FlashNum";
 import { Icon } from "@/ui/components/Icon";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
-import { SignatureWidget } from "@/ui/operating/SignatureWidget";
+import { ProductsPanel } from "@/ui/operating/ProductsPanel";
 import { OperationsPanel } from "@/ui/operating/OperationsPanel";
 import { FinancialsPanel } from "@/ui/operating/FinancialsPanel";
 import { PortfolioPanel } from "@/ui/operating/PortfolioPanel";
@@ -185,8 +185,8 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
         return <FinancialBand company={game.company} />;
       case "statement":
         return <FinancialsPanel />;
-      case "signature":
-        return <SignatureWidget />;
+      case "products":
+        return <ProductsPanel />;
       case "operations":
         return <OperationsPanel />;
       case "captable":

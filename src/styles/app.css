@@ -4834,3 +4834,155 @@
 .earn-fig__value--managed {
   color: var(--text-dim);
 }
+
+/* ── Products & R&D panel (the depth system's home surface) ───────────────────── */
+.prod-section {
+  padding: 12px 0;
+  border-top: 0.5px solid var(--border);
+}
+.prod-section:first-of-type {
+  border-top: none;
+  padding-top: 4px;
+}
+.prod-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.prod-budget {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.prod-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.prod-line__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+.prod-line__name {
+  font-size: 12.5px;
+  font-weight: 550;
+}
+.prod-line__lvl {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.prod-caps {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 8px;
+}
+.prod-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.prod-cap__name {
+  font-size: 12.5px;
+  font-weight: 550;
+  margin-right: 8px;
+}
+.prod-cap__avail {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.prod-cap__max {
+  font-size: 11.5px;
+}
+.prod-empty {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.prod-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 7px 0;
+  border-bottom: 0.5px solid var(--border-faint);
+}
+.prod-row:last-child {
+  border-bottom: none;
+}
+.prod-row__name {
+  font-size: 13px;
+  font-weight: 550;
+}
+.prod-row__tag {
+  font-size: 11px;
+  color: var(--accent);
+  text-align: right;
+}
+.prod-row__meta {
+  grid-column: 1 / -1;
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.prod-row__state {
+  font-size: 10.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: right;
+}
+.prod-row__state--ramping {
+  color: var(--accent);
+}
+.prod-row__state--mature {
+  color: var(--up);
+}
+.prod-row__state--declining {
+  color: var(--warn);
+}
+.prod-builds {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.build-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.build-row.is-locked {
+  opacity: 0.6;
+}
+.build-row__name {
+  font-size: 12.5px;
+  font-weight: 550;
+}
+.build-row__sub {
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+/* ── Team panel (headcount as flavor) ─────────────────────────────────────────── */
+.ops-team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 10px;
+}
+.ops-team__count {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ops-team__label {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-left: 8px;
+}

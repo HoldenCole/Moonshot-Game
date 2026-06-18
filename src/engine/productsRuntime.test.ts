@@ -1,9 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { advanceProducts, initProductsRuntime, productsOperatingRevenue, type SubContent } from "./productsRuntime.ts";
+import { advanceProducts, buyCapacityRung, commitBet, initProductsRuntime, productsOperatingRevenue, type SubContent } from "./productsRuntime.ts";
 import { makeBet } from "./products.ts";
+import { createNewGame } from "@/state/newgame";
 import type { CapacityRung, CapacityType, ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
+import type { GameState } from "@/domain/state";
 
 const line = (id: string, drives: string[]): RDLine => ({
   id,
@@ -97,4 +99,37 @@ test("a committed bet ships a product, which then earns ramping revenue", () => 
     rev0 = rev;
   }
   assert.ok(rev0 > 0, "the live product earns operating revenue");
+});
+
+function gameWithRuntime(): GameState {
+  const s = createNewGame(
+    { founderName: "You", companyName: "Co", industry: "ai", subIndustry: "ai_chips", color: "#fff", seed: 3 },
+    "2026-01-01T00:00:00Z",
+  );
+  s.company.products = initProductsRuntime(content);
+  s.company.financials = { ...s.company.financials, cash: 200 };
+  return s;
+}
+
+test("commitBet pays cash + queues a bet, and no-ops when gates aren't met", () => {
+  const s = gameWithRuntime();
+  s.company.products!.rd.levels = { a: 50, b: 50 }; // clears the a:10 gate
+  const after = commitBet(s, content, "p", "My Chip");
+  assert.equal(after.company.products!.bets.length, 1);
+  assert.equal(after.company.products!.bets[0]!.instance_name, "My Chip");
+  assert.ok(after.company.financials.cash < 200, "build cost paid");
+
+  // Gated: levels below the requirement → unchanged state.
+  const low = { ...s, company: { ...s.company, products: { ...s.company.products!, rd: { ...s.company.products!.rd, levels: { a: 1, b: 1 } } } } };
+  assert.equal(commitBet(low, content, "p", "X"), low);
+});
+
+test("buyCapacityRung pays cash + schedules a build; a no-op when short", () => {
+  const s = gameWithRuntime();
+  const after = buyCapacityRung(s, content, "fab");
+  assert.equal(after.company.products!.capacity.builds_in_progress.length, 1);
+  assert.ok(after.company.financials.cash < 200, "rung cost paid");
+
+  const broke = { ...s, company: { ...s.company, financials: { ...s.company.financials, cash: 0 } } };
+  assert.equal(buyCapacityRung(broke, content, "fab"), broke);
 });

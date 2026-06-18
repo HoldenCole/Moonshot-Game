@@ -4,11 +4,13 @@
 
 import type { Company } from "@/content/load";
 import type { CapacityType, ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
+import type { GameState } from "@/domain/state";
 import type { ProductsRuntime } from "@/domain/products";
 import { advanceRD, initRDState, rivalLevelsForLines } from "./rd";
-import { initCapacityState, tickCapacityBuilds } from "./capacity";
-import { productGrossProfit, tickBets, tickProduct } from "./products";
+import { canStartBet, initCapacityState, nextRung, startRungBuild, tickCapacityBuilds } from "./capacity";
+import { betCost, gatesMet, makeBet, productGrossProfit, tickBets, tickProduct } from "./products";
 import { advanceShare, rivalProductQuality } from "./productMarket";
+import { formatMoney } from "./format";
 
 /** The authored content for one sub-industry, resolved once and passed in. */
 export interface SubContent {
@@ -85,4 +87,77 @@ export function productsOperatingRevenue(rt: ProductsRuntime, productById: Map<s
     return arch ? s + productGrossProfit(p, arch, tuning) : s;
   }, 0);
   return Math.round(r * 100) / 100;
+}
+
+// ── Player mutations (store actions) ──────────────────────────────────────────
+
+/** Set the weekly R&D budget ($M/wk). */
+export function setRdBudget(rt: ProductsRuntime, amount: number): ProductsRuntime {
+  return { ...rt, rd: { ...rt.rd, rd_budget_per_week: Math.max(0, Math.round(amount * 100) / 100) } };
+}
+
+/** Set the per-line budget split, normalized to sum to 1. */
+export function setRdAllocation(rt: ProductsRuntime, allocation: Record<string, number>): ProductsRuntime {
+  const total = Object.values(allocation).reduce((s, x) => s + Math.max(0, x), 0);
+  const norm: Record<string, number> = {};
+  for (const [k, v] of Object.entries(allocation)) norm[k] = total > 0 ? Math.max(0, v) / total : 0;
+  return { ...rt, rd: { ...rt.rd, allocation: norm } };
+}
+
+/** Commit a bet to create a product (gates + capacity + concurrency + cash must
+ *  clear, else a no-op). */
+export function commitBet(state: GameState, c: SubContent, archetypeId: string, instanceName: string): GameState {
+  const rt = state.company.products;
+  if (!rt) return state;
+  const arch = c.productById.get(archetypeId);
+  if (!arch || !gatesMet(arch, rt.rd.levels)) return state;
+  const startable = canStartBet({
+    cap: rt.capacity,
+    capId: arch.economics.capacity_type,
+    bets: rt.bets,
+    products: rt.products,
+    productById: c.productById,
+    capacityToBuild: arch.economics.capacity_to_build,
+    maxConcurrentBets: c.tuning.max_concurrent_bets,
+  });
+  const cost = betCost(arch, c.tuning);
+  if (!startable || state.company.financials.cash < cost) return state;
+
+  const name = instanceName.trim() || arch.name;
+  const bet = makeBet(arch, name, "create", rt.rd.levels, state.clock.week, c.tuning, rt.bets.length);
+  return {
+    ...state,
+    company: {
+      ...state.company,
+      financials: { ...state.company.financials, cash: state.company.financials.cash - cost },
+      products: { ...rt, bets: [...rt.bets, bet] },
+      signature: { ...state.company.signature, status: "running" },
+    },
+    log: [
+      ...state.log,
+      { id: `bet-${archetypeId}-${state.clock.week}`, week: state.clock.week, kind: "company", tone: "neutral", headline: `Committed ${name}`, detail: `${formatMoney(cost)} to build over ~${bet.weeks_left} weeks. It ships when the build completes.` },
+    ],
+  };
+}
+
+/** Build the next rung of a capacity type (cash + a no-op when maxed/short). */
+export function buyCapacityRung(state: GameState, c: SubContent, capId: string): GameState {
+  const rt = state.company.products;
+  if (!rt) return state;
+  const type = c.capacityTypes.find((t) => t.id === capId);
+  if (!type) return state;
+  const next = nextRung(rt.capacity, type);
+  if (!next || state.company.financials.cash < next.rung.cost) return state;
+  return {
+    ...state,
+    company: {
+      ...state.company,
+      financials: { ...state.company.financials, cash: state.company.financials.cash - next.rung.cost },
+      products: { ...rt, capacity: startRungBuild(rt.capacity, type) },
+    },
+    log: [
+      ...state.log,
+      { id: `rung-${capId}-${state.clock.week}`, week: state.clock.week, kind: "company", tone: "neutral", headline: `Building ${type.name} capacity`, detail: `+${next.rung.capacity} ${type.unit_label}s in ${next.rung.build_weeks} weeks for ${formatMoney(next.rung.cost)}.` },
+    ],
+  };
 }

@@ -19,7 +19,14 @@ import { applyPublicChoice } from "@/engine/earnings";
 import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } from "@/engine/debt";
 import { hireStaff as engineHireStaff, investCapacity as engineInvestCapacity, trimTeam as engineTrimTeam } from "@/engine/operations";
 import { buyStock as engineBuyStock, sellStock as engineSellStock, type InvestAccount } from "@/engine/investing";
-import { initProductsRuntime, subContentFor } from "@/engine/productsRuntime";
+import {
+  buyCapacityRung as engineBuyRung,
+  commitBet as engineCommitBet,
+  initProductsRuntime,
+  setRdAllocation as engineSetAllocation,
+  setRdBudget as engineSetBudget,
+  subContentFor,
+} from "@/engine/productsRuntime";
 import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
@@ -96,6 +103,16 @@ interface GameStore {
   /** Commit to the next compute / facilities tier (capex + burn, lifts execution). */
   investCapacity: () => void;
 
+  // Products / R&D / Capacity (the depth system).
+  /** Set the weekly R&D budget ($M/wk). */
+  setRdBudget: (amount: number) => void;
+  /** Set the per-line R&D budget split (normalized). */
+  setRdAllocation: (allocation: Record<string, number>) => void;
+  /** Build the next rung of a capacity type. */
+  buyCapacityRung: (capId: string) => void;
+  /** Commit a bet to build a product archetype, named by the player. */
+  commitBet: (archetypeId: string, instanceName: string) => void;
+
   /** Buy a stake in a public company from the chosen pocket (personal / company cash). */
   buyStock: (companyId: string, amount: number, account: InvestAccount) => void;
   /** Sell a fraction (0–1) of a holding from the chosen pocket at the current price. */
@@ -168,6 +185,7 @@ export const useGame = create<GameStore>((set, get) => ({
       const env = {
         events: s.content.events,
         market: [...s.content.companies, ...s.game.market.companies],
+        subContent: subContentFor(s.content, s.game.company.subIndustry),
       };
       // Difficulty bends the world's volatility before the tick reads it.
       const tuning = applyWorldDifficulty(s.content.tuning, s.game.difficulty);
@@ -277,6 +295,34 @@ export const useGame = create<GameStore>((set, get) => ({
       if (!s.game) return s;
       const a = withAch(engineInvestCapacity(s.game));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  setRdBudget: (amount) =>
+    set((s) => {
+      if (!s.game?.company.products) return s;
+      return { game: { ...s.game, company: { ...s.game.company, products: engineSetBudget(s.game.company.products, amount) } } };
+    }),
+
+  setRdAllocation: (allocation) =>
+    set((s) => {
+      if (!s.game?.company.products) return s;
+      return { game: { ...s.game, company: { ...s.game.company, products: engineSetAllocation(s.game.company.products, allocation) } } };
+    }),
+
+  buyCapacityRung: (capId) =>
+    set((s) => {
+      if (!s.game) return s;
+      const sc = subContentFor(s.content, s.game.company.subIndustry);
+      if (!sc) return s;
+      return { game: engineBuyRung(s.game, sc, capId) };
+    }),
+
+  commitBet: (archetypeId, instanceName) =>
+    set((s) => {
+      if (!s.game) return s;
+      const sc = subContentFor(s.content, s.game.company.subIndustry);
+      if (!sc) return s;
+      return { game: engineCommitBet(s.game, sc, archetypeId, instanceName) };
     }),
 
   buyStock: (companyId, amount, account) =>

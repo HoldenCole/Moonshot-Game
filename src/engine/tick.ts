@@ -14,16 +14,18 @@ import { repricePublic } from "./exit";
 import { serviceDebt } from "./debt";
 import { bandWorsened, netBurnMonthly, netWorth, privateValuationMark, runwayBand, runwayMonths } from "./finance";
 import { evaluateEvents } from "./events";
-import { tickProcess } from "./signature";
+import { advanceProducts, productsOperatingRevenue, type SubContent } from "./productsRuntime";
 import { justClosedQuarter, marketReaction, quarterIndex, resultVerbose, settleQuarter } from "./earnings";
 import { markPortfolios } from "./investing";
 import { applyOutcome as applyEventOutcome, resolveOutcome, scaleByExec } from "./eventOutcomes";
 import { autoResolveChoice, delegationReport, eventArea, isDelegated, shouldEscalate } from "./delegation";
 
-/** What the events engine needs to run inside a tick. */
+/** What the events engine + depth system need to run inside a tick. */
 export interface EventEnv {
   events: EventContent[];
   market: Company[];
+  /** The player sub-industry's Products/R&D/Capacity content (null if none). */
+  subContent?: SubContent | null;
 }
 
 const EVENT_TONE: Record<EventTone, LogEntry["tone"]> = {
@@ -79,19 +81,44 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     entries.push({ id: `w${week}-world-${i}`, week, kind: "world", tone: n.tone, headline: n.headline, detail: n.detail }),
   );
 
-  // 2 — Company advances: accrue one week of net burn; a public company also
-  //     re-rates its market cap with the world.
-  const f = state.company.financials;
+  // 2 — Products / R&D / Capacity: advance the depth system, ship completed bets,
+  //     and derive operating revenue from the live product portfolio.
+  let company = state.company;
+  let shipped = false;
+  if (company.products && env?.subContent) {
+    const sub = env.subContent;
+    const rivals = env.market.filter((c) => c.sub_industry === company.subIndustry);
+    const pa = advanceProducts(company.products, sub, rivals, week);
+    // The weekly R&D budget is spent (the core cash competition each turn).
+    const rdSpend = pa.runtime.rd.rd_budget_per_week;
+    company = {
+      ...company,
+      products: pa.runtime,
+      financials: {
+        ...company.financials,
+        revenue: productsOperatingRevenue(pa.runtime, sub.productById, sub.tuning),
+        cash: company.financials.cash - rdSpend,
+      },
+      // The signature noun now labels "a bet in flight" (event-condition compat).
+      signature: { ...company.signature, status: pa.runtime.bets.length > 0 ? "running" : "idle" },
+    };
+    for (const s of pa.shipped) {
+      entries.push({ id: `w${week}-ship-${s.archetypeId}-${s.name}`, week, kind: "company", tone: "opportunity", headline: `Shipped ${s.name}`, detail: "A new product is live and ramping into the market." });
+      shipped = true;
+      decision = true;
+    }
+  }
+
+  // 3 — Company financials: accrue one week of net burn (the fresh product
+  //     revenue offsets it), and re-mark the valuation with the world.
+  const f = company.financials;
   const months = 1 / WEEKS_PER_MONTH;
   const netBurn = (f.burnMonthly - f.revenue / 12) * months;
-  // Public companies re-rate with the market; private ones now carry a live mark
-  // that tracks revenue + hype (floored at the last round), so growing the
-  // business actually moves the valuation, net worth, and IPO-readiness.
   const valuation =
-    state.company.stage === "public"
-      ? repricePublic(f.valuation, drift.world, state.company.industry, rng)
-      : privateValuationMark(state.company, drift.world);
-  const company = { ...state.company, financials: { ...f, cash: f.cash - netBurn, valuation } };
+    company.stage === "public"
+      ? repricePublic(f.valuation, drift.world, company.industry, rng)
+      : privateValuationMark(company, drift.world);
+  company = { ...company, financials: { ...f, cash: f.cash - netBurn, valuation } };
 
   const worldHistory = [...state.worldHistory, snapshotWorld(drift.world, week)].slice(-WORLD_HISTORY_CAP);
 
@@ -103,16 +130,6 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     company,
     meta: { ...state.meta, rngState: rng.state },
   };
-
-  // 2b — Signature process: creep forward; resolve at its end week (a stop).
-  let processResolved = false;
-  const proc = tickProcess(next, rng);
-  next = proc.state;
-  if (proc.resolved) {
-    entries.push(proc.resolved);
-    processResolved = true;
-    decision = true;
-  }
 
   // 2c — Debt service: weekly interest, and principal due at maturity (an
   //      overdue loan is a decision-worthy stop).
@@ -188,7 +205,7 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   if (env) next = markPortfolios(next, env.market, next.world, week);
 
   next = { ...next, log: [...next.log, ...entries], alerts: mergeAlerts(next.alerts, alerts) };
-  return { state: next, entries, alerts, decision, outOfCash: newBand === "empty", eventFired: eventFired || processResolved };
+  return { state: next, entries, alerts, decision, outOfCash: newBand === "empty", eventFired: eventFired || shipped };
 }
 
 /** Advance multiple weeks or until the next decision. */
