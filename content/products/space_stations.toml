@@ -16,8 +16,8 @@ module_tech = 25
 assembly = 25
 
 [research_module.economics]
-build_cost = 15
-build_weeks = 44
+build_cost = 3
+build_weeks = 40
 unit_margin = 0.44
 capacity_type = "module_construction"
 capacity_to_build = 2
