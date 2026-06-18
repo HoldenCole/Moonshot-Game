@@ -128,12 +128,6 @@ export interface PlayerCompany {
     revenueLog?: number[];
   };
   capTable: CapTable;
-  /** Compute / facilities build-out level (Operations): 0 = none … 3 = top tier.
-   *  Raises execution on the signature mechanic; absent until you build. */
-  capacityLevel?: number;
-  /** Legacy: pre-ladder accumulated capacity points. Kept for old-save safety;
-   *  no longer read. */
-  capacity?: number;
   /** Outstanding debt facilities (non-dilutive financing); absent until drawn. */
   loans?: Loan[];
   /** Strategic stakes the company treasury holds in other public companies — a
@@ -144,12 +138,9 @@ export interface PlayerCompany {
    *  in-flight bets, and shipped products. Absent for a sub-industry with no
    *  authored depth content. */
   products?: ProductsRuntime;
-  /** The sub-industry signature process. */
+  /** Signature state — now just tracks whether a bet is in flight (status), for
+   *  event conditions; the noun comes from signatureConfig. */
   signature: SignatureState;
-  /** Persistent quantities the signature mechanic builds up — keyed per
-   *  sub-industry (flight heritage, satellites live, station occupancy, moat
-   *  depth). Absent until the first process resolves. */
-  signatureStats?: Record<string, number>;
   /** Hired executives by area (empty until you delegate). */
   executives: Partial<Record<ExecArea, Exec>>;
   /** Autonomy setting per area. */

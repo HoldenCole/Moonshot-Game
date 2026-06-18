@@ -17,7 +17,7 @@ import { applyWorldDifficulty, difficultyProfile } from "@/engine/difficulty";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
 import { applyPublicChoice } from "@/engine/earnings";
 import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } from "@/engine/debt";
-import { hireStaff as engineHireStaff, investCapacity as engineInvestCapacity, trimTeam as engineTrimTeam } from "@/engine/operations";
+import { hireStaff as engineHireStaff, trimTeam as engineTrimTeam } from "@/engine/operations";
 import { buyStock as engineBuyStock, sellStock as engineSellStock, type InvestAccount } from "@/engine/investing";
 import {
   buyCapacityRung as engineBuyRung,
@@ -27,7 +27,6 @@ import {
   setRdBudget as engineSetBudget,
   subContentFor,
 } from "@/engine/productsRuntime";
-import { commitProcess } from "@/engine/signature";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
 import type { Autonomy, Exec, ExecArea } from "@/domain/state";
@@ -83,9 +82,6 @@ interface GameStore {
   dismissAlert: (id: string) => void;
   /** Resolve the pending event by choosing one of its options. */
   resolveEvent: (choiceIndex: number) => void;
-  /** Commit the sub-industry signature process (a training run, a launch, …)
-   *  under a chosen approach. */
-  commitSignature: (approachId?: string) => void;
   /** Hire an executive into an area (pays the cash cost). */
   hireExec: (exec: Exec, cost: number) => void;
   /** Set an area's autonomy. */
@@ -100,8 +96,6 @@ interface GameStore {
   hireStaff: (count: number) => void;
   /** Cut the team (lowers burn + a small reputation hit). */
   trimTeam: (count: number) => void;
-  /** Commit to the next compute / facilities tier (capex + burn, lifts execution). */
-  investCapacity: () => void;
 
   // Products / R&D / Capacity (the depth system).
   /** Set the weekly R&D budget ($M/wk). */
@@ -225,15 +219,6 @@ export const useGame = create<GameStore>((set, get) => ({
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
-  commitSignature: (approachId) =>
-    set((s) => {
-      if (!s.game || s.game.company.signature.status === "running") return s;
-      // A one-off RNG draw seeded off the save's state — deterministic per commit.
-      const rng = makeRng((s.game.meta.rngState ^ (s.game.clock.week << 8)) >>> 0);
-      const a = withAch(commitProcess(s.game, rng, approachId));
-      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
-    }),
-
   hireExec: (exec, cost) =>
     set((s) => {
       if (!s.game || s.game.company.financials.cash < cost) return s;
@@ -287,13 +272,6 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       if (!s.game) return s;
       const a = withAch(engineTrimTeam(s.game, count));
-      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
-    }),
-
-  investCapacity: () =>
-    set((s) => {
-      if (!s.game) return s;
-      const a = withAch(engineInvestCapacity(s.game));
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
