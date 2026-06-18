@@ -17,7 +17,7 @@ model_leverage = 15
 
 [point_solution.economics]
 build_cost = 2
-build_weeks = 14
+build_weeks = 7
 unit_margin = 0.72
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -46,7 +46,7 @@ model_leverage = 30
 
 [workflow_suite.economics]
 build_cost = 28
-build_weeks = 34
+build_weeks = 17
 unit_margin = 0.76
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -75,7 +75,7 @@ model_leverage = 50
 
 [platform_play.economics]
 build_cost = 70
-build_weeks = 52
+build_weeks = 26
 unit_margin = 0.80
 capacity_type = "deployment"
 capacity_to_build = 2

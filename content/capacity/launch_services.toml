@@ -13,24 +13,24 @@ description = "Your pads, integration facilities, and vehicle fleet — everythi
 [[launch_capacity.rungs]]
 capacity = 3
 cost = 10
-build_weeks = 28
+build_weeks = 14
 [[launch_capacity.rungs]]
 capacity = 6
 cost = 25
-build_weeks = 34
+build_weeks = 17
 [[launch_capacity.rungs]]
 capacity = 10
 cost = 60
-build_weeks = 42
+build_weeks = 21
 [[launch_capacity.rungs]]
 capacity = 15
 cost = 120
-build_weeks = 50
+build_weeks = 25
 [[launch_capacity.rungs]]
 capacity = 21
 cost = 220
-build_weeks = 58
+build_weeks = 29
 [[launch_capacity.rungs]]
 capacity = 28
 cost = 380
-build_weeks = 66
+build_weeks = 33

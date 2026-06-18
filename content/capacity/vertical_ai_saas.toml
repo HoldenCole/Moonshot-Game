@@ -13,24 +13,24 @@ description = "The cloud infra, security, and customer environments your product
 [[deployment.rungs]]
 capacity = 4
 cost = 6
-build_weeks = 8
+build_weeks = 4
 [[deployment.rungs]]
 capacity = 8
 cost = 15
-build_weeks = 10
+build_weeks = 5
 [[deployment.rungs]]
 capacity = 14
 cost = 34
-build_weeks = 12
+build_weeks = 6
 [[deployment.rungs]]
 capacity = 22
 cost = 68
-build_weeks = 14
+build_weeks = 7
 [[deployment.rungs]]
 capacity = 32
 cost = 120
-build_weeks = 16
+build_weeks = 8
 [[deployment.rungs]]
 capacity = 45
 cost = 200
-build_weeks = 18
+build_weeks = 9
