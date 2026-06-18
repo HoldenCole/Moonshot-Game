@@ -14,6 +14,7 @@ import { AXES, NEWS_CYCLES, PRESET_AXES, PRESETS, matchingPreset, previewBars } 
 import { Icon, type IconName } from "@/ui/components/Icon";
 import { Button, Segmented, Slider } from "@/ui/components/controls";
 import { saveSummary } from "@/state/persist";
+import { FOUNDING_CAPITAL_BASE } from "@/state/newgame";
 import { formatMoney } from "@/engine/format";
 import { emitGuided } from "@/ui/tutorial/guidedBus";
 
@@ -124,7 +125,7 @@ export function NewGameScreen() {
   const subs = useMemo(() => (industry ? SUBS[industry] : []), [industry]);
 
   const archMult = archetypeId === "custom" ? founderCapital : founders.find((f) => f.id === archetypeId)?.modifiers.starting_cash_mult ?? 1;
-  const baseCash = Math.round(0.75 * axes.startingCapital * archMult * 100) / 100;
+  const baseCash = Math.round(FOUNDING_CAPITAL_BASE * axes.startingCapital * archMult * 100) / 100;
 
   const customFounder = (): FounderContent => ({
     id: "custom",
@@ -337,13 +338,13 @@ export function NewGameScreen() {
                         ))}
                         <Slider
                           label="Starting capital"
-                          value={Math.round(0.75 * axes.startingCapital * founderCapital * 100) / 100}
-                          min={0.4}
-                          max={1.5}
-                          step={0.05}
-                          onChange={(v) => setFounderCapital(v / (0.75 * axes.startingCapital))}
+                          value={Math.round(FOUNDING_CAPITAL_BASE * axes.startingCapital * founderCapital * 100) / 100}
+                          min={1}
+                          max={30}
+                          step={0.5}
+                          onChange={(v) => setFounderCapital(v / (FOUNDING_CAPITAL_BASE * axes.startingCapital))}
                           format={(v) => formatMoney(v)}
-                          hint="Your personal founding capital — separate from the world's difficulty."
+                          hint="Your founding war chest — products cost real money, so a bigger start funds R&D and your first builds sooner."
                         />
                         <Slider
                           label="Age"

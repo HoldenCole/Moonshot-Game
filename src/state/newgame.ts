@@ -40,6 +40,11 @@ export interface FoundingChoices {
  *  procedural market is generated from the seed (anchors as templates). */
 const clampScore = (x: number) => Math.max(0, Math.min(100, x));
 
+/** Founding cash ($M) at the neutral difficulty/archetype = this × the axis ×
+ *  the cash multiplier. Sized so the depth system (products cost real money) is
+ *  reachable without an immediate desperate raise. */
+export const FOUNDING_CAPITAL_BASE = 2.5;
+
 export function createNewGame(
   choices: FoundingChoices,
   createdAt: string,
@@ -68,7 +73,7 @@ export function createNewGame(
   // Founding capital and opening burn scale with difficulty (and the archetype) —
   // more cushion and a lighter burn on Forgiving / capital-efficient founders.
   const startingCash =
-    Math.round(0.75 * axes.startingCapital * (m?.starting_cash_mult ?? 1) * 100) / 100 + reinvest;
+    Math.round(FOUNDING_CAPITAL_BASE * axes.startingCapital * (m?.starting_cash_mult ?? 1) * 100) / 100 + reinvest;
   const startingBurn = Math.round(0.08 * axes.burnRate * burnEff * 1000) / 1000;
 
   // Opening "weather": a healthy late-expansion, all eight industries seeded
