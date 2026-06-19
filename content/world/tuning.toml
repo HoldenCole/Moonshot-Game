@@ -10,7 +10,8 @@ next_decision_cap_weeks = 104   # a single "advance to decision" caps at ~2 year
 
 [milestones]
 # Net-worth milestones, $M — the "why" the spine is built around.
-net_worth = [1, 10, 100, 1000, 10000]
+# Runs to $10T at the apex: TAM growth can carry a dominant frontier company there.
+net_worth = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]
 
 # ── The six master-variable engines (three-layer world model) ────────────────
 

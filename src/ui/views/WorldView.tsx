@@ -3,6 +3,7 @@ import { useGame } from "@/state/store";
 import type { WorldSnapshot } from "@/domain/state";
 import { climateLabel, MACRO_LABEL, sentimentLabel, valuationMultiplier } from "@/engine/world";
 import { fundamentalValue } from "@/engine/pricing";
+import { growthEraLabel, tamGrowthRoll } from "@/engine/products";
 import { industryLabel, type Industry } from "@/domain/ids";
 import { formatMoney, formatPct } from "@/engine/format";
 import { Sparkline } from "@/ui/charts/Sparkline";
@@ -34,6 +35,12 @@ export function WorldView() {
   const series = (pick: (s: WorldSnapshot) => number) => hist.map(pick);
   const hype = w.hype[ind] ?? 50;
   const heat = valuationMultiplier(w, ind);
+  // This run's TAM growth era for the player's sector (seeded — differs each game).
+  const sub = game.company.subIndustry;
+  const tamRoll = tamGrowthRoll(game.meta.seed, sub);
+  const basePeak = content.productTuningBySub.get(sub)?.tam_growth_per_year ?? 0;
+  const sectorEra = growthEraLabel(tamRoll);
+  const sectorPeakPct = Math.round(basePeak * tamRoll * 100);
 
   return (
     <div className="workspace-scroll">
@@ -43,6 +50,12 @@ export function WorldView() {
             <h3 className="panel__title">The World</h3>
             <div className="panel__sub">The weather your company operates in — six forces, top-down</div>
           </div>
+          {basePeak > 0 && (
+            <div className="world-heat">
+              <span className="world-heat__label">Sector growth</span>
+              <span className="world-heat__val num up">{sectorEra}{sectorPeakPct > 0 ? ` · ~${sectorPeakPct}%/yr` : ""}</span>
+            </div>
+          )}
           <div className="world-heat">
             <span className="world-heat__label">Round-price heat</span>
             <span className={`world-heat__val num ${heat >= 1 ? "up" : "down"}`}>{(heat).toFixed(2)}×</span>

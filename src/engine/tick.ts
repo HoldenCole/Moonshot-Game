@@ -334,6 +334,7 @@ function mergeAlerts(existing: Alert[], incoming: Alert[]): Alert[] {
 }
 
 function milestoneLabel(m: number): string {
+  if (m >= 1_000_000) return `$${m / 1_000_000}T`;
   if (m >= 1000) return `$${m / 1000}B`;
   return `$${m}M`;
 }

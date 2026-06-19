@@ -214,6 +214,14 @@ export function tamGrowthRoll(seed: number, sub: string): number {
   return TAM_ROLL_MIN + (TAM_ROLL_MAX - TAM_ROLL_MIN) * u * u;
 }
 
+/** A player-facing read of this run's growth era (from tamGrowthRoll). */
+export function growthEraLabel(roll: number): string {
+  if (roll >= 1.6) return "Explosive";
+  if (roll >= 1.35) return "Booming";
+  if (roll >= 1.12) return "Growing";
+  return "Steady";
+}
+
 /** $M/yr a product is earning now: its share of the (TAM-scaled) market, scaled by
  *  where it is in the ramp and how far obsolescence has eaten in. */
 export function productRevenueRunRate(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning, tamScale = 1): number {

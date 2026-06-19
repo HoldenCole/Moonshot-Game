@@ -30,6 +30,8 @@ export const ACHIEVEMENTS: Achievement[] = [
 
   { id: "unicorn", name: "Unicorn", desc: "Reach a $1B valuation.", tier: "gold", test: (g) => valuationMark(g.company) >= 1000 },
   { id: "decacorn", name: "Decacorn", desc: "Reach a $10B valuation.", tier: "gold", test: (g) => valuationMark(g.company) >= 10000 },
+  { id: "hectocorn", name: "Hectocorn", desc: "Reach a $100B valuation.", tier: "gold", test: (g) => valuationMark(g.company) >= 100000 },
+  { id: "trillion_co", name: "Trillion-Dollar Company", desc: "Reach a $1T valuation.", tier: "gold", test: (g) => valuationMark(g.company) >= 1000000 },
   { id: "ipo", name: "Ring the Bell", desc: "Take a company public.", tier: "gold", test: (g) => g.company.stage === "public" },
   { id: "first_exit", name: "Exit", desc: "Complete your first exit.", tier: "gold", test: (g) => g.runOutcome != null },
 
@@ -37,6 +39,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "deca_m", name: "$10M Club", desc: "Reach $10M net worth.", tier: "silver", test: (g) => netWorth(g) >= 10 },
   { id: "centi_m", name: "Nine Figures", desc: "Reach $100M net worth.", tier: "gold", test: (g) => netWorth(g) >= 100 },
   { id: "billionaire", name: "Billionaire", desc: "Reach $1B net worth.", tier: "gold", test: (g) => netWorth(g) >= 1000 },
+  { id: "hundred_billionaire", name: "Hundred-Billionaire", desc: "Reach $100B net worth.", tier: "gold", test: (g) => netWorth(g) >= 100000 },
+  { id: "trillionaire", name: "Trillionaire", desc: "Reach $1T net worth.", tier: "gold", test: (g) => netWorth(g) >= 1000000 },
 
   { id: "first_hire", name: "Delegator", desc: "Hire your first executive.", tier: "bronze", test: (g) => execCount(g) >= 1 },
   { id: "full_bench", name: "Full Bench", desc: "Hire all four executives.", tier: "silver", test: (g) => execCount(g) >= 4 },
