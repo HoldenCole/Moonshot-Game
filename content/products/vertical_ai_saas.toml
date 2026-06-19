@@ -18,11 +18,11 @@ model_leverage = 15
 [point_solution.economics]
 build_cost = 5.5
 build_weeks = 12
-unit_margin = 0.72
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 600
+addressable_market = 90
 ramp_weeks = 20
 decay_per_quarter = 0.05
 
@@ -47,12 +47,12 @@ model_leverage = 30
 [workflow_suite.economics]
 build_cost = 18
 build_weeks = 22
-unit_margin = 0.76
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 1
 capacity_to_run = 2
-addressable_market = 3200
-ramp_weeks = 30
+addressable_market = 230
+ramp_weeks = 32
 decay_per_quarter = 0.04
 
 [workflow_suite.specs]
@@ -76,11 +76,11 @@ model_leverage = 50
 [platform_play.economics]
 build_cost = 44
 build_weeks = 34
-unit_margin = 0.80
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 2
 capacity_to_run = 3
-addressable_market = 9000
+addressable_market = 440
 ramp_weeks = 44
 decay_per_quarter = 0.03
 
@@ -110,11 +110,11 @@ model_leverage = 10
 [browser_extension.economics]
 build_cost = 0.4
 build_weeks = 2
-unit_margin = 0.70
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 200
+addressable_market = 9
 ramp_weeks = 10
 decay_per_quarter = 0.06
 
@@ -139,12 +139,12 @@ platform = 20
 [api_connector.economics]
 build_cost = 0.9
 build_weeks = 4
-unit_margin = 0.74
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 280
-ramp_weeks = 12
+addressable_market = 20
+ramp_weeks = 10
 decay_per_quarter = 0.04
 
 [api_connector.specs]
@@ -170,12 +170,12 @@ platform = 15
 [reporting_dashboard.economics]
 build_cost = 1.2
 build_weeks = 5
-unit_margin = 0.75
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 320
-ramp_weeks = 14
+addressable_market = 26
+ramp_weeks = 10
 decay_per_quarter = 0.04
 
 [reporting_dashboard.specs]
@@ -200,12 +200,12 @@ model_leverage = 15
 [mobile_companion.economics]
 build_cost = 1.6
 build_weeks = 6
-unit_margin = 0.70
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 300
-ramp_weeks = 14
+addressable_market = 35
+ramp_weeks = 10
 decay_per_quarter = 0.05
 
 [mobile_companion.specs]
@@ -230,11 +230,11 @@ domain_depth = 22
 [template_library.economics]
 build_cost = 0.5
 build_weeks = 2
-unit_margin = 0.82
+unit_margin = 0.55
 capacity_type = "deployment"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 180
+addressable_market = 11
 ramp_weeks = 10
 decay_per_quarter = 0.05
 

@@ -19,12 +19,12 @@ network = 25
 [comms_relay.economics]
 build_cost = 38
 build_weeks = 44
-unit_margin = 0.40
+unit_margin = 0.4
 capacity_type = "sat_manufacturing"
 capacity_to_build = 2
 capacity_to_run = 1
-addressable_market = 1800
-ramp_weeks = 39
+addressable_market = 855
+ramp_weeks = 20
 decay_per_quarter = 0.05
 
 [comms_relay.specs]
@@ -48,12 +48,12 @@ network = 45
 [earth_observation.economics]
 build_cost = 95
 build_weeks = 64
-unit_margin = 0.55
+unit_margin = 0.4
 capacity_type = "sat_manufacturing"
 capacity_to_build = 3
 capacity_to_run = 2
-addressable_market = 5500
-ramp_weeks = 44
+addressable_market = 1663
+ramp_weeks = 32
 decay_per_quarter = 0.06
 
 [earth_observation.specs]
@@ -77,12 +77,12 @@ network = 65
 [broadband_mega.economics]
 build_cost = 200
 build_weeks = 105
-unit_margin = 0.58
+unit_margin = 0.4
 capacity_type = "sat_manufacturing"
 capacity_to_build = 5
 capacity_to_run = 3
-addressable_market = 20000
-ramp_weeks = 60
+addressable_market = 2750
+ramp_weeks = 44
 decay_per_quarter = 0.07
 
 [broadband_mega.specs]
@@ -113,12 +113,12 @@ mass_production = 20
 [satellite_bus.economics]
 build_cost = 6
 build_weeks = 12
-unit_margin = 0.34
+unit_margin = 0.4
 capacity_type = "sat_manufacturing"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 600
-ramp_weeks = 18
+addressable_market = 180
+ramp_weeks = 10
 decay_per_quarter = 0.04
 
 [satellite_bus.specs]
@@ -143,12 +143,12 @@ satellite_tech = 25
 [payload_sensor.economics]
 build_cost = 12
 build_weeks = 20
-unit_margin = 0.46
+unit_margin = 0.4
 capacity_type = "sat_manufacturing"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 700
-ramp_weeks = 18
+addressable_market = 360
+ramp_weeks = 10
 decay_per_quarter = 0.06
 
 [payload_sensor.specs]
@@ -172,12 +172,12 @@ network = 20
 [ground_terminal.economics]
 build_cost = 1
 build_weeks = 4
-unit_margin = 0.38
+unit_margin = 0.4
 capacity_type = "ground_network"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 520
-ramp_weeks = 14
+addressable_market = 30
+ramp_weeks = 10
 decay_per_quarter = 0.05
 
 [ground_terminal.specs]
@@ -202,12 +202,12 @@ mass_production = 18
 [ion_thruster.economics]
 build_cost = 3
 build_weeks = 8
-unit_margin = 0.44
+unit_margin = 0.4
 capacity_type = "sat_manufacturing"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 460
-ramp_weeks = 16
+addressable_market = 90
+ramp_weeks = 10
 decay_per_quarter = 0.03
 
 [ion_thruster.specs]
@@ -233,12 +233,12 @@ mass_production = 20
 [planetary_rover.economics]
 build_cost = 9
 build_weeks = 16
-unit_margin = 0.40
+unit_margin = 0.4
 capacity_type = "sat_manufacturing"
 capacity_to_build = 1
 capacity_to_run = 1
-addressable_market = 420
-ramp_weeks = 20
+addressable_market = 270
+ramp_weeks = 10
 decay_per_quarter = 0.04
 
 [planetary_rover.specs]

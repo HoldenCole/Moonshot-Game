@@ -1,7 +1,8 @@
-// Market share vs. rivals (doc 07 §3.4). A product's share drifts toward a target
-// set by how its quality compares to the rival field, rate-limited by the
-// sub-industry's stickiness. Sticky industries (SaaS, launch) barely move; hype
-// ones (frontier lab) swing. Pure + deterministic.
+// Market share vs. rivals (doc 07 §3.4). A product's share eases toward a target
+// set by how its quality compares to the rival field — each week it closes a
+// fraction of the gap, the fraction being the sub-industry's volatility (damped
+// by company size). Sticky industries (SaaS, launch) move slowly; hype ones
+// (frontier lab) swing. Pure + deterministic.
 
 import type { Company } from "@/content/load";
 import type { ProductTuning } from "@/domain/content";
