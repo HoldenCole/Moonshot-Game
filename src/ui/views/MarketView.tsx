@@ -2,15 +2,51 @@ import { useMemo, useState } from "react";
 import { useGame } from "@/state/store";
 import { usePrefs } from "@/state/prefs";
 import type { Company } from "@/content/load";
+import type { GameState } from "@/domain/state";
 import { industryLabel, subIndustryLabel, type Industry } from "@/domain/ids";
 import { formatMoney, formatPct } from "@/engine/format";
 import { marketPrice } from "@/engine/pricing";
+import { revenueGrowth, valuationMark } from "@/engine/finance";
+import { totalShares } from "@/engine/captable";
 import { buildGraph } from "@/engine/companyGraph";
 import { Segmented, Tag } from "@/ui/components/controls";
 import { useMarketTape } from "./useMarketTape";
 import { CompanyDetail } from "./CompanyDetail";
 
 type Sort = "valuation" | "revenue" | "fundamentals" | "growth";
+
+const PLAYER_ID = "__you__";
+
+/** The player's operating company, shaped as a market Company so it sits in the
+ *  same table as its rivals — priced at its live valuation mark (not the rival
+ *  hype/macro pricing). */
+function playerCompany(game: GameState): Company {
+  const c = game.company;
+  return {
+    id: PLAYER_ID,
+    name: c.name,
+    tier: "anchor",
+    industry: c.industry,
+    sub_industry: c.subIndustry,
+    founded_year: 0,
+    hq: "—",
+    color: c.color,
+    logo_glyph: "★",
+    identity: { tagline: "Your company", reputation: game.founder.reputation, narrative_hooks: [] },
+    stage: { status: c.stage === "public" ? "public" : "private", private_round: c.stage, ipo_year: 0 },
+    financials: {
+      revenue: c.financials.revenue,
+      revenue_growth: revenueGrowth(c) ?? 0,
+      gross_margin: 0.5,
+      profitable: c.financials.revenue / 12 > c.financials.burnMonthly,
+      burn_monthly: c.financials.burnMonthly,
+      valuation: valuationMark(c),
+      shares_out: Math.max(1, totalShares(c.capTable) / 1_000_000),
+    },
+    quality: { fundamentals: 60, hype_exposure: 0.5, moat: 50, execution: 60 },
+    relationships: { investors: [] },
+  };
+}
 
 export function MarketView() {
   const game = useGame((s) => s.game);
@@ -19,9 +55,10 @@ export function MarketView() {
   const [sort, setSort] = useState<Sort>("valuation");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  const player = useMemo(() => (game ? playerCompany(game) : null), [game]);
   const companies = useMemo(
-    () => [...content.companies, ...(game?.market.companies ?? [])],
-    [content.companies, game?.market.companies],
+    () => [...(player ? [player] : []), ...content.companies, ...(game?.market.companies ?? [])],
+    [player, content.companies, game?.market.companies],
   );
   const graph = useMemo(() => buildGraph(companies), [companies]);
   const byId = useMemo(() => new Map(companies.map((c) => [c.id, c])), [companies]);
@@ -32,7 +69,8 @@ export function MarketView() {
   // instead of recomputing marketPrice on every comparison.
   const priceById = useMemo(() => {
     const m = new Map<string, number>();
-    for (const c of companies) m.set(c.id, world ? marketPrice(c, world, week) : c.financials.valuation);
+    // The player's own mark is authoritative — don't run it through rival pricing.
+    for (const c of companies) m.set(c.id, c.id === PLAYER_ID || !world ? c.financials.valuation : marketPrice(c, world, week));
     return m;
   }, [companies, world, week]);
   const priceOf = (c: Company) => priceById.get(c.id) ?? c.financials.valuation;
@@ -122,16 +160,17 @@ export function MarketView() {
             {rows.map((c) => {
               const t = ticks[c.id];
               const pct = t?.pct ?? 0;
+              const isYou = c.id === PLAYER_ID;
               return (
                 <button
                   key={c.id}
-                  className={`market-grid__row market-grid__data${selectedId === c.id ? " is-selected" : ""}`}
-                  onClick={() => setSelectedId(selectedId === c.id ? null : c.id)}
+                  className={`market-grid__row market-grid__data${selectedId === c.id ? " is-selected" : ""}${isYou ? " is-you" : ""}`}
+                  onClick={() => { if (!isYou) setSelectedId(selectedId === c.id ? null : c.id); }}
                 >
                   <span className="market-cell-name">
                     <span className="swatch swatch--sm" style={{ background: c.color }} />
                     <span className="strong">{c.name}</span>
-                    {c.tier === "anchor" && <Tag>Anchor</Tag>}
+                    {isYou ? <Tag>You</Tag> : c.tier === "anchor" && <Tag>Anchor</Tag>}
                   </span>
                   <span className="market-cell-tag dim">{c.identity.tagline}</span>
                   <span className="dim">{subIndustryLabel(c.sub_industry)}</span>
@@ -140,13 +179,17 @@ export function MarketView() {
                     {cap(c.stage.status)}
                   </span>
                   <span className="ar num strong">{formatMoney(priceOf(c))}</span>
-                  <span
-                    key={t?.n ?? 0}
-                    className={`ar num market-move ${pct >= 0 ? "up" : "down"} ${t ? (t.dir === "up" ? "tick-up" : "tick-down") : ""}`}
-                  >
-                    {pct >= 0 ? "+" : ""}
-                    {pct.toFixed(1)}%
-                  </span>
+                  {isYou ? (
+                    <span className="ar num dim">—</span>
+                  ) : (
+                    <span
+                      key={t?.n ?? 0}
+                      className={`ar num market-move ${pct >= 0 ? "up" : "down"} ${t ? (t.dir === "up" ? "tick-up" : "tick-down") : ""}`}
+                    >
+                      {pct >= 0 ? "+" : ""}
+                      {pct.toFixed(1)}%
+                    </span>
+                  )}
                   <span className="ar num">{formatPct(c.financials.revenue_growth, 0)}</span>
                   <span className="ar">
                     <HypeBar value={c.quality.hype_exposure} />
