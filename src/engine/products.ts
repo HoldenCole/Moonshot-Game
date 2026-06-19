@@ -176,13 +176,25 @@ function decayMultiplier(ageWeeks: number, archetype: ProductArchetype, tuning: 
  *  not shrinks). */
 export const MACRO_TAM_SENSITIVITY = 0.8;
 
+/** Adoption-curve modulation of a sector's TAM growth across the years: a wave that
+ *  runs fast → medium → slow (saturation) → fast again as the next technology
+ *  generation reignites demand. So the authored rate is the PEAK adoption rate, not
+ *  a flat forever-rate. cos starts the run at the fast crest. */
+export const TAM_WAVE_PERIOD_YEARS = 16;
+const TAM_WAVE_MID = 0.55;
+const TAM_WAVE_AMP = 0.45;
+export function adoptionWave(year: number): number {
+  return TAM_WAVE_MID + TAM_WAVE_AMP * Math.cos((2 * Math.PI * Math.max(0, year)) / TAM_WAVE_PERIOD_YEARS);
+}
+
 /** Advance a sector's TAM multiplier one week: the addressable market compounds at
- *  its annual rate, accelerated in booms and slowed in busts. A growing sector
- *  (space, chips) keeps expanding the pie over a long run. */
-export function nextTamScale(prev: number, ratePerYear: number, macroStrength: number): number {
-  if (!(ratePerYear > 0)) return prev;
+ *  its peak rate shaped by the adoption wave (fast early, slow at saturation, fast
+ *  again) and nudged by the macro cycle — waves, not a straight 30%-forever line. */
+export function nextTamScale(prev: number, peakRate: number, week: number, macroStrength: number): number {
+  if (!(peakRate > 0)) return prev;
+  const rate = peakRate * adoptionWave(week / 52);
   const macroFactor = Math.max(0.1, 1 + MACRO_TAM_SENSITIVITY * macroStrength);
-  return prev * (1 + ratePerYear * macroFactor) ** (1 / 52);
+  return prev * (1 + Math.max(0, rate) * macroFactor) ** (1 / 52);
 }
 
 /** $M/yr a product is earning now: its share of the (TAM-scaled) market, scaled by

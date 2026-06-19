@@ -75,7 +75,7 @@ export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Comp
   const growthScale = companyGrowthScale(rt.products.reduce((s, p) => s + p.revenue_run_rate, 0));
   // The sector's addressable market compounds over time — faster in booms, slower
   // in busts — so a growing industry (space, chips) keeps expanding the pie.
-  const tamScale = nextTamScale(rt.tam_scale ?? 1, c.tuning.tam_growth_per_year ?? 0, macroStrength);
+  const tamScale = nextTamScale(rt.tam_scale ?? 1, c.tuning.tam_growth_per_year ?? 0, week, macroStrength);
   const products = [...rt.products, ...betRes.shipped.map((s) => s.product)].map((p) => {
     const arch = c.productById.get(p.archetype_id);
     return arch ? tickProduct(advanceShare(p, rivalQ, c.tuning, growthScale), arch, c.tuning, tamScale) : p;

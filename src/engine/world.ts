@@ -25,10 +25,9 @@ const TAU = Math.PI * 2;
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-/** Secular world-economy growth per year — compounds the economyScale that lifts
- *  rival valuations over a run, faster in booms (macro-modulated). */
-const WORLD_ECONOMY_GROWTH = 0.1;
-const ECONOMY_MACRO_SENSITIVITY = 0.8;
+/** Secular world-economy (GDP) growth — 3–7%/yr depending on the macro cycle. */
+const WORLD_GROWTH_BASE = 0.05;
+const WORLD_GROWTH_SWING = 0.02;
 
 /** Advance every master variable one week. Pure: same state + rng + tuning →
  *  same result. `playerIndustry` only filters which hype news surfaces. */
@@ -168,10 +167,10 @@ export function stepWorld(
   const weeksInPhase = regimeChanged ? 0 : world.weeksInPhase + 1;
   const macroPrevPhase = regimeChanged ? prevRegime : world.macroPrevPhase;
 
-  // Secular economy growth: the world's pie compounds over the years (faster in
-  // booms), lifting rival valuations so the world grows alongside the player.
-  const economyScale =
-    (world.economyScale ?? 1) * (1 + WORLD_ECONOMY_GROWTH * Math.max(0.1, 1 + ECONOMY_MACRO_SENSITIVITY * strength)) ** (1 / 52);
+  // Secular economy growth: GDP compounds 3–7%/yr with the cycle (faster in booms),
+  // lifting rival valuations so the world grows alongside the player.
+  const worldRate = clamp(WORLD_GROWTH_BASE + WORLD_GROWTH_SWING * strength, 0.03, 0.07);
+  const economyScale = (world.economyScale ?? 1) * (1 + worldRate) ** (1 / 52);
 
   return {
     world: {

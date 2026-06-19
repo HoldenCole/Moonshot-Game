@@ -103,7 +103,7 @@ test("the world economy compounds over time, lifting the economyScale", () => {
   const after1 = stepWorld(w, makeRng(1), TEST_TUNING.world, "ai").world;
   assert.ok((after1.economyScale ?? 1) > 1, "one week of growth lifts the economy");
   for (let i = 0; i < 520; i++) w = stepWorld(w, makeRng(i + 2), TEST_TUNING.world, "ai").world; // ~10 years
-  assert.ok((w.economyScale ?? 1) > 1.5, `a decade grows the economy multi-fold (got ${(w.economyScale ?? 1).toFixed(2)})`);
+  assert.ok((w.economyScale ?? 1) > 1.3, `a decade at ~3-7%/yr compounds the economy (got ${(w.economyScale ?? 1).toFixed(2)})`);
 });
 
 test("valuation multiplier rises with climate and hype, within bounds", () => {
