@@ -9,7 +9,7 @@ import type { ProductsRuntime } from "@/domain/products";
 import { advanceRD, initRDState, rivalLevelsForLines } from "./rd";
 import { canStartBet, initCapacityState, nextRung, startRungBuild, tickCapacityBuilds } from "./capacity";
 import { betCost, gatesMet, makeBet, nextTamScale, productGrossProfit, rushQuote, tickBets, tickProduct } from "./products";
-import { advanceShare, companyGrowthScale, competitionLevel, rivalProductQuality } from "./productMarket";
+import { advanceShare, capLineShare, companyGrowthScale, competitionLevel, rivalProductQuality } from "./productMarket";
 import { formatMoney } from "./format";
 
 /** The authored content for one sub-industry, resolved once and passed in. */
@@ -76,9 +76,16 @@ export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Comp
   // The sector's addressable market compounds over time — faster in booms, slower
   // in busts — so a growing industry (space, chips) keeps expanding the pie.
   const tamScale = nextTamScale(rt.tam_scale ?? 1, (c.tuning.tam_growth_per_year ?? 0) * tamGrowthMult, week, macroStrength);
-  const products = [...rt.products, ...betRes.shipped.map((s) => s.product)].map((p) => {
+  // Move each product's share, then cap same-line cannibalization (so a new
+  // product of an existing line takes share from its siblings rather than
+  // stacking a full fresh share on top), then age + re-cache revenue on the
+  // settled share.
+  const advanced = [...rt.products, ...betRes.shipped.map((s) => s.product)].map((p) =>
+    advanceShare(p, rivalQ, c.tuning, growthScale),
+  );
+  const products = capLineShare(advanced, rivalQ).map((p) => {
     const arch = c.productById.get(p.archetype_id);
-    return arch ? tickProduct(advanceShare(p, rivalQ, c.tuning, growthScale), arch, c.tuning, tamScale) : p;
+    return arch ? tickProduct(p, arch, c.tuning, tamScale) : p;
   });
 
   return {

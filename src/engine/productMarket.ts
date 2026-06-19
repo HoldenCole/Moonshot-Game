@@ -69,3 +69,43 @@ export function advanceShare(product: LiveProduct, rivalQuality: number, tuning:
   const share = clamp(product.share + (target - product.share) * rate, 0, 1);
   return { ...product, share };
 }
+
+/** A modest breadth premium for running several products in one line: more SKUs
+ *  reach a little more of the market, with strong diminishing returns. Never a
+ *  free multiplier — 1 product = 1.0, and it caps just above 1.1. */
+export function lineBreadthBonus(n: number): number {
+  return 1 + 0.12 * (1 - 1 / Math.max(1, n));
+}
+
+/** Cap same-line cannibalization: products that share an archetype contest one
+ *  line-level share pool (set by the line's best model vs. the field, plus a
+ *  small breadth premium), so adding another product *splits* the line — a new
+ *  one ramps up by taking share from its older siblings — instead of stacking a
+ *  fresh full share on top and double-counting the market. A single product, or
+ *  a group still under its line ceiling, is left untouched. */
+export function capLineShare(products: LiveProduct[], rivalQuality: number): LiveProduct[] {
+  const byArchetype = new Map<string, LiveProduct[]>();
+  for (const p of products) {
+    const group = byArchetype.get(p.archetype_id);
+    if (group) group.push(p);
+    else byArchetype.set(p.archetype_id, [p]);
+  }
+
+  const scaleById = new Map<string, number>();
+  for (const group of byArchetype.values()) {
+    if (group.length < 2) continue;
+    const bestQ = Math.max(...group.map((p) => p.quality));
+    const ceiling = clamp(targetShare(bestQ, rivalQuality) * lineBreadthBonus(group.length), 0, 0.98);
+    const held = group.reduce((s, p) => s + p.share, 0);
+    if (held > ceiling && held > 0) {
+      const scale = ceiling / held;
+      for (const p of group) scaleById.set(p.id, scale);
+    }
+  }
+
+  if (scaleById.size === 0) return products;
+  return products.map((p) => {
+    const scale = scaleById.get(p.id);
+    return scale != null ? { ...p, share: p.share * scale } : p;
+  });
+}

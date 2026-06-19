@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { advanceShare, companyGrowthScale, competitionLevel, rivalProductQuality, targetShare } from "./productMarket.ts";
+import { advanceShare, capLineShare, companyGrowthScale, competitionLevel, lineBreadthBonus, rivalProductQuality, targetShare } from "./productMarket.ts";
 import type { Company } from "@/content/load";
 import type { ProductTuning } from "@/domain/content";
 import type { LiveProduct } from "@/domain/products";
@@ -83,6 +83,45 @@ test("competitionLevel tilts the rival bar by difficulty and climbs over time", 
   assert.ok(competitionLevel(70, 1, 520) > competitionLevel(70, 1, 0), "the bar drifts up over the years");
   assert.ok(competitionLevel(70, 1.2, 520) > competitionLevel(70, 1, 520), "harder difficulty climbs faster");
   assert.ok(competitionLevel(95, 1.4, 3000) <= 100, "never exceeds the 100 cap");
+});
+
+test("lineBreadthBonus rewards more SKUs with strong diminishing returns", () => {
+  assert.equal(lineBreadthBonus(1), 1, "a single product gets no premium");
+  assert.ok(lineBreadthBonus(2) > lineBreadthBonus(1));
+  assert.ok(lineBreadthBonus(3) > lineBreadthBonus(2));
+  assert.ok(lineBreadthBonus(20) < 1.13, "caps just above 1.1");
+});
+
+test("capLineShare leaves a single product (or an under-ceiling line) untouched", () => {
+  const solo = [{ ...product(0.9, 80), id: "a", archetype_id: "x" }];
+  assert.equal(capLineShare(solo, 50), solo, "one product is never capped");
+  // Two products of the same line still well under the ceiling: untouched.
+  const small = [
+    { ...product(0.1, 80), id: "a", archetype_id: "x" },
+    { ...product(0.05, 80), id: "b", archetype_id: "x" },
+  ];
+  assert.equal(capLineShare(small, 50), small);
+});
+
+test("capLineShare splits one line pool: same-archetype products can't double-dip", () => {
+  // Two strong products of the same line, each near its solo target (~0.83 vs a
+  // 50 field) — together 1.6 of share, which must be capped to the line ceiling.
+  const a = { ...product(0.8, 80), id: "a", archetype_id: "x" };
+  const b = { ...product(0.8, 80), id: "b", archetype_id: "x" };
+  const capped = capLineShare([a, b], 50);
+  const held = capped.reduce((s, p) => s + p.share, 0);
+  const ceiling = targetShare(80, 50) * lineBreadthBonus(2);
+  assert.ok(Math.abs(held - ceiling) < 1e-9, "the line total is held at its ceiling");
+  assert.ok(held < a.share + b.share, "combined share is cut below the naive sum");
+  assert.ok(Math.abs(capped[0]!.share - capped[1]!.share) < 1e-9, "an even split for equal holders");
+});
+
+test("capLineShare keeps different lines independent", () => {
+  const a = { ...product(0.8, 80), id: "a", archetype_id: "x" };
+  const b = { ...product(0.8, 80), id: "b", archetype_id: "y" };
+  const capped = capLineShare([a, b], 50);
+  assert.equal(capped[0]!.share, 0.8, "distinct lines don't contest each other");
+  assert.equal(capped[1]!.share, 0.8);
 });
 
 test("the company-size scale damps share growth as revenue climbs (floored)", () => {

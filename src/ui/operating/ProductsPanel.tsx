@@ -230,7 +230,7 @@ function BuildRow({
     <div className={`build-row${gated ? " is-locked" : ""}`}>
       <div className="build-row__id">
         <span className="build-row__name">T{archetype.tier} · {archetype.name}{count > 0 ? ` · #${count + 1}` : ""}</span>
-        <span className={`build-row__sub ${can ? "dim" : "is-blocked"}`}>{reason || `${formatMoney(cost)} · ${betBuildWeeks(archetype, tuning, count)}wk build`}</span>
+        <span className={`build-row__sub ${can ? "dim" : "is-blocked"}`}>{reason || `${formatMoney(cost)} · ${betBuildWeeks(archetype, tuning, count)}wk build${count > 0 ? " · shares this line's market" : ""}`}</span>
       </div>
       <Button variant="primary" size="sm" disabled={!can} title={can ? "" : reason} data-guide="signature-action-button" onClick={() => onCommit(`${archetype.name} ${count + 1}`)}>
         {cfg.split(" ")[0]}
