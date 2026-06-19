@@ -102,6 +102,7 @@ export function createNewGame(
       mobility: 52,
       quantum: 46,
     },
+    economyScale: 1,
   };
 
   return {

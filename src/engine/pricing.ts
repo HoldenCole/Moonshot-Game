@@ -13,9 +13,10 @@ const NOISE_AMPLITUDE = 0.07;
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
-/** The company's intrinsic fair value (authored / quality-derived), $M. */
-export function fundamentalValue(c: Company): Money {
-  return c.financials.valuation;
+/** The company's intrinsic fair value (authored / quality-derived), $M, lifted by
+ *  the secular world-economy scale so rival valuations grow over a run. */
+export function fundamentalValue(c: Company, economyScale = 1): Money {
+  return c.financials.valuation * economyScale;
 }
 
 /** The live market value, $M — fair value × hype × macro × noise. */
@@ -26,12 +27,12 @@ export function marketPrice(c: Company, world: WorldState, week: number): Money 
   const macroAdj = world.macroStrength * MACRO_SENSITIVITY;
   const noise = seededNoise(c.id, week) * NOISE_AMPLITUDE;
   const mult = clamp(1 + hypePremium + macroAdj + noise, 0.3, 3.2);
-  return fundamentalValue(c) * mult;
+  return fundamentalValue(c, world.economyScale ?? 1) * mult;
 }
 
 /** Premium (+) or discount (−) of market price to fair value, as a fraction. */
 export function mispricing(c: Company, world: WorldState, week: number): number {
-  const fair = fundamentalValue(c);
+  const fair = fundamentalValue(c, world.economyScale ?? 1);
   if (fair <= 0) return 0;
   return marketPrice(c, world, week) / fair - 1;
 }

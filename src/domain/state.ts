@@ -191,6 +191,9 @@ export interface WorldState {
   weeksInIpoWindow: number;
   /** Industry hype, 0–100, keyed by industry. */
   hype: Partial<Record<Industry, number>>;
+  /** Secular world-economy scale, compounding from 1.0 — lifts rival valuations
+   *  over a run so the world grows alongside the player. Macro-modulated. */
+  economyScale?: number;
 }
 
 /** A compact world sample for the World view's sparklines. */

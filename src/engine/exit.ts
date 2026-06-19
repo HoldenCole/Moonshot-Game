@@ -10,6 +10,7 @@ import type { Bank } from "@/content/load";
 import type { Company } from "@/content/load";
 import { applyRound, exitWaterfall, founderOwnership } from "./captable";
 import { valuationMark } from "./finance";
+import { fundamentalValue } from "./pricing";
 import { formatMoney } from "./format";
 import { type Rng, nextNoise, nextRange, pick } from "./rng";
 
@@ -230,12 +231,13 @@ export function acquisitionOffer(state: GameState, market: Company[], rng: Rng):
 
   // A plausible strategic buyer: a larger public company, ideally same sector.
   const ind = state.company.industry;
+  const econ = state.world.economyScale ?? 1;
   const buyers = market
-    .filter((c) => c.stage.status === "public" && c.financials.valuation > exitValue * 1.5)
+    .filter((c) => c.stage.status === "public" && fundamentalValue(c, econ) > exitValue * 1.5)
     .sort((a, b) => (a.industry === ind ? 0 : 1) - (b.industry === ind ? 0 : 1));
   const buyer = (buyers.length ? pick(rng, buyers) : pick(rng, market)) ?? null;
   const buyerName = buyer?.name ?? "a strategic acquirer";
-  const buyerValuation = buyer?.financials.valuation ?? Math.round(exitValue * nextRange(rng, 3, 6));
+  const buyerValuation = buyer ? Math.round(fundamentalValue(buyer, econ)) : Math.round(exitValue * nextRange(rng, 3, 6));
   const buyerHype = buyer ? state.world.hype[buyer.industry] ?? 55 : 55;
 
   // Stock deals price a touch higher — you're sharing in the acquirer's upside.

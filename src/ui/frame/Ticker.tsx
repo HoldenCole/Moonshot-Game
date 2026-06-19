@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/state/store";
+import { fundamentalValue } from "@/engine/pricing";
 import { formatMoney } from "@/engine/format";
 
 interface TickerItem {
@@ -31,7 +32,7 @@ export function Ticker() {
       out.push({
         key: `mkt-${c.id}`,
         text: c.name,
-        value: `${formatMoney(c.financials.valuation)} ${tick >= 0 ? "+" : ""}${tick.toFixed(1)}%`,
+        value: `${formatMoney(fundamentalValue(c, game.world.economyScale ?? 1))} ${tick >= 0 ? "+" : ""}${tick.toFixed(1)}%`,
         dir: tick >= 0 ? "up" : "down",
         color: c.color,
       });

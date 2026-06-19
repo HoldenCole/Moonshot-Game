@@ -2,6 +2,7 @@ import { type ReactNode, useMemo } from "react";
 import { useGame } from "@/state/store";
 import type { WorldSnapshot } from "@/domain/state";
 import { climateLabel, MACRO_LABEL, sentimentLabel, valuationMultiplier } from "@/engine/world";
+import { fundamentalValue } from "@/engine/pricing";
 import { industryLabel, type Industry } from "@/domain/ids";
 import { formatMoney, formatPct } from "@/engine/format";
 import { Sparkline } from "@/ui/charts/Sparkline";
@@ -20,7 +21,7 @@ export function WorldView() {
           id,
           hype: game.world.hype[id] ?? 50,
           count: cos.length,
-          cap: cos.reduce((s, c) => s + c.financials.valuation, 0),
+          cap: cos.reduce((s, c) => s + fundamentalValue(c, game.world.economyScale ?? 1), 0),
         };
       })
       .sort((a, b) => b.hype - a.hype);
