@@ -103,16 +103,30 @@ export function validateProducts(c: ProductsContent): string[] {
     }
   }
 
-  // Tier progression (6): contiguous 1..N per sub; build_cost + build_weeks
-  // non-decreasing by tier.
+  // Tier progression (6): tiers contiguous from their floor (a tier-0 component
+  // layer is allowed beneath tier 1), and build_cost + build_weeks non-decreasing
+  // across tiers — each tier's cheapest/fastest product is at least the prior
+  // tier's priciest/slowest (clean separation; free variety within a tier).
   for (const [sub, prods] of prodBySub) {
-    const sorted = [...prods].sort((a, b) => a.tier - b.tier);
-    sorted.forEach((p, i) => {
-      if (p.tier !== i + 1) w.push(`products ${sub}: tiers not contiguous 1..N (tier ${p.tier} at position ${i + 1})`);
+    const byTier = new Map<number, ProductArchetype[]>();
+    for (const p of prods) {
+      const arr = byTier.get(p.tier);
+      if (arr) arr.push(p);
+      else byTier.set(p.tier, [p]);
+    }
+    const tiers = [...byTier.keys()].sort((a, b) => a - b);
+    tiers.forEach((t, i) => {
+      if (t !== tiers[0]! + i) w.push(`products ${sub}: tiers not contiguous (tier ${t} after a gap)`);
     });
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i]!.economics.build_cost < sorted[i - 1]!.economics.build_cost) w.push(`products ${sub}: build_cost drops at tier ${sorted[i]!.tier} (${sorted[i]!.id})`);
-      if (sorted[i]!.economics.build_weeks < sorted[i - 1]!.economics.build_weeks) w.push(`products ${sub}: build_weeks drops at tier ${sorted[i]!.tier} (${sorted[i]!.id})`);
+    for (let i = 1; i < tiers.length; i++) {
+      const prev = byTier.get(tiers[i - 1]!)!;
+      const cur = byTier.get(tiers[i]!)!;
+      const prevMaxCost = Math.max(...prev.map((p) => p.economics.build_cost));
+      const curMinCost = Math.min(...cur.map((p) => p.economics.build_cost));
+      if (curMinCost < prevMaxCost) w.push(`products ${sub}: build_cost drops at tier ${tiers[i]} (${curMinCost} < tier ${tiers[i - 1]} max ${prevMaxCost})`);
+      const prevMaxWk = Math.max(...prev.map((p) => p.economics.build_weeks));
+      const curMinWk = Math.min(...cur.map((p) => p.economics.build_weeks));
+      if (curMinWk < prevMaxWk) w.push(`products ${sub}: build_weeks drops at tier ${tiers[i]} (${curMinWk} < tier ${tiers[i - 1]} max ${prevMaxWk})`);
     }
   }
 

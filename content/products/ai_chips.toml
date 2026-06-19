@@ -15,8 +15,8 @@ process_node = 15
 architecture = 20
 
 [consumer_gpu.economics]
-build_cost = 3
-build_weeks = 8
+build_cost = 20
+build_weeks = 30
 unit_margin = 0.35
 capacity_type = "fab_line"
 capacity_to_build = 1
@@ -44,8 +44,8 @@ architecture = 40
 yield_line = 35
 
 [datacenter_accel.economics]
-build_cost = 35
-build_weeks = 16
+build_cost = 55
+build_weeks = 48
 unit_margin = 0.62
 capacity_type = "fab_line"
 capacity_to_build = 2
@@ -73,8 +73,8 @@ architecture = 65
 yield_line = 55
 
 [next_gen_arch.economics]
-build_cost = 90
-build_weeks = 24
+build_cost = 120
+build_weeks = 66
 unit_margin = 0.68
 capacity_type = "fab_line"
 capacity_to_build = 3
@@ -87,3 +87,158 @@ decay_per_quarter = 0.10
 performance = 0.6
 efficiency = 0.25
 margin = 0.15
+
+# ---------------------------------------------------------------------------
+# TIER 0 — Components. Cheaper, faster, low-gate parts that generate early
+# revenue and fill the weeks between tape-out bets. Each is well below the
+# Consumer GPU floor ($40M/60w) in cost and time.
+# ---------------------------------------------------------------------------
+
+[memory_module]
+id = "memory_module"
+sub_industry = "ai_chips"
+name = "Memory module"
+tier = 0
+description = """DRAM and high-bandwidth memory stacks — the commodity workhorse \
+of the fab. Thin margins, steady demand, and a forgiving process. The first thing \
+a young fab makes to keep the lines warm and the cash trickling in while you chase \
+bigger silicon."""
+flavor_naming_hint = "e.g. 'M-series', a memory part number"
+
+[memory_module.gates]
+yield_line = 15
+
+[memory_module.economics]
+build_cost = 9
+build_weeks = 16
+unit_margin = 0.22
+capacity_type = "fab_line"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 500
+ramp_weeks = 10
+decay_per_quarter = 0.05
+
+[memory_module.specs]
+margin = 0.5
+cost = 0.3
+efficiency = 0.2
+
+[io_controller]
+id = "io_controller"
+sub_industry = "ai_chips"
+name = "I/O controller"
+tier = 0
+description = """The unglamorous interconnect and I/O dies that move data around a \
+board — USB, PCIe, networking controllers. Low-margin, high-volume glue chips \
+that every system needs. Reliable revenue that asks little of your process node."""
+flavor_naming_hint = "e.g. 'IOC-100', a controller part number"
+
+[io_controller.gates]
+architecture = 15
+
+[io_controller.economics]
+build_cost = 11
+build_weeks = 18
+unit_margin = 0.28
+capacity_type = "fab_line"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 600
+ramp_weeks = 12
+decay_per_quarter = 0.05
+
+[io_controller.specs]
+performance = 0.4
+cost = 0.35
+margin = 0.25
+
+[embedded_soc]
+id = "embedded_soc"
+sub_industry = "ai_chips"
+name = "Embedded SoC"
+tier = 0
+description = """A small system-on-chip for phones, appliances, and edge devices — \
+modest compute, tight power budget, sold by the million. Lower stakes than a \
+datacenter part, and a great way to bank architecture experience on someone \
+else's volume."""
+flavor_naming_hint = "e.g. 'Atom-S', an embedded line name"
+
+[embedded_soc.gates]
+architecture = 20
+process_node = 18
+
+[embedded_soc.economics]
+build_cost = 16
+build_weeks = 24
+unit_margin = 0.33
+capacity_type = "fab_line"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 750
+ramp_weeks = 14
+decay_per_quarter = 0.06
+
+[embedded_soc.specs]
+efficiency = 0.4
+performance = 0.35
+margin = 0.25
+
+[power_chip]
+id = "power_chip"
+sub_industry = "ai_chips"
+name = "Power management chip"
+tier = 0
+description = """The voltage regulators and power-delivery silicon that feed every \
+other chip. Boring, essential, and almost recession-proof — demand never really \
+goes away. A defensive product line that keeps earning when the frontier cools."""
+flavor_naming_hint = "e.g. 'PMU-7', a power part number"
+
+[power_chip.gates]
+yield_line = 20
+
+[power_chip.economics]
+build_cost = 8
+build_weeks = 14
+unit_margin = 0.30
+capacity_type = "fab_line"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 450
+ramp_weeks = 10
+decay_per_quarter = 0.03
+
+[power_chip.specs]
+margin = 0.45
+cost = 0.35
+efficiency = 0.2
+
+[packaging_substrate]
+id = "packaging_substrate"
+sub_industry = "ai_chips"
+name = "Advanced packaging substrate"
+tier = 0
+description = """The interposers and substrates that bind chiplets into a finished \
+package — increasingly where performance is won or lost. A components business \
+that rides the same yield expertise as your big parts and sells into the whole \
+industry, rivals included."""
+flavor_naming_hint = "e.g. 'Weave-1', a packaging brand"
+
+[packaging_substrate.gates]
+yield_line = 25
+
+[packaging_substrate.economics]
+build_cost = 14
+build_weeks = 20
+unit_margin = 0.36
+capacity_type = "fab_line"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 680
+ramp_weeks = 12
+decay_per_quarter = 0.04
+
+[packaging_substrate.specs]
+margin = 0.4
+cost = 0.35
+efficiency = 0.25

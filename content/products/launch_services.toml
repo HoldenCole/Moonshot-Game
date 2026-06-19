@@ -16,8 +16,8 @@ propulsion = 20
 reliability = 25
 
 [small_lift.economics]
-build_cost = 3
-build_weeks = 15
+build_cost = 28
+build_weeks = 34
 unit_margin = 0.30
 capacity_type = "launch_capacity"
 capacity_to_build = 1
@@ -45,8 +45,8 @@ reusability = 45
 reliability = 45
 
 [medium_lift.economics]
-build_cost = 30
-build_weeks = 30
+build_cost = 70
+build_weeks = 52
 unit_margin = 0.48
 capacity_type = "launch_capacity"
 capacity_to_build = 2
@@ -74,8 +74,8 @@ reusability = 60
 reliability = 70
 
 [heavy_human.economics]
-build_cost = 80
-build_weeks = 45
+build_cost = 140
+build_weeks = 74
 unit_margin = 0.52
 capacity_type = "launch_capacity"
 capacity_to_build = 3
@@ -88,3 +88,159 @@ decay_per_quarter = 0.04
 reliability = 0.45
 payload = 0.35
 performance = 0.20
+
+# ---------------------------------------------------------------------------
+# TIER 0 — Components. Hardware subsystems you can build and sell (to yourself
+# or to rivals) before and between full vehicle programs. All below the
+# Small-lift floor ($35M/44w).
+# ---------------------------------------------------------------------------
+
+[solid_booster]
+id = "solid_booster"
+sub_industry = "launch_services"
+name = "Solid rocket booster"
+tier = 0
+description = """A strap-on solid booster — simpler than a full vehicle, sold to \
+add thrust to your rockets or someone else's. Proven, forgiving tech that banks \
+propulsion experience and early revenue without betting a whole launch program."""
+flavor_naming_hint = "e.g. 'Kick-1', a booster part name"
+
+[solid_booster.gates]
+propulsion = 18
+
+[solid_booster.economics]
+build_cost = 12
+build_weeks = 20
+unit_margin = 0.34
+capacity_type = "launch_capacity"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 380
+ramp_weeks = 14
+decay_per_quarter = 0.03
+
+[solid_booster.specs]
+payload = 0.45
+performance = 0.35
+cost = 0.2
+
+[upper_stage]
+id = "upper_stage"
+sub_industry = "launch_services"
+name = "Upper stage"
+tier = 0
+description = """The restartable upper stage that places payloads in their final \
+orbit — a self-contained subsystem you can sell as a kick stage or fly atop your \
+own rockets. Real propulsion craft at a fraction of a full vehicle's cost."""
+flavor_naming_hint = "e.g. 'Apex Stage', an upper-stage name"
+
+[upper_stage.gates]
+propulsion = 22
+reliability = 20
+
+[upper_stage.economics]
+build_cost = 18
+build_weeks = 26
+unit_margin = 0.38
+capacity_type = "launch_capacity"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 480
+ramp_weeks = 16
+decay_per_quarter = 0.03
+
+[upper_stage.specs]
+performance = 0.4
+reliability = 0.35
+payload = 0.25
+
+[payload_fairing]
+id = "payload_fairing"
+sub_industry = "launch_services"
+name = "Payload fairing & dispenser"
+tier = 0
+description = """The nose cone and dispenser that protect and deploy payloads — and \
+increasingly, recoverable so you can reuse them. Unsexy structural hardware, but \
+it's where reusability savings quietly start and a steady B2B sale to other \
+launchers."""
+flavor_naming_hint = "e.g. 'Shell-2', a fairing part name"
+
+[payload_fairing.gates]
+reusability = 20
+
+[payload_fairing.economics]
+build_cost = 9
+build_weeks = 16
+unit_margin = 0.36
+capacity_type = "launch_capacity"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 300
+ramp_weeks = 12
+decay_per_quarter = 0.03
+
+[payload_fairing.specs]
+cost = 0.45
+reliability = 0.35
+margin = 0.2
+
+[ground_support]
+id = "ground_support"
+sub_industry = "launch_services"
+name = "Ground support equipment"
+tier = 0
+description = """Launch-pad systems, transporters, and fueling rigs — the ground \
+hardware every operator needs and few want to build. A defensive, low-drama \
+revenue line that leans on your operational know-how rather than bleeding-edge \
+propulsion."""
+flavor_naming_hint = "e.g. 'PadWorks', a GSE brand"
+
+[ground_support.gates]
+reliability = 18
+
+[ground_support.economics]
+build_cost = 7
+build_weeks = 14
+unit_margin = 0.40
+capacity_type = "launch_capacity"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 260
+ramp_weeks = 12
+decay_per_quarter = 0.02
+
+[ground_support.specs]
+reliability = 0.45
+cost = 0.35
+margin = 0.2
+
+[orbital_tug]
+id = "orbital_tug"
+sub_industry = "launch_services"
+name = "Orbital transfer tug"
+tier = 0
+description = """A small space tug that ferries payloads between orbits after \
+separation — last-mile delivery for satellites. A fast-growing niche that rides \
+your propulsion and reliability work, and opens a service the big vehicles don't \
+provide."""
+flavor_naming_hint = "e.g. 'Ferry-1', a tug name"
+
+[orbital_tug.gates]
+propulsion = 25
+reliability = 22
+
+[orbital_tug.economics]
+build_cost = 20
+build_weeks = 28
+unit_margin = 0.42
+capacity_type = "launch_capacity"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 520
+ramp_weeks = 18
+decay_per_quarter = 0.04
+
+[orbital_tug.specs]
+performance = 0.4
+reliability = 0.35
+payload = 0.25

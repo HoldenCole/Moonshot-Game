@@ -17,8 +17,8 @@ satellite_tech = 25
 network = 25
 
 [comms_relay.economics]
-build_cost = 3
-build_weeks = 12
+build_cost = 30
+build_weeks = 38
 unit_margin = 0.40
 capacity_type = "sat_manufacturing"
 capacity_to_build = 2
@@ -46,8 +46,8 @@ mass_production = 40
 network = 45
 
 [earth_observation.economics]
-build_cost = 35
-build_weeks = 24
+build_cost = 72
+build_weeks = 54
 unit_margin = 0.55
 capacity_type = "sat_manufacturing"
 capacity_to_build = 3
@@ -75,8 +75,8 @@ mass_production = 70
 network = 65
 
 [broadband_mega.economics]
-build_cost = 90
-build_weeks = 36
+build_cost = 150
+build_weeks = 76
 unit_margin = 0.58
 capacity_type = "sat_manufacturing"
 capacity_to_build = 5
@@ -89,3 +89,159 @@ decay_per_quarter = 0.07
 coverage = 0.45
 cost = 0.30
 capability = 0.25
+
+# ---------------------------------------------------------------------------
+# TIER 0 — Components. Satellite subsystems and ground hardware that earn early
+# and sell into the wider space economy. All below the Comms relay floor
+# ($90M/60w). Most draw sat_manufacturing; ground terminals draw ground_network.
+# ---------------------------------------------------------------------------
+
+[satellite_bus]
+id = "satellite_bus"
+sub_industry = "satellite_constellations"
+name = "Satellite bus"
+tier = 0
+description = """The standardized chassis — power, structure, avionics — that any \
+payload bolts onto. Selling buses to other operators turns your mass-production \
+muscle into a parts business and funds the constellation while it's still being \
+built."""
+flavor_naming_hint = "e.g. 'Bus-100', a platform name"
+
+[satellite_bus.gates]
+mass_production = 20
+
+[satellite_bus.economics]
+build_cost = 18
+build_weeks = 26
+unit_margin = 0.34
+capacity_type = "sat_manufacturing"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 600
+ramp_weeks = 18
+decay_per_quarter = 0.04
+
+[satellite_bus.specs]
+cost = 0.45
+capability = 0.35
+margin = 0.2
+
+[payload_sensor]
+id = "payload_sensor"
+sub_industry = "satellite_constellations"
+name = "Payload sensor package"
+tier = 0
+description = """The cameras, antennas, and instruments that ride on a satellite — \
+the part that actually does the job. Higher-value than the bus and a showcase for \
+your satellite tech, sold to anyone who builds their own birds but not their own \
+sensors."""
+flavor_naming_hint = "e.g. 'Optix-1', a sensor name"
+
+[payload_sensor.gates]
+satellite_tech = 25
+
+[payload_sensor.economics]
+build_cost = 22
+build_weeks = 28
+unit_margin = 0.46
+capacity_type = "sat_manufacturing"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 700
+ramp_weeks = 18
+decay_per_quarter = 0.06
+
+[payload_sensor.specs]
+capability = 0.5
+coverage = 0.3
+reliability = 0.2
+
+[ground_terminal]
+id = "ground_terminal"
+sub_industry = "satellite_constellations"
+name = "Ground terminal"
+tier = 0
+description = """The customer-side antennas and modems that connect to your fleet — \
+the hardware that turns orbital coverage into a paying subscriber. Sells in volume \
+alongside the service and leans on your ground-network expertise."""
+flavor_naming_hint = "e.g. 'LinkDish', a terminal brand"
+
+[ground_terminal.gates]
+network = 20
+
+[ground_terminal.economics]
+build_cost = 10
+build_weeks = 18
+unit_margin = 0.38
+capacity_type = "ground_network"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 520
+ramp_weeks = 14
+decay_per_quarter = 0.05
+
+[ground_terminal.specs]
+coverage = 0.4
+reliability = 0.4
+cost = 0.2
+
+[ion_thruster]
+id = "ion_thruster"
+sub_industry = "satellite_constellations"
+name = "Ion thruster module"
+tier = 0
+description = """A compact electric-propulsion module for station-keeping and orbit \
+raising — the unglamorous part that keeps satellites where they belong for years. \
+High-margin, long-lived, and in demand across the whole industry."""
+flavor_naming_hint = "e.g. 'Drift-1', a thruster name"
+
+[ion_thruster.gates]
+satellite_tech = 22
+mass_production = 18
+
+[ion_thruster.economics]
+build_cost = 14
+build_weeks = 22
+unit_margin = 0.44
+capacity_type = "sat_manufacturing"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 460
+ramp_weeks = 16
+decay_per_quarter = 0.03
+
+[ion_thruster.specs]
+capability = 0.4
+cost = 0.35
+reliability = 0.25
+
+[planetary_rover]
+id = "planetary_rover"
+sub_industry = "satellite_constellations"
+name = "Planetary rover"
+tier = 0
+description = """A small robotic rover built for research agencies and lunar \
+missions — a low-volume, high-prestige sideline that flexes your satellite tech in \
+a new direction. The contract is lumpy, but landing one puts your name on a \
+headline mission."""
+flavor_naming_hint = "e.g. 'Pathfinder-S', a rover name"
+
+[planetary_rover.gates]
+satellite_tech = 28
+mass_production = 20
+
+[planetary_rover.economics]
+build_cost = 24
+build_weeks = 32
+unit_margin = 0.40
+capacity_type = "sat_manufacturing"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 420
+ramp_weeks = 20
+decay_per_quarter = 0.04
+
+[planetary_rover.specs]
+capability = 0.45
+reliability = 0.35
+coverage = 0.2

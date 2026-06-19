@@ -16,8 +16,8 @@ domain_depth = 20
 model_leverage = 15
 
 [point_solution.economics]
-build_cost = 2
-build_weeks = 5
+build_cost = 10
+build_weeks = 18
 unit_margin = 0.72
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -46,7 +46,7 @@ model_leverage = 30
 
 [workflow_suite.economics]
 build_cost = 28
-build_weeks = 11
+build_weeks = 32
 unit_margin = 0.76
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -75,7 +75,7 @@ model_leverage = 50
 
 [platform_play.economics]
 build_cost = 70
-build_weeks = 17
+build_weeks = 46
 unit_margin = 0.80
 capacity_type = "deployment"
 capacity_to_build = 2
@@ -88,3 +88,157 @@ decay_per_quarter = 0.03
 moat = 0.4
 stickiness = 0.35
 fit = 0.25
+
+# ---------------------------------------------------------------------------
+# TIER 0 — Components. Tiny, fast add-ons and features that earn early and feed
+# the land-and-expand motion. All below the Point solution floor ($8M/18w).
+# ---------------------------------------------------------------------------
+
+[browser_extension]
+id = "browser_extension"
+sub_industry = "vertical_ai_saas"
+name = "Browser extension"
+tier = 0
+description = """A lightweight in-browser assistant for your vertical — surfacing \
+your tool where the work already happens. Cheap to build, frictionless to adopt, \
+and the perfect top-of-funnel wedge that pulls users toward the paid product."""
+flavor_naming_hint = "e.g. 'ClauseCheck for Chrome', an extension name"
+
+[browser_extension.gates]
+model_leverage = 10
+
+[browser_extension.economics]
+build_cost = 2
+build_weeks = 8
+unit_margin = 0.70
+capacity_type = "deployment"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 200
+ramp_weeks = 10
+decay_per_quarter = 0.06
+
+[browser_extension.specs]
+fit = 0.5
+reliability = 0.3
+stickiness = 0.2
+
+[api_connector]
+id = "api_connector"
+sub_industry = "vertical_ai_saas"
+name = "API & webhook connector"
+tier = 0
+description = """Prebuilt integrations into the tools your customers already run — \
+the connectors that make you part of their stack. Unglamorous plumbing, but every \
+integration deepens stickiness and raises the cost of ever leaving you."""
+flavor_naming_hint = "e.g. 'Connect', an integrations brand"
+
+[api_connector.gates]
+platform = 20
+
+[api_connector.economics]
+build_cost = 4
+build_weeks = 12
+unit_margin = 0.74
+capacity_type = "deployment"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 280
+ramp_weeks = 12
+decay_per_quarter = 0.04
+
+[api_connector.specs]
+stickiness = 0.5
+reliability = 0.3
+fit = 0.2
+
+[reporting_dashboard]
+id = "reporting_dashboard"
+sub_industry = "vertical_ai_saas"
+name = "Analytics dashboard"
+tier = 0
+description = """A reporting and insights layer that turns the data your product \
+already touches into something an executive will pay for. Low effort on top of \
+existing data, and it sells upward — the feature that gets you into the budget \
+conversation."""
+flavor_naming_hint = "e.g. 'Insights', a reporting add-on name"
+
+[reporting_dashboard.gates]
+domain_depth = 20
+platform = 15
+
+[reporting_dashboard.economics]
+build_cost = 5
+build_weeks = 12
+unit_margin = 0.75
+capacity_type = "deployment"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 320
+ramp_weeks = 14
+decay_per_quarter = 0.04
+
+[reporting_dashboard.specs]
+fit = 0.45
+stickiness = 0.35
+reliability = 0.2
+
+[mobile_companion]
+id = "mobile_companion"
+sub_industry = "vertical_ai_saas"
+name = "Mobile companion app"
+tier = 0
+description = """A phone app that extends your product to the field — approvals, \
+quick lookups, notifications. Modest on its own, but it keeps users engaged \
+between desk sessions and makes the whole subscription harder to give up."""
+flavor_naming_hint = "e.g. 'ClauseCheck Mobile', a companion-app name"
+
+[mobile_companion.gates]
+domain_depth = 18
+model_leverage = 15
+
+[mobile_companion.economics]
+build_cost = 6
+build_weeks = 14
+unit_margin = 0.70
+capacity_type = "deployment"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 300
+ramp_weeks = 14
+decay_per_quarter = 0.05
+
+[mobile_companion.specs]
+fit = 0.45
+stickiness = 0.35
+reliability = 0.2
+
+[template_library]
+id = "template_library"
+sub_industry = "vertical_ai_saas"
+name = "Template & content library"
+tier = 0
+description = """A curated library of templates, prompts, and workflows for your \
+vertical, sold as an add-on or used to drive adoption. Almost pure content — \
+cheapest thing you can ship — and it showcases the domain depth that sets you \
+apart from a generic model."""
+flavor_naming_hint = "e.g. 'Playbook Library', a content-pack name"
+
+[template_library.gates]
+domain_depth = 22
+
+[template_library.economics]
+build_cost = 2
+build_weeks = 8
+unit_margin = 0.82
+capacity_type = "deployment"
+capacity_to_build = 1
+capacity_to_run = 1
+addressable_market = 180
+ramp_weeks = 10
+decay_per_quarter = 0.05
+
+[template_library.specs]
+fit = 0.4
+moat = 0.35
+stickiness = 0.25
