@@ -153,20 +153,21 @@ capability = 0.4
 reliability = 0.4
 benchmark = 0.2
 
-[moderation_api]
-id = "moderation_api"
+[code_assistant]
+id = "code_assistant"
 sub_industry = "frontier_model_lab"
-name = "Content moderation API"
+name = "Code assistant API"
 tier = 0
-description = """A safety-classifier endpoint that flags harmful content for \
-everyone else's apps. Low compute, high trust, and it doubles as a showcase for \
-your alignment work — proof to enterprise buyers that you take safety seriously."""
-flavor_naming_hint = "e.g. 'Helio-Guard', a safety-tool name"
+description = """An autocomplete-and-explain endpoint for developers — the everyday \
+AI tool that turns your model into muscle memory for every engineer who touches it. \
+High-frequency, sticky, and a direct line into the developer ecosystem that quietly \
+makes your model the default."""
+flavor_naming_hint = "e.g. 'Helio-Code', a coding-assistant name"
 
-[moderation_api.gates]
-alignment = 20
+[code_assistant.gates]
+data_quality = 18
 
-[moderation_api.economics]
+[code_assistant.economics]
 build_cost = 1.8
 build_weeks = 4
 unit_margin = 0.5
@@ -175,12 +176,12 @@ capacity_to_build = 1
 capacity_to_run = 1
 addressable_market = 43
 ramp_weeks = 10
-decay_per_quarter = 0.06
+decay_per_quarter = 0.05
 
-[moderation_api.specs]
-safety = 0.45
-reliability = 0.35
-capability = 0.2
+[code_assistant.specs]
+capability = 0.5
+reliability = 0.3
+benchmark = 0.2
 
 [finetune_service]
 id = "finetune_service"

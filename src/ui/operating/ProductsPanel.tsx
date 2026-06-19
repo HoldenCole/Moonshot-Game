@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useGame } from "@/state/store";
 import { signatureConfig } from "@/engine/signature";
-import { betBuildWeeks, betCost, gatesMet, rushQuote } from "@/engine/products";
+import { betBuildWeeks, betCost, rushQuote } from "@/engine/products";
 import { available, nextRung } from "@/engine/capacity";
 import { formatMoney } from "@/engine/format";
-import type { ProductArchetype, ProductTuning } from "@/domain/content";
+import type { CapacityType, ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
 import type { ProductsRuntime } from "@/domain/products";
 import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Button, Slider } from "@/ui/components/controls";
@@ -135,7 +135,7 @@ export function ProductsPanel() {
         <div className="section-label">Commit a {cfg.noun}</div>
         <div className="prod-builds">
           {archetypes.map((a) => (
-            <BuildRow key={a.id} archetype={a} rt={rt} cash={cash} tuning={tuning} productById={productById} cfg={cfg.commitVerb} onCommit={(name) => commitBet(a.id, name)} />
+            <BuildRow key={a.id} archetype={a} rt={rt} cash={cash} tuning={tuning} productById={productById} lines={lines} caps={caps} cfg={cfg.commitVerb} onCommit={(name) => commitBet(a.id, name)} />
           ))}
         </div>
       </div>
@@ -149,6 +149,8 @@ function BuildRow({
   cash,
   tuning,
   productById,
+  lines,
+  caps,
   cfg,
   onCommit,
 }: {
@@ -157,33 +159,41 @@ function BuildRow({
   cash: number;
   tuning: ProductTuning;
   productById: Map<string, ProductArchetype>;
+  lines: RDLine[];
+  caps: CapacityType[];
   cfg: string;
   onCommit: (name: string) => void;
 }) {
   const cost = betCost(archetype, tuning);
-  const gated = !gatesMet(archetype, rt.rd.levels);
+  const unmet = Object.entries(archetype.gates).filter(([l, v]) => (rt.rd.levels[l] ?? 0) < v);
+  const gated = unmet.length > 0;
   const avail = available(rt.capacity, archetype.economics.capacity_type, rt.bets, rt.products, productById);
   const capShort = avail < archetype.economics.capacity_to_build;
   const atCap = rt.bets.length >= tuning.max_concurrent_bets;
   const can = !gated && !capShort && !atCap && cash >= cost;
-  const reason = gated
-    ? `needs ${Object.entries(archetype.gates).map(([l, v]) => `${l} ${v}`).join(", ")}`
-    : atCap
-      ? "at concurrency cap"
-      : capShort
-        ? "needs capacity"
-        : cash < cost
-          ? "short on cash"
-          : "";
   const count = rt.products.filter((p) => p.archetype_id === archetype.id).length + rt.bets.filter((b) => b.archetype_id === archetype.id).length;
+
+  // A specific, current-vs-required reason for *why* a build is blocked.
+  const lineName = (id: string) => lines.find((l) => l.id === id)?.name ?? id;
+  const cap = caps.find((cp) => cp.id === archetype.economics.capacity_type);
+  const need = archetype.economics.capacity_to_build;
+  const reason = gated
+    ? `Locked — R&D: ${unmet.map(([l, v]) => `${lineName(l)} ${Math.round(rt.rd.levels[l] ?? 0)}/${v}`).join(", ")}`
+    : capShort
+      ? `Needs ${need} ${cap?.unit_label ?? "unit"}${need > 1 ? "s" : ""} of ${cap?.name ?? "capacity"} — only ${avail} free (build more capacity)`
+      : atCap
+        ? `${rt.bets.length}/${tuning.max_concurrent_bets} builds in progress — wait for one to ship`
+        : cash < cost
+          ? `Short on cash — ${formatMoney(cost)} to build, ${formatMoney(cash)} on hand`
+          : "";
 
   return (
     <div className={`build-row${gated ? " is-locked" : ""}`}>
       <div className="build-row__id">
-        <span className="build-row__name">T{archetype.tier} · {archetype.name}</span>
-        <span className="build-row__sub dim">{reason || `${formatMoney(cost)} · ${betBuildWeeks(archetype, tuning, count)}wk build`}</span>
+        <span className="build-row__name">T{archetype.tier} · {archetype.name}{count > 0 ? ` · #${count + 1}` : ""}</span>
+        <span className={`build-row__sub ${can ? "dim" : "is-blocked"}`}>{reason || `${formatMoney(cost)} · ${betBuildWeeks(archetype, tuning, count)}wk build`}</span>
       </div>
-      <Button variant="primary" size="sm" disabled={!can} data-guide="signature-action-button" onClick={() => onCommit(`${archetype.name} ${count + 1}`)}>
+      <Button variant="primary" size="sm" disabled={!can} title={can ? "" : reason} data-guide="signature-action-button" onClick={() => onCommit(`${archetype.name} ${count + 1}`)}>
         {cfg.split(" ")[0]}
       </Button>
     </div>
