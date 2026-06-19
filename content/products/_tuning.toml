@@ -21,7 +21,7 @@ build_cost_mult = 1.0      # cost authored per product (effective $M)
 build_time_mult = 1.0      # build weeks authored per product (effective)
 decay_mult = 1.0            # treadmill is real (per-product decay already high)
 share_volatility = 0.25     # hype-driven — share swings fast
-tam_growth_per_year = 0.15  # the model market matures fast — growth, but it saturates
+tam_growth_per_year = 0.32  # AI models: rapid real-world adoption — base rate, rolled per game
 
 [vertical_ai_saas]
 starting_capacity = 4       # capacity-light: you start with room
@@ -32,7 +32,7 @@ build_cost_mult = 1.0      # cost authored per product (effective $M)
 build_time_mult = 1.0      # build weeks authored per product (effective)
 decay_mult = 0.7            # subscriptions are sticky — slow churn
 share_volatility = 0.10     # retention-driven — share barely moves either way
-tam_growth_per_year = 0.12  # steady software expansion, the most mature pie
+tam_growth_per_year = 0.15  # the most mature pie — base rate, rolled per game
 
 [ai_chips]
 starting_capacity = 2
@@ -43,7 +43,7 @@ build_cost_mult = 1.0      # cost authored per product (effective $M)
 build_time_mult = 1.0      # build weeks authored per product (effective)
 decay_mult = 1.1            # frontier parts obsolesce fast
 share_volatility = 0.15     # stickier, design-win-driven
-tam_growth_per_year = 0.30  # physical silicon TAM explodes as compute demand compounds
+tam_growth_per_year = 0.35  # physical silicon TAM explodes with compute demand — base rate, rolled per game
 
 [launch_services]
 starting_capacity = 3       # you can fly from day one
@@ -54,7 +54,7 @@ build_cost_mult = 1.0      # cost authored per product (effective $M)
 build_time_mult = 1.0      # build weeks authored per product (effective)
 decay_mult = 0.6            # a reliable vehicle is a long-lived workhorse
 share_volatility = 0.12     # contract/reliability-driven, very sticky
-tam_growth_per_year = 0.22  # launch demand grows as cost-to-orbit falls
+tam_growth_per_year = 0.26  # launch demand grows as cost-to-orbit falls — base rate, rolled per game
 
 [satellite_constellations]
 starting_capacity = 3
@@ -65,7 +65,7 @@ build_cost_mult = 1.0      # cost authored per product (effective $M)
 build_time_mult = 1.0      # build weeks authored per product (effective)
 decay_mult = 0.8            # fleets refresh, but installed base earns steadily
 share_volatility = 0.16     # mixed: comms sticky, imaging more hype-exposed
-tam_growth_per_year = 0.25  # connectivity + earth-data markets expand steadily
+tam_growth_per_year = 0.30  # connectivity + earth-data markets expand — base rate, rolled per game
 
 [space_stations]
 starting_capacity = 2
@@ -76,4 +76,4 @@ build_cost_mult = 1.0      # cost authored per product (effective $M)
 build_time_mult = 1.0      # build weeks authored per product (effective)
 decay_mult = 0.5            # stations are generational infrastructure
 share_volatility = 0.18     # lumpy, tenant-driven revenue
-tam_growth_per_year = 0.30  # the orbital economy is being built — the pie grows fastest
+tam_growth_per_year = 0.35  # the orbital economy is being built — base rate, rolled per game

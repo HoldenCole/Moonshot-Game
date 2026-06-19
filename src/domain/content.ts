@@ -337,9 +337,9 @@ export interface ProductTuning {
   build_time_mult: number;
   decay_mult: number;
   share_volatility: number; // how fast share can swing vs. rivals
-  /** PEAK yearly growth of the sector's addressable market (TAM) — the fast crest of
-   *  the adoption wave (fast → slow → fast again over the years), also modulated by
-   *  the macro cycle. Optional; absent = a flat market. */
+  /** BASE peak yearly growth of the sector's addressable market (TAM) — the fast crest
+   *  of the adoption wave (fast → slow → fast again), then scaled by a per-run growth
+   *  era (tamGrowthRoll) and nudged by the macro cycle. Optional; absent = a flat market. */
   tam_growth_per_year?: number;
 }
 

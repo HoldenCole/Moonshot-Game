@@ -197,6 +197,23 @@ export function nextTamScale(prev: number, peakRate: number, week: number, macro
   return prev * (1 + Math.max(0, rate) * macroFactor) ** (1 / 52);
 }
 
+/** The per-run "growth era" multiplier on a sector's base peak rate — the knob that
+ *  makes each game differ. Seeded from the save + sub-industry, so it's fixed for a
+ *  run but varies across games. The u² skew keeps most runs near the regular low end
+ *  (1.0) with a long tail to a rare, huge boom era (~1.8×) — which, compounded over
+ *  decades, is the difference between a ~$1T and a ~$27T sector. */
+export const TAM_ROLL_MIN = 1.0;
+export const TAM_ROLL_MAX = 1.8;
+export function tamGrowthRoll(seed: number, sub: string): number {
+  let h = (seed >>> 0) ^ 2166136261;
+  for (let i = 0; i < sub.length; i++) {
+    h ^= sub.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  const u = (h >>> 0) / 4294967296; // [0, 1)
+  return TAM_ROLL_MIN + (TAM_ROLL_MAX - TAM_ROLL_MIN) * u * u;
+}
+
 /** $M/yr a product is earning now: its share of the (TAM-scaled) market, scaled by
  *  where it is in the ramp and how far obsolescence has eaten in. */
 export function productRevenueRunRate(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning, tamScale = 1): number {

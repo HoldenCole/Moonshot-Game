@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { adoptionWave, betBuildWeeks, iterationBuildFactor, lifecycleState, nextTamScale, productQuality, productRevenueRunRate, productGrossProfit, tickProduct, MATURE_WINDOW } from "./products.ts";
+import { adoptionWave, betBuildWeeks, iterationBuildFactor, lifecycleState, nextTamScale, productQuality, productRevenueRunRate, productGrossProfit, tamGrowthRoll, tickProduct, MATURE_WINDOW, TAM_ROLL_MIN, TAM_ROLL_MAX } from "./products.ts";
 import type { ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
 import type { LiveProduct } from "@/domain/products";
 
@@ -105,6 +105,14 @@ test("the adoption wave runs fast → slow → fast again over its period", () =
   assert.ok(adoptionWave(8) < adoptionWave(4), "slowest at the saturation trough (~half period)");
   assert.ok(adoptionWave(16) > adoptionWave(8), "a new wave reignites growth");
   assert.ok(Math.abs(adoptionWave(0) - adoptionWave(16)) < 1e-9, "one full period returns to the crest");
+});
+
+test("tamGrowthRoll is a stable per-run growth-era multiplier within range", () => {
+  const a = tamGrowthRoll(42, "ai_chips");
+  assert.equal(a, tamGrowthRoll(42, "ai_chips"), "same seed + sub → same roll (fixed for the run)");
+  assert.ok(a >= TAM_ROLL_MIN && a <= TAM_ROLL_MAX, "within the configured range");
+  assert.notEqual(tamGrowthRoll(42, "ai_chips"), tamGrowthRoll(43, "ai_chips"), "a different game rolls differently");
+  assert.notEqual(tamGrowthRoll(42, "ai_chips"), tamGrowthRoll(42, "space_stations"), "sectors roll independently");
 });
 
 test("nextTamScale follows the adoption wave: fast early, slow at saturation; flat when ungrown", () => {
