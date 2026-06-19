@@ -92,7 +92,7 @@ safety = 0.25
 # ---------------------------------------------------------------------------
 # TIER 0 — Components. Station subsystems and orbital hardware that earn before
 # you can afford a full module. All well below the Research module floor
-# ($110M/78w) in cost and time.
+# ($45M/52w) in cost and time.
 # ---------------------------------------------------------------------------
 
 [docking_adapter]

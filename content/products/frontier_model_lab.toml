@@ -120,7 +120,7 @@ safety = 0.25
 
 # ---------------------------------------------------------------------------
 # TIER 0 — Components. Small, fast model-layer products that earn between the
-# big training runs. All well below the API model floor ($18M/26w).
+# big training runs. All well below the API model floor ($14M/20w).
 # ---------------------------------------------------------------------------
 
 [embeddings_api]

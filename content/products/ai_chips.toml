@@ -91,7 +91,7 @@ margin = 0.15
 # ---------------------------------------------------------------------------
 # TIER 0 — Components. Cheaper, faster, low-gate parts that generate early
 # revenue and fill the weeks between tape-out bets. Each is well below the
-# Consumer GPU floor ($40M/60w) in cost and time.
+# Consumer GPU floor ($26M/34w) in cost and time.
 # ---------------------------------------------------------------------------
 
 [memory_module]

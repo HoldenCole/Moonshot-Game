@@ -93,7 +93,7 @@ capability = 0.25
 # ---------------------------------------------------------------------------
 # TIER 0 — Components. Satellite subsystems and ground hardware that earn early
 # and sell into the wider space economy. All below the Comms relay floor
-# ($90M/60w). Most draw sat_manufacturing; ground terminals draw ground_network.
+# ($38M/44w). Most draw sat_manufacturing; ground terminals draw ground_network.
 # ---------------------------------------------------------------------------
 
 [satellite_bus]

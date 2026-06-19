@@ -92,7 +92,7 @@ performance = 0.20
 # ---------------------------------------------------------------------------
 # TIER 0 — Components. Hardware subsystems you can build and sell (to yourself
 # or to rivals) before and between full vehicle programs. All below the
-# Small-lift floor ($35M/44w).
+# Small-lift floor ($30M/30w).
 # ---------------------------------------------------------------------------
 
 [solid_booster]
