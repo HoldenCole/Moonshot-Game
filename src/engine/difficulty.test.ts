@@ -61,7 +61,7 @@ test("starting capital and opening burn both scale with the preset", () => {
 
 test("preview bars are normalized [0,1] and a harsher world reads higher", () => {
   const bars = previewBars(PRESET_AXES.realistic);
-  assert.equal(bars.length, 4);
+  assert.equal(bars.length, 5);
   for (const bar of bars) assert.ok(bar.fill >= 0 && bar.fill <= 1, `${bar.label}=${bar.fill}`);
   const turb = (axes: typeof PRESET_AXES.realistic) => previewBars(axes).find((x) => x.label === "Market turbulence")!.fill;
   assert.ok(turb(PRESET_AXES.brutal) > turb(PRESET_AXES.forgiving));

@@ -13,6 +13,7 @@ import { snapshotWorld, stepWorld } from "./world";
 import { repricePublic } from "./exit";
 import { serviceDebt } from "./debt";
 import { bandWorsened, netBurnMonthly, netWorth, privateValuationMark, runwayBand, runwayMonths } from "./finance";
+import { difficultyProfile } from "./difficulty";
 import { evaluateEvents } from "./events";
 import { advanceProducts, productsOperatingRevenue, type SubContent } from "./productsRuntime";
 import { justClosedQuarter, marketReaction, quarterIndex, resultVerbose, settleQuarter } from "./earnings";
@@ -88,7 +89,7 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   if (company.products && env?.subContent) {
     const sub = env.subContent;
     const rivals = env.market.filter((c) => c.sub_industry === company.subIndustry);
-    const pa = advanceProducts(company.products, sub, rivals, week);
+    const pa = advanceProducts(company.products, sub, rivals, week, difficultyProfile(state.difficulty).competition);
     // The weekly R&D budget is spent (the core cash competition each turn).
     const rdSpend = pa.runtime.rd.rd_budget_per_week;
     company = {

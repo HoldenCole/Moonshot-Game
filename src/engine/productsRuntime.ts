@@ -9,7 +9,7 @@ import type { ProductsRuntime } from "@/domain/products";
 import { advanceRD, initRDState, rivalLevelsForLines } from "./rd";
 import { canStartBet, initCapacityState, nextRung, startRungBuild, tickCapacityBuilds } from "./capacity";
 import { betCost, gatesMet, makeBet, productGrossProfit, rushQuote, tickBets, tickProduct } from "./products";
-import { advanceShare, companyGrowthScale, rivalProductQuality } from "./productMarket";
+import { advanceShare, companyGrowthScale, competitionLevel, rivalProductQuality } from "./productMarket";
 import { formatMoney } from "./format";
 
 /** The authored content for one sub-industry, resolved once and passed in. */
@@ -59,7 +59,7 @@ export interface ProductsAdvance {
 
 /** Advance the whole depth system one week, in the spec's deterministic order:
  *  R&D progress → capacity builds → bets ship → products age (share, revenue). */
-export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Company[], week: number): ProductsAdvance {
+export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Company[], week: number, competition = 1): ProductsAdvance {
   const rd = advanceRD(rt.rd, c.lines, c.tuning, rivalLevelsForLines(c.lines, rivals));
 
   const typeById = new Map(c.capacityTypes.map((t) => [t.id, t]));
@@ -67,7 +67,9 @@ export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Comp
 
   const betRes = tickBets(rt.bets, c.productById, c.lines, week);
 
-  const rivalQ = rivalProductQuality(rivals);
+  // The competitive bar your products take share against — scaled by difficulty
+  // and drifting up over time, so the field stays level as you (and the TAM) grow.
+  const rivalQ = competitionLevel(rivalProductQuality(rivals), competition, week);
   // Growth slows as the company gets bigger: damp share gains by total run-rate.
   const growthScale = companyGrowthScale(rt.products.reduce((s, p) => s + p.revenue_run_rate, 0));
   const products = [...rt.products, ...betRes.shipped.map((s) => s.product)].map((p) => {

@@ -8,9 +8,9 @@ import type { Tuning } from "@/domain/tuning";
 import type { Difficulty, DifficultyAxes, DifficultyPreset, NewsCycle } from "@/domain/state";
 
 export const PRESET_AXES: Record<DifficultyPreset, DifficultyAxes> = {
-  forgiving: { volatility: 0.7, cycleSpeed: 0.85, capitalClimate: 1.18, startingCapital: 1.6, burnRate: 0.85, eventSeverity: 0.7 },
-  realistic: { volatility: 1.0, cycleSpeed: 1.0, capitalClimate: 1.0, startingCapital: 1.0, burnRate: 1.0, eventSeverity: 1.0 },
-  brutal: { volatility: 1.45, cycleSpeed: 1.25, capitalClimate: 0.82, startingCapital: 0.6, burnRate: 1.25, eventSeverity: 1.4 },
+  forgiving: { volatility: 0.7, cycleSpeed: 0.85, capitalClimate: 1.18, startingCapital: 1.6, burnRate: 0.85, eventSeverity: 0.7, competition: 0.85 },
+  realistic: { volatility: 1.0, cycleSpeed: 1.0, capitalClimate: 1.0, startingCapital: 1.0, burnRate: 1.0, eventSeverity: 1.0, competition: 1.0 },
+  brutal: { volatility: 1.45, cycleSpeed: 1.25, capitalClimate: 0.82, startingCapital: 0.6, burnRate: 1.25, eventSeverity: 1.4, competition: 1.2 },
 };
 
 export const DEFAULT_DIFFICULTY: Difficulty = { preset: "realistic", newsCycle: "medium", axes: PRESET_AXES.realistic };
@@ -71,6 +71,7 @@ export const AXES: AxisMeta[] = [
   { key: "startingCapital", label: "Starting capital", hint: "The founder cash you open with.", min: 0.5, max: 1.8, harderWhenHigh: false },
   { key: "burnRate", label: "Opening burn", hint: "How fast your starting costs eat that cash.", min: 0.6, max: 1.6, harderWhenHigh: true },
   { key: "eventSeverity", label: "Event severity", hint: "How hard a bad decision or crisis hits.", min: 0.6, max: 1.6, harderWhenHigh: true },
+  { key: "competition", label: "Competition", hint: "How strong your rivals start, and how fast they keep improving.", min: 0.7, max: 1.4, harderWhenHigh: true },
 ];
 
 /** Whether a set of axes matches a named preset exactly (so the UI can show the
@@ -139,6 +140,7 @@ export function previewBars(axes: DifficultyAxes): PreviewBar[] {
     { label: "Market turbulence", fill: norm((axes.volatility + axes.cycleSpeed) / 2, 0.6, 1.5), hint: "How violently and how often the world swings." },
     { label: "Capital availability", fill: norm((axes.startingCapital + axes.capitalClimate) / 2, 0.6, 1.5), hint: "Opening cash and how generously rounds price." },
     { label: "Event severity", fill: norm(axes.eventSeverity, 0.6, 1.5), hint: "How hard a bad decision or crisis hits." },
+    { label: "Competition", fill: norm(axes.competition, 0.7, 1.4), hint: "How strong and fast-improving your rivals are." },
     { label: "Opening runway", fill: norm(axes.startingCapital / axes.burnRate, 0.4, 2.2), hint: "Starting capital set against your opening burn." },
   ];
 }

@@ -44,6 +44,21 @@ export function companyGrowthScale(companyRevenue: number): number {
   return Math.max(0.25, 1 / (1 + Math.max(0, companyRevenue) / GROWTH_SCALE_HALFLIFE));
 }
 
+/** Yearly drift of the competitive bar toward the frontier — a maturing sector's
+ *  incumbents keep improving, so you can't simply outgrow a static field. */
+export const RIVAL_CLIMB_PER_YEAR = 0.05;
+
+/** The effective rival quality bar (0–100) the market is contested against, given
+ *  the difficulty's competition axis and the week. The authored bar is tilted by
+ *  the axis (Forgiving < 1 weaker, Brutal > 1 stronger), then drifts up toward the
+ *  100 cap over time at a difficulty-scaled rate. Axis 1.0 at week 0 = the raw bar,
+ *  so early Realistic play is unchanged and the field stays level into the late game. */
+export function competitionLevel(baseRivalQuality: number, competition: number, week: number): number {
+  const scaled = baseRivalQuality * competition;
+  const climb = clamp(RIVAL_CLIMB_PER_YEAR * competition * (Math.max(0, week) / 52), 0, 0.85);
+  return clamp(scaled + (100 - scaled) * climb, 0, 100);
+}
+
 /** Move a product's share one week toward its target by a fraction of the
  *  remaining gap — the industry's volatility sets the fraction, the company-size
  *  scale damps it. Share ramps fast when far from target and eases as it closes

@@ -242,6 +242,9 @@ export interface DifficultyAxes {
   burnRate: number;
   /** How hard the bad side of an event outcome bites. */
   eventSeverity: number;
+  /** How strong (and how fast-improving) your market rivals are — scales the
+   *  competitive quality bar your products take share against. */
+  competition: number;
 }
 export interface Difficulty {
   preset: DifficultyPreset | "custom";

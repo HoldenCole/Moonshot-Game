@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { advanceShare, companyGrowthScale, rivalProductQuality, targetShare } from "./productMarket.ts";
+import { advanceShare, companyGrowthScale, competitionLevel, rivalProductQuality, targetShare } from "./productMarket.ts";
 import type { Company } from "@/content/load";
 import type { ProductTuning } from "@/domain/content";
 import type { LiveProduct } from "@/domain/products";
@@ -74,6 +74,15 @@ test("share eases toward target by a fraction of the gap, never overshooting", (
   const next = advanceShare(p, 0, tuning(0.13)).share;
   assert.ok(Math.abs(next - (0.5 + (target - 0.5) * 0.13)) < 1e-9, "13% of the gap");
   assert.ok(next > 0.5 && next < target, "eases in without overshooting");
+});
+
+test("competitionLevel tilts the rival bar by difficulty and climbs over time", () => {
+  assert.ok(Math.abs(competitionLevel(70, 1, 0) - 70) < 1e-9, "Realistic @ founding = the raw bar");
+  assert.ok(competitionLevel(70, 0.85, 0) < 70, "Forgiving weakens rivals");
+  assert.ok(competitionLevel(70, 1.2, 0) > 70, "Brutal strengthens rivals");
+  assert.ok(competitionLevel(70, 1, 520) > competitionLevel(70, 1, 0), "the bar drifts up over the years");
+  assert.ok(competitionLevel(70, 1.2, 520) > competitionLevel(70, 1, 520), "harder difficulty climbs faster");
+  assert.ok(competitionLevel(95, 1.4, 3000) <= 100, "never exceeds the 100 cap");
 });
 
 test("the company-size scale damps share growth as revenue climbs (floored)", () => {
