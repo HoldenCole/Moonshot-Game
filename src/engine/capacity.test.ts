@@ -58,6 +58,7 @@ const bet = (capId: string, held: number): ActiveBet => ({
   instance_name: "X",
   kind: "create",
   weeks_left: 10,
+  build_weeks_total: 10,
   capacity_held: held,
   cap_id: capId,
   committed_levels: {},

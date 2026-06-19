@@ -43,10 +43,23 @@ export function betCost(archetype: ProductArchetype, tuning: ProductTuning): num
   return Math.round(archetype.economics.build_cost * tuning.build_cost_mult);
 }
 
-/** The full build length of a bet in weeks, after the industry's time multiplier
- *  (the same figure makeBet seeds weeks_left with). */
-export function betBuildWeeks(archetype: ProductArchetype, tuning: ProductTuning): number {
-  return Math.max(1, Math.round(archetype.economics.build_weeks * tuning.build_time_mult));
+/** How much longer each successive build of the same product takes. Early
+ *  iterations are quick; once you've shipped a dozen-ish of one archetype its
+ *  frontier is harder and a new version takes up to ~3× as long. Front-flat then
+ *  rising (quadratic), so the first several stay near baseline. */
+export const ITERATION_RAMP_K = 1.5;
+export const ITERATION_RAMP_SCALE = 12;
+export const ITERATION_RAMP_MAX = 3;
+export function iterationBuildFactor(priorBuilds: number): number {
+  const n = Math.max(0, priorBuilds);
+  return Math.min(ITERATION_RAMP_MAX, 1 + ITERATION_RAMP_K * (n / ITERATION_RAMP_SCALE) ** 2);
+}
+
+/** The full build length of a bet in weeks: the authored weeks after the
+ *  industry's time multiplier, lengthened by the iteration ramp for how many of
+ *  this archetype you've already built. makeBet seeds weeks_left with this. */
+export function betBuildWeeks(archetype: ProductArchetype, tuning: ProductTuning, priorBuilds = 0): number {
+  return Math.max(1, Math.round(archetype.economics.build_weeks * tuning.build_time_mult * iterationBuildFactor(priorBuilds)));
 }
 
 // ── Crashing the schedule (invest cash to ship sooner) ────────────────────────
@@ -66,7 +79,7 @@ export function rushQuote(
   tuning: ProductTuning,
 ): { weeks: number; cost: number } | null {
   if (bet.weeks_left <= 1) return null;
-  const full = betBuildWeeks(archetype, tuning);
+  const full = bet.build_weeks_total || betBuildWeeks(archetype, tuning);
   const chunk = Math.max(1, Math.round(full * RUSH_FRACTION));
   const weeks = Math.min(chunk, bet.weeks_left - 1);
   if (weeks <= 0) return null;
@@ -84,13 +97,16 @@ export function makeBet(
   week: number,
   tuning: ProductTuning,
   seq = 0,
+  priorBuilds = 0,
 ): ActiveBet {
+  const weeks = betBuildWeeks(archetype, tuning, priorBuilds);
   return {
     id: `bet-${archetype.id}-${week}-${seq}`,
     archetype_id: archetype.id,
     instance_name: instanceName,
     kind,
-    weeks_left: Math.max(1, Math.round(archetype.economics.build_weeks * tuning.build_time_mult)),
+    weeks_left: weeks,
+    build_weeks_total: weeks,
     capacity_held: archetype.economics.capacity_to_build,
     cap_id: archetype.economics.capacity_type,
     committed_levels: { ...levels },
@@ -158,7 +174,11 @@ function decayMultiplier(ageWeeks: number, archetype: ProductArchetype, tuning: 
  *  in the ramp and how far obsolescence has eaten in. */
 export function productRevenueRunRate(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning): number {
   const peak = product.share * archetype.economics.addressable_market;
-  const rampFrac = Math.min(1, product.age_weeks / Math.max(1, archetype.economics.ramp_weeks));
+  const t = Math.min(1, product.age_weeks / Math.max(1, archetype.economics.ramp_weeks));
+  // Front-loaded ramp: revenue climbs fast early then eases into its plateau,
+  // instead of crawling up a straight line (=1 at t≥1, so it still matures at
+  // share × market). With the share ease (productMarket) the curve reads as an S.
+  const rampFrac = 1 - (1 - t) ** 2;
   return peak * rampFrac * decayMultiplier(product.age_weeks, archetype, tuning);
 }
 

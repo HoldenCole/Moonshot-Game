@@ -37,6 +37,9 @@ export interface ActiveBet {
   instance_name: string;
   kind: "create" | "upgrade";
   weeks_left: number;
+  /** The build's full length at commit (weeks_left starts here). Lets the rush
+   *  quote price against the original schedule even as weeks_left ticks down. */
+  build_weeks_total: number;
   /** = archetype.economics.capacity_to_build; released on ship. */
   capacity_held: number;
   cap_id: string;

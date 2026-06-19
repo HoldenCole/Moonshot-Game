@@ -7,7 +7,6 @@ import type { Company } from "@/content/load";
 import type { ProductTuning } from "@/domain/content";
 import type { LiveProduct } from "@/domain/products";
 
-const QUARTER = 13;
 /** Quality-gap scale of the share logistic — a ~18pt edge is worth a lot. */
 const SPREAD = 18;
 
@@ -36,11 +35,21 @@ export function targetShare(yourQ: number, rivalQ: number): number {
   return logistic((yourQ - rivalQ) / SPREAD);
 }
 
-/** Move a product's share one week toward its target, capped by the industry's
- *  share volatility (per-week slice of a quarter). */
-export function advanceShare(product: LiveProduct, rivalQuality: number, tuning: ProductTuning): LiveProduct {
+/** As a company's revenue grows, share gains come slower — diminishing returns at
+ *  scale (a bigger base is harder to grow off). 1.0 for a small company, easing
+ *  toward a floor as run-rate revenue climbs. */
+export const GROWTH_SCALE_HALFLIFE = 3000; // $M of revenue at which growth roughly halves
+export function companyGrowthScale(companyRevenue: number): number {
+  return Math.max(0.25, 1 / (1 + Math.max(0, companyRevenue) / GROWTH_SCALE_HALFLIFE));
+}
+
+/** Move a product's share one week toward its target by a fraction of the
+ *  remaining gap — the industry's volatility sets the fraction, the company-size
+ *  scale damps it. Share ramps fast when far from target and eases as it closes
+ *  in (fast-then-plateau), rather than crawling up a fixed step. */
+export function advanceShare(product: LiveProduct, rivalQuality: number, tuning: ProductTuning, growthScale = 1): LiveProduct {
   const target = targetShare(product.quality, rivalQuality);
-  const step = tuning.share_volatility / QUARTER;
-  const share = clamp(product.share + clamp(target - product.share, -step, step), 0, 1);
+  const rate = clamp(tuning.share_volatility * growthScale, 0, 1);
+  const share = clamp(product.share + (target - product.share) * rate, 0, 1);
   return { ...product, share };
 }

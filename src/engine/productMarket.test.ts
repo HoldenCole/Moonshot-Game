@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { advanceShare, rivalProductQuality, targetShare } from "./productMarket.ts";
+import { advanceShare, companyGrowthScale, rivalProductQuality, targetShare } from "./productMarket.ts";
 import type { Company } from "@/content/load";
 import type { ProductTuning } from "@/domain/content";
 import type { LiveProduct } from "@/domain/products";
@@ -67,9 +67,22 @@ test("share drifts toward target, faster in volatile industries", () => {
   assert.ok(volatile > sticky, "a hype industry swings faster than a sticky one");
 });
 
-test("share is rate-limited and clamped to [0,1]", () => {
-  // A huge quality edge still can't jump more than the weekly volatility slice.
+test("share eases toward target by a fraction of the gap, never overshooting", () => {
+  // Proportional approach: move 13% of the remaining gap, decelerating as it closes.
   const p = product(0.5, 100);
-  const next = advanceShare(p, 0, tuning(0.13)).share; // step = 0.13/13 = 0.01
-  assert.ok(Math.abs(next - 0.51) < 1e-9);
+  const target = targetShare(100, 0);
+  const next = advanceShare(p, 0, tuning(0.13)).share;
+  assert.ok(Math.abs(next - (0.5 + (target - 0.5) * 0.13)) < 1e-9, "13% of the gap");
+  assert.ok(next > 0.5 && next < target, "eases in without overshooting");
+});
+
+test("the company-size scale damps share growth as revenue climbs (floored)", () => {
+  assert.equal(companyGrowthScale(0), 1, "a tiny company grows at full speed");
+  assert.ok(companyGrowthScale(3000) < companyGrowthScale(500), "bigger → slower");
+  assert.ok(companyGrowthScale(1e9) >= 0.25, "growth never fully stalls (floor)");
+
+  const p = product(0.2, 80);
+  const fast = advanceShare(p, 50, tuning(0.2), 1).share;
+  const damped = advanceShare(p, 50, tuning(0.2), 0.4).share;
+  assert.ok(damped < fast, "a damped (big) company gains share slower");
 });

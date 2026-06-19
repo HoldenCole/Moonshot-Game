@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { lifecycleState, productQuality, productRevenueRunRate, productGrossProfit, tickProduct, MATURE_WINDOW } from "./products.ts";
+import { betBuildWeeks, iterationBuildFactor, lifecycleState, productQuality, productRevenueRunRate, productGrossProfit, tickProduct, MATURE_WINDOW } from "./products.ts";
 import type { ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
 import type { LiveProduct } from "@/domain/products";
 
@@ -83,6 +83,21 @@ test("revenue ramps up across the ramp window — grows between bets (bug #3 gua
   const rPeak = productRevenueRunRate(product({ age_weeks: 25 }), a, tuning());
   assert.ok(r5 < r15 && r15 < rPeak, "run-rate rises every week of the ramp with no new event");
   assert.ok(Math.abs(rPeak - 200) < 1e-9, "matures at share × addressable market");
+});
+
+test("the revenue ramp is front-loaded — a quarter into the window, past a quarter of peak", () => {
+  const a = archetype(); // ramp 20, peak = share 0.2 × 1000 = 200
+  const quarterIn = productRevenueRunRate(product({ age_weeks: 5 }), a, tuning()); // t = 0.25
+  assert.ok(quarterIn > 0.25 * 200, "climbs faster than a straight line early");
+  assert.ok(quarterIn < 200, "but hasn't reached the plateau yet");
+});
+
+test("iterationBuildFactor lengthens later builds — flat early, rising, then capped", () => {
+  assert.equal(iterationBuildFactor(0), 1, "the first build is at baseline");
+  assert.ok(iterationBuildFactor(3) < iterationBuildFactor(8), "later iterations take longer");
+  assert.ok(iterationBuildFactor(50) <= 3 + 1e-9, "capped at the max");
+  const a = archetype({ build_weeks: 20 });
+  assert.ok(betBuildWeeks(a, tuning(), 10) > betBuildWeeks(a, tuning(), 0), "the 11th build is slower than the 1st");
 });
 
 test("revenue decays after the mature plateau", () => {

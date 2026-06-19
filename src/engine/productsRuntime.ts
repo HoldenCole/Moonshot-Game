@@ -9,7 +9,7 @@ import type { ProductsRuntime } from "@/domain/products";
 import { advanceRD, initRDState, rivalLevelsForLines } from "./rd";
 import { canStartBet, initCapacityState, nextRung, startRungBuild, tickCapacityBuilds } from "./capacity";
 import { betCost, gatesMet, makeBet, productGrossProfit, rushQuote, tickBets, tickProduct } from "./products";
-import { advanceShare, rivalProductQuality } from "./productMarket";
+import { advanceShare, companyGrowthScale, rivalProductQuality } from "./productMarket";
 import { formatMoney } from "./format";
 
 /** The authored content for one sub-industry, resolved once and passed in. */
@@ -68,9 +68,11 @@ export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Comp
   const betRes = tickBets(rt.bets, c.productById, c.lines, week);
 
   const rivalQ = rivalProductQuality(rivals);
+  // Growth slows as the company gets bigger: damp share gains by total run-rate.
+  const growthScale = companyGrowthScale(rt.products.reduce((s, p) => s + p.revenue_run_rate, 0));
   const products = [...rt.products, ...betRes.shipped.map((s) => s.product)].map((p) => {
     const arch = c.productById.get(p.archetype_id);
-    return arch ? tickProduct(advanceShare(p, rivalQ, c.tuning), arch, c.tuning) : p;
+    return arch ? tickProduct(advanceShare(p, rivalQ, c.tuning, growthScale), arch, c.tuning) : p;
   });
 
   return {
@@ -124,7 +126,11 @@ export function commitBet(state: GameState, c: SubContent, archetypeId: string, 
   if (!startable || state.company.financials.cash < cost) return state;
 
   const name = instanceName.trim() || arch.name;
-  const bet = makeBet(arch, name, "create", rt.rd.levels, state.clock.week, c.tuning, rt.bets.length);
+  // Each successive build of an archetype takes a bit longer (frontier hardens).
+  const priorBuilds =
+    rt.products.filter((p) => p.archetype_id === archetypeId).length +
+    rt.bets.filter((b) => b.archetype_id === archetypeId).length;
+  const bet = makeBet(arch, name, "create", rt.rd.levels, state.clock.week, c.tuning, rt.bets.length, priorBuilds);
   return {
     ...state,
     company: {
