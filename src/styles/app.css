@@ -4577,6 +4577,20 @@
   gap: 14px 20px;
   padding-top: 2px;
 }
+.fin-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px 20px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 0.5px solid var(--border-faint);
+}
+.fin-chart__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
 .fin-earnings {
   margin-top: 14px;
   padding-top: 12px;
@@ -4858,6 +4872,16 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--accent);
+}
+.prod-bench {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 2px 0 10px;
+  font-size: 12px;
+}
+.prod-bench__label {
+  color: var(--text-faint);
 }
 .prod-lines {
   display: flex;

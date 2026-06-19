@@ -5,6 +5,7 @@ import { companyPortfolioValue, holdingGain } from "@/engine/investing";
 import { formatMoney } from "@/engine/format";
 import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Stat } from "@/ui/components/controls";
+import { Sparkline } from "@/ui/charts/Sparkline";
 
 /** The numbers behind the valuation — stock price, revenue + growth, net income,
  *  EPS / P-E, and (when public) the quarter's earnings report. */
@@ -47,6 +48,34 @@ export function FinancialsPanel() {
           />
         )}
       </div>
+
+      {(() => {
+        const revLog = f.revenueLog ?? [];
+        const valLog = f.valuationLog ?? [];
+        if (revLog.length < 2 && valLog.length < 2) return null;
+        return (
+          <div className="fin-charts">
+            {revLog.length >= 2 && (
+              <div className="fin-chart">
+                <div className="fin-chart__head">
+                  <span className="section-label">Revenue</span>
+                  <span className="num dim">{formatMoney(revLog[revLog.length - 1]!)}/yr</span>
+                </div>
+                <Sparkline data={revLog} color="var(--up)" />
+              </div>
+            )}
+            {valLog.length >= 2 && (
+              <div className="fin-chart">
+                <div className="fin-chart__head">
+                  <span className="section-label">Valuation</span>
+                  <span className="num dim">{formatMoney(valLog[valLog.length - 1]!)}</span>
+                </div>
+                <Sparkline data={valLog} color="var(--accent)" />
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {isPublic && e && (
         <div className="fin-earnings">

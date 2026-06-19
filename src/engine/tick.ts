@@ -200,9 +200,12 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
     if (r !== "met") decision = true;
   }
 
-  // 7 — Revenue history (capped) so growth can be derived for the readouts.
-  const revLog = [...(next.company.financials.revenueLog ?? []), next.company.financials.revenue].slice(-16);
-  next = { ...next, company: { ...next.company, financials: { ...next.company.financials, revenueLog: revLog } } };
+  // 7 — Revenue + valuation history (capped to a trailing year) for growth and
+  //     the trend charts.
+  const fin = next.company.financials;
+  const revLog = [...(fin.revenueLog ?? []), fin.revenue].slice(-52);
+  const valLog = [...(fin.valuationLog ?? []), fin.valuation].slice(-52);
+  next = { ...next, company: { ...next.company, financials: { ...fin, revenueLog: revLog, valuationLog: valLog } } };
 
   // 8 — Mark both the personal and company portfolios to the live market.
   if (env) next = markPortfolios(next, env.market, next.world, week);

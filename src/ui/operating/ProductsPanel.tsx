@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useGame } from "@/state/store";
 import { signatureConfig } from "@/engine/signature";
-import { betBuildWeeks, betCost, rushQuote } from "@/engine/products";
+import { betBuildWeeks, betCost, productQuality, rushQuote } from "@/engine/products";
+import { rivalProductQuality } from "@/engine/productMarket";
 import { available, nextRung } from "@/engine/capacity";
 import { formatMoney } from "@/engine/format";
 import type { CapacityType, ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
@@ -37,6 +38,15 @@ export function ProductsPanel() {
   const cfg = signatureConfig(sub);
   const totalW = Object.values(weights).reduce((s, x) => s + x, 0) || 1;
 
+  // The benchmark you push: your best model's quality (live, or what the headline
+  // product would ship at today's R&D levels) against the rival field.
+  const rivals = [...content.companies, ...game.market.companies].filter((co) => co.sub_industry === sub);
+  const fieldBench = Math.round(rivalProductQuality(rivals));
+  const headline = archetypes.find((a) => a.tier === 1) ?? archetypes[0];
+  const bestLive = rt.products.reduce((m, p) => Math.max(m, p.quality), 0);
+  const yourBench = Math.round(Math.max(bestLive, headline ? productQuality(headline, lines, rt.rd.levels) : 0));
+  const benchGap = yourBench - fieldBench;
+
   const setLineWeight = (id: string, v: number) => {
     const w = { ...weights, [id]: v };
     setWeights(w);
@@ -52,6 +62,13 @@ export function ProductsPanel() {
         <div className="prod-section__head">
           <span className="section-label">R&amp;D</span>
           <span className="prod-budget num">{formatMoney(rt.rd.rd_budget_per_week)}/wk</span>
+        </div>
+        <div className="prod-bench">
+          <span className="prod-bench__label">Benchmark</span>
+          <span className="prod-bench__val num">
+            Q{yourBench} <span className="dim">vs field Q{fieldBench}</span>
+            <span className={benchGap >= 0 ? "up" : "down"}> · {benchGap >= 0 ? "ahead" : `${-benchGap} behind`}</span>
+          </span>
         </div>
         <Slider label="Weekly R&D budget" value={rt.rd.rd_budget_per_week} min={0} max={Math.max(5, Math.round(cash / 4))} step={0.5} onChange={setBudget} format={(n) => `${formatMoney(n)}/wk`} />
         <div className="prod-lines">

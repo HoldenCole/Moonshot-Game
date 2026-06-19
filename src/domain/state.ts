@@ -126,6 +126,8 @@ export interface PlayerCompany {
     valuation: Money;
     /** Recent weekly revenue samples (capped), so growth can be derived. */
     revenueLog?: number[];
+    /** Recent weekly valuation samples (capped), for the trend chart. */
+    valuationLog?: number[];
   };
   capTable: CapTable;
   /** Outstanding debt facilities (non-dilutive financing); absent until drawn. */
