@@ -7,6 +7,7 @@ import {
   exitWaterfall,
   foundCompany,
   founderOwnership,
+  grantEquity,
   ownership,
   roundHistory,
   totalShares,
@@ -38,6 +39,24 @@ test("founding gives the founder 100% of common", () => {
   assert.equal(rows.length, 1);
   assert.equal(rows[0]!.holderType, "founder");
   approx(rows[0]!.ownership, 1);
+});
+
+test("a stock-comp grant gives the exec equity worth its value and dilutes the founder", () => {
+  const c = applyRound(found(), { terms: seed, stage: "seed", week: 0, leadInvestorId: "a", leadInvestorName: "Acme" });
+  const valuation = 100; // $100M mark
+  const granted = grantEquity(c, { holderId: "exec:finance", holderName: "Lena Cho", holderType: "employee", value: 2, valuation });
+  const execRow = ownership(granted, valuation).find((r) => r.holderId === "exec:finance");
+  assert.ok(execRow, "exec appears on the cap table");
+  // A $2M grant at a $100M mark is worth ~$2M of equity.
+  approx(execRow!.currentValue, 2, 0.05);
+  // The founder is diluted, and the grant is not a financing round.
+  assert.ok(founderOwnership(granted) < founderOwnership(c));
+  assert.equal(granted.rounds.length, c.rounds.length);
+});
+
+test("a stock grant is a no-op without a valuation", () => {
+  const c = found();
+  assert.equal(grantEquity(c, { holderId: "x", holderName: "X", holderType: "employee", value: 1, valuation: 0 }), c);
 });
 
 test("a priced round: investor owns amount/post, pool is created pre-money", () => {

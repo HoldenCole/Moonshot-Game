@@ -27,6 +27,7 @@ export function ProductsPanel() {
   const [weights, setWeights] = useState<Record<string, number>>(() =>
     Object.fromEntries(lines.map((l) => [l.id, Math.round((rt?.rd.allocation[l.id] ?? 0) * 100)])),
   );
+  const [showDeclining, setShowDeclining] = useState(false);
   if (!game || !rt) return null;
 
   const c = game.company;
@@ -46,6 +47,12 @@ export function ProductsPanel() {
   const bestLive = rt.products.reduce((m, p) => Math.max(m, p.quality), 0);
   const yourBench = Math.round(Math.max(bestLive, headline ? productQuality(headline, lines, rt.rd.levels) : 0));
   const benchGap = yourBench - fieldBench;
+
+  // Keep the live portfolio readable: declining products collapse behind a toggle
+  // so a long tail of winding-down lines doesn't bury what's actually growing.
+  const active = rt.products.filter((p) => p.state !== "declining");
+  const declining = rt.products.filter((p) => p.state === "declining");
+  const decliningRevenue = declining.reduce((s, p) => s + p.revenue_run_rate, 0);
 
   const setLineWeight = (id: string, v: number) => {
     const w = { ...weights, [id]: v };
@@ -136,15 +143,30 @@ export function ProductsPanel() {
             </div>
           );
         })}
-        {rt.products.map((p) => {
-          return (
-            <div key={p.id} className="prod-row">
-              <span className="prod-row__name">{p.instance_name}</span>
-              <span className={`prod-row__state prod-row__state--${p.state}`}>{p.state}</span>
-              <span className="prod-row__meta num">{Math.round(p.share * 100)}% share · {formatMoney(p.revenue_run_rate)}/yr · Q{Math.round(p.quality)}</span>
-            </div>
-          );
-        })}
+        {active.map((p) => (
+          <div key={p.id} className="prod-row">
+            <span className="prod-row__name">{p.instance_name}</span>
+            <span className={`prod-row__state prod-row__state--${p.state}`}>{p.state}</span>
+            <span className="prod-row__meta num">{Math.round(p.share * 100)}% share · {formatMoney(p.revenue_run_rate)}/yr · Q{Math.round(p.quality)}</span>
+          </div>
+        ))}
+        {declining.length > 0 && (
+          <>
+            <button type="button" className="prod-decline-toggle" onClick={() => setShowDeclining((v) => !v)}>
+              <span className="prod-row__state prod-row__state--declining">declining</span>
+              <span className="dim">{declining.length} winding down · {formatMoney(decliningRevenue)}/yr</span>
+              <span className="prod-decline-toggle__chev dim">{showDeclining ? "▾ hide" : "▸ show"}</span>
+            </button>
+            {showDeclining &&
+              declining.map((p) => (
+                <div key={p.id} className="prod-row prod-row--dim">
+                  <span className="prod-row__name">{p.instance_name}</span>
+                  <span className={`prod-row__state prod-row__state--${p.state}`}>{p.state}</span>
+                  <span className="prod-row__meta num">{Math.round(p.share * 100)}% share · {formatMoney(p.revenue_run_rate)}/yr · Q{Math.round(p.quality)}</span>
+                </div>
+              ))}
+          </>
+        )}
       </div>
 
       {/* ── Commit a bet ── */}

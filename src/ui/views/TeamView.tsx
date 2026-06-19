@@ -39,9 +39,11 @@ export function TeamView() {
 function AreaRow({ area }: { area: ExecArea }) {
   const game = useGame((s) => s.game)!;
   const hireExec = useGame((s) => s.hireExec);
+  const hireExecWithStock = useGame((s) => s.hireExecWithStock);
   const setAutonomy = useGame((s) => s.setAutonomy);
   const exec = game.company.executives[area];
   const autonomy = game.company.delegation[area];
+  const valuation = game.company.financials.valuation;
 
   const candidates = useMemo(
     () => generateCandidates(area, game, makeRng((game.meta.seed ^ (AREAS.indexOf(area) * 2654435761)) >>> 0)),
@@ -86,6 +88,11 @@ function AreaRow({ area }: { area: ExecArea }) {
         <div className="hire-row">
           {candidates.map((c, i) => {
             const afford = game.company.financials.cash >= c.cost;
+            const baseExec = { name: c.name, role: c.role, area: c.area, quality: c.quality };
+            // Stock comp prices the same package against the live mark; offered
+            // only when there's a real valuation and the grant stays under half.
+            const equityPct = valuation > 0 ? c.cost / valuation : Infinity;
+            const canStock = equityPct > 0 && equityPct < 0.5;
             return (
               <div key={i} className="hire-card">
                 <div className="hire-card__name">{c.name}</div>
@@ -95,9 +102,14 @@ function AreaRow({ area }: { area: ExecArea }) {
                   </span>
                   <span className="qbar__val num">{c.quality}</span>
                 </div>
-                <Button variant="subtle" size="sm" disabled={!afford} onClick={() => hireExec({ name: c.name, role: c.role, area: c.area, quality: c.quality }, c.cost)}>
-                  Hire · {formatMoney(c.cost)}
-                </Button>
+                <div className="hire-card__offers">
+                  <Button variant="subtle" size="sm" disabled={!afford} onClick={() => hireExec(baseExec, c.cost)}>
+                    Cash · {formatMoney(c.cost)}
+                  </Button>
+                  <Button variant="subtle" size="sm" disabled={!canStock} title={canStock ? `Grant ${formatPct(equityPct)} equity instead of cash` : "Needs a real valuation to grant stock"} onClick={() => hireExecWithStock(baseExec, c.cost)}>
+                    Stock · {canStock ? formatPct(equityPct) : "—"}
+                  </Button>
+                </div>
               </div>
             );
           })}
@@ -109,4 +121,10 @@ function AreaRow({ area }: { area: ExecArea }) {
 
 function initials(name: string): string {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
+}
+
+/** A compact equity percentage — "0.4%" for small grants, "12%" for larger. */
+function formatPct(frac: number): string {
+  const pct = frac * 100;
+  return `${pct < 1 ? pct.toFixed(2) : pct < 10 ? pct.toFixed(1) : Math.round(pct)}%`;
 }

@@ -9,7 +9,7 @@ import type { Stage } from "@/domain/ids";
 import type { LogEntry, StopReason } from "@/domain/log";
 import type { NegotiationContext, NegotiationState } from "@/domain/negotiation";
 import { nextStage } from "@/domain/ids";
-import { applyRound } from "@/engine/captable";
+import { applyRound, grantEquity } from "@/engine/captable";
 import { advance as engineAdvance, checkMilestones, type AdvanceMode } from "@/engine/tick";
 import { privateValuationMark, runwayBand } from "@/engine/finance";
 import { valuationMultiplier } from "@/engine/world";
@@ -85,6 +85,9 @@ interface GameStore {
   resolveEvent: (choiceIndex: number) => void;
   /** Hire an executive into an area (pays the cash cost). */
   hireExec: (exec: Exec, cost: number) => void;
+  /** Hire an exec by granting equity (stock comp) instead of paying cash —
+   *  dilutes ownership at the current valuation, conserving cash. */
+  hireExecWithStock: (exec: Exec, cost: number) => void;
   /** Set an area's autonomy. */
   setAutonomy: (area: ExecArea, autonomy: Autonomy) => void;
 
@@ -233,6 +236,33 @@ export const useGame = create<GameStore>((set, get) => ({
           financials: { ...company.financials, cash: company.financials.cash - cost, headcount: company.financials.headcount + 1 },
           executives: { ...company.executives, [exec.area]: exec },
           // Hiring an exec opens that area up to delegation.
+          delegation: { ...company.delegation, [exec.area]: "recommend" as Autonomy },
+        },
+      });
+      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  hireExecWithStock: (exec, cost) =>
+    set((s) => {
+      if (!s.game) return s;
+      const company = s.game.company;
+      const valuation = company.financials.valuation;
+      // Stock comp needs a real mark to price the grant against.
+      if (valuation <= 0) return s;
+      const capTable = grantEquity(company.capTable, {
+        holderId: `exec:${exec.area}`,
+        holderName: exec.name,
+        holderType: "employee",
+        value: cost,
+        valuation,
+      });
+      const a = withAch({
+        ...s.game,
+        company: {
+          ...company,
+          capTable,
+          financials: { ...company.financials, headcount: company.financials.headcount + 1 },
+          executives: { ...company.executives, [exec.area]: exec },
           delegation: { ...company.delegation, [exec.area]: "recommend" as Autonomy },
         },
       });

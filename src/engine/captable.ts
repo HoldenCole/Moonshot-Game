@@ -222,6 +222,38 @@ export function applyRound(capTable: CapTable, params: RoundParams): CapTable {
   return { lots, rounds: [...capTable.rounds, round] };
 }
 
+/** Issue a stock-compensation grant: new common shares to `holderId` worth
+ *  `value` $M at the current `valuation`, diluting existing holders pro-rata.
+ *  No cash changes hands and it is not a financing round, so the lot carries its
+ *  own grant id and adds no Round record. Returns a new cap table (input
+ *  unchanged). The grant fraction is capped at half the company. */
+export function grantEquity(
+  capTable: CapTable,
+  params: { holderId: string; holderName: string; holderType: ShareLot["holderType"]; value: Money; valuation: Money },
+): CapTable {
+  const existing = totalShares(capTable);
+  const raw = params.valuation > 0 ? params.value / params.valuation : 0;
+  if (existing <= 0 || raw <= 0) return capTable;
+  const frac = Math.min(0.5, raw);
+  const grantShares = Math.round((existing * frac) / (1 - frac));
+  if (grantShares <= 0) return capTable;
+  const grantId = `grant:${capTable.lots.length}`;
+  return {
+    ...capTable,
+    lots: [
+      ...capTable.lots,
+      commonLot({
+        id: grantId,
+        holderId: params.holderId,
+        holderName: params.holderName,
+        holderType: params.holderType,
+        shares: grantShares,
+        roundId: grantId,
+      }),
+    ],
+  };
+}
+
 // ── Selectors ────────────────────────────────────────────────────────────────
 
 export function totalShares(capTable: CapTable): number {

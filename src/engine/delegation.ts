@@ -51,7 +51,9 @@ export interface ExecCandidate extends Exec {
 
 /** Three rolled candidates for an area, varying in quality and price. */
 export function generateCandidates(area: ExecArea, state: GameState, rng: Rng): ExecCandidate[] {
-  const stageFactor = Math.max(1, state.company.financials.valuation / 200 + 1);
+  // Exec comp rises with company scale, but sub-linearly (sqrt) — a top hire at a
+  // huge company costs more, not thousands of times more.
+  const stageFactor = 1 + Math.sqrt(Math.max(0, state.company.financials.valuation) / 150);
   // An Operator/Repeat founder lifts the hiring pool — better first execs.
   const floor = state.founder.execQualityFloor ?? 0;
   return Array.from({ length: 3 }, () => {
