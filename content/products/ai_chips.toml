@@ -16,7 +16,7 @@ architecture = 20
 
 [consumer_gpu.economics]
 build_cost = 3
-build_weeks = 15
+build_weeks = 8
 unit_margin = 0.35
 capacity_type = "fab_line"
 capacity_to_build = 1
@@ -45,7 +45,7 @@ yield_line = 35
 
 [datacenter_accel.economics]
 build_cost = 35
-build_weeks = 30
+build_weeks = 16
 unit_margin = 0.62
 capacity_type = "fab_line"
 capacity_to_build = 2
@@ -74,7 +74,7 @@ yield_line = 55
 
 [next_gen_arch.economics]
 build_cost = 90
-build_weeks = 45
+build_weeks = 24
 unit_margin = 0.68
 capacity_type = "fab_line"
 capacity_to_build = 3
