@@ -3,16 +3,15 @@
 // (a procedural buyer's premium, which ends the run and seeds the next one).
 // Pure + deterministic; the payout math reuses the cap-table waterfall.
 
-import type { GameState, RunOutcome } from "@/domain/state";
-import type { Industry } from "@/domain/ids";
+import type { GameState, PlayerCompany, RunOutcome } from "@/domain/state";
 import type { Money, RoundTerms } from "@/domain/captable";
 import type { Bank } from "@/content/load";
 import type { Company } from "@/content/load";
 import { applyRound, exitWaterfall, founderOwnership } from "./captable";
-import { valuationMark } from "./finance";
+import { valuationMark, equityValue } from "./finance";
 import { fundamentalValue } from "./pricing";
 import { formatMoney } from "./format";
-import { type Rng, nextNoise, nextRange, pick } from "./rng";
+import { type Rng, nextRange, pick } from "./rng";
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
@@ -153,15 +152,13 @@ export function applyIpo(state: GameState, bank: Bank, result: IpoResult): GameS
 
 // ── Public company: a live, weekly-repriced stock + a lockup'd cash-out ───────
 
-/** Re-rate a public company's market cap one week. A bounded weekly return
- *  tilted by sector hype and the macro cycle, plus per-week noise — so the stock
- *  actually moves, and timing the cash-out matters. Pure given the rng. */
-export function repricePublic(prev: Money, world: GameState["world"], industry: Industry, rng: Rng): Money {
-  const hype = world.hype[industry] ?? 55;
-  const hypeTilt = ((hype - 58) / 100) * 0.012;
-  const macroTilt = world.macroStrength * 0.004;
-  const ret = clamp(hypeTilt + macroTilt + nextNoise(rng, 0.018), -0.07, 0.07);
-  return Math.max(1, Math.round(prev * (1 + ret)));
+/** Re-rate a public company's market cap one week. Cash-adjusted fundamentals
+ *  (revenue × multiple + cash) times a sector-mood premium that moves with hype
+ *  and the macro cycle — so the stock tracks revenue, not a free-floating drift. */
+export function repricePublic(c: PlayerCompany, world: GameState["world"]): Money {
+  const hype = world.hype[c.industry] ?? 58;
+  const mood = clamp(1 + ((hype - 58) / 100) * 0.5 + world.macroStrength * 0.12, 0.6, 1.6);
+  return Math.max(1, Math.round(equityValue(c, world) * mood));
 }
 
 /** Weeks until the founder's shares unlock (0 once tradeable; Infinity if not public). */

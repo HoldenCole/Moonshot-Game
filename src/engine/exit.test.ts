@@ -143,11 +143,11 @@ test("going public starts a lockup, re-prices weekly, and the cash-out ends the 
   const later = { ...ipo, clock: { week: ipo.clock.week + LOCKUP_WEEKS } };
   assert.equal(lockupExpired(later), true);
 
-  // The stock actually moves week-to-week, within a bounded weekly return.
-  const v0 = ipo.company.financials.valuation;
-  const v1 = repricePublic(v0, ipo.world, ipo.company.industry, makeRng(3));
-  assert.notEqual(v1, v0);
-  assert.ok(v1 > v0 * 0.92 && v1 < v0 * 1.08);
+  // The market cap tracks fundamentals: more revenue → a higher mark.
+  const marked = repricePublic(ipo.company, ipo.world);
+  assert.ok(marked > 0, "marks at a live value");
+  const richer = { ...ipo.company, financials: { ...ipo.company.financials, revenue: ipo.company.financials.revenue + 2000 } };
+  assert.ok(repricePublic(richer, ipo.world) > marked, "more revenue lifts the market cap");
 
   // Cashing out banks the stake and produces an "ipo" run outcome (was never set).
   const { state, outcome } = applyCashOut(later);

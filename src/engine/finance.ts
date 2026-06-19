@@ -24,18 +24,31 @@ export function runwayMonths(c: PlayerCompany): number {
   return nb > 0 ? c.financials.cash / nb : Infinity;
 }
 
-/** Revenue multiple a private company marks at, widening with sector hype. */
+/** Revenue multiple a company marks at, widening with sector hype. */
 export function revenueMultiple(hype: number): number {
   return clamp(4 + (hype / 100) * 9, 4, 14);
 }
 
-/** A live valuation for a *private* company: a revenue/hype multiple, floored at
- *  the last priced round (so a fresh raise still anchors the mark, and growing
- *  revenue lifts it between rounds). The tick stamps this onto financials. */
-export function privateValuationMark(c: PlayerCompany, world: WorldState): Money {
+/** Operating (enterprise) value ($M): the revenue multiple applied to revenue. */
+export function businessValue(c: PlayerCompany, world: WorldState): Money {
   const hype = world.hype[c.industry] ?? 55;
-  const revMark = c.financials.revenue * revenueMultiple(hype);
-  return Math.round(Math.max(latestPostMoney(c.capTable), revMark));
+  return c.financials.revenue * revenueMultiple(hype);
+}
+
+/** Cash-adjusted equity value ($M): the operating business plus cash and treasury
+ *  investments, less debt. The founder's stake is a claim on all of it, so a
+ *  cash-rich company is worth at least its cash. */
+export function equityValue(c: PlayerCompany, world: WorldState): Money {
+  const investments = (c.portfolio ?? []).reduce((s, h) => s + h.value, 0);
+  const debt = (c.loans ?? []).reduce((s, l) => s + l.principal, 0);
+  return businessValue(c, world) + c.financials.cash + investments - debt;
+}
+
+/** A live valuation for a *private* company: the cash-adjusted equity value, floored
+ *  at the last priced round (so a fresh raise still anchors the mark, and growing
+ *  revenue + cash lift it between rounds). The tick stamps this onto financials. */
+export function privateValuationMark(c: PlayerCompany, world: WorldState): Money {
+  return Math.round(Math.max(latestPostMoney(c.capTable), equityValue(c, world)));
 }
 
 /** The live equity mark used for net worth and exit gating. For a public company

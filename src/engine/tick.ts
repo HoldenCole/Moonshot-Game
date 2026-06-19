@@ -119,7 +119,7 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   const netBurn = (f.burnMonthly - f.revenue / 12) * months;
   const valuation =
     company.stage === "public"
-      ? repricePublic(f.valuation, drift.world, company.industry, rng)
+      ? repricePublic(company, drift.world)
       : privateValuationMark(company, drift.world);
   company = { ...company, financials: { ...f, cash: f.cash - netBurn, valuation } };
 

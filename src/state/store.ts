@@ -11,7 +11,7 @@ import type { NegotiationContext, NegotiationState } from "@/domain/negotiation"
 import { nextStage } from "@/domain/ids";
 import { applyRound } from "@/engine/captable";
 import { advance as engineAdvance, checkMilestones, type AdvanceMode } from "@/engine/tick";
-import { runwayBand } from "@/engine/finance";
+import { privateValuationMark, runwayBand } from "@/engine/finance";
 import { valuationMultiplier } from "@/engine/world";
 import { applyWorldDifficulty, difficultyProfile } from "@/engine/difficulty";
 import { applyOutcome as applyEventOutcome, resolveOutcome } from "@/engine/eventOutcomes";
@@ -495,7 +495,16 @@ function buildCtx(game: GameState, leadId: string): NegotiationContext {
   // climate then makes rounds across the board more or less generous.
   const heat = valuationMultiplier(game.world, game.company.industry) * difficultyProfile(game.difficulty).capitalClimate;
   const base = suggestedTerms(stage);
-  const market = { ...base, valuation: Math.round(base.valuation * heat * 10) / 10 };
+  // Price off the larger of the stage baseline and the company's live mark, so a
+  // company that has grown past its stage raises at what it's actually worth (the
+  // raise matches the valuation shown at home), with a proportionally bigger round.
+  const mark = privateValuationMark(game.company, game.world);
+  const anchor = Math.max(base.valuation, mark);
+  const market = {
+    ...base,
+    valuation: Math.round(anchor * heat * 10) / 10,
+    roundSize: Math.round(base.roundSize * Math.max(1, anchor / base.valuation) * 10) / 10,
+  };
   return {
     stage,
     industry: game.company.industry,
