@@ -16,8 +16,8 @@ domain_depth = 20
 model_leverage = 15
 
 [point_solution.economics]
-build_cost = 10
-build_weeks = 18
+build_cost = 5.5
+build_weeks = 12
 unit_margin = 0.72
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -45,8 +45,8 @@ platform = 40
 model_leverage = 30
 
 [workflow_suite.economics]
-build_cost = 28
-build_weeks = 32
+build_cost = 18
+build_weeks = 22
 unit_margin = 0.76
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -74,8 +74,8 @@ platform = 60
 model_leverage = 50
 
 [platform_play.economics]
-build_cost = 70
-build_weeks = 46
+build_cost = 44
+build_weeks = 34
 unit_margin = 0.80
 capacity_type = "deployment"
 capacity_to_build = 2
@@ -108,8 +108,8 @@ flavor_naming_hint = "e.g. 'ClauseCheck for Chrome', an extension name"
 model_leverage = 10
 
 [browser_extension.economics]
-build_cost = 2
-build_weeks = 8
+build_cost = 0.4
+build_weeks = 2
 unit_margin = 0.70
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -137,8 +137,8 @@ flavor_naming_hint = "e.g. 'Connect', an integrations brand"
 platform = 20
 
 [api_connector.economics]
-build_cost = 4
-build_weeks = 12
+build_cost = 0.9
+build_weeks = 4
 unit_margin = 0.74
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -168,8 +168,8 @@ domain_depth = 20
 platform = 15
 
 [reporting_dashboard.economics]
-build_cost = 5
-build_weeks = 12
+build_cost = 1.2
+build_weeks = 5
 unit_margin = 0.75
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -198,8 +198,8 @@ domain_depth = 18
 model_leverage = 15
 
 [mobile_companion.economics]
-build_cost = 6
-build_weeks = 14
+build_cost = 1.6
+build_weeks = 6
 unit_margin = 0.70
 capacity_type = "deployment"
 capacity_to_build = 1
@@ -228,8 +228,8 @@ flavor_naming_hint = "e.g. 'Playbook Library', a content-pack name"
 domain_depth = 22
 
 [template_library.economics]
-build_cost = 2
-build_weeks = 8
+build_cost = 0.5
+build_weeks = 2
 unit_margin = 0.82
 capacity_type = "deployment"
 capacity_to_build = 1

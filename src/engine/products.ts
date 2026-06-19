@@ -38,9 +38,10 @@ export function gatesMet(archetype: ProductArchetype, levels: Record<string, num
   return Object.entries(archetype.gates).every(([lineId, req]) => (levels[lineId] ?? 0) >= req);
 }
 
-/** The cash a bet costs to commit, after the industry's build-cost multiplier. */
+/** The cash a bet costs to commit, after the industry's build-cost multiplier.
+ *  Kept to $0.01M precision so sub-$1M entry products read correctly. */
 export function betCost(archetype: ProductArchetype, tuning: ProductTuning): number {
-  return Math.round(archetype.economics.build_cost * tuning.build_cost_mult);
+  return Math.round(archetype.economics.build_cost * tuning.build_cost_mult * 100) / 100;
 }
 
 /** How much longer each successive build of the same product takes. Early

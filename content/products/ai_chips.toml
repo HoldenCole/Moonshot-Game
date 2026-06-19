@@ -15,8 +15,8 @@ process_node = 15
 architecture = 20
 
 [consumer_gpu.economics]
-build_cost = 20
-build_weeks = 30
+build_cost = 26
+build_weeks = 34
 unit_margin = 0.35
 capacity_type = "fab_line"
 capacity_to_build = 1
@@ -44,8 +44,8 @@ architecture = 40
 yield_line = 35
 
 [datacenter_accel.economics]
-build_cost = 55
-build_weeks = 48
+build_cost = 80
+build_weeks = 60
 unit_margin = 0.62
 capacity_type = "fab_line"
 capacity_to_build = 2
@@ -73,8 +73,8 @@ architecture = 65
 yield_line = 55
 
 [next_gen_arch.economics]
-build_cost = 120
-build_weeks = 66
+build_cost = 175
+build_weeks = 100
 unit_margin = 0.68
 capacity_type = "fab_line"
 capacity_to_build = 3
@@ -109,8 +109,8 @@ flavor_naming_hint = "e.g. 'M-series', a memory part number"
 yield_line = 15
 
 [memory_module.economics]
-build_cost = 9
-build_weeks = 16
+build_cost = 1.5
+build_weeks = 5
 unit_margin = 0.22
 capacity_type = "fab_line"
 capacity_to_build = 1
@@ -138,8 +138,8 @@ flavor_naming_hint = "e.g. 'IOC-100', a controller part number"
 architecture = 15
 
 [io_controller.economics]
-build_cost = 11
-build_weeks = 18
+build_cost = 2.5
+build_weeks = 6
 unit_margin = 0.28
 capacity_type = "fab_line"
 capacity_to_build = 1
@@ -169,8 +169,8 @@ architecture = 20
 process_node = 18
 
 [embedded_soc.economics]
-build_cost = 16
-build_weeks = 24
+build_cost = 7
+build_weeks = 12
 unit_margin = 0.33
 capacity_type = "fab_line"
 capacity_to_build = 1
@@ -198,8 +198,8 @@ flavor_naming_hint = "e.g. 'PMU-7', a power part number"
 yield_line = 20
 
 [power_chip.economics]
-build_cost = 8
-build_weeks = 14
+build_cost = 1
+build_weeks = 4
 unit_margin = 0.30
 capacity_type = "fab_line"
 capacity_to_build = 1
@@ -228,8 +228,8 @@ flavor_naming_hint = "e.g. 'Weave-1', a packaging brand"
 yield_line = 25
 
 [packaging_substrate.economics]
-build_cost = 14
-build_weeks = 20
+build_cost = 4
+build_weeks = 8
 unit_margin = 0.36
 capacity_type = "fab_line"
 capacity_to_build = 1

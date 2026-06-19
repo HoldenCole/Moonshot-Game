@@ -16,8 +16,8 @@ propulsion = 20
 reliability = 25
 
 [small_lift.economics]
-build_cost = 28
-build_weeks = 34
+build_cost = 30
+build_weeks = 30
 unit_margin = 0.30
 capacity_type = "launch_capacity"
 capacity_to_build = 1
@@ -45,7 +45,7 @@ reusability = 45
 reliability = 45
 
 [medium_lift.economics]
-build_cost = 70
+build_cost = 90
 build_weeks = 52
 unit_margin = 0.48
 capacity_type = "launch_capacity"
@@ -74,8 +74,8 @@ reusability = 60
 reliability = 70
 
 [heavy_human.economics]
-build_cost = 140
-build_weeks = 74
+build_cost = 185
+build_weeks = 88
 unit_margin = 0.52
 capacity_type = "launch_capacity"
 capacity_to_build = 3
@@ -109,8 +109,8 @@ flavor_naming_hint = "e.g. 'Kick-1', a booster part name"
 propulsion = 18
 
 [solid_booster.economics]
-build_cost = 12
-build_weeks = 20
+build_cost = 4
+build_weeks = 8
 unit_margin = 0.34
 capacity_type = "launch_capacity"
 capacity_to_build = 1
@@ -139,8 +139,8 @@ propulsion = 22
 reliability = 20
 
 [upper_stage.economics]
-build_cost = 18
-build_weeks = 26
+build_cost = 7
+build_weeks = 12
 unit_margin = 0.38
 capacity_type = "launch_capacity"
 capacity_to_build = 1
@@ -169,8 +169,8 @@ flavor_naming_hint = "e.g. 'Shell-2', a fairing part name"
 reusability = 20
 
 [payload_fairing.economics]
-build_cost = 9
-build_weeks = 16
+build_cost = 2
+build_weeks = 6
 unit_margin = 0.36
 capacity_type = "launch_capacity"
 capacity_to_build = 1
@@ -199,8 +199,8 @@ flavor_naming_hint = "e.g. 'PadWorks', a GSE brand"
 reliability = 18
 
 [ground_support.economics]
-build_cost = 7
-build_weeks = 14
+build_cost = 1
+build_weeks = 4
 unit_margin = 0.40
 capacity_type = "launch_capacity"
 capacity_to_build = 1
@@ -230,8 +230,8 @@ propulsion = 25
 reliability = 22
 
 [orbital_tug.economics]
-build_cost = 20
-build_weeks = 28
+build_cost = 10
+build_weeks = 16
 unit_margin = 0.42
 capacity_type = "launch_capacity"
 capacity_to_build = 1

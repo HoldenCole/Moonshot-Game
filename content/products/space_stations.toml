@@ -16,8 +16,8 @@ module_tech = 25
 assembly = 25
 
 [research_module.economics]
-build_cost = 30
-build_weeks = 44
+build_cost = 45
+build_weeks = 52
 unit_margin = 0.44
 capacity_type = "module_construction"
 capacity_to_build = 2
@@ -45,8 +45,8 @@ life_support = 55
 assembly = 40
 
 [tourism_habitat.economics]
-build_cost = 75
-build_weeks = 60
+build_cost = 115
+build_weeks = 78
 unit_margin = 0.58
 capacity_type = "module_construction"
 capacity_to_build = 3
@@ -74,8 +74,8 @@ life_support = 65
 assembly = 70
 
 [full_station.economics]
-build_cost = 150
-build_weeks = 78
+build_cost = 230
+build_weeks = 115
 unit_margin = 0.55
 capacity_type = "module_construction"
 capacity_to_build = 5
@@ -109,8 +109,8 @@ flavor_naming_hint = "e.g. 'Port-1', a docking standard name"
 assembly = 18
 
 [docking_adapter.economics]
-build_cost = 16
-build_weeks = 30
+build_cost = 3
+build_weeks = 8
 unit_margin = 0.40
 capacity_type = "module_construction"
 capacity_to_build = 1
@@ -139,8 +139,8 @@ flavor_naming_hint = "e.g. 'BioLoop-1', a life-support brand"
 life_support = 25
 
 [life_support_unit.economics]
-build_cost = 22
-build_weeks = 34
+build_cost = 10
+build_weeks = 18
 unit_margin = 0.44
 capacity_type = "module_construction"
 capacity_to_build = 1
@@ -170,8 +170,8 @@ module_tech = 20
 assembly = 18
 
 [cargo_pod.economics]
-build_cost = 14
-build_weeks = 26
+build_cost = 1
+build_weeks = 4
 unit_margin = 0.36
 capacity_type = "module_construction"
 capacity_to_build = 1
@@ -200,8 +200,8 @@ flavor_naming_hint = "e.g. 'Reach-7', a manipulator name"
 assembly = 25
 
 [robotic_arm.economics]
-build_cost = 20
-build_weeks = 30
+build_cost = 6
+build_weeks = 12
 unit_margin = 0.46
 capacity_type = "module_construction"
 capacity_to_build = 1
@@ -231,8 +231,8 @@ module_tech = 25
 life_support = 20
 
 [airlock_module.economics]
-build_cost = 26
-build_weeks = 38
+build_cost = 14
+build_weeks = 24
 unit_margin = 0.42
 capacity_type = "module_construction"
 capacity_to_build = 1
