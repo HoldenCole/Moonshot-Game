@@ -20,6 +20,7 @@ import { debtOffer, repayLoan as engineRepayLoan, takeLoan as engineTakeLoan } f
 import { hireStaff as engineHireStaff, trimTeam as engineTrimTeam } from "@/engine/operations";
 import { buyStock as engineBuyStock, sellStock as engineSellStock, type InvestAccount } from "@/engine/investing";
 import {
+  accelerateBet as engineAccelerateBet,
   buyCapacityRung as engineBuyRung,
   commitBet as engineCommitBet,
   initProductsRuntime,
@@ -106,6 +107,8 @@ interface GameStore {
   buyCapacityRung: (capId: string) => void;
   /** Commit a bet to build a product archetype, named by the player. */
   commitBet: (archetypeId: string, instanceName: string) => void;
+  /** Invest cash to pull an in-flight bet's schedule in (ship sooner). */
+  accelerateBet: (betId: string) => void;
 
   /** Buy a stake in a public company from the chosen pocket (personal / company cash). */
   buyStock: (companyId: string, amount: number, account: InvestAccount) => void;
@@ -301,6 +304,14 @@ export const useGame = create<GameStore>((set, get) => ({
       const sc = subContentFor(s.content, s.game.company.subIndustry);
       if (!sc) return s;
       return { game: engineCommitBet(s.game, sc, archetypeId, instanceName) };
+    }),
+
+  accelerateBet: (betId) =>
+    set((s) => {
+      if (!s.game) return s;
+      const sc = subContentFor(s.content, s.game.company.subIndustry);
+      if (!sc) return s;
+      return { game: engineAccelerateBet(s.game, sc, betId) };
     }),
 
   buyStock: (companyId, amount, account) =>

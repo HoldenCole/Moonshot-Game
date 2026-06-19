@@ -8,7 +8,7 @@ import type { GameState } from "@/domain/state";
 import type { ProductsRuntime } from "@/domain/products";
 import { advanceRD, initRDState, rivalLevelsForLines } from "./rd";
 import { canStartBet, initCapacityState, nextRung, startRungBuild, tickCapacityBuilds } from "./capacity";
-import { betCost, gatesMet, makeBet, productGrossProfit, tickBets, tickProduct } from "./products";
+import { betCost, gatesMet, makeBet, productGrossProfit, rushQuote, tickBets, tickProduct } from "./products";
 import { advanceShare, rivalProductQuality } from "./productMarket";
 import { formatMoney } from "./format";
 
@@ -136,6 +136,33 @@ export function commitBet(state: GameState, c: SubContent, archetypeId: string, 
     log: [
       ...state.log,
       { id: `bet-${archetypeId}-${state.clock.week}`, week: state.clock.week, kind: "company", tone: "neutral", headline: `Committed ${name}`, detail: `${formatMoney(cost)} to build over ~${bet.weeks_left} weeks. It ships when the build completes.` },
+    ],
+  };
+}
+
+/** Invest cash to pull an in-flight bet's schedule in (a no-op when it can't be
+ *  rushed or the cash isn't there). Works the same in every sub-industry. */
+export function accelerateBet(state: GameState, c: SubContent, betId: string): GameState {
+  const rt = state.company.products;
+  if (!rt) return state;
+  const bet = rt.bets.find((b) => b.id === betId);
+  if (!bet) return state;
+  const arch = c.productById.get(bet.archetype_id);
+  if (!arch) return state;
+  const quote = rushQuote(bet, arch, c.tuning);
+  if (!quote || state.company.financials.cash < quote.cost) return state;
+
+  const bets = rt.bets.map((b) => (b.id === betId ? { ...b, weeks_left: b.weeks_left - quote.weeks } : b));
+  return {
+    ...state,
+    company: {
+      ...state.company,
+      financials: { ...state.company.financials, cash: state.company.financials.cash - quote.cost },
+      products: { ...rt, bets },
+    },
+    log: [
+      ...state.log,
+      { id: `rush-${betId}-${state.clock.week}-${bet.weeks_left}`, week: state.clock.week, kind: "company", tone: "neutral", headline: `Rushed ${bet.instance_name}`, detail: `${formatMoney(quote.cost)} to pull the schedule in ${quote.weeks} week${quote.weeks === 1 ? "" : "s"} — ships in ~${bet.weeks_left - quote.weeks}.` },
     ],
   };
 }

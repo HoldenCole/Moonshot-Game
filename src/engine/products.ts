@@ -43,6 +43,37 @@ export function betCost(archetype: ProductArchetype, tuning: ProductTuning): num
   return Math.round(archetype.economics.build_cost * tuning.build_cost_mult);
 }
 
+/** The full build length of a bet in weeks, after the industry's time multiplier
+ *  (the same figure makeBet seeds weeks_left with). */
+export function betBuildWeeks(archetype: ProductArchetype, tuning: ProductTuning): number {
+  return Math.max(1, Math.round(archetype.economics.build_weeks * tuning.build_time_mult));
+}
+
+// ── Crashing the schedule (invest cash to ship sooner) ────────────────────────
+
+/** Each rush pulls in this fraction of the build's full length. */
+export const RUSH_FRACTION = 0.25;
+/** Bought weeks cost this premium over the build's natural per-week cost. */
+export const RUSH_PREMIUM = 1.5;
+
+/** What one rush would buy on an in-flight bet: the weeks it shaves and the cash
+ *  it costs, or null when the bet is too close to shipping to rush (≤1 week left).
+ *  Weeks bought are capped to leave a final week so the ship runs in the normal
+ *  tick; cost scales with the build's per-week cost × a premium. */
+export function rushQuote(
+  bet: ActiveBet,
+  archetype: ProductArchetype,
+  tuning: ProductTuning,
+): { weeks: number; cost: number } | null {
+  if (bet.weeks_left <= 1) return null;
+  const full = betBuildWeeks(archetype, tuning);
+  const chunk = Math.max(1, Math.round(full * RUSH_FRACTION));
+  const weeks = Math.min(chunk, bet.weeks_left - 1);
+  if (weeks <= 0) return null;
+  const cost = Math.round((betCost(archetype, tuning) / full) * weeks * RUSH_PREMIUM * 100) / 100;
+  return { weeks, cost };
+}
+
 /** Build a bet (caller has checked gates/capacity/cash). `seq` keeps the seeded
  *  id unique when several are committed the same week. */
 export function makeBet(

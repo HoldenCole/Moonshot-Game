@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGame } from "@/state/store";
 import { signatureConfig } from "@/engine/signature";
-import { betCost, gatesMet } from "@/engine/products";
+import { betBuildWeeks, betCost, gatesMet, rushQuote } from "@/engine/products";
 import { available, nextRung } from "@/engine/capacity";
 import { formatMoney } from "@/engine/format";
 import type { ProductArchetype, ProductTuning } from "@/domain/content";
@@ -18,6 +18,7 @@ export function ProductsPanel() {
   const setAlloc = useGame((s) => s.setRdAllocation);
   const buyRung = useGame((s) => s.buyCapacityRung);
   const commitBet = useGame((s) => s.commitBet);
+  const accelerate = useGame((s) => s.accelerateBet);
 
   const rt = game?.company.products;
   const sub = game?.company.subIndustry ?? "";
@@ -102,10 +103,18 @@ export function ProductsPanel() {
         )}
         {rt.bets.map((b) => {
           const a = productById.get(b.archetype_id);
+          const quote = a ? rushQuote(b, a, tuning) : null;
           return (
             <div key={b.id} className="prod-row prod-row--bet">
               <span className="prod-row__name">{b.instance_name}</span>
               <span className="prod-row__tag">{cfg.noun} · ~{b.weeks_left}wk</span>
+              {quote ? (
+                <Button variant="subtle" size="sm" disabled={cash < quote.cost} onClick={() => accelerate(b.id)} title={`Invest ${formatMoney(quote.cost)} to ship ${quote.weeks} week${quote.weeks === 1 ? "" : "s"} sooner`}>
+                  Rush −{quote.weeks}wk · {formatMoney(quote.cost)}
+                </Button>
+              ) : (
+                <span className="prod-row__tag dim">shipping soon</span>
+              )}
               <span className="prod-row__meta dim">building {a?.name}</span>
             </div>
           );
@@ -172,7 +181,7 @@ function BuildRow({
     <div className={`build-row${gated ? " is-locked" : ""}`}>
       <div className="build-row__id">
         <span className="build-row__name">T{archetype.tier} · {archetype.name}</span>
-        <span className="build-row__sub dim">{reason || `${formatMoney(cost)} · ${archetype.economics.build_weeks}wk build`}</span>
+        <span className="build-row__sub dim">{reason || `${formatMoney(cost)} · ${betBuildWeeks(archetype, tuning)}wk build`}</span>
       </div>
       <Button variant="primary" size="sm" disabled={!can} data-guide="signature-action-button" onClick={() => onCommit(`${archetype.name} ${count + 1}`)}>
         {cfg.split(" ")[0]}

@@ -4914,6 +4914,20 @@
 .prod-row:last-child {
   border-bottom: none;
 }
+/* In-flight bets lay out as a flex row so the Rush button sits inline; the
+   meta line wraps full-width beneath. */
+.prod-row--bet {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.prod-row--bet .prod-row__name {
+  flex: 1;
+}
+.prod-row--bet .prod-row__meta {
+  flex-basis: 100%;
+}
 .prod-row__name {
   font-size: 13px;
   font-weight: 550;

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { advanceProducts, buyCapacityRung, commitBet, initProductsRuntime, productsOperatingRevenue, type SubContent } from "./productsRuntime.ts";
+import { accelerateBet, advanceProducts, buyCapacityRung, commitBet, initProductsRuntime, productsOperatingRevenue, type SubContent } from "./productsRuntime.ts";
 import { makeBet } from "./products.ts";
 import { createNewGame } from "@/state/newgame";
 import type { CapacityRung, CapacityType, ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
@@ -122,6 +122,30 @@ test("commitBet pays cash + queues a bet, and no-ops when gates aren't met", () 
   // Gated: levels below the requirement → unchanged state.
   const low = { ...s, company: { ...s.company, products: { ...s.company.products!, rd: { ...s.company.products!.rd, levels: { a: 1, b: 1 } } } } };
   assert.equal(commitBet(low, content, "p", "X"), low);
+});
+
+test("accelerateBet pulls a bet's schedule in for cash; no-ops when broke or ≤1wk", () => {
+  // A longer build so there's room to rush (full = 12, chunk = 3 weeks).
+  const longArch: ProductArchetype = { ...arch, id: "lp", economics: { ...arch.economics, build_cost: 40, build_weeks: 12 } };
+  const longContent: SubContent = { ...content, productById: new Map([["lp", longArch]]) };
+  const s = gameWithRuntime();
+  s.company.products = initProductsRuntime(longContent);
+  s.company.financials = { ...s.company.financials, cash: 200 };
+  s.company.products.bets = [makeBet(longArch, "Big", "create", { a: 50, b: 50 }, 0, tuning)];
+  const betId = s.company.products.bets[0]!.id;
+
+  // full 12, chunk 3, cost = (40/12)*3*1.5 = 15.
+  const after = accelerateBet(s, longContent, betId);
+  assert.equal(after.company.products!.bets[0]!.weeks_left, 12 - 3, "pulled in 3 weeks");
+  assert.ok(Math.abs(after.company.financials.cash - (200 - 15)) < 1e-9, "rush cost paid");
+
+  // Can't afford it → unchanged.
+  const broke = { ...s, company: { ...s.company, financials: { ...s.company.financials, cash: 0 } } };
+  assert.equal(accelerateBet(broke, longContent, betId), broke);
+
+  // A bet a week from shipping can't be rushed → unchanged.
+  const almost = { ...s, company: { ...s.company, products: { ...s.company.products, bets: [{ ...s.company.products.bets[0]!, weeks_left: 1 }] } } };
+  assert.equal(accelerateBet(almost, longContent, betId), almost);
 });
 
 test("buyCapacityRung pays cash + schedules a build; a no-op when short", () => {
