@@ -337,6 +337,9 @@ export interface ProductTuning {
   build_time_mult: number;
   decay_mult: number;
   share_volatility: number; // how fast share can swing vs. rivals
+  /** Yearly secular growth of the sector's addressable market (TAM), compounded
+   *  weekly and modulated by the macro cycle. Optional; absent = a flat market. */
+  tam_growth_per_year?: number;
 }
 
 /** Keyed-table TOML files (one table per entity). */

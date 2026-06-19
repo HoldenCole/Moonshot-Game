@@ -171,10 +171,24 @@ function decayMultiplier(ageWeeks: number, archetype: ProductArchetype, tuning: 
   return Math.pow(Math.max(0, 1 - decayWeek), ageWeeks - declineStart);
 }
 
-/** $M/yr a product is earning now: its share of the market, scaled by where it is
- *  in the ramp and how far obsolescence has eaten in. */
-export function productRevenueRunRate(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning): number {
-  const peak = product.share * archetype.economics.addressable_market;
+/** How sharply TAM growth tracks the macro cycle: a peak (+1 strength) grows the
+ *  market this much faster, a trough (−1) this much slower (floored so it stalls,
+ *  not shrinks). */
+export const MACRO_TAM_SENSITIVITY = 0.8;
+
+/** Advance a sector's TAM multiplier one week: the addressable market compounds at
+ *  its annual rate, accelerated in booms and slowed in busts. A growing sector
+ *  (space, chips) keeps expanding the pie over a long run. */
+export function nextTamScale(prev: number, ratePerYear: number, macroStrength: number): number {
+  if (!(ratePerYear > 0)) return prev;
+  const macroFactor = Math.max(0.1, 1 + MACRO_TAM_SENSITIVITY * macroStrength);
+  return prev * (1 + ratePerYear * macroFactor) ** (1 / 52);
+}
+
+/** $M/yr a product is earning now: its share of the (TAM-scaled) market, scaled by
+ *  where it is in the ramp and how far obsolescence has eaten in. */
+export function productRevenueRunRate(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning, tamScale = 1): number {
+  const peak = product.share * archetype.economics.addressable_market * tamScale;
   const t = Math.min(1, product.age_weeks / Math.max(1, archetype.economics.ramp_weeks));
   // Front-loaded ramp: revenue climbs fast early then eases into its plateau,
   // instead of crawling up a straight line (=1 at t≥1, so it still matures at
@@ -184,15 +198,15 @@ export function productRevenueRunRate(product: LiveProduct, archetype: ProductAr
 }
 
 /** $M/yr of gross profit (revenue × launch margin). */
-export function productGrossProfit(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning): number {
-  return productRevenueRunRate(product, archetype, tuning) * archetype.economics.unit_margin;
+export function productGrossProfit(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning, tamScale = 1): number {
+  return productRevenueRunRate(product, archetype, tuning, tamScale) * archetype.economics.unit_margin;
 }
 
 /** Age a product one week: advance the lifecycle and re-cache its run-rate. Share
  *  is moved separately (productMarket) before this, so revenue reads the latest. */
-export function tickProduct(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning): LiveProduct {
+export function tickProduct(product: LiveProduct, archetype: ProductArchetype, tuning: ProductTuning, tamScale = 1): LiveProduct {
   const next: LiveProduct = { ...product, age_weeks: product.age_weeks + 1 };
   next.state = lifecycleState(next.age_weeks, archetype);
-  next.revenue_run_rate = Math.round(productRevenueRunRate(next, archetype, tuning) * 100) / 100;
+  next.revenue_run_rate = Math.round(productRevenueRunRate(next, archetype, tuning, tamScale) * 100) / 100;
   return next;
 }

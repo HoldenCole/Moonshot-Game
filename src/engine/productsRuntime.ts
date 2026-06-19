@@ -8,7 +8,7 @@ import type { GameState } from "@/domain/state";
 import type { ProductsRuntime } from "@/domain/products";
 import { advanceRD, initRDState, rivalLevelsForLines } from "./rd";
 import { canStartBet, initCapacityState, nextRung, startRungBuild, tickCapacityBuilds } from "./capacity";
-import { betCost, gatesMet, makeBet, productGrossProfit, rushQuote, tickBets, tickProduct } from "./products";
+import { betCost, gatesMet, makeBet, nextTamScale, productGrossProfit, rushQuote, tickBets, tickProduct } from "./products";
 import { advanceShare, companyGrowthScale, competitionLevel, rivalProductQuality } from "./productMarket";
 import { formatMoney } from "./format";
 
@@ -48,6 +48,7 @@ export function initProductsRuntime(c: SubContent): ProductsRuntime {
     capacity: initCapacityState(c.capacityTypes, c.tuning),
     bets: [],
     products: [],
+    tam_scale: 1,
   };
 }
 
@@ -59,7 +60,7 @@ export interface ProductsAdvance {
 
 /** Advance the whole depth system one week, in the spec's deterministic order:
  *  R&D progress → capacity builds → bets ship → products age (share, revenue). */
-export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Company[], week: number, competition = 1): ProductsAdvance {
+export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Company[], week: number, competition = 1, macroStrength = 0): ProductsAdvance {
   const rd = advanceRD(rt.rd, c.lines, c.tuning, rivalLevelsForLines(c.lines, rivals));
 
   const typeById = new Map(c.capacityTypes.map((t) => [t.id, t]));
@@ -72,13 +73,16 @@ export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Comp
   const rivalQ = competitionLevel(rivalProductQuality(rivals), competition, week);
   // Growth slows as the company gets bigger: damp share gains by total run-rate.
   const growthScale = companyGrowthScale(rt.products.reduce((s, p) => s + p.revenue_run_rate, 0));
+  // The sector's addressable market compounds over time — faster in booms, slower
+  // in busts — so a growing industry (space, chips) keeps expanding the pie.
+  const tamScale = nextTamScale(rt.tam_scale ?? 1, c.tuning.tam_growth_per_year ?? 0, macroStrength);
   const products = [...rt.products, ...betRes.shipped.map((s) => s.product)].map((p) => {
     const arch = c.productById.get(p.archetype_id);
-    return arch ? tickProduct(advanceShare(p, rivalQ, c.tuning, growthScale), arch, c.tuning) : p;
+    return arch ? tickProduct(advanceShare(p, rivalQ, c.tuning, growthScale), arch, c.tuning, tamScale) : p;
   });
 
   return {
-    runtime: { rd, capacity, bets: betRes.bets, products },
+    runtime: { rd, capacity, bets: betRes.bets, products, tam_scale: tamScale },
     shipped: betRes.shipped.map((s) => ({ name: s.product.instance_name, archetypeId: s.product.archetype_id })),
   };
 }
@@ -86,9 +90,10 @@ export function advanceProducts(rt: ProductsRuntime, c: SubContent, rivals: Comp
 /** Operating revenue from shipped products ($M/yr) — the sum of their gross
  *  profit, fed into the finance pipeline as the company's product revenue. */
 export function productsOperatingRevenue(rt: ProductsRuntime, productById: Map<string, ProductArchetype>, tuning: ProductTuning): number {
+  const scale = rt.tam_scale ?? 1;
   const r = rt.products.reduce((s, p) => {
     const arch = productById.get(p.archetype_id);
-    return arch ? s + productGrossProfit(p, arch, tuning) : s;
+    return arch ? s + productGrossProfit(p, arch, tuning, scale) : s;
   }, 0);
   return Math.round(r * 100) / 100;
 }

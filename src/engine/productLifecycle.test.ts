@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { betBuildWeeks, iterationBuildFactor, lifecycleState, productQuality, productRevenueRunRate, productGrossProfit, tickProduct, MATURE_WINDOW } from "./products.ts";
+import { betBuildWeeks, iterationBuildFactor, lifecycleState, nextTamScale, productQuality, productRevenueRunRate, productGrossProfit, tickProduct, MATURE_WINDOW } from "./products.ts";
 import type { ProductArchetype, ProductTuning, RDLine } from "@/domain/content";
 import type { LiveProduct } from "@/domain/products";
 
@@ -98,6 +98,21 @@ test("iterationBuildFactor lengthens later builds — flat early, rising, then c
   assert.ok(iterationBuildFactor(50) <= 3 + 1e-9, "capped at the max");
   const a = archetype({ build_weeks: 20 });
   assert.ok(betBuildWeeks(a, tuning(), 10) > betBuildWeeks(a, tuning(), 0), "the 11th build is slower than the 1st");
+});
+
+test("nextTamScale compounds the market yearly, faster in booms; flat when ungrown", () => {
+  assert.equal(nextTamScale(1, 0, 1), 1, "a flat sector (rate 0) never moves");
+  let s = 1;
+  for (let i = 0; i < 52; i++) s = nextTamScale(s, 0.3, 0); // a year at neutral macro
+  assert.ok(Math.abs(s - 1.3) < 0.01, `one year at 30% ≈ 1.30, got ${s.toFixed(3)}`);
+  assert.ok(nextTamScale(1, 0.3, 1) > nextTamScale(1, 0.3, -1), "booms expand TAM faster than busts");
+});
+
+test("a growing TAM lifts a product's revenue proportionally", () => {
+  const a = archetype(); // peak (share 0.2 × 1000) = 200
+  const base = productRevenueRunRate(product({ age_weeks: 25 }), a, tuning());
+  const grown = productRevenueRunRate(product({ age_weeks: 25 }), a, tuning(), 2); // TAM doubled
+  assert.ok(Math.abs(grown - base * 2) < 1e-9, "double the TAM, double the revenue");
 });
 
 test("revenue decays after the mature plateau", () => {

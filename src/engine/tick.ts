@@ -89,7 +89,7 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   if (company.products && env?.subContent) {
     const sub = env.subContent;
     const rivals = env.market.filter((c) => c.sub_industry === company.subIndustry);
-    const pa = advanceProducts(company.products, sub, rivals, week, difficultyProfile(state.difficulty).competition);
+    const pa = advanceProducts(company.products, sub, rivals, week, difficultyProfile(state.difficulty).competition, drift.world.macroStrength);
     // The weekly R&D budget is spent (the core cash competition each turn).
     const rdSpend = pa.runtime.rd.rd_budget_per_week;
     company = {

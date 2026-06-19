@@ -73,4 +73,6 @@ export interface ProductsRuntime {
   capacity: CapacityState;
   bets: ActiveBet[];
   products: LiveProduct[];
+  /** The sector's TAM multiplier, compounding from 1.0 as the market grows. */
+  tam_scale?: number;
 }
