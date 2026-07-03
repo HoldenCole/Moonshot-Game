@@ -1,0 +1,34 @@
+# eras — the explicit arc (00: Founder -> Scale-up -> Titan -> Sovereign).
+# Detection thresholds + the authored transition moments. Order matters.
+
+[garage]
+id = "garage"
+name = "The Garage Years"
+order = 1
+enter = { stature_below = 2000 }
+texture = "Every dollar is borrowed, every hire is a bet, every week could be the last one."
+transition_prose = ""
+
+[scaleup]
+id = "scaleup"
+name = "The Scale-Up"
+order = 2
+enter = { stature_min = 2000 }
+texture = "The product works. Now the question is whether the company survives its own growth."
+transition_prose = "Somewhere between the last funding round and this morning's headcount report, it stopped being a startup. The garage years are over — what you build now, you build at scale."
+
+[titan]
+id = "titan"
+name = "The Titan Age"
+order = 3
+enter = { stature_min = 15000 }
+texture = "Governments return your calls. Rivals plan around you. The frontier is open and everyone is racing."
+transition_prose = "The analysts have run out of comparisons. You are no longer a company in an industry — you are one of the handful of names the century will be explained by. The megaproject gates are open."
+
+[sovereign]
+id = "sovereign"
+name = "The Sovereign Era"
+order = 4
+enter = { stature_min = 45000, power_min = 5, any = true }
+texture = "The line between company and polity is a matter of ongoing negotiation."
+transition_prose = "There is no market category for what you have become. Treaties reference your infrastructure; textbooks will argue about this decade. The remaining questions are the ones history asks."

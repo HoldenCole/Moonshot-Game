@@ -1,0 +1,15 @@
+[global]
+mega_slots_base = 1
+mega_slots_cap = 3
+setback_exec_mitigation = 0.4     # setback chance x (1 - 0.4*execQ)
+setback_redo_fraction = 0.3
+[repeat]                          # THE PINNED CURVES (19 s3.8)
+cost_mult_step = 0.15
+cost_mult_floor = 0.55
+output_decay = 0.80
+output_floor = 40
+power_decay = 0.70
+power_floor = 0.5
+[economic]
+cost_mult = 0.8
+time_mult = 0.9

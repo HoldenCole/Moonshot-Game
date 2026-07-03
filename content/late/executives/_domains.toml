@@ -1,0 +1,49 @@
+# executives/_domains — the 7 domains (12 §3.1). gates_megaprojects mirrors 10's exec_domain (bidirectional).
+[cto]
+id = "cto"
+name = "Chief Technology Officer"
+runs = "rd_and_products"
+unlock_stature = 0
+gates_megaprojects = []
+
+[cfo]
+id = "cfo"
+name = "Chief Financial Officer"
+runs = "finance"
+unlock_stature = 0
+gates_megaprojects = []
+
+[coo]
+id = "coo"
+name = "Chief Operating Officer"
+runs = "capacity_ops"
+unlock_stature = 500
+gates_megaprojects = []
+
+[cro]
+id = "cro"
+name = "Chief Revenue Officer"
+runs = "go_to_market"
+unlock_stature = 1000
+gates_megaprojects = []
+
+[chief_scientist]
+id = "chief_scientist"
+name = "Chief Scientist"
+runs = "frontier_research"
+unlock_stature = 25000                    # doc 12 value
+gates_megaprojects = ["artificial_general_intelligence", "quantum_supremacy_platform", "accelerated_science_program"]
+
+[space_program]
+id = "space_program"
+name = "Space Program Director"
+runs = "space_megaprojects"
+unlock_stature = 22000                    # TUNING ANCHOR
+gates_megaprojects = ["mars_transit_line", "mars_colony", "asteroid_mining_operation", "orbital_solar_array", "oneill_cylinder", "orbital_ring"]
+
+[chief_executive]
+id = "chief_executive"
+name = "Chief Executive (Group)"
+runs = "economic_megaprojects"
+unlock_stature = 20000                    # TUNING ANCHOR
+gates_megaprojects = ["sector_dominance_platform", "autonomous_economy_platform"]

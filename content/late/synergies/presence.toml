@@ -1,0 +1,90 @@
+[ai_chip_codesign]
+id = "ai_chip_codesign"
+name = "Ai Chip Codesign"
+activation = "presence"
+
+[ai_chip_codesign.source]
+requires_fronts = ["frontier_model_lab", "ai_chips"]
+requires_research = ["ai_designed_silicon"]
+
+[ai_chip_codesign.effect]
+rd_speed_mult = { ai_chips = 1.25, frontier_model_lab = 1.1 }
+cap = 1.4
+
+[full_ai_stack]
+id = "full_ai_stack"
+name = "Full Ai Stack"
+activation = "presence"
+
+[full_ai_stack.source]
+requires_fronts = ["frontier_model_lab", "ai_chips", "vertical_ai_saas"]
+requires_research = ["vertically_integrated_ai"]
+
+[full_ai_stack.effect]
+rd_speed_mult = { ai_chips = 1.15, frontier_model_lab = 1.15, vertical_ai_saas = 1.15 }
+cap = 1.5
+
+[integrated_space_logistics]
+id = "integrated_space_logistics"
+name = "Integrated Space Logistics"
+activation = "presence"
+
+[integrated_space_logistics.source]
+requires_fronts = ["launch_services", "satellite_constellations"]
+requires_research = ["reusable_satellite_launch"]
+
+[integrated_space_logistics.effect]
+build_cost_mult = { satellite_constellations = 0.85, launch_services = 0.9 }
+cap = 0.8
+
+[orbital_construction]
+id = "orbital_construction"
+name = "Orbital Construction"
+activation = "presence"
+
+[orbital_construction.source]
+requires_fronts = ["launch_services", "space_stations"]
+requires_research = ["orbital_construction_logistics"]
+
+[orbital_construction.effect]
+build_cost_mult = { space_stations = 0.85, space = 0.9 }
+cap = 0.8
+
+[orbital_compute]
+id = "orbital_compute"
+name = "Orbital Compute"
+activation = "presence"
+
+[orbital_compute.source]
+requires_fronts = ["ai_chips", "satellite_constellations"]
+requires_research = ["space_based_compute"]
+
+[orbital_compute.effect]
+rd_speed_mult = { frontier_model_lab = 1.1, ai_chips = 1.1, satellite_constellations = 1.1 }
+cap = 0.8
+
+[autonomous_space]
+id = "autonomous_space"
+name = "Autonomous Space"
+activation = "presence"
+
+[autonomous_space.source]
+requires_fronts = ["frontier_model_lab", "satellite_constellations", "launch_services"]
+requires_research = ["autonomous_space_ops"]
+
+[autonomous_space.effect]
+opex_mult = { launch_services = 0.85, satellite_constellations = 0.85 }
+cap = 0.75
+
+[ai_research_engine]
+id = "ai_research_engine"
+name = "Ai Research Engine"
+activation = "presence"
+
+[ai_research_engine.source]
+requires_fronts = ["frontier_model_lab", "ai_chips", "launch_services", "space_stations"]
+requires_research = ["ai_accelerated_research"]
+
+[ai_research_engine.effect]
+rd_speed_mult = { all = 1.3 }
+cap = 1.5

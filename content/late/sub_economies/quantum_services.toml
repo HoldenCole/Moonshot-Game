@@ -1,0 +1,35 @@
+# quantum_services — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[quantum_services]
+id = "quantum_services"
+name = "Quantum Services"
+opened_by = "quantum_supremacy_platform"
+branch = "intelligence"
+scale_label = "qubit capacity"
+description = "Computation no classical machine can match — sold by the problem, and priceless to your own labs."
+icon = "node"
+
+[quantum_services.scale]
+starting_scale = 50
+scale_cap = 10000
+growth_rate = 0.05
+exec_domain = "chief_scientist"
+
+[quantum_services.produces]
+revenue_per_scale = 0.015
+[quantum_services.produces.resources]
+quantum_advantage = 0.012
+
+[quantum_services.consumes]
+upkeep_per_scale = 0.004
+[quantum_services.consumes.resources]
+compute = 0.006
+
+[quantum_services.power]
+power_per_scale_tier = [[1000, 2], [5000, 3], [10000, 4]]
+
+[quantum_services.events]
+pool = "quantum_services_events"
+crisis_chance = 0.04
+
+[quantum_services.feeds_synergies]
+quantum_advantage = ["quantum_advantage_all_rd", "cheap_raw_materials"]

@@ -1,0 +1,126 @@
+[antitrust_inquiry]
+id = "antitrust_inquiry"
+category = "scrutiny"
+gates = { power_min = 2, stature_min = 15000 }
+frequency_scales_with = "power"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 78
+headline = "Antitrust regulators open a formal inquiry"
+body = """Your dominance has drawn a formal antitrust investigation. You can offer \
+concessions to settle it quietly, or fight to keep your position whole and accept \
+the scrutiny — and the precedent — that comes with refusing to yield."""
+[[antitrust_inquiry.choices]]
+label = "Settle with concessions"
+[antitrust_inquiry.choices.effects]
+reputation_delta = 1
+power_delta = -1
+revenue_delta = -50
+[[antitrust_inquiry.choices]]
+label = "Fight it"
+[antitrust_inquiry.choices.effects]
+power_delta = 1
+reputation_delta = -1
+regulation_level = 1
+
+[breakup_pressure]
+id = "breakup_pressure"
+category = "scrutiny"
+gates = { power_min = 4, stature_min = 40000 }
+frequency_scales_with = "power"
+kind = "crisis"
+weight = 0.9
+cooldown_weeks = 120
+headline = "Lawmakers call for your company to be broken up"
+body = """You have grown large enough that legislators are openly proposing to \
+dismantle you. A grave threat — and a backhanded acknowledgment that you've become \
+too important to ignore. You can mount a charm offensive, or dare them to try."""
+[[breakup_pressure.choices]]
+label = "Charm offensive ($150M)"
+[breakup_pressure.choices.effects]
+revenue_delta = -150
+reputation_delta = 2
+[[breakup_pressure.choices]]
+label = "Dare them"
+[breakup_pressure.choices.effects]
+power_delta = 2
+reputation_delta = -2
+regulation_level = 1
+
+[regulatory_framework]
+id = "regulatory_framework"
+category = "scrutiny"
+gates = { power_min = 2, stature_min = 18000 }
+frequency_scales_with = "power"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 70
+headline = "A new regulatory framework targets your industry"
+body = """Lawmakers draft rules clearly aimed at your line of business. You can help \
+write them — shaping the cage you'll live in — or oppose them outright."""
+[[regulatory_framework.choices]]
+label = "Help write the rules"
+[regulatory_framework.choices.effects]
+power_delta = 1
+reputation_delta = 1
+revenue_delta = -30
+[[regulatory_framework.choices]]
+label = "Oppose them"
+[regulatory_framework.choices.effects]
+reputation_delta = -1
+regulation_level = 1
+
+[public_backlash]
+id = "public_backlash"
+category = "scrutiny"
+gates = { power_min = 3, stature_min = 25000 }
+frequency_scales_with = "power"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 60
+headline = "Public unease grows over your concentration of power"
+body = """Op-eds and protests question whether any company should be as powerful as \
+yours has become. No immediate action — but the mood is shifting, and moods become \
+laws."""
+[public_backlash.effects]
+reputation_delta = -1
+regulation_level = 1
+
+[oversight_hearing]
+id = "oversight_hearing"
+category = "scrutiny"
+gates = { power_min = 3, stature_min = 20000 }
+frequency_scales_with = "power"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 75
+headline = "You are summoned to testify before the legislature"
+body = """Lawmakers want you in the chamber, under oath, answering for your \
+company's reach. A command performance for the cameras — combative or contrite, \
+the country will be watching."""
+[[oversight_hearing.choices]]
+label = "Contrite and cooperative"
+[oversight_hearing.choices.effects]
+reputation_delta = 1
+power_delta = -1
+[[oversight_hearing.choices]]
+label = "Combative — concede nothing"
+[oversight_hearing.choices.effects]
+power_delta = 1
+reputation_delta = -1
+regulation_level = 1
+
+[breakup_bill]
+id = "breakup_bill"
+category = "scrutiny"
+gates = { power_min = 5, stature_min = 40000 }
+frequency_scales_with = "power"
+kind = "crisis"
+weight = 0.8
+cooldown_weeks = 156
+headline = "A structural-separation bill reaches the floor"
+body = "Not a fine, not a consent decree — a bill to carve your empire into four companies, and it has co-sponsors from both parties. Killing it takes everything your lobby has; accepting a self-imposed firewall between divisions might defang it. The one thing you cannot do is nothing."
+choices = [
+  { label = "Total lobbying war — kill the bill", effects = { revenue_delta = -60, power_delta = 0.5, reputation_delta = -1 } },
+  { label = "Offer a voluntary firewall between divisions", effects = { regulation_level = 1, reputation_delta = 1 } },
+]

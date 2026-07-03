@@ -1,0 +1,255 @@
+# research/space_stations — 09 tree, validated structure (transcript 06-21). Budget/weeks: doc values where authored, tier-formula anchors otherwise.
+[expandable_habitats]
+id = "expandable_habitats"
+sub_industry = "space_stations"
+name = "Expandable Habitats"
+description = """Modules that launch folded and inflate to triple volume. More room per rocket than rigid cans will ever offer — the cheap square footage of the orbital age."""
+tier = "applied"
+
+[expandable_habitats.requires]
+rd_levels = { module_tech = 40, assembly = 35 }
+projects = []
+stature_min = 0
+
+[expandable_habitats.cost]
+budget = 25
+weeks = 32
+
+[expandable_habitats.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[life_support_recycling]
+id = "life_support_recycling"
+sub_industry = "space_stations"
+name = "Life-Support Recycling"
+description = """Water to water, breath to breath — closing the loops that keep resupply mass down. Every percentage point of recovery is cargo you never launch."""
+tier = "applied"
+
+[life_support_recycling.requires]
+rd_levels = { life_support = 45 }
+projects = []
+stature_min = 0
+
+[life_support_recycling.cost]
+budget = 25
+weeks = 32
+
+[life_support_recycling.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[orbital_assembly]
+id = "orbital_assembly"
+sub_industry = "space_stations"
+name = "Orbital Assembly"
+description = """Building in space instead of launching whole — robotic arms, docking tolerances, and the craft of construction without gravity. The skill every large structure depends on."""
+tier = "applied"
+
+[orbital_assembly.requires]
+rd_levels = { assembly = 50, module_tech = 40 }
+projects = []
+stature_min = 0
+
+[orbital_assembly.cost]
+budget = 25
+weeks = 32
+
+[orbital_assembly.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[large_scale_stations]
+id = "large_scale_stations"
+sub_industry = "space_stations"
+name = "Large-Scale Stations"
+description = """Hundreds of residents, rotating sections, districts instead of decks. The construction program where 'station' stops meaning laboratory and starts meaning settlement."""
+tier = "advanced"
+
+[large_scale_stations.requires]
+rd_levels = { module_tech = 65, assembly = 60, life_support = 55 }
+projects = ["expandable_habitats", "orbital_assembly"]
+stature_min = 12000
+
+[large_scale_stations.cost]
+budget = 170
+weeks = 82
+
+[large_scale_stations.unlocks]
+products = ["orbital_city"]
+frontier_unlock = ["closed_loop_habitation"]
+megaproject_unlock = []
+capability = { slot = 1 }
+
+[closed_loop_life_support]
+id = "closed_loop_life_support"
+sub_industry = "space_stations"
+name = "Closed-Loop Life Support"
+description = """Ecology as engineering: air, water, and nutrients cycling indefinitely without resupply. The technology that severs the umbilical to Earth — nothing permanent gets built without it."""
+tier = "advanced"
+
+[closed_loop_life_support.requires]
+rd_levels = { life_support = 75, module_tech = 60 }
+projects = ["life_support_recycling"]
+stature_min = 15000
+
+[closed_loop_life_support.cost]
+budget = 190
+weeks = 87
+
+[closed_loop_life_support.unlocks]
+products = []
+frontier_unlock = ["closed_loop_habitation"]
+megaproject_unlock = []
+
+[closed_loop_habitation]
+id = "closed_loop_habitation"
+sub_industry = "space_stations"
+name = "Closed-Loop Habitation"
+description = """The full discipline of keeping humans alive, indefinitely, anywhere — sealed ecologies, redundant everything, failure modes rehearsed to boredom. The research that makes a Mars colony a plan instead of a poster."""
+tier = "frontier"
+
+[closed_loop_habitation.requires]
+rd_levels = { life_support = 100, module_tech = 90, assembly = 85 }
+projects = ["large_scale_stations", "closed_loop_life_support"]
+stature_min = 28000
+
+[closed_loop_habitation.cost]
+budget = 730
+weeks = 150
+
+[closed_loop_habitation.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["mars_colony"]
+power = 1
+
+[artificial_gravity_habitat]
+id = "artificial_gravity_habitat"
+sub_industry = "space_stations"
+name = "Artificial-Gravity Habitat"
+description = """Rotation for gravity at the scale of a city — the structural, dynamic, and human factors of living on the inside of a spinning world. The O'Neill cylinder's founding science."""
+tier = "frontier"
+
+[artificial_gravity_habitat.requires]
+rd_levels = { module_tech = 95, assembly = 90 }
+projects = ["large_scale_stations"]
+stature_min = 26000
+
+[artificial_gravity_habitat.cost]
+budget = 705
+weeks = 147
+
+[artificial_gravity_habitat.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["oneill_cylinder"]
+power = 1
+
+[radiation_shielding]
+id = "radiation_shielding"
+sub_industry = "space_stations"
+name = "Radiation Shielding"
+description = """Water walls, regolith fill, and storm shelters. The invisible problem of living in space, solved well enough that crews stop counting their dosimeter badges."""
+tier = "applied"
+
+[radiation_shielding.requires]
+rd_levels = { module_tech = 45, life_support = 40 }
+projects = []
+stature_min = 0
+
+[radiation_shielding.cost]
+budget = 25
+weeks = 32
+
+[radiation_shielding.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[in_space_manufacturing_mod]
+id = "in_space_manufacturing_mod"
+sub_industry = "space_stations"
+name = "Microgravity Manufacturing"
+description = """Fiber optics, protein crystals, and alloys that only form without gravity. The first products worth more than their launch costs — orbit's first export economy."""
+tier = "applied"
+
+[in_space_manufacturing_mod.requires]
+rd_levels = { module_tech = 50, assembly = 45 }
+projects = ["orbital_assembly"]
+stature_min = 4000
+
+[in_space_manufacturing_mod.cost]
+budget = 45
+weeks = 42
+
+[in_space_manufacturing_mod.unlocks]
+products = ["microgravity_factory"]
+frontier_unlock = []
+megaproject_unlock = []
+
+[crew_health_systems]
+id = "crew_health_systems"
+sub_industry = "space_stations"
+name = "Crew Health Systems"
+description = """Exercise protocols, medical bays, and countermeasures for bodies that evolved at one gravity. The research that turns six-month tours into open-ended residence."""
+tier = "applied"
+
+[crew_health_systems.requires]
+rd_levels = { life_support = 50, module_tech = 40 }
+projects = ["life_support_recycling"]
+stature_min = 3000
+
+[crew_health_systems.cost]
+budget = 40
+weeks = 39
+
+[crew_health_systems.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[space_agriculture]
+id = "space_agriculture"
+sub_industry = "space_stations"
+name = "Space Agriculture"
+description = """Crops under LED suns — the psychology of fresh food and the logistics of not shipping it. A greenhouse module is the difference between a station and a place people live."""
+tier = "advanced"
+
+[space_agriculture.requires]
+rd_levels = { life_support = 65, module_tech = 55 }
+projects = ["life_support_recycling", "expandable_habitats"]
+stature_min = 9000
+
+[space_agriculture.cost]
+budget = 150
+weeks = 77
+
+[space_agriculture.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[docking_standardization]
+id = "docking_standardization"
+sub_industry = "space_stations"
+name = "Docking Standardization"
+description = """One port standard, published and licensed. Every spacecraft that adopts it becomes a potential customer — and your hatch becomes the industry's front door."""
+tier = "applied"
+
+[docking_standardization.requires]
+rd_levels = { module_tech = 45, assembly = 40 }
+projects = ["orbital_assembly"]
+stature_min = 2500
+
+[docking_standardization.cost]
+budget = 37
+weeks = 38
+
+[docking_standardization.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []

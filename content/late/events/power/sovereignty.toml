@@ -1,0 +1,97 @@
+[summoned_as_peer]
+id = "summoned_as_peer"
+category = "sovereignty"
+gates = { power_min = 5, stature_min = 45000 }
+frequency_scales_with = "power"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 80
+headline = "A head of state requests a meeting — as an equal"
+body = """A national leader asks to meet you not as a regulator to a company, but as \
+one power to another. The framing alone is historic: you are now an actor on the \
+world stage, negotiated with rather than governed."""
+[summoned_as_peer.effects]
+power_delta = 1
+reputation_delta = 1
+
+[arbitrate_dispute]
+id = "arbitrate_dispute"
+category = "sovereignty"
+gates = { power_min = 5, stature_min = 50000 }
+frequency_scales_with = "power"
+kind = "opportunity"
+weight = 0.9
+cooldown_weeks = 100
+headline = "Nations ask you to mediate a dispute"
+body = """A disagreement between states — over orbital rights, or resources, or \
+access to your infrastructure — and the parties have asked *you* to mediate. You \
+hold leverage over both. The role is the clearest sign yet that you have surpassed \
+the institutions that once oversaw you."""
+[[arbitrate_dispute.choices]]
+label = "Mediate impartially"
+[arbitrate_dispute.choices.effects]
+reputation_delta = 2
+power_delta = 1
+[[arbitrate_dispute.choices]]
+label = "Tilt it to your advantage"
+[arbitrate_dispute.choices.effects]
+power_delta = 2
+reputation_delta = -1
+
+[set_the_policy]
+id = "set_the_policy"
+category = "sovereignty"
+gates = { power_min = 6, stature_min = 60000 }
+frequency_scales_with = "power"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 110
+headline = "Governments adopt your standard as international law"
+body = """A framework your company authored — for AI, for orbital traffic, for the \
+new economy — is being adopted by governments as binding international policy. You \
+are no longer subject to the rules. You write them. The question is only how openly \
+you wield it."""
+[[set_the_policy.choices]]
+label = "Wield it openly"
+[set_the_policy.choices.effects]
+power_delta = 2
+reputation_delta = -1
+[[set_the_policy.choices]]
+label = "Wield it quietly"
+[set_the_policy.choices.effects]
+power_delta = 1
+reputation_delta = 1
+
+[more_powerful_than_government]
+id = "more_powerful_than_government"
+category = "sovereignty"
+gates = { power_min = 7, stature_min = 75000 }
+frequency_scales_with = "power"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 9999
+headline = "Analysts conclude your company now outweighs most nations"
+body = """It is said plainly now, in the press and in the halls of power: your \
+company is more powerful than most of the governments of the Earth. Budgets larger \
+than nations', infrastructure entire states depend on, a say in matters once \
+reserved for sovereigns. The founder's garage is a long way behind you. The \
+question of what you do with this has no precedent to guide it."""
+[more_powerful_than_government.effects]
+power_delta = 1
+reputation_delta = 1
+legacy_victory = "more_powerful_than_government"
+
+[company_scrip]
+id = "company_scrip"
+category = "sovereignty"
+gates = { power_min = 6, stature_min = 50000 }
+frequency_scales_with = "power"
+kind = "opportunity"
+weight = 0.7
+cooldown_weeks = 200
+headline = "Your internal credits are circulating as money"
+body = "The settlement credits your colonies and platforms use internally are now accepted in three Earth economies — merchants price in them, a small nation holds them as reserves. Your treasury has accidentally become a central bank. Formalizing it is a line no company has ever crossed. Not formalizing it means someone else manages your currency."
+choices = [
+  { label = "Formalize the currency — cross the line", effects = { power_delta = 1, entanglement_delta = -5, reputation_delta = -1 } },
+  { label = "Peg it to a state currency basket — step back", effects = { reputation_delta = 1, entanglement_delta = 5 } },
+]

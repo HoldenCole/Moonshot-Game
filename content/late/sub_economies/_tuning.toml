@@ -1,0 +1,12 @@
+[global]
+default_posture = "balanced"
+grow_growth_mult = 1.6
+harvest_growth_mult = 0.5
+harvest_revenue_mult = 1.4
+invest_to_raise_cap_cost = 50
+preview_output_mult = 0.4    # sub_economy_preview: same sub-economy early, at reduced output
+[branch_pacing]
+space = 1.0
+intelligence = 1.4
+energy = 1.0
+economic = 1.5

@@ -1,0 +1,17 @@
+[global]
+commercial_pool_size = 8          # commercial contracts available at once (plentiful)
+government_pool_size = 3          # government contracts rarer
+market_refresh_weeks = 13
+entanglement_decay_per_year = 6   # entanglement falls if you stop taking gov work
+[mix_identity]
+# commercial:government revenue ratio → identity label (engine reads)
+thresholds = [
+  { gov_share_below = 0.1, label = "Independent" },
+  { gov_share_below = 0.35, label = "Government Partner" },
+  { gov_share_below = 0.6, label = "National Champion" },
+  { gov_share_above = 0.6, label = "State-Entangled" },
+]
+[strategic_criticality]
+# emergent power from being humanity-critical, regardless of channel
+market_share_for_criticality = 0.4   # dominate >40% of a critical market → power even if pure-commercial
+criticality_power = 2

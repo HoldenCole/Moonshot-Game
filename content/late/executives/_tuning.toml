@@ -1,0 +1,14 @@
+# executives/_tuning — market, comp, retention (12 §4.4, doc values).
+[global]
+candidate_pool_size = 6
+market_refresh_weeks = 26
+headhunt_cost = 20
+
+[comp]
+base_salary_by_competence = 0.05
+equity_expectation_range = [0.005, 0.03]
+
+[retention]
+underpay_defection_per_quarter = 0.08
+star_poach_multiplier = 2.0
+fire_morale_hit = 0.1

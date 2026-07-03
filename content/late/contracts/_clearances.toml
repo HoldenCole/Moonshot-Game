@@ -1,0 +1,17 @@
+[defense_secret]
+id = "defense_secret"
+name = "Defense Secret clearance"
+description = "Vetting that unlocks classified defense contracts."
+cost = 40                          # $M + time to obtain
+weeks = 26
+entanglement_on_grant = 8          # getting cleared is itself an entanglement step
+requires = { stature_min = 5000 }
+
+[intelligence_ts]
+id = "intelligence_ts"
+name = "Intelligence Top Secret clearance"
+description = "The deepest vetting — unlocks intelligence-service work."
+cost = 90
+weeks = 39
+entanglement_on_grant = 15
+requires = { stature_min = 12000, prior_clearance = "defense_secret" }

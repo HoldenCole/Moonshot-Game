@@ -1,0 +1,12 @@
+# content/infrastructure/_tuning.toml
+[global]
+starting_infra_slots = 1         # infrastructure builds you can run at once
+max_infra_slots = 3              # ceiling (raised by HQ tier 3+, which grant infra_slots)
+# Slot grants from buildouts (research_slots, megaproject_slots, bet_slots) feed the
+# respective system slot pools (09 / 10 / bet scheduler). Engine sums and clamps to
+# those systems' own max caps (e.g. research max_slots = 5 from 09).
+[caps]
+# Global ceilings so infrastructure buffs stack but don't spiral (with synergies 14).
+max_rd_speed_from_infra = 1.5
+min_opex_from_infra = 0.7
+max_talent_quality = 0.4

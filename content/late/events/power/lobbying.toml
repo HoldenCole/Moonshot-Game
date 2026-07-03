@@ -1,0 +1,96 @@
+[lobbying_opportunity]
+id = "lobbying_opportunity"
+category = "lobbying"
+gates = { power_min = 2, stature_min = 14000 }
+frequency_scales_with = "power"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 55
+headline = "A chance to shape pending legislation"
+body = """A bill that will affect your industry for a decade is being drafted. A \
+well-placed lobbying campaign could tilt it your way — a direct, if unglamorous, \
+exercise of the power you've built."""
+[[lobbying_opportunity.choices]]
+label = "Fund the campaign ($60M)"
+[lobbying_opportunity.choices.effects]
+revenue_delta = -60
+power_delta = 1
+regulation_level = -1
+[[lobbying_opportunity.choices]]
+label = "Stay out of it"
+[lobbying_opportunity.choices.effects]
+reputation_delta = 1
+
+[policy_advisory_seat]
+id = "policy_advisory_seat"
+category = "lobbying"
+gates = { power_min = 3, stature_min = 22000 }
+frequency_scales_with = "power"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 70
+headline = "You're offered a seat on a national policy council"
+body = """The government invites you onto a council shaping national technology \
+strategy. Real influence over the rules everyone plays by — at the cost of being \
+seen as part of the establishment you might one day need to defy."""
+[[policy_advisory_seat.choices]]
+label = "Take the seat"
+[policy_advisory_seat.choices.effects]
+power_delta = 1
+entanglement_delta = 6
+[[policy_advisory_seat.choices]]
+label = "Decline to stay independent"
+[policy_advisory_seat.choices.effects]
+reputation_delta = 1
+
+[fund_initiative]
+id = "fund_initiative"
+category = "lobbying"
+gates = { power_min = 2, stature_min = 16000 }
+frequency_scales_with = "power"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 60
+headline = "A chance to fund a public initiative in your favor"
+body = """Bankrolling a research institute, a think tank, or a public-works program \
+would build goodwill and quietly steer the conversation your way. Soft power, \
+bought."""
+[[fund_initiative.choices]]
+label = "Fund it ($80M)"
+[fund_initiative.choices.effects]
+revenue_delta = -80
+reputation_delta = 2
+power_delta = 1
+[[fund_initiative.choices]]
+label = "Pass"
+[fund_initiative.choices.effects]
+
+[revolving_door]
+id = "revolving_door"
+category = "lobbying"
+gates = { power_min = 3, stature_min = 20000 }
+frequency_scales_with = "power"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 120
+headline = "The regulator who oversees you is leaving office"
+body = "The official who wrote half the rules you operate under is available — and interested. Hiring them buys you a decade of institutional knowledge and every door in the capital. It also puts your name in every 'revolving door' exposé written for the next five years."
+choices = [
+  { label = "Hire them — knowledge is power", effects = { power_delta = 1, reputation_delta = -1, revenue_delta = -15 } },
+  { label = "Pass — some optics aren't worth it", effects = { reputation_delta = 1 } },
+]
+
+[write_the_rules]
+id = "write_the_rules"
+category = "lobbying"
+gates = { power_min = 4, stature_min = 30000 }
+frequency_scales_with = "power"
+kind = "opportunity"
+weight = 0.8
+cooldown_weeks = 156
+headline = "The committee asks you to draft the framework"
+body = "The new industry regulation is coming either way, and the legislators — outgunned, understaffed, and privately terrified of getting it wrong — have asked your policy team to write the first draft. Whatever you send becomes the anchor. Rivals would kill for the pen you're being handed."
+choices = [
+  { label = "Write rules that favor your structure", effects = { power_delta = 1, regulation_level = -1, reputation_delta = -1 } },
+  { label = "Write genuinely good rules — statesman's play", effects = { reputation_delta = 2, power_delta = 0.5 } },
+]

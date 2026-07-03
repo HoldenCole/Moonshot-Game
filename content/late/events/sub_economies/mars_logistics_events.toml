@@ -1,0 +1,88 @@
+[transit_window_record]
+id = "transit_window_record"
+pool = "mars_logistics_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 70
+headline = "Record cargo throughput this transit window"
+body = """A favorable alignment and a smooth fleet rotation move more tonnage to \
+Mars this window than ever before. Demand for seats and cargo space spikes."""
+choices = [
+  { label = "Sell the surplus capacity at spot rates", effects = { output_mult = 1.12 } },
+  { label = "Bank the margin as schedule slack — reliability is the brand", effects = { reputation_delta = 1 } },
+]
+
+[transit_window_record.effects]
+output_mult = 1.12
+
+[transit_solar_flare]
+id = "transit_solar_flare"
+pool = "mars_logistics_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 55
+headline = "Solar storm forces a transit delay"
+body = """A major solar event forces ships in transit to shelter and delays the next \
+departures. Schedules slip; some cargo misses its window."""
+[[transit_solar_flare.choices]]
+label = "Hold departures until it passes"
+[transit_solar_flare.choices.effects]
+output_mult = 0.85
+[[transit_solar_flare.choices]]
+label = "Fly the hardened ships anyway ($40M)"
+[transit_solar_flare.choices.effects]
+revenue_delta = -40
+output_mult = 0.95
+
+[transit_route_optimized]
+id = "transit_route_optimized"
+pool = "mars_logistics_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 50
+headline = "Navigation AI shaves days off the crossing"
+body = """A refined trajectory model trims transit time and fuel on every crossing — \
+small per trip, real across a fleet running year-round."""
+[transit_route_optimized.effects]
+output_mult = 1.04
+
+[transit_competitor_exit]
+id = "transit_competitor_exit"
+pool = "mars_logistics_events"
+kind = "opportunity"
+weight = 0.8
+cooldown_weeks = 90
+headline = "A rival abandons its Mars cargo ambitions"
+body = """The only serious competitor for the Earth–Mars freight route has folded \
+its program. The artery between the worlds is effectively yours alone."""
+choices = [
+  { label = "Raise freight rates — the artery is yours", effects = { scale_mult = 1.08, power_delta = 1 } },
+  { label = "Hold prices and hire their stranded crews", effects = { reputation_delta = 2, revenue_delta = -5 } },
+]
+
+[transit_competitor_exit.effects]
+scale_mult = 1.08
+power_delta = 1
+
+
+[transit_stowaway]
+id = "transit_stowaway"
+pool = "mars_logistics_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 110
+headline = "A stowaway is found on the outbound cycler"
+body = "Twenty-two years old, hid in a cargo rack for six days, wants to be a Martian. The lawyers say liability; the crew says hire her — anyone who can beat your manifest screening belongs in operations. The internet has already made her famous."
+
+[transit_insurance_reckoning]
+id = "transit_insurance_reckoning"
+pool = "mars_logistics_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 80
+headline = "The underwriters revolt"
+body = "After a near-miss docking anomaly, the consortium insuring interplanetary cargo doubles premiums and demands audit rights over your flight software. Self-insuring saves the fee and keeps your code private — and puts the next accident entirely on your balance sheet."
+choices = [
+  { label = "Accept the audit — keep the coverage", effects = { revenue_delta = -25, entanglement_delta = 2 } },
+  { label = "Self-insure — your ships, your risk", effects = { revenue_delta = 10, output_mult = 0.97 } },
+]

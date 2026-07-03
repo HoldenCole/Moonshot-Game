@@ -1,0 +1,33 @@
+# ring_access — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[ring_access]
+id = "ring_access"
+name = "Ring Access"
+opened_by = "orbital_ring"
+branch = "space"
+scale_label = "access throughput"
+description = "The orbital ring — reaching space is now an elevator ride, and the elevator is yours."
+icon = "node"
+
+[ring_access.scale]
+starting_scale = 500
+scale_cap = 50000
+growth_rate = 0.045
+exec_domain = "space_program"
+
+[ring_access.produces]
+revenue_per_scale = 0.01
+[ring_access.produces.resources]
+launch_access = 0.015
+
+[ring_access.consumes]
+upkeep_per_scale = 0.003
+
+[ring_access.power]
+power_per_scale_tier = [[5000, 2], [20000, 3], [50000, 5]]
+
+[ring_access.events]
+pool = "ring_access_events"
+crisis_chance = 0.04
+
+[ring_access.feeds_synergies]
+launch_access = ["near_free_launch", "space_native_civilization"]

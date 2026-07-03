@@ -1,0 +1,276 @@
+# research/frontier_model_lab — 09 tree, validated structure (transcript 06-21). Budget/weeks: doc values where authored, tier-formula anchors otherwise.
+[multimodal_models]
+id = "multimodal_models"
+sub_industry = "frontier_model_lab"
+name = "Multimodal Models"
+description = """One model that reads, sees, and listens. The interface stops being text and starts being the world — and every product you own gets a new sense."""
+tier = "applied"
+
+[multimodal_models.requires]
+rd_levels = { scaling = 35, data_quality = 30 }
+projects = []
+stature_min = 0
+
+[multimodal_models.cost]
+budget = 25
+weeks = 32
+
+[multimodal_models.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[tool_use]
+id = "tool_use"
+sub_industry = "frontier_model_lab"
+name = "Tool Use"
+description = """Models that call APIs, run code, and operate software. The difference between a model that answers and one that acts — the foundation everything agentic stands on."""
+tier = "applied"
+
+[tool_use.requires]
+rd_levels = { scaling = 30, data_quality = 35 }
+projects = []
+stature_min = 0
+
+[tool_use.cost]
+budget = 25
+weeks = 32
+
+[tool_use.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[long_context]
+id = "long_context"
+sub_industry = "frontier_model_lab"
+name = "Long-Context Architecture"
+description = """A working memory measured in libraries, not pages. Whole codebases, whole case files, whole histories in a single pass — the feature enterprises quietly rank above raw intelligence."""
+tier = "applied"
+
+[long_context.requires]
+rd_levels = { scaling = 40, data_quality = 35 }
+projects = []
+stature_min = 0
+
+[long_context.cost]
+budget = 25
+weeks = 32
+
+[long_context.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[rlhf_advanced]
+id = "rlhf_advanced"
+sub_industry = "frontier_model_lab"
+name = "Advanced Preference Training"
+description = """Teaching models what people actually want, at scale, without teaching them to flatter. The craft that separates a demo from something a hospital will deploy."""
+tier = "applied"
+
+[rlhf_advanced.requires]
+rd_levels = { alignment = 40, data_quality = 35 }
+projects = []
+stature_min = 0
+
+[rlhf_advanced.cost]
+budget = 25
+weeks = 32
+
+[rlhf_advanced.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[autonomous_agents]
+id = "autonomous_agents"
+sub_industry = "frontier_model_lab"
+name = "Autonomous Agents"
+description = """Models that pursue goals across hours and systems, not sentences. Give one a mandate and it plans, executes, and reports back. The product that turns AI from a tool into a workforce."""
+tier = "advanced"
+
+[autonomous_agents.requires]
+rd_levels = { scaling = 60, data_quality = 55, alignment = 45 }
+projects = ["tool_use", "long_context"]
+stature_min = 9000
+
+[autonomous_agents.cost]
+budget = 150
+weeks = 77
+
+[autonomous_agents.unlocks]
+products = ["autonomous_agent_platform"]
+frontier_unlock = ["artificial_general_intelligence"]
+megaproject_unlock = []
+
+[autonomous_research]
+id = "autonomous_research"
+sub_industry = "frontier_model_lab"
+name = "Autonomous Research"
+description = """Agents that do science — read literature, form hypotheses, design experiments. Pointed at your own R&D, the flywheel starts: research that accelerates research."""
+tier = "advanced"
+
+[autonomous_research.requires]
+rd_levels = { scaling = 65, data_quality = 60, alignment = 55 }
+projects = ["autonomous_agents", "multimodal_models"]
+stature_min = 13000
+
+[autonomous_research.cost]
+budget = 176
+weeks = 83
+
+[autonomous_research.unlocks]
+products = []
+frontier_unlock = ["artificial_general_intelligence"]
+megaproject_unlock = []
+capability = { slot = 1 }
+
+[recursive_self_improvement]
+id = "recursive_self_improvement"
+sub_industry = "frontier_model_lab"
+name = "Recursive Self-Improvement"
+description = """Models improving the systems that train models. The most carefully monitored program you run — every curve in the lab bends upward, and the safety team's budget bends with it."""
+tier = "advanced"
+
+[recursive_self_improvement.requires]
+rd_levels = { scaling = 75, alignment = 70 }
+projects = ["autonomous_research"]
+stature_min = 18000
+
+[recursive_self_improvement.cost]
+budget = 210
+weeks = 92
+
+[recursive_self_improvement.unlocks]
+products = []
+frontier_unlock = ["artificial_general_intelligence"]
+megaproject_unlock = []
+
+[artificial_general_intelligence]
+id = "artificial_general_intelligence"
+sub_industry = "frontier_model_lab"
+name = "The AGI Program"
+description = """General intelligence — the summit of the field and the reason your lab exists. Every scaling law, every alignment technique, every agent you've shipped converges here. Cross the line and the world is divided into before and after."""
+tier = "frontier"
+
+[artificial_general_intelligence.requires]
+rd_levels = { scaling = 100, data_quality = 90, alignment = 95 }
+projects = ["recursive_self_improvement"]
+stature_min = 30000
+
+[artificial_general_intelligence.cost]
+budget = 755
+weeks = 152
+
+[artificial_general_intelligence.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["artificial_general_intelligence"]
+power = 1
+
+[superhuman_science]
+id = "superhuman_science"
+sub_industry = "frontier_model_lab"
+name = "Superhuman Science"
+description = """A system that does research better than the people who built it. Not general intelligence — something narrower and, for civilization's throughput, perhaps more valuable: discovery on demand."""
+tier = "frontier"
+
+[superhuman_science.requires]
+rd_levels = { scaling = 90, data_quality = 100 }
+projects = ["autonomous_research", "recursive_self_improvement"]
+stature_min = 26000
+
+[superhuman_science.cost]
+budget = 705
+weeks = 147
+
+[superhuman_science.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["accelerated_science_program"]
+power = 1
+
+[retrieval_augmentation]
+id = "retrieval_augmentation"
+sub_industry = "frontier_model_lab"
+name = "Retrieval Augmentation"
+description = """Models that look things up instead of hallucinating them. Grounded answers with citations — the unglamorous feature that wins every enterprise bake-off."""
+tier = "applied"
+
+[retrieval_augmentation.requires]
+rd_levels = { data_quality = 40, scaling = 30 }
+projects = []
+stature_min = 0
+
+[retrieval_augmentation.cost]
+budget = 25
+weeks = 32
+
+[retrieval_augmentation.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[synthetic_data]
+id = "synthetic_data"
+sub_industry = "frontier_model_lab"
+name = "Synthetic Data Generation"
+description = """When the internet runs dry, brew your own. Model-generated training data, curated and verified — the escape hatch from the data wall everyone else is about to hit."""
+tier = "applied"
+
+[synthetic_data.requires]
+rd_levels = { data_quality = 45, scaling = 40 }
+projects = ["multimodal_models"]
+stature_min = 2000
+
+[synthetic_data.cost]
+budget = 35
+weeks = 37
+
+[synthetic_data.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[mixture_of_experts]
+id = "mixture_of_experts"
+sub_industry = "frontier_model_lab"
+name = "Mixture-of-Experts Scaling"
+description = """A trillion parameters where only billions wake up per token. Frontier capability at a fraction of the serving cost — the economics that make scale a business instead of a stunt."""
+tier = "applied"
+
+[mixture_of_experts.requires]
+rd_levels = { scaling = 45, data_quality = 40 }
+projects = []
+stature_min = 0
+
+[mixture_of_experts.cost]
+budget = 25
+weeks = 32
+
+[mixture_of_experts.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[interpretability]
+id = "interpretability"
+sub_industry = "frontier_model_lab"
+name = "Interpretability"
+description = """Opening the black box — circuits, features, the actual mechanics of machine cognition. What regulators will demand, what alignment requires, and what lets you trust the things you're about to build."""
+tier = "advanced"
+
+[interpretability.requires]
+rd_levels = { alignment = 60, data_quality = 50 }
+projects = ["rlhf_advanced"]
+stature_min = 8000
+
+[interpretability.cost]
+budget = 143
+weeks = 75
+
+[interpretability.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []

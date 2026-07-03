@@ -1,0 +1,98 @@
+[mars_dust_storm]
+id = "mars_dust_storm"
+pool = "mars_colony_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 60
+headline = "Planet-wide dust storm engulfs the colony"
+body = """A months-long dust storm has blacked out the solar arrays and grounded \
+surface operations. The colony can ride it out on reserves — or you can rush an \
+emergency resupply at real cost."""
+[[mars_dust_storm.choices]]
+label = "Ride it out on reserves"
+[mars_dust_storm.choices.effects]
+output_mult = 0.8
+[[mars_dust_storm.choices]]
+label = "Emergency resupply ($120M)"
+[mars_dust_storm.choices.effects]
+revenue_delta = -120
+reputation_delta = 1
+
+[mars_first_child]
+id = "mars_first_child"
+pool = "mars_colony_events"
+kind = "flavor"
+weight = 1.2
+cooldown_weeks = 9999
+headline = "The first child is born on Mars"
+body = """A birth at the colony — the first human born on another world. Every \
+outlet on Earth carries the story. History will remember whose flag flew over the \
+settlement that day."""
+[mars_first_child.effects]
+power_delta = 1
+reputation_delta = 1
+
+[mars_water_discovery]
+id = "mars_water_discovery"
+pool = "mars_colony_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 80
+headline = "Vast subsurface ice deposit confirmed"
+body = """Surveyors confirm a far larger water-ice reserve beneath the colony than \
+anyone expected — easing the path to self-sufficiency and opening new growth."""
+choices = [
+  { label = "Fast-track extraction — water is growth", effects = { scale_mult = 1.05, output_mult = 1.1 } },
+  { label = "Survey fully before drilling — the aquifer is forever", effects = { reputation_delta = 1, output_mult = 0.98 } },
+]
+
+[mars_water_discovery.effects]
+scale_mult = 1.05
+output_mult = 1.1
+
+[mars_habitat_breakthrough]
+id = "mars_habitat_breakthrough"
+pool = "mars_colony_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 60
+headline = "Colony agriculture hits full self-sufficiency in greens"
+body = """The hydroponics bays now supply the colony's fresh food entirely. A quiet \
+milestone, and a real one — every kilo not shipped from Earth is a kilo of margin."""
+[mars_habitat_breakthrough.effects]
+output_mult = 1.05
+
+[mars_governance_dispute]
+id = "mars_governance_dispute"
+pool = "mars_colony_events"
+kind = "crisis"
+weight = 0.8
+cooldown_weeks = 100
+headline = "Colonists petition for self-governance"
+body = """The settlement's residents — citizens of no nation, employees of your \
+company — are asking who governs them. How you answer shapes what the colony \
+becomes, and how Earth's governments view you."""
+[[mars_governance_dispute.choices]]
+label = "Grant a local council"
+[mars_governance_dispute.choices.effects]
+reputation_delta = 1
+output_mult = 1.05
+[[mars_governance_dispute.choices]]
+label = "Keep corporate control"
+[mars_governance_dispute.choices.effects]
+power_delta = 1
+reputation_delta = -1
+
+
+[mars_second_city_bid]
+id = "mars_second_city_bid"
+pool = "mars_colony_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 90
+headline = "The settlers petition for a second settlement"
+body = "A faction of First Light's residents — your employees, technically — want to found a sister outpost at the water-rich pole. It's earlier than your plan, it splits your logistics, and it is exactly the kind of thing living cities do whether their landlords approve or not."
+choices = [
+  { label = "Back the expansion — cities grow", effects = { revenue_delta = -30, scale_mult = 1.08, reputation_delta = 1 } },
+  { label = "Consolidate first — one city, done right", effects = { revenue_delta = 10 } },
+]

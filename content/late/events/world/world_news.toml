@@ -1,0 +1,223 @@
+# world news — ambient texture. No player effects (or tiny ones); pure living-world.
+# kind: "flavor" throughout; gates keep beats era-appropriate.
+
+[first_private_moonwalk]
+id = "first_private_moonwalk"
+pool = "world"
+kind = "flavor"
+weight = 2
+cooldown_weeks = 9999
+headline = "A private crew walks on the Moon"
+body = "Not yours, not a government's — a tourist consortium. The footage is shaky and the flag is a logo, and a billion people watch anyway. The era has clearly turned."
+
+[orbital_debris_treaty]
+id = "orbital_debris_treaty"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 200
+headline = "Forty nations sign the Orbital Commons Treaty"
+body = "Debris quotas, deorbit bonds, traffic lanes. The lawyers of the space age have arrived, and they bill by the hour."
+
+[ai_displacement_protests]
+id = "ai_displacement_protests"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 120
+headline = "General strikes in three capitals over AI displacement"
+body = "The placards name no single company — yet. The economists say the productivity gains are real; the crowds say so is the rent."
+
+[fusion_milestone]
+id = "fusion_milestone"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 300
+headline = "A national lab sustains net-positive fusion for six minutes"
+body = "Grid-scale is still 'a decade away,' as it has been for sixty years. But the graph line finally bends the right direction."
+
+[sovereign_wealth_pivot]
+id = "sovereign_wealth_pivot"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 150
+headline = "Gulf sovereign funds pivot to orbital infrastructure"
+body = "A trillion dollars is quietly changing what it wants to own. Launch manifests are sold out for three years."
+
+[university_exodus]
+id = "university_exodus"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 130
+headline = "Physics departments empty into industry"
+body = "Half a graduating cohort skips academia entirely. The frontier pays better, moves faster, and publishes less."
+
+[chip_embargo_tightens]
+id = "chip_embargo_tightens"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 140
+headline = "Export controls tighten on frontier silicon"
+body = "Another node class goes behind the wall. Smuggling prosecutions double; so do the prices."
+
+[first_space_born]
+id = "first_space_born"
+pool = "world"
+kind = "flavor"
+weight = 2
+cooldown_weeks = 9999
+gates = { power_min = 3 }
+headline = "The first child is born off Earth"
+body = "A medical milestone, a legal nightmare, a photograph that will outlive everyone alive today."
+
+[asteroid_scare]
+id = "asteroid_scare"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 250
+headline = "A near-miss asteroid focuses minds"
+body = "It passed inside the Moon's orbit. Planetary-defense budgets triple overnight, and suddenly everyone loves the space industry."
+
+[deepfake_election]
+id = "deepfake_election"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 160
+headline = "An election is annulled over synthetic media"
+body = "Nobody can prove which videos were real, which is precisely the problem. Calls for model regulation reach a new pitch."
+
+[orbital_hotel_opens]
+id = "orbital_hotel_opens"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 9999
+headline = "The first orbital hotel opens at $9M a night"
+body = "The reviews mention the view, the nausea, and the bar. It is booked solid until 2034."
+
+[grid_strain_summer]
+id = "grid_strain_summer"
+pool = "world"
+kind = "flavor"
+weight = 5
+cooldown_weeks = 100
+headline = "Datacenter demand breaks another national grid record"
+body = "Utilities are signing twenty-year deals with anyone who can promise electrons. Energy is the new compute; compute is the new oil."
+
+[antitrust_hearings_tech]
+id = "antitrust_hearings_tech"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 140
+gates = { power_min = 2 }
+headline = "Antitrust hearings open on the frontier giants"
+body = "You are mentioned twice — once as a cautionary tale, once as a national asset. The committee can't decide which it prefers."
+
+[luddite_manifesto]
+id = "luddite_manifesto"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 180
+headline = "'The Slowness Manifesto' tops the bestseller lists"
+body = "A former lab director argues civilization needs a decade off. It is read on flights to launch sites, ironically."
+
+[space_command_expansion]
+id = "space_command_expansion"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 150
+gates = { power_min = 2 }
+headline = "Three militaries stand up orbital commands"
+body = "The doctrine papers use the word 'terrain' about the sky. Procurement officers begin returning your calls first."
+
+[talent_visa_war]
+id = "talent_visa_war"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 130
+headline = "Nations bid for engineers with fast-track visas"
+body = "A machinist with vacuum-welding experience now clears immigration faster than a diplomat. Your HR department cheers and despairs."
+
+[markets_reprice_future]
+id = "markets_reprice_future"
+pool = "world"
+kind = "flavor"
+weight = 5
+cooldown_weeks = 110
+headline = "Markets violently reprice the future — again"
+body = "A trillion in value moves between the old economy and the new in a week. Analysts invent a new word for it. The word is bad."
+
+[first_agi_hoax]
+id = "first_agi_hoax"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 220
+headline = "'AGI achieved' claim collapses in 72 hours"
+body = "A startup's demo turns out to be forty contractors in a warehouse. Real labs seethe; the public shrugs; the bar for belief rises."
+
+[ocean_platform_states]
+id = "ocean_platform_states"
+pool = "world"
+kind = "flavor"
+weight = 2
+cooldown_weeks = 300
+gates = { power_min = 4 }
+headline = "A seastead declares itself a data haven"
+body = "Sovereignty is getting entrepreneurial. Three companies relocate their model weights offshore by Friday."
+
+[heat_records_energy_politics]
+id = "heat_records_energy_politics"
+pool = "world"
+kind = "flavor"
+weight = 5
+cooldown_weeks = 100
+headline = "Another record summer reframes the energy debate"
+body = "Every clean-energy pitch deck adds the same slide. Yours was already there."
+
+[old_giant_stumbles]
+id = "old_giant_stumbles"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 140
+headline = "A legacy tech giant announces its first layoffs in a generation"
+body = "The obituaries are premature but the symbolism is total. Their best people update their profiles; your recruiters notice."
+
+[gene_therapy_breakthrough]
+id = "gene_therapy_breakthrough"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 250
+headline = "A gene therapy reverses a form of blindness"
+body = "A reminder that the century is bigger than your industry — and that the public's patience with 'progress' depends on days like this."
+
+[launch_viewing_culture]
+id = "launch_viewing_culture"
+pool = "world"
+kind = "flavor"
+weight = 4
+cooldown_weeks = 120
+headline = "Launch-watching becomes a national pastime"
+body = "Beach towns near the pads triple their hotel stock. Somewhere between the countdowns, spaceflight became folk culture."
+
+[un_ai_charter]
+id = "un_ai_charter"
+pool = "world"
+kind = "flavor"
+weight = 3
+cooldown_weeks = 200
+gates = { power_min = 3 }
+headline = "The UN adopts a non-binding AI charter"
+body = "Non-binding, the diplomats stress. But charters have a way of becoming law once someone frightens the right committee."

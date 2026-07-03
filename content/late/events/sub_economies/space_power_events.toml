@@ -1,0 +1,90 @@
+[grid_nation_contract]
+id = "grid_nation_contract"
+pool = "space_power_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 70
+headline = "A nation signs on to buy orbital power"
+body = """A major economy contracts to draw baseload power from your orbital grid. \
+Steady revenue — and one more place whose lights depend on you."""
+choices = [
+  { label = "Sign at standard terms", effects = { revenue_delta = 80, power_delta = 1 } },
+  { label = "Sign with a sovereignty clause — they can't cut you off either", effects = { revenue_delta = 15, entanglement_delta = 4, power_delta = 0.5 } },
+]
+
+[grid_nation_contract.effects]
+revenue_delta = 80
+power_delta = 1
+
+[grid_beam_outage]
+id = "grid_beam_outage"
+pool = "space_power_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 60
+headline = "A ground rectenna goes offline"
+body = """A receiving station fault interrupts power delivery to a region — a visible \
+outage with customers watching. A rapid fix limits the reputational damage."""
+[[grid_beam_outage.choices]]
+label = "Crash-fix the station ($60M)"
+[grid_beam_outage.choices.effects]
+revenue_delta = -60
+[[grid_beam_outage.choices]]
+label = "Standard repair queue"
+[grid_beam_outage.choices.effects]
+output_mult = 0.92
+reputation_delta = -1
+
+[grid_efficiency_gain]
+id = "grid_efficiency_gain"
+pool = "space_power_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 50
+headline = "Beam-conversion efficiency improves"
+body = """A tuning of the transmission system delivers more of the collected sunlight \
+to the ground. Free margin, quietly compounding across the grid."""
+[grid_efficiency_gain.effects]
+output_mult = 1.05
+
+[grid_safety_scrutiny]
+id = "grid_safety_scrutiny"
+pool = "space_power_events"
+kind = "crisis"
+weight = 0.8
+cooldown_weeks = 90
+headline = "Regulators question power-beaming safety"
+body = """Public concern over the safety of beaming gigawatts from orbit draws \
+regulatory scrutiny. A transparency campaign costs money but defuses it."""
+[[grid_safety_scrutiny.choices]]
+label = "Fund a transparency campaign ($40M)"
+[grid_safety_scrutiny.choices.effects]
+revenue_delta = -40
+reputation_delta = 1
+[[grid_safety_scrutiny.choices]]
+label = "Weather the criticism"
+[grid_safety_scrutiny.choices.effects]
+reputation_delta = -1
+
+
+[power_night_country]
+id = "power_night_country"
+pool = "space_power_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 95
+headline = "The first nation runs a full night on beamed power"
+body = "No storage draw, no gas peakers — just your collectors, in sunlight the country can't see, holding its grid until dawn. The energy minister posts a photo of the sunrise with one word: 'redundant.'"
+
+[power_desalination_bid]
+id = "power_desalination_bid"
+pool = "space_power_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 85
+headline = "A drought coalition bids for dedicated beam time"
+body = "Five water-stressed nations want a rectenna field powering desalination at continental scale — humanitarian, headline-friendly, and priced well below your industrial rate. Every terawatt you commit to water is one you can't sell to compute."
+choices = [
+  { label = "Commit the beam — water first", effects = { revenue_delta = -20, reputation_delta = 2 } },
+  { label = "Offer market rate — the beam is the business", effects = { revenue_delta = 25, reputation_delta = -1 } },
+]

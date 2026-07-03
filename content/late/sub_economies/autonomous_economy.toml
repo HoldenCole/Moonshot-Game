@@ -1,0 +1,37 @@
+# autonomous_economy — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[autonomous_economy]
+id = "autonomous_economy"
+name = "Autonomous Economy"
+opened_by = "autonomous_economy_platform"
+branch = "economic"
+scale_label = "platform volume"
+description = "The substrate of the new economy — firms are born already running on your systems."
+icon = "node"
+
+[autonomous_economy.scale]
+starting_scale = 800
+scale_cap = 500000
+growth_rate = 0.06
+exec_domain = "chief_executive"
+
+[autonomous_economy.produces]
+revenue_per_scale = 0.01
+[autonomous_economy.produces.resources]
+economic_substrate = 0.006
+division_automation = 0.004
+
+[autonomous_economy.consumes]
+upkeep_per_scale = 0.0015
+[autonomous_economy.consumes.resources]
+compute = 0.005
+
+[autonomous_economy.power]
+power_per_scale_tier = [[10000, 2], [100000, 3], [300000, 4], [500000, 4]]
+
+[autonomous_economy.events]
+pool = "autonomous_economy_events"
+crisis_chance = 0.04
+
+[autonomous_economy.feeds_synergies]
+economic_substrate = ["economic_gravity"]
+division_automation = ["agi_runs_divisions"]

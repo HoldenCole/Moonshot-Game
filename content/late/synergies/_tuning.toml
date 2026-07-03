@@ -1,0 +1,7 @@
+[global]
+min_build_cost_mult = 0.45
+min_opex_mult = 0.5
+max_rd_speed_mult = 2.5
+max_power_from_synergies = 6
+[flow]
+default_strength_curve = "diminishing"   # strength = output / (output + full_strength_at)

@@ -1,0 +1,139 @@
+[classified_contract_leak]
+id = "classified_contract_leak"
+category = "entanglement"
+gates = { entanglement_min = 40 }
+requires_active_contract_customer = "intelligence_service"   # services the 16 leak hook
+frequency_scales_with = "entanglement"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 90
+headline = "A classified contract is leaked to the press"
+body = """Documents exposing your secret work for an intelligence service have hit \
+the front pages. The public and your commercial customers are alarmed. You can come \
+clean and weather it, or deny and deflect and hope it blows over."""
+[[classified_contract_leak.choices]]
+label = "Come clean"
+[classified_contract_leak.choices.effects]
+reputation_delta = -1
+[[classified_contract_leak.choices]]
+label = "Deny and deflect"
+[classified_contract_leak.choices.effects]
+reputation_delta = -2
+power_delta = 1
+
+[contract_obligation]
+id = "contract_obligation"
+category = "entanglement"
+gates = { entanglement_min = 30 }
+frequency_scales_with = "entanglement"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 65
+headline = "The state invokes a priority clause"
+body = """A government you're contracted to invokes its priority rights — commandeering \
+capacity you'd planned to sell commercially. You're bound by the terms you signed. \
+You can comply, or push back and strain the relationship."""
+[[contract_obligation.choices]]
+label = "Comply with the order"
+[contract_obligation.choices.effects]
+revenue_delta = -40
+power_delta = 1
+[[contract_obligation.choices]]
+label = "Push back"
+[contract_obligation.choices.effects]
+entanglement_delta = -8
+reputation_delta = -1
+power_delta = -1
+
+[administration_change]
+id = "administration_change"
+category = "entanglement"
+gates = { entanglement_min = 35 }
+frequency_scales_with = "entanglement"
+kind = "crisis"
+weight = 0.9
+cooldown_weeks = 100
+headline = "A hostile administration takes power"
+body = """An election has put a government in power that views your influence with \
+suspicion. The contracts that made you strong now make you a target. You can invest \
+in the new relationship, or weather the cold and lean on your other channels."""
+[[administration_change.choices]]
+label = "Invest in the relationship ($100M)"
+[administration_change.choices.effects]
+revenue_delta = -100
+entanglement_delta = 5
+[[administration_change.choices]]
+label = "Weather the cold"
+[administration_change.choices.effects]
+power_delta = -1
+revenue_delta = -50
+
+[defense_dependency]
+id = "defense_dependency"
+category = "entanglement"
+gates = { entanglement_min = 50 }
+frequency_scales_with = "entanglement"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 70
+headline = "You are named a critical defense supplier"
+body = """The state formally designates your company critical national-security \
+infrastructure. It is a mark of how essential you've become — and a set of \
+obligations and oversight you can never fully shed. Protected, and bound."""
+[defense_dependency.effects]
+power_delta = 1
+entanglement_delta = 5
+
+[export_control_restriction]
+id = "export_control_restriction"
+category = "entanglement"
+gates = { entanglement_min = 40 }
+frequency_scales_with = "entanglement"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 85
+headline = "Export controls clamp down on your best products"
+body = """The state has classified your most advanced technology as strategically \
+sensitive — you can no longer sell it freely abroad. The cost of being essential: \
+your best products now need permission slips."""
+[[export_control_restriction.choices]]
+label = "Comply fully"
+[export_control_restriction.choices.effects]
+revenue_delta = -80
+power_delta = 1
+[[export_control_restriction.choices]]
+label = "Lobby for carve-outs ($50M)"
+[export_control_restriction.choices.effects]
+revenue_delta = -50
+entanglement_delta = 4
+
+[defector_disclosure]
+id = "defector_disclosure"
+category = "entanglement"
+gates = { entanglement_min = 30 }
+requires_active_contract_customer = "intelligence_service"
+frequency_scales_with = "entanglement"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 130
+headline = "A former analyst goes public"
+body = "Someone who once sat inside your classified programs is on a foreign broadcast describing — in general terms, so far — what your systems do for the intelligence service. The agency wants aggressive prosecution and total silence. Your comms team wants to get ahead of it. Your general counsel wants a drink."
+choices = [
+  { label = "Follow the agency's line — silence and subpoenas", effects = { entanglement_delta = 6, reputation_delta = -2 } },
+  { label = "Publish your own transparency report first", effects = { entanglement_delta = -4, reputation_delta = 1, revenue_delta = -30 } },
+]
+
+[wartime_requisition]
+id = "wartime_requisition"
+category = "entanglement"
+gates = { entanglement_min = 45, power_min = 4 }
+frequency_scales_with = "entanglement"
+kind = "crisis"
+weight = 0.7
+cooldown_weeks = 200
+headline = "The emergency powers letter arrives"
+body = "A regional crisis, an invocation of defense-production authority, and a letter directing 'priority allocation' of your launch capacity, compute, and constellation bandwidth — indefinitely, at cost. This is what entanglement was always going to become. Comply and you are, openly, an arm of the state. Refuse and find out what the state does about it."
+choices = [
+  { label = "Comply — you built this bed", effects = { entanglement_delta = 10, power_delta = 1, revenue_delta = -80 } },
+  { label = "Negotiate scope hard — allies, not assets", effects = { entanglement_delta = 4, reputation_delta = 1, revenue_delta = -30 } },
+]

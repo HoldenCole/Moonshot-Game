@@ -1,0 +1,24 @@
+# loading lines — in-world texture for The Founding interstitial + generic loads.
+# Per-sub-industry founding lines (shown once at wk 0) and rotating generic lines.
+
+[founding]
+frontier_model_lab = "The GPUs arrive before the desks do. Somebody trains a tiny model on the office thermostat data, just to hear the fans spin."
+vertical_ai_saas = "Your first customer's workflow is held together by spreadsheets and one heroic operations manager named Dee. You are going to make Dee very powerful."
+ai_chips = "The tape-out schedule on the whiteboard ends eighteen months from now. Everything before that line is faith."
+launch_services = "The first engine test is scheduled for a Tuesday. The county has been notified. The neighbors have not."
+satellite_constellations = "Bird One sits in a cleanroom the size of a two-car garage — which is fitting, because that's what the cleanroom used to be."
+space_stations = "The pressure-vessel mockup lives in the parking lot. Investors keep asking to climb inside. You keep letting them."
+
+[generic]
+lines = [
+  "Capital is a story you tell until the revenue arrives.",
+  "Somewhere, a rival just closed a round. Build faster.",
+  "Rockets are easy. Payroll is hard.",
+  "The frontier doesn't care about your burn rate. Your board does.",
+  "Every era ends the same way: somebody builds the next one.",
+  "Term sheets age like milk. Sign or walk.",
+  "Nobody remembers the second company to do it.",
+  "The winter always comes. The prepared call it a buying opportunity.",
+  "Power is what's left when you no longer need permission.",
+  "Read the covenants. Then read them again.",
+]

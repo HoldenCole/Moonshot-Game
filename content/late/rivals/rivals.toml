@@ -1,0 +1,108 @@
+# rivals — the other titans. Each races the player toward megaprojects and can
+# claim legacy victories FIRST. Aggression drives pacing; variance drives drama.
+# Ambition lists are ordered — a rival pursues them in sequence.
+
+[helion_dynamics]
+id = "helion_dynamics"
+name = "Helion Dynamics"
+ceo = "Silas Vance"
+tagline = "The other launch empire."
+branches = ["space"]
+home_subs = ["launch_services", "satellite_constellations"]
+aggression = 0.85
+variance = 0.35
+starting_stature = 18000
+stature_growth_per_year = 0.22
+ambitions = ["mars_transit_line", "mars_colony", "orbital_ring"]
+news_style = "swagger"
+description = """Founded on a fortune and a grudge, run by a man who holds press
+conferences on landing barges. Helion flies more tonnage than most nations and
+Vance has said, on stage, that he intends to die on Mars — after you get there
+second."""
+
+[cerebra]
+id = "cerebra"
+name = "Cerebra"
+ceo = "Dr. Ana Okonkwo"
+tagline = "The lab that publishes nothing."
+branches = ["intelligence"]
+home_subs = ["frontier_model_lab", "ai_chips"]
+aggression = 0.9
+variance = 0.45
+starting_stature = 22000
+stature_growth_per_year = 0.28
+ambitions = ["artificial_general_intelligence", "accelerated_science_program"]
+news_style = "silent"
+description = """No blog posts, no benchmarks, no leaks — just compute purchases
+visible from orbit and alumni who won't say why they left. Okonkwo believes the
+first AGI decides everything that comes after, and that second place is a
+rounding error in history."""
+
+[meridian_compute]
+id = "meridian_compute"
+name = "Meridian Compute"
+ceo = "Wei Zhang"
+tagline = "The silicon superpower."
+branches = ["intelligence"]
+home_subs = ["ai_chips"]
+aggression = 0.7
+variance = 0.2
+starting_stature = 30000
+stature_growth_per_year = 0.15
+ambitions = ["quantum_supremacy_platform"]
+news_style = "institutional"
+description = """A thirty-year-old foundry giant that decided it would rather own
+the future than manufacture everyone else's. Slow, methodical, and terrifyingly
+well-capitalized — Meridian never announces a program until it's half done."""
+
+[aurora_orbital]
+id = "aurora_orbital"
+name = "Aurora Orbital"
+ceo = "Ingrid Halvorsen"
+tagline = "Power from the high frontier."
+branches = ["energy", "space"]
+home_subs = ["satellite_constellations", "space_stations"]
+aggression = 0.65
+variance = 0.3
+starting_stature = 15000
+stature_growth_per_year = 0.18
+ambitions = ["orbital_solar_array", "asteroid_mining_operation"]
+news_style = "earnest"
+description = """A Nordic consortium that talks about terawatts the way others
+talk about souls. Aurora's pitch decks end with a photo of Earth at night and
+the caption 'we can fix this' — and their engineering is good enough that
+governments believe them."""
+
+[praxis]
+id = "praxis"
+name = "Praxis"
+ceo = "Jonah Reyes-Marsh"
+tagline = "The economy's new operating system."
+branches = ["economic"]
+home_subs = ["vertical_ai_saas"]
+aggression = 0.75
+variance = 0.25
+starting_stature = 12000
+stature_growth_per_year = 0.25
+ambitions = ["sector_dominance_platform", "autonomous_economy_platform"]
+news_style = "evangelist"
+description = """Praxis doesn't sell software; it sells inevitability. Reyes-Marsh
+keynotes like a preacher and acquires like a shark, and every industry he touches
+wakes up a year later to find his platform is the only door in the building."""
+
+[kessler_heavy_industries]
+id = "kessler_heavy_industries"
+name = "Kessler Heavy Industries"
+ceo = "Marta Kessler"
+tagline = "Old money, new orbits."
+branches = ["space", "energy"]
+home_subs = ["space_stations", "launch_services"]
+aggression = 0.55
+variance = 0.15
+starting_stature = 26000
+stature_growth_per_year = 0.12
+ambitions = ["oneill_cylinder"]
+news_style = "patrician"
+description = """A century-old industrial dynasty that built dams, then reactors,
+then decided the family's third act would be a city in the sky. Kessler moves at
+the speed of concrete — but nothing it starts has ever gone unfinished."""

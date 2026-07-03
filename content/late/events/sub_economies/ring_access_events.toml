@@ -1,0 +1,86 @@
+[ring_throughput_record]
+id = "ring_throughput_record"
+pool = "ring_access_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 65
+headline = "Ring traffic hits a new high"
+body = """With launch costs near zero, traffic to orbit is climbing faster than \
+projected — every operator on Earth wants a slot. Throughput and revenue rise \
+together."""
+choices = [
+  { label = "Open more climber slots — volume is victory", effects = { output_mult = 1.12, scale_mult = 1.03 } },
+  { label = "Keep slots scarce — the Ring as premium infrastructure", effects = { revenue_delta = 30, power_delta = 0.5 } },
+]
+
+[ring_throughput_record.effects]
+output_mult = 1.12
+scale_mult = 1.03
+
+[ring_tether_stress]
+id = "ring_tether_stress"
+pool = "ring_access_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 70
+headline = "Tether stress anomaly flagged"
+body = """Sensors detect dangerous stress on one of the ring's anchor tethers. \
+Closing that segment for repair cuts capacity for a time; deferring the work courts \
+a catastrophic failure no one wants on the record."""
+[[ring_tether_stress.choices]]
+label = "Close the segment and repair ($150M)"
+[ring_tether_stress.choices.effects]
+revenue_delta = -150
+output_mult = 0.85
+[[ring_tether_stress.choices]]
+label = "Defer the repair"
+[ring_tether_stress.choices.effects]
+output_mult = 1.0
+
+[ring_nations_negotiate]
+id = "ring_nations_negotiate"
+pool = "ring_access_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 80
+headline = "Nations queue to negotiate ring access"
+body = """Governments that once raced you to space now line up to negotiate access \
+to your ring. The infrastructure of spaceflight is yours, and everyone knows it."""
+[ring_nations_negotiate.effects]
+power_delta = 1
+
+
+[ring_pilgrimage]
+id = "ring_pilgrimage"
+pool = "ring_access_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 90
+headline = "A billion people have now ridden the Ring"
+body = "The billionth passenger is a schoolteacher from Jakarta; she gets confetti and a plaque at the elevator terminal. Somewhere in the statistics, 'going to space' quietly became something ordinary people have simply done."
+
+[ring_freeport_petition]
+id = "ring_freeport_petition"
+pool = "ring_access_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 85
+headline = "A trade bloc petitions for a Ring freeport"
+body = "Duty-free transshipment at one of your elevator terminals — orbit as the new Singapore. The tariff revenue is enormous and the diplomatic geometry is delicate: whoever gets the first freeport, everyone else remembers."
+choices = [
+  { label = "Grant the freeport — orbit opens for trade", effects = { revenue_delta = 50, entanglement_delta = 5 } },
+  { label = "Keep terminals neutral — no flags on the Ring", effects = { reputation_delta = 1, power_delta = 0.5 } },
+]
+
+[ring_climber_jam]
+id = "ring_climber_jam"
+pool = "ring_access_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 70
+headline = "A climber stalls at kilometer ninety"
+body = "Four hundred passengers stuck on the elevator, live on every feed on Earth, while your crews improvise a rescue that has never been rehearsed at this altitude. Everyone comes home — and now the world wants to know what else has never been rehearsed."
+choices = [
+  { label = "Ground the line for a full safety stand-down", effects = { revenue_delta = -45, reputation_delta = 1 } },
+  { label = "Resume service with rolling inspections", effects = { revenue_delta = -10, reputation_delta = -1 } },
+]

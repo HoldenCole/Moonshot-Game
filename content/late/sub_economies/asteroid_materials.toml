@@ -1,0 +1,33 @@
+# asteroid_materials — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[asteroid_materials]
+id = "asteroid_materials"
+name = "Asteroid Materials"
+opened_by = "asteroid_mining_operation"
+branch = "space"
+scale_label = "extraction throughput"
+description = "A standing fleet working the belt — its revenue is real, but its true value is the materials it sends home."
+icon = "node"
+
+[asteroid_materials.scale]
+starting_scale = 50
+scale_cap = 5000
+growth_rate = 0.05
+exec_domain = "space_program"
+
+[asteroid_materials.produces]
+revenue_per_scale = 0.012
+[asteroid_materials.produces.resources]
+raw_materials = 0.02
+
+[asteroid_materials.consumes]
+upkeep_per_scale = 0.004
+
+[asteroid_materials.power]
+power_per_scale_tier = [[1000, 1], [3000, 2], [5000, 3]]
+
+[asteroid_materials.events]
+pool = "asteroid_events"
+crisis_chance = 0.04
+
+[asteroid_materials.feeds_synergies]
+raw_materials = ["cheap_raw_materials", "off_world_resources"]

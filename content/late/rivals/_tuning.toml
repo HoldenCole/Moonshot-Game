@@ -1,0 +1,20 @@
+# rivals/_tuning — the race pacing. TUNING ANCHORS — calibrate at playtest.
+[global]
+# research phase: weeks for a rival at aggression 1.0 to clear a mega's research gate
+research_weeks_base = 220
+# build pacing: rivals build at this multiple of the mega's authored stage weeks
+build_time_mult = 1.15
+# setbacks: per-stage chance a rival slips (news beat + delay)
+setback_chance = 0.18
+setback_delay_weeks = 26
+# news cadence: ambient rival beats (hiring sprees, raises, launches) per year per rival
+ambient_beats_per_year = 1.2
+# poaching: chance an underpaid departing exec is attributed to a rival raid
+poach_attribution = 0.7
+# --- reactivity (all TUNING ANCHORS) ---
+surge_chance_per_year = 0.6       # chance/yr a rival crash-programs when you race the same mega
+surge_weeks = 78                  # how long a surge lasts
+surge_mult = 1.5                  # pace multiplier while surging
+pressure_per_player_legacy = 0.12 # every legacy you claim quickens EVERY rival
+poach_attempt_per_year = 0.5      # per seated exec — rivals call your best people
+poach_base_success = 0.2

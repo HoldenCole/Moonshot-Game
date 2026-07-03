@@ -1,0 +1,92 @@
+[asteroid_motherlode]
+id = "asteroid_motherlode"
+pool = "asteroid_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 70
+headline = "Survey tags an exceptionally rich body"
+body = """A prospected asteroid assays far higher in platinum-group metals than \
+projected. Redirecting the fleet to work it would lift materials output \
+substantially."""
+[[asteroid_motherlode.choices]]
+label = "Redirect the fleet"
+[asteroid_motherlode.choices.effects]
+output_mult = 1.15
+[[asteroid_motherlode.choices]]
+label = "Stay the course"
+[asteroid_motherlode.choices.effects]
+output_mult = 1.02
+
+[asteroid_miner_lost]
+id = "asteroid_miner_lost"
+pool = "asteroid_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 60
+headline = "A mining drone is lost to a collision"
+body = """One of the robotic miners is destroyed working a tumbling body — a costly \
+write-off and a dent in throughput until it's replaced."""
+[[asteroid_miner_lost.choices]]
+label = "Rush a replacement ($60M)"
+[asteroid_miner_lost.choices.effects]
+revenue_delta = -60
+[[asteroid_miner_lost.choices]]
+label = "Absorb the loss"
+[asteroid_miner_lost.choices.effects]
+output_mult = 0.9
+revenue_delta = -40
+
+[asteroid_price_crash]
+id = "asteroid_price_crash"
+pool = "asteroid_events"
+kind = "crisis"
+weight = 0.8
+cooldown_weeks = 80
+headline = "Your own supply crashes platinum prices"
+body = """You've returned so much metal that Earth markets for it are softening — \
+the irony of abundance. The internal value (cheaper inputs for your fabs) holds, \
+but the external sales revenue dips."""
+[[asteroid_price_crash.choices]]
+label = "Throttle external sales to steady prices"
+[asteroid_price_crash.choices.effects]
+revenue_delta = -30
+output_mult = 0.95
+[[asteroid_price_crash.choices]]
+label = "Keep selling into the glut"
+[asteroid_price_crash.choices.effects]
+revenue_delta = -60
+
+[asteroid_refining_advance]
+id = "asteroid_refining_advance"
+pool = "asteroid_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 50
+headline = "In-space refining yield improves"
+body = """A better refining process aboard the operation returns more usable material \
+per ton mined — quietly raising the value of everything the fleet sends home."""
+[asteroid_refining_advance.effects]
+output_mult = 1.05
+
+
+[asteroid_naming_rights]
+id = "asteroid_naming_rights"
+pool = "asteroid_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 100
+headline = "The rock gets a name"
+body = "The astronomers' registry finally processes the paperwork, and the asteroid you're eating is officially named after your first mission director. Somewhere in the belt, a mountain of platinum carries a payroll number's legacy."
+
+[asteroid_rare_core]
+id = "asteroid_rare_core"
+pool = "asteroid_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 90
+headline = "Prospectors find an anomalous metallic core"
+body = "The assay is strange — iridium concentrations that shouldn't exist, plus isotopes the materials labs are desperate for. Diverting the refinery to crack it means months of lost throughput against a payoff nobody can price yet."
+choices = [
+  { label = "Crack the core — bet on the anomaly", effects = { revenue_delta = -25, output_mult = 1.15 } },
+  { label = "Keep grinding ore — throughput is the business", effects = { revenue_delta = 15 } },
+]

@@ -1,0 +1,37 @@
+# mars_colony — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[mars_colony]
+id = "mars_colony"
+name = "Mars Colony"
+opened_by = "mars_colony"
+branch = "space"
+scale_label = "residents"
+description = "A permanent, growing settlement — humanity's second home, and yours."
+icon = "node"
+
+[mars_colony.scale]
+starting_scale = 100
+scale_cap = 100000
+growth_rate = 0.04
+exec_domain = "space_program"
+
+[mars_colony.produces]
+revenue_per_scale = 0.0008
+[mars_colony.produces.resources]
+off_world_materials = 0.0004
+mars_research = 0.0002
+
+[mars_colony.consumes]
+upkeep_per_scale = 0.0003
+[mars_colony.consumes.resources]
+cislunar_capacity = 5e-05
+
+[mars_colony.power]
+power_per_scale_tier = [[1000, 1], [10000, 2], [50000, 3], [100000, 4]]
+
+[mars_colony.events]
+pool = "mars_colony_events"
+crisis_chance = 0.04
+
+[mars_colony.feeds_synergies]
+off_world_materials = ["off_world_resources", "mars_manufacturing", "space_native_civilization"]
+mars_research = ["mars_manufacturing"]

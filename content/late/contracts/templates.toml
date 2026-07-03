@@ -1,0 +1,318 @@
+# Contract templates — 17 validated (16). Payments beyond doc examples: tuning anchors.
+[chips_commercial_supply]
+id = "chips_commercial_supply"
+customer = "commercial_enterprise"
+name = "Chips Commercial Supply"
+sub_industry = "ai_chips"
+description = "Standing silicon supply for the big cloud platforms. Straightforward volume at market rates — the deal that keeps the fabs warm and the balance sheet boring."
+requires = { product_tier = 1, stature_min = 0, rd_levels = { architecture = 30 } }
+payment = { upfront = 20, recurring_per_year = 70, term_weeks = 104 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[defense_chip_supply]
+id = "defense_chip_supply"
+customer = "defense_ministry"
+name = "Defense Chip Supply"
+sub_industry = "ai_chips"
+description = "Hardened processors for defense systems, delivered through a classified supply chain. Steady money with a uniform on — and your first taste of being strategically necessary."
+requires = { product_tier = 2, stature_min = 6000, rd_levels = { process_node = 50 }, clearance = "defense_secret" }
+payment = { upfront = 80, recurring_per_year = 120, term_weeks = 156 }
+effects = { power = 2, entanglement = 12, reputation = -1 }
+
+[chips_allied_fab]
+id = "chips_allied_fab"
+customer = "allied_bloc"
+name = "Chips Allied Fab"
+sub_industry = "ai_chips"
+description = "Co-develop a secure fab with the alliance's industrial consortium. They get supply-chain sovereignty; you get their capital and a seat at tables that used to be governments-only."
+requires = { product_tier = 3, stature_min = 14000, rd_levels = { process_node = 65, yield_line = 50 }, clearance = "defense_secret" }
+payment = { upfront = 150, recurring_per_year = 220, term_weeks = 182 }
+effects = { power = 3, entanglement = 15, reputation = 0 }
+
+[lab_commercial_api]
+id = "lab_commercial_api"
+customer = "commercial_enterprise"
+name = "Lab Commercial Api"
+sub_industry = "frontier_model_lab"
+description = "Metered access to your frontier models for the enterprise market. Every developer that builds on you deepens the moat — pure commercial compounding."
+requires = { product_tier = 1, stature_min = 0, rd_levels = { scaling = 25 } }
+payment = { upfront = 15, recurring_per_year = 45, term_weeks = 104 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[intel_compute_access]
+id = "intel_compute_access"
+customer = "intelligence_service"
+name = "Intel Compute Access"
+sub_industry = "frontier_model_lab"
+description = "The intelligence service buys dedicated, air-gapped access to your frontier models. They will not tell you what they ask it. You will not be able to stop wondering."
+requires = { product_tier = 3, stature_min = 14000, rd_levels = { scaling = 60 }, clearance = "intelligence_ts" }
+payment = { upfront = 200, recurring_per_year = 300, term_weeks = 208 }
+effects = { power = 3, entanglement = 18, reputation = -2 }
+has_leak_risk = true
+
+[lab_defense_analysis]
+id = "lab_defense_analysis"
+customer = "defense_ministry"
+name = "Lab Defense Analysis"
+sub_industry = "frontier_model_lab"
+description = "Your models against the ministry's analysis backlog — decades of intercepts and imagery, finally readable. The work is genuinely impressive. The applications are not all defensive."
+requires = { product_tier = 2, stature_min = 6000, rd_levels = { scaling = 45, alignment = 40 }, clearance = "defense_secret" }
+payment = { upfront = 90, recurring_per_year = 140, term_weeks = 156 }
+effects = { power = 2, entanglement = 12, reputation = -1 }
+
+[enterprise_saas_deal]
+id = "enterprise_saas_deal"
+customer = "commercial_enterprise"
+name = "Enterprise Saas Deal"
+sub_industry = "vertical_ai_saas"
+description = "A flagship enterprise rollout of your vertical platform. Reference customer, standard terms, honest software revenue."
+requires = { product_tier = 1, stature_min = 0 }
+payment = { upfront = 10, recurring_per_year = 30, term_weeks = 104 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[gov_agency_platform]
+id = "gov_agency_platform"
+customer = "defense_ministry"
+name = "Gov Agency Platform"
+sub_industry = "vertical_ai_saas"
+description = "Migrate a sprawling ministry onto your workflow platform. The procurement process ages you; the lock-in, once achieved, is geological."
+requires = { product_tier = 2, stature_min = 6000, rd_levels = { platform = 45, domain_depth = 40 }, clearance = "defense_secret" }
+payment = { upfront = 60, recurring_per_year = 100, term_weeks = 156 }
+effects = { power = 2, entanglement = 10, reputation = -1 }
+
+[launch_commercial_manifest]
+id = "launch_commercial_manifest"
+customer = "commercial_enterprise"
+name = "Launch Commercial Manifest"
+sub_industry = "launch_services"
+description = "A standing rideshare manifest for the commercial smallsat market. Bread-and-butter launch revenue that keeps the cadence — and the learning curve — alive."
+requires = { product_tier = 1, stature_min = 0, rd_levels = { reliability = 25 } }
+payment = { upfront = 20, recurring_per_year = 55, term_weeks = 78 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[space_agency_launch]
+id = "space_agency_launch"
+customer = "space_agency"
+name = "Space Agency Launch"
+sub_industry = "launch_services"
+description = "Fly the agency's science missions. Modest margins, meticulous oversight, and a mission patch your engineers will frame — the contract that makes you respectable."
+requires = { product_tier = 1, stature_min = 4000, rd_levels = { reliability = 45 } }
+payment = { upfront = 60, recurring_per_year = 90, term_weeks = 130 }
+effects = { power = 2, entanglement = 8, reputation = 1 }
+
+[launch_defense_responsive]
+id = "launch_defense_responsive"
+customer = "defense_ministry"
+name = "Launch Defense Responsive"
+sub_industry = "launch_services"
+description = "Launch-on-demand for defense payloads: a vehicle held ready, a countdown that answers to someone else's phone. They pay handsomely for your calendar."
+requires = { product_tier = 2, stature_min = 6000, rd_levels = { reliability = 55, reusability = 45 }, clearance = "defense_secret" }
+payment = { upfront = 80, recurring_per_year = 110, term_weeks = 156 }
+effects = { power = 2, entanglement = 12, reputation = -1 }
+
+[sat_commercial_connectivity]
+id = "sat_commercial_connectivity"
+customer = "commercial_enterprise"
+name = "Sat Commercial Connectivity"
+sub_industry = "satellite_constellations"
+description = "Wholesale bandwidth to telecoms and enterprises off your constellation. The subscription business of orbit — unglamorous, recurring, enormous at scale."
+requires = { product_tier = 1, stature_min = 0, rd_levels = { network = 25 } }
+payment = { upfront = 25, recurring_per_year = 60, term_weeks = 104 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[sat_gov_earth_observation]
+id = "sat_gov_earth_observation"
+customer = "space_agency"
+name = "Sat Gov Earth Observation"
+sub_industry = "satellite_constellations"
+description = "Priority tasking of your imaging birds for the civil agency — crops, coasts, climate. Honest public-good work with your name on it."
+requires = { product_tier = 2, stature_min = 6000, rd_levels = { satellite_tech = 45, network = 40 } }
+payment = { upfront = 70, recurring_per_year = 110, term_weeks = 156 }
+effects = { power = 2, entanglement = 8, reputation = 1 }
+
+[sat_intel_surveillance]
+id = "sat_intel_surveillance"
+customer = "intelligence_service"
+name = "Sat Intel Surveillance"
+sub_industry = "satellite_constellations"
+description = "Priority tasking of the same cameras, different customer, no publication. The revenue is excellent and invisible — like the work."
+requires = { product_tier = 2, stature_min = 6000, rd_levels = { satellite_tech = 60, network = 55 }, clearance = "intelligence_ts" }
+payment = { upfront = 180, recurring_per_year = 260, term_weeks = 208 }
+effects = { power = 3, entanglement = 18, reputation = -2 }
+has_leak_risk = true
+
+[station_commercial_lease]
+id = "station_commercial_lease"
+customer = "commercial_enterprise"
+name = "Station Commercial Lease"
+sub_industry = "space_stations"
+description = "Lease lab racks and berths to companies that need microgravity. Orbit's first real-estate business, with you as the landlord."
+requires = { product_tier = 1, stature_min = 0, rd_levels = { module_tech = 25 } }
+payment = { upfront = 30, recurring_per_year = 70, term_weeks = 104 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[station_gov_research]
+id = "station_gov_research"
+customer = "space_agency"
+name = "Station Gov Research"
+sub_industry = "space_stations"
+description = "Host the national lab's research program aboard your station. The science is public, the dependency is quiet, and the renewal is nearly automatic."
+requires = { product_tier = 2, stature_min = 6000, rd_levels = { module_tech = 45, life_support = 40 } }
+payment = { upfront = 90, recurring_per_year = 110, term_weeks = 182 }
+effects = { power = 2, entanglement = 8, reputation = 1 }
+
+[station_defense_platform]
+id = "station_defense_platform"
+customer = "defense_ministry"
+name = "Station Defense Platform"
+sub_industry = "space_stations"
+description = "A defense wing on your station: sealed modules, cleared crew, questions discouraged. The money reflects what they're really buying — presence."
+requires = { product_tier = 3, stature_min = 14000, rd_levels = { module_tech = 60, assembly = 55 }, clearance = "defense_secret" }
+payment = { upfront = 160, recurring_per_year = 200, term_weeks = 208 }
+effects = { power = 3, entanglement = 15, reputation = -1 }
+
+# ============================================================
+# TITAN BAND — commercial (stature 16000+). The Independent
+# path's late game: enormous clean money, zero strings.
+# ============================================================
+
+[chips_hyperscaler_alliance]
+id = "chips_hyperscaler_alliance"
+customer = "commercial_enterprise"
+name = "The Hyperscaler Alliance"
+sub_industry = "ai_chips"
+description = "Three cloud giants co-fund your next two silicon generations in exchange for guaranteed allocation. Their capital, your roadmap — and a decade of your best chips promised to someone else's datacenters."
+requires = { product_tier = 3, stature_min = 18000, rd_levels = { process_node = 75, architecture = 60 } }
+payment = { upfront = 400, recurring_per_year = 380, term_weeks = 208 }
+effects = { power = 0, entanglement = 0, reputation = 1 }
+
+[lab_enterprise_mind]
+id = "lab_enterprise_mind"
+customer = "commercial_enterprise"
+name = "The Enterprise Mind"
+sub_industry = "frontier_model_lab"
+description = "Your models become the reasoning layer for a fifth of the Fortune 500 — one master agreement, one throat to choke. The biggest software deal in history, and every board that signs it becomes a constituency against regulating you."
+requires = { product_tier = 3, stature_min = 20000, rd_levels = { scaling = 70, alignment = 55 } }
+payment = { upfront = 350, recurring_per_year = 420, term_weeks = 260 }
+effects = { power = 0, entanglement = 0, reputation = 1 }
+
+[saas_logistics_backbone]
+id = "saas_logistics_backbone"
+customer = "commercial_enterprise"
+name = "The Logistics Backbone"
+sub_industry = "vertical_ai_saas"
+description = "The world's largest shipping conglomerate moves its entire operation onto your platform. Eleven percent of global trade flows through your software; the fee is enormous and the dependency runs both ways."
+requires = { product_tier = 3, stature_min = 16000 }
+payment = { upfront = 200, recurring_per_year = 300, term_weeks = 208 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[launch_wholesale_orbit]
+id = "launch_wholesale_orbit"
+customer = "commercial_enterprise"
+name = "Wholesale Orbit"
+sub_industry = "launch_services"
+description = "A consortium of constellation operators buys your launch capacity years forward at a locked price. Guaranteed manifests through the decade — and if your costs keep falling, the margin becomes obscene."
+requires = { product_tier = 3, stature_min = 17000, rd_levels = { reusability = 70 } }
+payment = { upfront = 500, recurring_per_year = 260, term_weeks = 364 }
+effects = { power = 0, entanglement = 0, reputation = 0 }
+
+[sat_every_seat_connected]
+id = "sat_every_seat_connected"
+customer = "commercial_enterprise"
+name = "Every Seat Connected"
+sub_industry = "satellite_constellations"
+description = "The three largest airline alliances, one connectivity contract. Four billion passenger-hours a year on your network — the deal that turns your constellation from infrastructure into a household experience."
+requires = { product_tier = 3, stature_min = 16000, rd_levels = { network = 65 } }
+payment = { upfront = 180, recurring_per_year = 280, term_weeks = 208 }
+effects = { power = 0, entanglement = 0, reputation = 1 }
+
+[station_pharma_campus]
+id = "station_pharma_campus"
+customer = "commercial_enterprise"
+name = "The Orbital Pharma Campus"
+sub_industry = "space_stations"
+description = "Big pharma leases half a station wing for protein crystallization at scale. Their patents, your microgravity — and the first commercial proof that orbit manufactures things Earth simply can't."
+requires = { product_tier = 3, stature_min = 18000, rd_levels = { module_tech = 70 } }
+payment = { upfront = 250, recurring_per_year = 320, term_weeks = 208 }
+effects = { power = 0, entanglement = 0, reputation = 1 }
+
+# ============================================================
+# LATE GOVERNMENT BAND — the deep end. The money is state-scale
+# and so are the hooks.
+# ============================================================
+
+[intel_full_take]
+id = "intel_full_take"
+customer = "intelligence_service"
+name = "The Full Take"
+sub_industry = "frontier_model_lab"
+description = "Your models triage an allied nation's entire signals intake — every intercept, every pattern, in real time. The single largest contract ever offered you, and the one your alignment team asks the most questions about. There is no quiet way out of this."
+has_leak_risk = true
+requires = { product_tier = 3, stature_min = 20000, rd_levels = { scaling = 75 }, clearance = "intelligence_ts" }
+payment = { upfront = 300, recurring_per_year = 450, term_weeks = 208 }
+effects = { power = 4, entanglement = 22, reputation = -2 }
+
+[allied_orbital_shield]
+id = "allied_orbital_shield"
+customer = "allied_bloc"
+name = "The Orbital Shield"
+sub_industry = "satellite_constellations"
+description = "A missile-warning and tracking layer for the entire alliance, built on your constellation. Your satellites become sovereign territory in everything but name — attacked in war, defended by treaty, never fully yours again."
+requires = { product_tier = 3, stature_min = 22000, rd_levels = { network = 70 }, clearance = "intelligence_ts" }
+payment = { upfront = 400, recurring_per_year = 380, term_weeks = 260 }
+effects = { power = 4, entanglement = 18, reputation = 0 }
+
+[agency_gateway_keeper]
+id = "agency_gateway_keeper"
+customer = "space_agency"
+name = "Gateway Keeper"
+sub_industry = "space_stations"
+description = "Operate the national lunar-orbit station — crew rotation, logistics, the flag on the hull theirs, everything behind it yours. Prestige money: modest margins, enormous legitimacy, and your name in every future mission plan."
+requires = { product_tier = 3, stature_min = 16000, rd_levels = { life_support = 60 } }
+payment = { upfront = 220, recurring_per_year = 260, term_weeks = 260 }
+effects = { power = 3, entanglement = 12, reputation = 2 }
+
+[defense_project_overmatch]
+id = "defense_project_overmatch"
+customer = "defense_ministry"
+name = "Project OVERMATCH"
+sub_industry = "vertical_ai_saas"
+description = "Decision-support software for a theater command — logistics, targeting queues, the tempo of war as a workflow product. The generals call it transformative. Your employees have started a petition. Both are right."
+requires = { product_tier = 3, stature_min = 15000, clearance = "defense_secret" }
+payment = { upfront = 250, recurring_per_year = 340, term_weeks = 156 }
+effects = { power = 3, entanglement = 16, reputation = -2 }
+
+# ============================================================
+# MISSION BAND — mid-game government work that builds
+# reputation instead of spending it.
+# ============================================================
+
+[allied_health_grid]
+id = "allied_health_grid"
+customer = "allied_bloc"
+name = "The Health Grid"
+sub_industry = "vertical_ai_saas"
+description = "Modernize the health systems of six member states on one platform. Bureaucratic, slow, endlessly audited — and the rare government deal your comms team actually wants to talk about."
+requires = { product_tier = 2, stature_min = 9000 }
+payment = { upfront = 100, recurring_per_year = 160, term_weeks = 208 }
+effects = { power = 2, entanglement = 10, reputation = 2 }
+
+[agency_disaster_watch]
+id = "agency_disaster_watch"
+customer = "space_agency"
+name = "Disaster Watch"
+sub_industry = "satellite_constellations"
+description = "Your constellation's eyes, pointed at floods, fires, and quakes — imagery to first responders inside minutes, free at the point of need. Modest money; the kind of contract that gets quoted back at your antitrust hearings, in your favor."
+requires = { product_tier = 2, stature_min = 7000, rd_levels = { network = 40 } }
+payment = { upfront = 60, recurring_per_year = 90, term_weeks = 156 }
+effects = { power = 1, entanglement = 6, reputation = 2 }
+
+[agency_cleanup_charter]
+id = "agency_cleanup_charter"
+customer = "space_agency"
+name = "The Cleanup Charter"
+sub_industry = "launch_services"
+description = "Deorbit the dead satellites of three decades — the orbital commons, swept by your vehicles at public expense. Unglamorous, steady, and quietly strategic: the company that cleans the road decides its rules."
+requires = { product_tier = 2, stature_min = 8000, rd_levels = { reliability = 50 } }
+payment = { upfront = 70, recurring_per_year = 100, term_weeks = 130 }
+effects = { power = 1, entanglement = 6, reputation = 2 }

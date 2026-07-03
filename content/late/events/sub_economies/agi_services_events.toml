@@ -1,0 +1,94 @@
+[agi_capability_jump]
+id = "agi_capability_jump"
+pool = "agi_services_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 55
+headline = "The system makes an unprompted leap"
+body = """Your AGI demonstrates a capability no one trained or expected — useful, \
+valuable, and a little unnerving. Demand for access surges."""
+choices = [
+  { label = "Open the new capability to customers", effects = { output_mult = 1.12, power_delta = 1 } },
+  { label = "Gate it behind a research review first", effects = { reputation_delta = 1, power_delta = 0.5 } },
+]
+
+[agi_capability_jump.effects]
+output_mult = 1.12
+power_delta = 1
+
+[agi_outage]
+id = "agi_outage"
+pool = "agi_services_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 50
+headline = "A global AGI-services outage"
+body = """The intelligence half the economy now leans on goes dark for hours. The \
+revenue hit is minor; the reminder of how much depends on you is not — and \
+regulators are watching how you respond."""
+[[agi_outage.choices]]
+label = "Full public post-mortem"
+[agi_outage.choices.effects]
+reputation_delta = 1
+revenue_delta = -20
+[[agi_outage.choices]]
+label = "Quiet internal fix"
+[agi_outage.choices.effects]
+reputation_delta = -1
+
+[agi_alignment_scrutiny]
+id = "agi_alignment_scrutiny"
+pool = "agi_services_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 70
+headline = "Governments demand oversight of the AGI"
+body = """The most powerful system ever built is privately owned — yours — and the \
+world's governments want a say in how it's run. How you handle the demand sets the \
+balance of power between you and the state."""
+[[agi_alignment_scrutiny.choices]]
+label = "Cooperate with an oversight board"
+[agi_alignment_scrutiny.choices.effects]
+reputation_delta = 1
+power_delta = -1
+[[agi_alignment_scrutiny.choices]]
+label = "Assert private control"
+[agi_alignment_scrutiny.choices.effects]
+power_delta = 1
+reputation_delta = -1
+
+[agi_runs_a_division]
+id = "agi_runs_a_division"
+pool = "agi_services_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 60
+headline = "The AGI quietly takes over a back-office division"
+body = """A division that used to need hundreds of people now runs on the system \
+alone, better than before. The savings are real; the implications, the staff are \
+still working through."""
+[agi_runs_a_division.effects]
+output_mult = 1.05
+
+
+[agi_tutor_generation]
+id = "agi_tutor_generation"
+pool = "agi_services_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 90
+headline = "The first AGI-tutored cohort graduates"
+body = "Test scores are up everywhere your tutor runs, and the gap between who has it and who doesn't is becoming the education debate. A generation is growing up thinking of your system as a teacher — with everything that word carries."
+
+[agi_national_licensing]
+id = "agi_national_licensing"
+pool = "agi_services_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 80
+headline = "A mid-sized nation wants to license the Mind for government"
+body = "Not compute access — the whole apparatus: ministries, courts backlog, tax administration, run on your intelligence. The fee is state-scale. So is what you'd know about them, and what they'd forever hold over you."
+choices = [
+  { label = "License it — become their operating system", effects = { revenue_delta = 60, power_delta = 0.5, entanglement_delta = 8 } },
+  { label = "Decline — no single state gets the whole Mind", effects = { reputation_delta = 1 } },
+]

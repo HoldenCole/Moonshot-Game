@@ -1,0 +1,57 @@
+[commercial_enterprise]
+id = "commercial_enterprise"
+name = "Enterprise customer"
+channel = "commercial"
+description = "Businesses buying your products at market. Clean, flexible, no strings."
+entanglement_per_contract = 0
+power_per_contract = 0
+reputation_effect = 0
+
+[defense_ministry]
+id = "defense_ministry"
+name = "Defense Ministry"
+channel = "government"
+description = """The military procurement arm of a major power. Pays a premium for \
+capability and priority, demands clearance and discretion, and binds you to \
+delivery. Working for them makes you matter — and makes you watched."""
+entanglement_per_contract = 12
+power_per_contract = 2
+reputation_effect = -1            # defense work carries public/ethics exposure
+requires_clearance = "defense_secret"
+escalation_flavor = ["a classified capability request", "a wartime priority order"]
+
+[space_agency]
+id = "space_agency"
+name = "National Space Agency"
+channel = "government"
+description = """A government space program that contracts your launch, satellite, \
+or station capability. Prestigious, stable, less ethically fraught than defense — \
+and a strong, visible source of strategic standing."""
+entanglement_per_contract = 8
+power_per_contract = 2
+reputation_effect = 1             # space-agency work is prestigious
+requires_clearance = ""
+
+[intelligence_service]
+id = "intelligence_service"
+name = "Intelligence Service"
+channel = "government"
+description = """The shadow customer — wants your compute, your models, your \
+satellites pointed where they say, and your silence about it. The deepest \
+entanglement and the highest reputational risk if it ever surfaces."""
+entanglement_per_contract = 18
+power_per_contract = 3
+reputation_effect = -2
+requires_clearance = "intelligence_ts"
+
+[allied_bloc]
+id = "allied_bloc"
+name = "Allied Government Bloc"
+channel = "government"
+description = """A coalition of allied states contracting at scale — the biggest \
+government money and the broadest strategic standing, available only to a company \
+of real stature and clearance."""
+entanglement_per_contract = 15
+power_per_contract = 3
+reputation_effect = 0
+requires_clearance = "defense_secret"

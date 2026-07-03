@@ -1,0 +1,92 @@
+[autoecon_share_surge]
+id = "autoecon_share_surge"
+pool = "autonomous_economy_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 60
+headline = "A wave of new firms launches on your platform"
+body = """A surge of new businesses is being born already running on your autonomous \
+platform — each one a sliver of the economy now flowing through your systems. The \
+substrate grows."""
+choices = [
+  { label = "Court the wave — subsidized onboarding", effects = { scale_mult = 1.08, revenue_delta = 60 } },
+  { label = "Raise the bar — vet every firm, grow slower and cleaner", effects = { reputation_delta = 1 } },
+]
+
+[autoecon_share_surge.effects]
+scale_mult = 1.08
+revenue_delta = 60
+
+[autoecon_jobs_backlash]
+id = "autoecon_jobs_backlash"
+pool = "autonomous_economy_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 85
+headline = "Backlash over jobs and concentration erupts"
+body = """As your platform runs more of the economy with fewer people, public anger \
+and political pressure mount. You can fund a transition initiative to soften it, or \
+hold your ground and absorb the heat."""
+[[autoecon_jobs_backlash.choices]]
+label = "Fund a transition initiative ($100M)"
+[autoecon_jobs_backlash.choices.effects]
+revenue_delta = -100
+reputation_delta = 1
+[[autoecon_jobs_backlash.choices]]
+label = "Hold your ground"
+[autoecon_jobs_backlash.choices.effects]
+power_delta = 1
+reputation_delta = -1
+
+[autoecon_government_dependency]
+id = "autoecon_government_dependency"
+pool = "autonomous_economy_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 70
+headline = "A government quietly runs services on your platform"
+body = """It emerges that a national government has been running parts of its own \
+operations on your autonomous platform. The line between your company and the state \
+blurs a little further."""
+[autoecon_government_dependency.effects]
+power_delta = 1
+
+[autoecon_efficiency_record]
+id = "autoecon_efficiency_record"
+pool = "autonomous_economy_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 55
+headline = "A three-person firm out-competes an old giant"
+body = """A company with three employees and your platform has out-competed a legacy \
+corporation with thirty thousand. The story captures, in miniature, the world your \
+software is building."""
+[autoecon_efficiency_record.effects]
+output_mult = 1.04
+
+
+[auto_economy_acquisition_engine]
+id = "auto_economy_acquisition_engine"
+pool = "autonomous_economy_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 85
+headline = "The system proposes an acquisition — autonomously"
+body = "Your platform identified an undervalued logistics firm, modeled the integration, and drafted the offer letter before any human saw the target's name. The deal math is impeccable. The precedent — machines initiating M&A — is a headline waiting to happen."
+choices = [
+  { label = "Approve the acquisition — trust the engine", effects = { revenue_delta = 40, scale_mult = 1.05, reputation_delta = -1 } },
+  { label = "Kill it — humans initiate, machines assist", effects = { reputation_delta = 1 } },
+]
+
+[auto_economy_flash_cascade]
+id = "auto_economy_flash_cascade"
+pool = "autonomous_economy_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 70
+headline = "Two autonomous enterprises enter a feedback loop"
+body = "A pricing war between two companies running your platform escalates at machine speed — thousands of decisions an hour, both spiraling toward mutual ruin until your engineers pull a circuit breaker. Regulators want to know why one company's software sat on both sides of a market."
+choices = [
+  { label = "Publish the incident and propose circuit-breaker standards", effects = { reputation_delta = 1, regulation_level = 1, revenue_delta = -20 } },
+  { label = "Settle both clients quietly and patch", effects = { revenue_delta = -40 } },
+]

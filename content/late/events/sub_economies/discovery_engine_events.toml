@@ -1,0 +1,90 @@
+[discovery_major_breakthrough]
+id = "discovery_major_breakthrough"
+pool = "discovery_engine_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 55
+headline = "The engine makes a landmark discovery overnight"
+body = """The automated discovery system produces an original result that would have \
+taken a human field years — and it's patentable. Progress across your research \
+accelerates and the prestige is enormous."""
+choices = [
+  { label = "Patent it and press the advantage", effects = { output_mult = 1.1, reputation_delta = 1 } },
+  { label = "Publish it — feed the field, own the credit", effects = { reputation_delta = 2 } },
+]
+
+[discovery_major_breakthrough.effects]
+output_mult = 1.1
+reputation_delta = 1
+
+[discovery_dead_end]
+id = "discovery_dead_end"
+pool = "discovery_engine_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 45
+headline = "A research thread quietly fizzles"
+body = """Even an automated discovery engine chases blind alleys; a promising line \
+of inquiry comes to nothing. The machine moves on without complaint."""
+[discovery_dead_end.effects]
+output_mult = 0.97
+
+[discovery_credit_dispute]
+id = "discovery_credit_dispute"
+pool = "discovery_engine_events"
+kind = "crisis"
+weight = 0.8
+cooldown_weeks = 80
+headline = "Academia disputes machine authorship"
+body = """The scientific establishment is uneasy crediting discoveries to your \
+machine — and uneasier that you own them. A gesture toward open publication would \
+ease tensions at the cost of some advantage."""
+[[discovery_credit_dispute.choices]]
+label = "Publish openly"
+[discovery_credit_dispute.choices.effects]
+reputation_delta = 1
+output_mult = 0.97
+[[discovery_credit_dispute.choices]]
+label = "Keep results proprietary"
+[discovery_credit_dispute.choices.effects]
+power_delta = 1
+reputation_delta = -1
+
+[discovery_compounding]
+id = "discovery_compounding"
+pool = "discovery_engine_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 60
+headline = "Discovery rate ticks up again"
+body = """Each breakthrough teaches the engine to find the next one faster. The \
+pace of progress itself is climbing — slowly, then noticeably."""
+[discovery_compounding.effects]
+output_mult = 1.04
+
+
+[discovery_orphan_disease]
+id = "discovery_orphan_disease"
+pool = "discovery_engine_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 80
+headline = "The engine cracks an orphan disease nobody funds"
+body = "A treatment pathway for a condition afflicting forty thousand people worldwide — commercially worthless, humanly priceless. Licensing it open costs you nothing but the revenue it will never make anyway; patenting it makes the point that discoveries are yours."
+choices = [
+  { label = "Open-license it — some things aren't products", effects = { reputation_delta = 2 } },
+  { label = "Patent and shelve for a partner", effects = { revenue_delta = 10, reputation_delta = -1 } },
+]
+
+[discovery_dual_use_paper]
+id = "discovery_dual_use_paper"
+pool = "discovery_engine_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 75
+headline = "A discovery is too dangerous to publish"
+body = "The engine's materials run produced an energetic compound with obvious civilian uses and worse military ones. Your review board is split; two governments have already asked, politely, whether the run logs are for sale. Whatever you do sets your precedent for every dangerous thing the engine finds next."
+choices = [
+  { label = "Classify it internally — publish nothing, sell nothing", effects = { reputation_delta = 0, power_delta = 0.5 } },
+  { label = "Disclose to your host government only", effects = { entanglement_delta = 8, revenue_delta = 30 } },
+]

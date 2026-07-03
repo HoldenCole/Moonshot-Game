@@ -1,0 +1,48 @@
+# pressures — multi-turn adversity arcs. A pressure is a DOWN that lasts:
+# named, explained, felt in the numbers for weeks, and then explicitly lifted.
+# triggered_by maps event ids (power or sub-economy) to pressures.
+
+[regulatory_crackdown]
+id = "regulatory_crackdown"
+name = "Regulatory Crackdown"
+duration_weeks = 39
+modifiers = { contract_payment_mult = 0.85, rd_speed_mult = 0.95 }
+on_start = "The inquiry has teeth: new deals face review, filings multiply, and the whole company grows a compliance shadow. This will pass — after it costs you."
+on_end = "The consent paperwork is signed and the review lapses. The crackdown lifts, leaving better lawyers and thinner margins as souvenirs."
+triggered_by = ["antitrust_inquiry", "breakup_bill", "auto_economy_flash_cascade"]
+
+[supply_crunch]
+id = "supply_crunch"
+name = "Supply Crunch"
+duration_weeks = 30
+modifiers = { build_cost_mult = 1.3, opex_mult = 1.1 }
+on_start = "A component drought hits the whole industry at once — lead times triple, brokers gouge, and your build schedules bend around missing parts."
+on_end = "The backlog clears port by port. Costs settle back toward sane, and procurement starts breathing again."
+triggered_by = ["chip_embargo_tightens", "asteroid_price_crash"]
+
+[talent_exodus]
+id = "talent_exodus"
+name = "Talent Exodus"
+duration_weeks = 26
+modifiers = { rd_speed_mult = 0.8 }
+on_start = "Three senior departures become a narrative, and the narrative becomes a recruiting problem. Every open role takes twice as long; every project slips a little."
+on_end = "A marquee hire and a good quarter change the story. The résumés start flowing back."
+triggered_by = ["classified_contract_leak", "defector_disclosure"]
+
+[public_backlash]
+id = "public_backlash"
+name = "Public Backlash"
+duration_weeks = 26
+modifiers = { contract_payment_mult = 0.9, reputation_drift = -1 }
+on_start = "The mood turns. Late-night monologues, an organized boycott, employees asked hard questions at parties. Nothing is illegal; everything is harder."
+on_end = "Attention moves on, the way it does. What remains is whatever you actually did while they were watching."
+triggered_by = ["ai_displacement_protests", "city_first_strike", "oversight_hearing"]
+
+[program_setback_cascade]
+id = "program_setback_cascade"
+name = "Program Review"
+duration_weeks = 20
+modifiers = { build_cost_mult = 1.15, rd_speed_mult = 0.9 }
+on_start = "After the failure, everything gets re-checked — every weld, every model, every assumption. Slower is the point."
+on_end = "The review board signs off. The program restarts, humbler and harder to kill."
+triggered_by = ["transit_solar_flare", "ring_climber_jam", "quantum_decoherence_setback"]

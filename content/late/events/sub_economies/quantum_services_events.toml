@@ -1,0 +1,95 @@
+[quantum_breakthrough_sale]
+id = "quantum_breakthrough_sale"
+pool = "quantum_services_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 60
+headline = "A pharma giant books your quantum platform"
+body = """A major drugmaker contracts your quantum compute to simulate molecules no \
+classical machine could — a marquee, high-margin customer that validates the whole \
+platform."""
+choices = [
+  { label = "Take the marquee contract", effects = { revenue_delta = 70, output_mult = 1.05 } },
+  { label = "Take it exclusive — one drugmaker, triple rate", effects = { revenue_delta = 50, reputation_delta = -1 } },
+]
+
+[quantum_breakthrough_sale.effects]
+revenue_delta = 70
+output_mult = 1.05
+
+[quantum_crypto_panic]
+id = "quantum_crypto_panic"
+pool = "quantum_services_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 80
+headline = "Word spreads that you can break standard encryption"
+body = """The security world realizes your platform can crack encryption protecting \
+much of the internet. Panic and government attention follow. You can reassure the \
+world — or let the leverage speak for itself."""
+[[quantum_crypto_panic.choices]]
+label = "Pledge restraint and help patch"
+[quantum_crypto_panic.choices.effects]
+reputation_delta = 1
+power_delta = -1
+[[quantum_crypto_panic.choices]]
+label = "Say nothing"
+[quantum_crypto_panic.choices.effects]
+power_delta = 1
+reputation_delta = -1
+
+[quantum_decoherence_setback]
+id = "quantum_decoherence_setback"
+pool = "quantum_services_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 55
+headline = "A decoherence problem degrades the array"
+body = """An error-correction regression knocks a chunk of your logical qubits \
+offline until it's resolved. Capacity — and the customers relying on it — take a \
+hit."""
+[[quantum_decoherence_setback.choices]]
+label = "Crash-fix with the whole team ($50M)"
+[quantum_decoherence_setback.choices.effects]
+revenue_delta = -50
+output_mult = 0.95
+[[quantum_decoherence_setback.choices]]
+label = "Fix it on the normal schedule"
+[quantum_decoherence_setback.choices.effects]
+output_mult = 0.88
+
+[quantum_research_windfall]
+id = "quantum_research_windfall"
+pool = "quantum_services_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 50
+headline = "Your own labs exploit the quantum edge"
+body = """Internal teams use the platform to crack a materials problem that had \
+stalled for years — a reminder that the most valuable customer of your quantum \
+machine is you."""
+[quantum_research_windfall.effects]
+output_mult = 1.04
+
+
+[quantum_first_material]
+id = "quantum_first_material"
+pool = "quantum_services_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 95
+headline = "A customer ships the first quantum-designed product"
+body = "A battery chemistry found in your Oracle's queue eighteen months ago is now in a car you can buy. The press kit thanks your machine in the third paragraph. The century's supply chains will be full of third paragraphs like it."
+
+[quantum_crypto_migration]
+id = "quantum_crypto_migration"
+pool = "quantum_services_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 85
+headline = "The banks want you to break them first"
+body = "A consortium of financial institutions offers a standing engagement: attack their post-quantum cryptography with your own hardware, continuously, before anyone else can. Being the world's licensed lockpick pays magnificently — and means holding a list of every door you've opened."
+choices = [
+  { label = "Take the red-team mandate", effects = { revenue_delta = 45, power_delta = 0.5, reputation_delta = -1 } },
+  { label = "Publish tools instead — let them test themselves", effects = { reputation_delta = 1, revenue_delta = 10 } },
+]

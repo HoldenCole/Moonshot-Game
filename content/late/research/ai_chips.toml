@@ -1,0 +1,296 @@
+# research/ai_chips — 09 tree, validated structure (transcript 06-21). Budget/weeks: doc values where authored, tier-formula anchors otherwise.
+[specialized_accelerator]
+id = "specialized_accelerator"
+sub_industry = "ai_chips"
+name = "Specialized Accelerators"
+description = """Silicon shaped to one workload instead of every workload. Less flexible than a GPU, ruthlessly better at the thing it does — and the first proof your architects can beat the incumbents somewhere."""
+tier = "applied"
+
+[specialized_accelerator.requires]
+rd_levels = { architecture = 30 }
+projects = []
+stature_min = 0
+
+[specialized_accelerator.cost]
+budget = 25
+weeks = 32
+
+[specialized_accelerator.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[chiplet_packaging]
+id = "chiplet_packaging"
+sub_industry = "ai_chips"
+name = "Chiplet Packaging"
+description = """Stitching smaller dies into one package instead of betting on a single monolithic chip. Sidesteps the yield cliff at the bleeding edge and lets you scale performance when the node alone can't."""
+tier = "applied"
+
+[chiplet_packaging.requires]
+rd_levels = { yield_line = 45, architecture = 40 }
+projects = []
+stature_min = 0
+
+[chiplet_packaging.cost]
+budget = 35
+weeks = 40
+
+[chiplet_packaging.unlocks]
+products = ["chiplet_accelerator"]
+frontier_unlock = []
+megaproject_unlock = []
+
+[hbm_integration]
+id = "hbm_integration"
+sub_industry = "ai_chips"
+name = "HBM Integration"
+description = """Memory stacked on-package, wired straight into the compute. The bandwidth wall is where AI chips go to die; this is the ladder over it."""
+tier = "applied"
+
+[hbm_integration.requires]
+rd_levels = { yield_line = 40, process_node = 35 }
+projects = []
+stature_min = 0
+
+[hbm_integration.cost]
+budget = 25
+weeks = 32
+
+[hbm_integration.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[power_efficiency_arch]
+id = "power_efficiency_arch"
+sub_industry = "ai_chips"
+name = "Power-Efficiency Architecture"
+description = """Performance per watt as a first-class design goal. Datacenters buy electricity before they buy chips — the vendor who bends that curve owns the purchase order."""
+tier = "applied"
+
+[power_efficiency_arch.requires]
+rd_levels = { process_node = 40, architecture = 35 }
+projects = []
+stature_min = 0
+
+[power_efficiency_arch.cost]
+budget = 25
+weeks = 32
+
+[power_efficiency_arch.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[advanced_lithography]
+id = "advanced_lithography"
+sub_industry = "ai_chips"
+name = "Advanced Lithography"
+description = """In-house mastery of the most extreme ultraviolet processes — the hardest step in chipmaking, controlled by almost no one. Owning it means you no longer wait in anyone's queue."""
+tier = "advanced"
+
+[advanced_lithography.requires]
+rd_levels = { process_node = 65 }
+projects = ["chiplet_packaging"]
+stature_min = 8000
+
+[advanced_lithography.cost]
+budget = 120
+weeks = 78
+
+[advanced_lithography.unlocks]
+products = []
+frontier_unlock = ["neuromorphic_substrate"]
+megaproject_unlock = []
+
+[node_leadership_program]
+id = "node_leadership_program"
+sub_industry = "ai_chips"
+name = "Node Leadership Program"
+description = """Not using the best process node — being it. A standing program of tooling, metrology, and yield craft that keeps your silicon a step ahead of anything a rival can buy."""
+tier = "advanced"
+
+[node_leadership_program.requires]
+rd_levels = { process_node = 75, yield_line = 60 }
+projects = ["advanced_lithography"]
+stature_min = 12000
+
+[node_leadership_program.cost]
+budget = 170
+weeks = 82
+
+[node_leadership_program.unlocks]
+products = ["frontier_node_part"]
+frontier_unlock = []
+megaproject_unlock = []
+
+[wafer_scale_compute]
+id = "wafer_scale_compute"
+sub_industry = "ai_chips"
+name = "Wafer-Scale Compute"
+description = """Stop dicing the wafer; make the whole disc one chip. A single part with the die area of a dinner plate — interconnect problems dissolve, cooling problems bloom, and nothing else trains models faster."""
+tier = "advanced"
+
+[wafer_scale_compute.requires]
+rd_levels = { yield_line = 70, architecture = 65 }
+projects = ["chiplet_packaging", "hbm_integration"]
+stature_min = 14000
+
+[wafer_scale_compute.cost]
+budget = 183
+weeks = 85
+
+[wafer_scale_compute.unlocks]
+products = ["wafer_scale_engine"]
+frontier_unlock = ["neuromorphic_substrate"]
+megaproject_unlock = []
+
+[optical_interconnect]
+id = "optical_interconnect"
+sub_industry = "ai_chips"
+name = "Optical Interconnect"
+description = """Light instead of copper between dies, boards, and racks. Bandwidth stops decaying with distance, and the datacenter starts behaving like one enormous chip."""
+tier = "advanced"
+
+[optical_interconnect.requires]
+rd_levels = { architecture = 60, process_node = 55 }
+projects = ["hbm_integration"]
+stature_min = 10000
+
+[optical_interconnect.cost]
+budget = 156
+weeks = 78
+
+[optical_interconnect.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[neuromorphic_substrate]
+id = "neuromorphic_substrate"
+sub_industry = "ai_chips"
+name = "Neuromorphic Compute Substrate"
+description = """A fundamentally new architecture — brain-like, massively parallel, orders of magnitude more efficient for intelligence workloads. The hardware a true general intelligence would run on. A handful of labs on Earth could attempt it; you intend to be the one that finishes."""
+tier = "frontier"
+
+[neuromorphic_substrate.requires]
+rd_levels = { process_node = 95, architecture = 90 }
+projects = ["advanced_lithography", "wafer_scale_compute"]
+stature_min = 25000
+
+[neuromorphic_substrate.cost]
+budget = 600
+weeks = 150
+
+[neuromorphic_substrate.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["artificial_general_intelligence"]
+power = 1
+
+[quantum_accelerator]
+id = "quantum_accelerator"
+sub_industry = "ai_chips"
+name = "Quantum Accelerator"
+description = """Error-corrected qubits packaged as a co-processor. Not a lab curiosity — a product, with a driver stack and an SLA. The doorway to computation classical physics simply cannot follow."""
+tier = "frontier"
+
+[quantum_accelerator.requires]
+rd_levels = { process_node = 90, architecture = 95 }
+projects = ["node_leadership_program", "optical_interconnect"]
+stature_min = 28000
+
+[quantum_accelerator.cost]
+budget = 730
+weeks = 150
+
+[quantum_accelerator.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["quantum_supremacy_platform"]
+power = 1
+
+[analog_compute]
+id = "analog_compute"
+sub_industry = "ai_chips"
+name = "Analog In-Memory Compute"
+description = """Doing the multiplication in physics instead of logic — currents summing in a crossbar. Fussy, noisy, and for the right inference workloads, absurdly efficient."""
+tier = "applied"
+
+[analog_compute.requires]
+rd_levels = { architecture = 45, process_node = 40 }
+projects = ["specialized_accelerator"]
+stature_min = 3000
+
+[analog_compute.cost]
+budget = 40
+weeks = 39
+
+[analog_compute.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[advanced_cooling]
+id = "advanced_cooling"
+sub_industry = "ai_chips"
+name = "Advanced Cooling Systems"
+description = """Immersion baths and microfluidic channels etched into the silicon itself. Heat is the real ceiling on compute density; whoever raises it sells to everyone."""
+tier = "applied"
+
+[advanced_cooling.requires]
+rd_levels = { yield_line = 40, architecture = 35 }
+projects = []
+stature_min = 0
+
+[advanced_cooling.cost]
+budget = 25
+weeks = 32
+
+[advanced_cooling.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[edge_inference_chip]
+id = "edge_inference_chip"
+sub_industry = "ai_chips"
+name = "Edge Inference Silicon"
+description = """Frontier-model intelligence in a five-watt envelope. Phones, cars, satellites — the market that never touches a datacenter, and never stops growing."""
+tier = "applied"
+
+[edge_inference_chip.requires]
+rd_levels = { architecture = 40, process_node = 38 }
+projects = ["power_efficiency_arch"]
+stature_min = 2000
+
+[edge_inference_chip.cost]
+budget = 35
+weeks = 37
+
+[edge_inference_chip.unlocks]
+products = ["edge_ai_chip"]
+frontier_unlock = []
+megaproject_unlock = []
+
+[silicon_photonics]
+id = "silicon_photonics"
+sub_industry = "ai_chips"
+name = "Silicon Photonics"
+description = """Photonic circuits printed with the same fabs that make your logic. The technology that turns optical interconnect from a boutique part into a product line."""
+tier = "advanced"
+
+[silicon_photonics.requires]
+rd_levels = { process_node = 60, architecture = 58 }
+projects = ["optical_interconnect"]
+stature_min = 11000
+
+[silicon_photonics.cost]
+budget = 163
+weeks = 80
+
+[silicon_photonics.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []

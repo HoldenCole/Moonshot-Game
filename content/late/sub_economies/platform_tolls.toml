@@ -1,0 +1,35 @@
+# platform_tolls — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[platform_tolls]
+id = "platform_tolls"
+name = "Platform Tolls"
+opened_by = "sector_dominance_platform"
+branch = "economic"
+scale_label = "platform volume"
+description = "The platform an industry runs on — every transaction pays you a toll."
+icon = "node"
+
+[platform_tolls.scale]
+starting_scale = 500
+scale_cap = 100000
+growth_rate = 0.06
+exec_domain = "chief_executive"
+
+[platform_tolls.produces]
+revenue_per_scale = 0.012
+[platform_tolls.produces.resources]
+market_lock_in = 0.008
+
+[platform_tolls.consumes]
+upkeep_per_scale = 0.002
+[platform_tolls.consumes.resources]
+compute = 0.004
+
+[platform_tolls.power]
+power_per_scale_tier = [[5000, 1], [30000, 2], [100000, 3]]
+
+[platform_tolls.events]
+pool = "platform_tolls_events"
+crisis_chance = 0.04
+
+[platform_tolls.feeds_synergies]
+market_lock_in = ["economic_gravity", "industry_lock_in"]

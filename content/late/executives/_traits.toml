@@ -1,0 +1,57 @@
+# executives/_traits — the personality vocabulary (12 §3.3). effects keys are engine-known.
+[visionary]
+id = "visionary"
+name = "Visionary"
+effects = { tier_bias = 0.3, variance = 0.4 }
+applies_to = ["cto", "chief_scientist", "space_program"]
+comp_premium = 0.1
+
+[steady]
+id = "steady"
+name = "Steady operator"
+effects = { variance = -0.3, consistency = 0.2 }
+applies_to = []
+comp_premium = 0.0
+
+[aggressive]
+id = "aggressive"
+name = "Aggressive"
+effects = { leverage_bias = 0.3, variance = 0.3 }
+applies_to = ["cfo", "cro", "coo", "chief_executive"]
+comp_premium = 0.05
+
+[cautious]
+id = "cautious"
+name = "Cautious"
+effects = { leverage_bias = -0.2, variance = -0.2, growth_drag = 0.05 }
+applies_to = []
+comp_premium = 0.0
+
+[empire_builder]
+id = "empire_builder"
+name = "Empire builder"
+effects = { domain_scale = 0.25, budget_drain = 0.15, clash_risk = 0.2 }
+applies_to = ["coo", "cro", "chief_executive", "cfo"]
+comp_premium = 0.1
+
+[star]
+id = "star"
+name = "Star"
+effects = { competence_bonus = 0.15 }
+applies_to = []
+comp_premium = 0.4
+flight_risk = 0.3
+
+[loyalist]
+id = "loyalist"
+name = "Loyalist"
+effects = { defection_mult = 0.3 }
+applies_to = []
+comp_premium = 0.0
+
+[maverick]
+id = "maverick"
+name = "Maverick"
+effects = { mandate_slip = 0.2, variance = 0.35 }
+applies_to = ["cto", "chief_scientist", "space_program"]
+comp_premium = 0.05

@@ -1,0 +1,255 @@
+# research/satellite_constellations — 09 tree, validated structure (transcript 06-21). Budget/weeks: doc values where authored, tier-formula anchors otherwise.
+[mass_manufacturing]
+id = "mass_manufacturing"
+sub_industry = "satellite_constellations"
+name = "Satellite Mass Manufacturing"
+description = """Satellites off an assembly line — a bird a day, then several. Aerospace craft traded for automotive throughput; the constellation business begins here."""
+tier = "applied"
+
+[mass_manufacturing.requires]
+rd_levels = { mass_production = 45 }
+projects = []
+stature_min = 0
+
+[mass_manufacturing.cost]
+budget = 25
+weeks = 32
+
+[mass_manufacturing.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[inter_satellite_links]
+id = "inter_satellite_links"
+sub_industry = "satellite_constellations"
+name = "Inter-Satellite Links"
+description = """Lasers between satellites — the constellation becomes a mesh network in the sky, routing around the planet without touching the ground. Coverage stops meaning 'near a ground station.'"""
+tier = "applied"
+
+[inter_satellite_links.requires]
+rd_levels = { satellite_tech = 45, network = 40 }
+projects = []
+stature_min = 0
+
+[inter_satellite_links.cost]
+budget = 25
+weeks = 32
+
+[inter_satellite_links.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[onboard_processing]
+id = "onboard_processing"
+sub_industry = "satellite_constellations"
+name = "Onboard Processing"
+description = """Compute on the satellite itself — imagery analyzed, signals filtered, decisions made in orbit. Downlink only what matters; the constellation gets smarter without getting heavier."""
+tier = "applied"
+
+[onboard_processing.requires]
+rd_levels = { satellite_tech = 50, network = 35 }
+projects = []
+stature_min = 0
+
+[onboard_processing.cost]
+budget = 25
+weeks = 32
+
+[onboard_processing.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[global_broadband]
+id = "global_broadband"
+sub_industry = "satellite_constellations"
+name = "Global Broadband"
+description = """The full constellation: thousands of birds, laser-meshed, selling connectivity to planes, ships, villages, and armies. The product that makes a satellite company a utility."""
+tier = "advanced"
+
+[global_broadband.requires]
+rd_levels = { mass_production = 65, network = 60, satellite_tech = 55 }
+projects = ["mass_manufacturing", "inter_satellite_links"]
+stature_min = 12000
+
+[global_broadband.cost]
+budget = 170
+weeks = 82
+
+[global_broadband.unlocks]
+products = ["global_broadband_network"]
+frontier_unlock = ["orbital_industrial_base"]
+megaproject_unlock = []
+capability = { slot = 1 }
+
+[realtime_earth_obs]
+id = "realtime_earth_obs"
+sub_industry = "satellite_constellations"
+name = "Real-Time Earth Observation"
+description = """The planet, live: every field, port, and pipeline revisited in minutes. Intelligence agencies buy it, insurers price on it, and history gets harder to deny."""
+tier = "advanced"
+
+[realtime_earth_obs.requires]
+rd_levels = { satellite_tech = 65, network = 55 }
+projects = ["onboard_processing", "inter_satellite_links"]
+stature_min = 13000
+
+[realtime_earth_obs.cost]
+budget = 176
+weeks = 83
+
+[realtime_earth_obs.unlocks]
+products = []
+frontier_unlock = ["orbital_industrial_base"]
+megaproject_unlock = []
+
+[orbital_industrial_base]
+id = "orbital_industrial_base"
+sub_industry = "satellite_constellations"
+name = "Orbital Industrial Base"
+description = """Manufacturing in orbit, for orbit — depots, foundries, assembly platforms fed by your own launch line. The industrial park above the sky, and the doorway to mining the asteroids."""
+tier = "frontier"
+
+[orbital_industrial_base.requires]
+rd_levels = { mass_production = 95, satellite_tech = 85 }
+projects = ["global_broadband", "realtime_earth_obs"]
+stature_min = 24000
+
+[orbital_industrial_base.cost]
+budget = 680
+weeks = 145
+
+[orbital_industrial_base.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["asteroid_mining_operation"]
+power = 1
+
+[space_solar_power]
+id = "space_solar_power"
+sub_industry = "satellite_constellations"
+name = "Space Solar Power"
+description = """Collecting sunlight where it never sets and beaming it down. The physics is old; the launch costs were the problem — and you just solved those. The research the Sunfarm stands on."""
+tier = "frontier"
+
+[space_solar_power.requires]
+rd_levels = { mass_production = 90, network = 85 }
+projects = ["global_broadband"]
+stature_min = 25000
+
+[space_solar_power.cost]
+budget = 692
+weeks = 146
+
+[space_solar_power.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["orbital_solar_array"]
+power = 1
+
+[electric_propulsion_sat]
+id = "electric_propulsion_sat"
+sub_industry = "satellite_constellations"
+name = "Electric Propulsion"
+description = """Ion thrusters on every bird — slow, steady, sipping propellant for years. Longer lives, tighter formations, and graceful deorbits the regulators adore."""
+tier = "applied"
+
+[electric_propulsion_sat.requires]
+rd_levels = { satellite_tech = 40, mass_production = 35 }
+projects = []
+stature_min = 0
+
+[electric_propulsion_sat.cost]
+budget = 25
+weeks = 32
+
+[electric_propulsion_sat.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[direct_to_device]
+id = "direct_to_device"
+sub_industry = "satellite_constellations"
+name = "Direct-to-Device"
+description = """Satellites that talk to ordinary phones — no dish, no terminal. Every handset on Earth becomes a potential subscriber, and 'coverage map' becomes an antique phrase."""
+tier = "applied"
+
+[direct_to_device.requires]
+rd_levels = { satellite_tech = 50, network = 45 }
+projects = ["inter_satellite_links"]
+stature_min = 5000
+
+[direct_to_device.cost]
+budget = 50
+weeks = 44
+
+[direct_to_device.unlocks]
+products = ["direct_to_device_service"]
+frontier_unlock = []
+megaproject_unlock = []
+
+[debris_mitigation]
+id = "debris_mitigation"
+sub_industry = "satellite_constellations"
+name = "Debris Mitigation"
+description = """Tracking, avoidance, and deorbit discipline. The orbital commons stays usable — and your name stays off the incident reports that end constellation licenses."""
+tier = "applied"
+
+[debris_mitigation.requires]
+rd_levels = { network = 45, satellite_tech = 40 }
+projects = []
+stature_min = 0
+
+[debris_mitigation.cost]
+budget = 25
+weeks = 32
+
+[debris_mitigation.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[orbital_servicing]
+id = "orbital_servicing"
+sub_industry = "satellite_constellations"
+name = "Orbital Servicing"
+description = """Repair, refuel, and reposition other people's satellites. The tow-truck-and-garage business of orbit — recurring revenue in the one place house calls are hardest."""
+tier = "advanced"
+
+[orbital_servicing.requires]
+rd_levels = { satellite_tech = 60, mass_production = 55 }
+projects = ["electric_propulsion_sat", "mass_manufacturing"]
+stature_min = 9000
+
+[orbital_servicing.cost]
+budget = 150
+weeks = 77
+
+[orbital_servicing.unlocks]
+products = ["servicing_vehicle"]
+frontier_unlock = []
+megaproject_unlock = []
+
+[ground_station_network]
+id = "ground_station_network"
+sub_industry = "satellite_constellations"
+name = "Ground Station Network"
+description = """Antenna farms on every continent, scheduling software to match. The unglamorous half of a constellation — and the half that decides latency."""
+tier = "applied"
+
+[ground_station_network.requires]
+rd_levels = { network = 45, mass_production = 35 }
+projects = []
+stature_min = 0
+
+[ground_station_network.cost]
+budget = 25
+weeks = 32
+
+[ground_station_network.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []

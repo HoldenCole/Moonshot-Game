@@ -1,0 +1,37 @@
+# orbital_city — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[orbital_city]
+id = "orbital_city"
+name = "Orbital City"
+opened_by = "oneill_cylinder"
+branch = "space"
+scale_label = "residents"
+description = "A city in the sky — a rotating world you built, with an economy and a culture of its own."
+icon = "node"
+
+[orbital_city.scale]
+starting_scale = 1000
+scale_cap = 1000000
+growth_rate = 0.035
+exec_domain = "space_program"
+
+[orbital_city.produces]
+revenue_per_scale = 0.0006
+[orbital_city.produces.resources]
+off_world_materials = 0.0003
+orbital_research = 0.0002
+
+[orbital_city.consumes]
+upkeep_per_scale = 0.00025
+[orbital_city.consumes.resources]
+clean_energy = 0.0001
+
+[orbital_city.power]
+power_per_scale_tier = [[10000, 2], [100000, 3], [500000, 4], [1000000, 5]]
+
+[orbital_city.events]
+pool = "orbital_city_events"
+crisis_chance = 0.04
+
+[orbital_city.feeds_synergies]
+off_world_materials = ["off_world_resources", "mars_manufacturing", "space_native_civilization"]
+orbital_research = ["space_native_civilization"]

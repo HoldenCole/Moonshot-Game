@@ -1,0 +1,140 @@
+# executives/archetypes — 2 per domain (a high-variance one + a steady one), 14 total (12 §4.3).
+[frontier_cto]
+id = "frontier_cto"
+domain = "cto"
+name = "Frontier CTO"
+competence_range = [60, 95]
+trait_pool = ["visionary", "star", "maverick"]
+trait_count = [1, 2]
+min_stature = 8000
+flavor_titles = ["ex-frontier-lab research lead", "founder of an acquired AI startup"]
+
+[operator_cto]
+id = "operator_cto"
+domain = "cto"
+name = "Operator CTO"
+competence_range = [50, 80]
+trait_pool = ["steady", "loyalist", "cautious"]
+trait_count = [1, 2]
+min_stature = 0
+flavor_titles = ["VP Eng at a public tech co", "serial startup CTO"]
+
+[dealmaker_cfo]
+id = "dealmaker_cfo"
+domain = "cfo"
+name = "Dealmaker CFO"
+competence_range = [60, 92]
+trait_pool = ["aggressive", "star", "empire_builder"]
+trait_count = [1, 2]
+min_stature = 4000
+flavor_titles = ["ex-investment banker", "took two companies public"]
+
+[steward_cfo]
+id = "steward_cfo"
+domain = "cfo"
+name = "Steward CFO"
+competence_range = [50, 82]
+trait_pool = ["steady", "cautious", "loyalist"]
+trait_count = [1, 2]
+min_stature = 0
+flavor_titles = ["20-year controller", "audit-committee favorite"]
+
+[scale_coo]
+id = "scale_coo"
+domain = "coo"
+name = "Scale COO"
+competence_range = [58, 90]
+trait_pool = ["empire_builder", "aggressive", "star"]
+trait_count = [1, 2]
+min_stature = 5000
+flavor_titles = ["ran global ops at a hyperscaler", "factory-buildout legend"]
+
+[lean_coo]
+id = "lean_coo"
+domain = "coo"
+name = "Lean COO"
+competence_range = [50, 80]
+trait_pool = ["steady", "cautious"]
+trait_count = [1, 1]
+min_stature = 500
+flavor_titles = ["turnaround operator", "supply-chain veteran"]
+
+[hunter_cro]
+id = "hunter_cro"
+domain = "cro"
+name = "Hunter CRO"
+competence_range = [58, 90]
+trait_pool = ["aggressive", "star", "empire_builder"]
+trait_count = [1, 2]
+min_stature = 3000
+flavor_titles = ["built a $1B pipeline from zero", "enterprise-sales killer"]
+
+[farmer_cro]
+id = "farmer_cro"
+domain = "cro"
+name = "Farmer CRO"
+competence_range = [50, 78]
+trait_pool = ["steady", "loyalist"]
+trait_count = [1, 1]
+min_stature = 1000
+flavor_titles = ["renewals machine", "customer-success pioneer"]
+
+[laureate_scientist]
+id = "laureate_scientist"
+domain = "chief_scientist"
+name = "Laureate"
+competence_range = [70, 98]
+trait_pool = ["visionary", "star", "maverick"]
+trait_count = [1, 3]
+min_stature = 25000
+flavor_titles = ["field-defining theorist", "led the benchmark-breaking lab"]
+
+[program_scientist]
+id = "program_scientist"
+domain = "chief_scientist"
+name = "Program Scientist"
+competence_range = [60, 85]
+trait_pool = ["steady", "loyalist", "cautious"]
+trait_count = [1, 2]
+min_stature = 25000
+flavor_titles = ["national-lab program director", "shipped three frontier systems"]
+
+[apollo_director]
+id = "apollo_director"
+domain = "space_program"
+name = "Apollo-class Director"
+competence_range = [68, 96]
+trait_pool = ["visionary", "maverick", "star"]
+trait_count = [1, 2]
+min_stature = 22000
+flavor_titles = ["flew the first commercial deep-space mission", "agency flight director"]
+
+[mission_director]
+id = "mission_director"
+domain = "space_program"
+name = "Mission Director"
+competence_range = [58, 84]
+trait_pool = ["steady", "cautious", "loyalist"]
+trait_count = [1, 2]
+min_stature = 22000
+flavor_titles = ["100 launches without a loss", "station-program veteran"]
+
+[conglomerate_ceo]
+id = "conglomerate_ceo"
+domain = "chief_executive"
+name = "Conglomerate CEO"
+competence_range = [65, 94]
+trait_pool = ["empire_builder", "star", "aggressive"]
+trait_count = [1, 2]
+min_stature = 20000
+flavor_titles = ["ran a five-division industrial group", "the market's favorite operator"]
+
+[platform_ceo]
+id = "platform_ceo"
+domain = "chief_executive"
+name = "Platform CEO"
+competence_range = [58, 86]
+trait_pool = ["steady", "loyalist"]
+trait_count = [1, 1]
+min_stature = 20000
+flavor_titles = ["scaled the industry's quiet monopoly", "ecosystem builder"]

@@ -1,0 +1,96 @@
+[platform_sector_capture]
+id = "platform_sector_capture"
+pool = "platform_tolls_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 60
+headline = "A holdout industry segment adopts your platform"
+body = """The last major holdouts in the sector have migrated onto your platform. \
+Your share of the industry's transaction flow — and your tolls — step up."""
+choices = [
+  { label = "Standard rates for the holdouts — complete the map quietly", effects = { scale_mult = 1.08, revenue_delta = 50 } },
+  { label = "Charge the late-adopter premium", effects = { revenue_delta = 35, reputation_delta = -1, regulation_level = 1 } },
+]
+
+[platform_sector_capture.effects]
+scale_mult = 1.08
+revenue_delta = 50
+
+[platform_antitrust_probe]
+id = "platform_antitrust_probe"
+pool = "platform_tolls_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 90
+headline = "Antitrust regulators open an investigation"
+body = """Your grip on the sector has drawn a formal antitrust probe. You can make \
+concessions to settle quickly, or fight to keep your position intact and accept the \
+scrutiny."""
+[[platform_antitrust_probe.choices]]
+label = "Settle with concessions"
+[platform_antitrust_probe.choices.effects]
+output_mult = 0.92
+reputation_delta = 1
+[[platform_antitrust_probe.choices]]
+label = "Fight it"
+[platform_antitrust_probe.choices.effects]
+power_delta = 1
+reputation_delta = -1
+
+[platform_outage_dependency]
+id = "platform_outage_dependency"
+pool = "platform_tolls_events"
+kind = "crisis"
+weight = 0.9
+cooldown_weeks = 55
+headline = "An outage freezes the sector"
+body = """Your platform goes down and the entire industry that runs on it grinds to \
+a halt — a stark, public demonstration of how dependent the sector has become on \
+you. Costly, and double-edged."""
+[[platform_outage_dependency.choices]]
+label = "Compensate affected customers ($80M)"
+[platform_outage_dependency.choices.effects]
+revenue_delta = -80
+power_delta = 1
+[[platform_outage_dependency.choices]]
+label = "Restore service and move on"
+[platform_outage_dependency.choices.effects]
+revenue_delta = -40
+power_delta = 1
+reputation_delta = -1
+
+[platform_standard_adopted]
+id = "platform_standard_adopted"
+pool = "platform_tolls_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 60
+headline = "Your format becomes the industry standard"
+body = """A standards body ratifies your platform's way of doing things as the \
+official norm. Competitors must now build to your design — a quiet, durable kind of \
+power."""
+[platform_standard_adopted.effects]
+power_delta = 1
+
+
+[tolls_dependency_study]
+id = "tolls_dependency_study"
+pool = "platform_tolls_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 95
+headline = "An economist coins your platform's share of GDP"
+body = "The paper measures what fraction of the sector's value passes through your rails and gives the number a name — the analysts now quote 'the toll ratio' on earnings calls. Being measured like weather is its own kind of arrival."
+
+[tolls_rival_buyout_offer]
+id = "tolls_rival_buyout_offer"
+pool = "platform_tolls_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 85
+headline = "The last independent player offers itself to you"
+body = "The one competitor who never built on your platform is tired of fighting and names a price. Buying them ends the war and completes the map — and hands the regulators the cleanest monopolization exhibit they will ever see."
+choices = [
+  { label = "Buy them — finish the map", effects = { revenue_delta = -50, scale_mult = 1.1, regulation_level = 1 } },
+  { label = "Let them struggle on — a live competitor is cheap antitrust insurance", effects = { reputation_delta = 1 } },
+]

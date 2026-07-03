@@ -1,0 +1,21 @@
+# macro cycles — the sine wave under the exponential. Booms and winters modulate
+# the contract market, growth, and the funding mood. TUNING ANCHORS throughout.
+
+[tuning]
+steady_weeks_range = [40, 80]
+boom_weeks_range = [40, 70]
+winter_weeks_range = [45, 90]
+p_boom_from_steady = 0.5          # else winter
+# modifiers by phase
+boom_payment_mult = 1.15
+boom_growth_mult = 1.10
+boom_extra_offers = 2
+winter_payment_mult = 0.80
+winter_growth_mult = 0.85
+winter_offer_penalty = 2
+
+[prose]
+boom_start = "The money mood turns euphoric — term sheets are getting signed at dinner, and every contract negotiation starts higher. A boom is on."
+boom_end = "The euphoria cools to something more like arithmetic. The boom is over; the numbers still have to work."
+winter_start = "The funding winter arrives the way they always do: two quiet weeks, then everyone pretending they saw it coming. Deals shrink, diligence triples, and the weak start selling."
+winter_end = "Green shoots — a big round closes upstream, a rival's down-round gets absorbed without panic. The winter is breaking."

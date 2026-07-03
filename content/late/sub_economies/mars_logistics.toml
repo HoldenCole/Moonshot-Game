@@ -1,0 +1,35 @@
+# mars_logistics — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[mars_logistics]
+id = "mars_logistics"
+name = "Mars Logistics"
+opened_by = "mars_transit_line"
+branch = "space"
+scale_label = "transit throughput"
+description = "The artery between the worlds — every colony and outpost beyond Earth rides on this line."
+icon = "node"
+
+[mars_logistics.scale]
+starting_scale = 30
+scale_cap = 2000
+growth_rate = 0.05
+exec_domain = "space_program"
+
+[mars_logistics.produces]
+revenue_per_scale = 0.015
+[mars_logistics.produces.resources]
+cislunar_capacity = 0.03
+
+[mars_logistics.consumes]
+upkeep_per_scale = 0.005
+[mars_logistics.consumes.resources]
+launch_capacity = 0.01
+
+[mars_logistics.power]
+power_per_scale_tier = [[500, 1], [1500, 2]]
+
+[mars_logistics.events]
+pool = "mars_logistics_events"
+crisis_chance = 0.04
+
+[mars_logistics.feeds_synergies]
+cislunar_capacity = ["cislunar_logistics"]

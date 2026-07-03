@@ -1,0 +1,255 @@
+# research/vertical_ai_saas — 09 tree, validated structure (transcript 06-21). Budget/weeks: doc values where authored, tier-formula anchors otherwise.
+[domain_foundation_model]
+id = "domain_foundation_model"
+sub_industry = "vertical_ai_saas"
+name = "Domain Foundation Model"
+description = """A model trained to think in your vertical's own language — its documents, regulations, edge cases. Generic models visit the industry; this one lives there."""
+tier = "applied"
+
+[domain_foundation_model.requires]
+rd_levels = { domain_depth = 40, model_leverage = 35 }
+projects = []
+stature_min = 0
+
+[domain_foundation_model.cost]
+budget = 25
+weeks = 32
+
+[domain_foundation_model.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[workflow_automation]
+id = "workflow_automation"
+sub_industry = "vertical_ai_saas"
+name = "Workflow Automation"
+description = """The whole process, not the single task. Intake to resolution without a human hop — the moment your product graduates from assistant to employee."""
+tier = "applied"
+
+[workflow_automation.requires]
+rd_levels = { platform = 35, domain_depth = 35 }
+projects = []
+stature_min = 0
+
+[workflow_automation.cost]
+budget = 25
+weeks = 32
+
+[workflow_automation.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[data_network_effects]
+id = "data_network_effects"
+sub_industry = "vertical_ai_saas"
+name = "Data Network Effects"
+description = """Every customer makes the product better for every other customer — a moat that digs itself deeper each quarter. The competitors don't lack features; they lack your flywheel."""
+tier = "applied"
+
+[data_network_effects.requires]
+rd_levels = { platform = 40, model_leverage = 30 }
+projects = []
+stature_min = 0
+
+[data_network_effects.cost]
+budget = 25
+weeks = 32
+
+[data_network_effects.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[compliance_engine]
+id = "compliance_engine"
+sub_industry = "vertical_ai_saas"
+name = "Compliance Engine"
+description = """Regulation as code — auditable, current, provable. In regulated industries this isn't a feature; it's the ticket that gets you in the building."""
+tier = "applied"
+
+[compliance_engine.requires]
+rd_levels = { domain_depth = 45 }
+projects = []
+stature_min = 0
+
+[compliance_engine.cost]
+budget = 25
+weeks = 32
+
+[compliance_engine.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[autonomous_workflows]
+id = "autonomous_workflows"
+sub_industry = "vertical_ai_saas"
+name = "Autonomous Workflows"
+description = """Entire business functions that run themselves, escalating only exceptions. The headcount conversation changes in your customers' boardrooms, and your name comes up in it."""
+tier = "advanced"
+
+[autonomous_workflows.requires]
+rd_levels = { platform = 60, domain_depth = 60, model_leverage = 50 }
+projects = ["workflow_automation", "domain_foundation_model"]
+stature_min = 7000
+
+[autonomous_workflows.cost]
+budget = 136
+weeks = 73
+
+[autonomous_workflows.unlocks]
+products = ["autonomous_operations_suite"]
+frontier_unlock = ["industry_operating_system"]
+megaproject_unlock = []
+
+[industry_platform]
+id = "industry_platform"
+sub_industry = "vertical_ai_saas"
+name = "Industry Platform"
+description = """From product to platform: APIs, an app marketplace, third-party developers building on your rails. The moment competitors face a choice — fight you, or pay you."""
+tier = "advanced"
+
+[industry_platform.requires]
+rd_levels = { platform = 65, domain_depth = 55 }
+projects = ["data_network_effects", "compliance_engine"]
+stature_min = 9000
+
+[industry_platform.cost]
+budget = 150
+weeks = 77
+
+[industry_platform.unlocks]
+products = []
+frontier_unlock = ["industry_operating_system"]
+megaproject_unlock = []
+capability = { slot = 1 }
+
+[industry_operating_system]
+id = "industry_operating_system"
+sub_industry = "vertical_ai_saas"
+name = "The Industry Operating System"
+description = """The system-of-record an entire sector runs on. Its data lives with you, its workflows are your workflows, its startups build on your APIs. Power without a single rocket — the industry simply cannot function without you."""
+tier = "frontier"
+
+[industry_operating_system.requires]
+rd_levels = { platform = 95, domain_depth = 90, model_leverage = 80 }
+projects = ["autonomous_workflows", "industry_platform"]
+stature_min = 22000
+
+[industry_operating_system.cost]
+budget = 655
+weeks = 142
+
+[industry_operating_system.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["sector_dominance_platform"]
+power = 1
+
+[autonomous_enterprise]
+id = "autonomous_enterprise"
+sub_industry = "vertical_ai_saas"
+name = "The Autonomous Enterprise"
+description = """Software that runs a company — strategy, operations, the works — with humans setting intent and reviewing exceptions. The product that makes management a configuration file."""
+tier = "frontier"
+
+[autonomous_enterprise.requires]
+rd_levels = { platform = 90, model_leverage = 95, domain_depth = 85 }
+projects = ["autonomous_workflows"]
+stature_min = 20000
+
+[autonomous_enterprise.cost]
+budget = 630
+weeks = 140
+
+[autonomous_enterprise.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["autonomous_economy_platform"]
+power = 1
+
+[vertical_copilot]
+id = "vertical_copilot"
+sub_industry = "vertical_ai_saas"
+name = "Vertical Copilot"
+description = """The assistant that sits inside the professional's workflow and finishes their sentences correctly. Cheap to love, hard to give up — the wedge product for the whole platform."""
+tier = "applied"
+
+[vertical_copilot.requires]
+rd_levels = { model_leverage = 40, domain_depth = 35 }
+projects = []
+stature_min = 0
+
+[vertical_copilot.cost]
+budget = 25
+weeks = 32
+
+[vertical_copilot.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[multi_vertical_expansion]
+id = "multi_vertical_expansion"
+sub_industry = "vertical_ai_saas"
+name = "Multi-Vertical Expansion"
+description = """The playbook, industrialized: what you built for one industry, templated for five. The step from a vertical company to a vertical machine."""
+tier = "applied"
+
+[multi_vertical_expansion.requires]
+rd_levels = { platform = 45, domain_depth = 40 }
+projects = ["domain_foundation_model"]
+stature_min = 4000
+
+[multi_vertical_expansion.cost]
+budget = 45
+weeks = 42
+
+[multi_vertical_expansion.unlocks]
+products = ["multi_vertical_platform"]
+frontier_unlock = []
+megaproject_unlock = []
+
+[usage_based_pricing]
+id = "usage_based_pricing"
+sub_industry = "vertical_ai_saas"
+name = "Usage-Based Pricing"
+description = """Price on outcomes, not seats. Revenue that scales with the value you create — and quietly, a meter on every process your customers run."""
+tier = "applied"
+
+[usage_based_pricing.requires]
+rd_levels = { platform = 40, model_leverage = 35 }
+projects = []
+stature_min = 0
+
+[usage_based_pricing.cost]
+budget = 25
+weeks = 32
+
+[usage_based_pricing.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[ai_governance_layer]
+id = "ai_governance_layer"
+sub_industry = "vertical_ai_saas"
+name = "AI Governance Layer"
+description = """The controls enterprises demand before they trust automation: audit trails, human-in-the-loop gates, model risk reports. Sells the CIO what the board actually asked for — permission."""
+tier = "advanced"
+
+[ai_governance_layer.requires]
+rd_levels = { domain_depth = 60, platform = 55 }
+projects = ["compliance_engine"]
+stature_min = 6000
+
+[ai_governance_layer.cost]
+budget = 130
+weeks = 72
+
+[ai_governance_layer.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []

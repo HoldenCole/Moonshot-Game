@@ -1,0 +1,133 @@
+# research/_cross_domain — the 7 synergy-research nodes (validated).
+[ai_designed_silicon]
+id = "ai_designed_silicon"
+name = "AI-Designed Silicon"
+description = """Your own models turned loose on chip design, exploring architecture spaces no human team could walk. Only possible if you run both a frontier lab and a fab — and it makes each better than either could be alone."""
+tier = "cross_domain"
+
+[ai_designed_silicon.requires]
+fronts = ["frontier_model_lab", "ai_chips"]
+rd_levels = { scaling = 50, architecture = 50 }
+projects = []
+stature_min = 12000
+
+[ai_designed_silicon.cost]
+budget = 90
+weeks = 60
+
+[ai_designed_silicon.unlocks]
+synergy_tags = ["ai_chip_codesign"]
+
+[vertically_integrated_ai]
+id = "vertically_integrated_ai"
+name = "Vertically Integrated AI"
+description = """Models, silicon, and software as one pipeline — each layer tuned to the others' exact shape. The stack nobody can buy piecemeal, because no piece of it is for sale."""
+tier = "cross_domain"
+
+[vertically_integrated_ai.requires]
+fronts = ["frontier_model_lab", "ai_chips", "vertical_ai_saas"]
+rd_levels = { scaling = 60, architecture = 60, platform = 55 }
+projects = ["ai_designed_silicon"]
+stature_min = 20000
+
+[vertically_integrated_ai.cost]
+budget = 180
+weeks = 80
+
+[vertically_integrated_ai.unlocks]
+synergy_tags = ["full_ai_stack"]
+
+[reusable_satellite_launch]
+id = "reusable_satellite_launch"
+name = "Integrated Launch & Constellation Ops"
+description = """Your rockets and your satellites on one production rhythm — deployment costs that read like typos to competitors who buy launch at retail."""
+tier = "cross_domain"
+
+[reusable_satellite_launch.requires]
+fronts = ["launch_services", "satellite_constellations"]
+rd_levels = { reusability = 50, mass_production = 50 }
+projects = []
+stature_min = 13000
+
+[reusable_satellite_launch.cost]
+budget = 145
+weeks = 71
+
+[reusable_satellite_launch.unlocks]
+synergy_tags = ["integrated_space_logistics"]
+
+[orbital_construction_logistics]
+id = "orbital_construction_logistics"
+name = "Orbital Construction Logistics"
+description = """Launch cadence married to assembly capability: heavy structure flown, caught, and built in a continuous flow. The supply chain that makes megastructures schedulable."""
+tier = "cross_domain"
+
+[orbital_construction_logistics.requires]
+fronts = ["launch_services", "space_stations"]
+rd_levels = { reusability = 55, assembly = 55 }
+projects = []
+stature_min = 14000
+
+[orbital_construction_logistics.cost]
+budget = 150
+weeks = 72
+
+[orbital_construction_logistics.unlocks]
+synergy_tags = ["orbital_construction"]
+
+[space_based_compute]
+id = "space_based_compute"
+name = "Space-Based Compute"
+description = """Datacenters in orbit — your chips, your satellites, solar power without night and cooling without water. Latency to anywhere, jurisdiction of nowhere."""
+tier = "cross_domain"
+
+[space_based_compute.requires]
+fronts = ["ai_chips", "satellite_constellations"]
+rd_levels = { process_node = 60, satellite_tech = 60 }
+projects = []
+stature_min = 16000
+
+[space_based_compute.cost]
+budget = 160
+weeks = 75
+
+[space_based_compute.unlocks]
+synergy_tags = ["orbital_compute"]
+
+[autonomous_space_ops]
+id = "autonomous_space_ops"
+name = "Autonomous Space Operations"
+description = """Your agents flying your fleet: launches scheduled, constellations balanced, anomalies handled while the ops floor sleeps. The marginal cost of a mission trends toward electricity."""
+tier = "cross_domain"
+
+[autonomous_space_ops.requires]
+fronts = ["frontier_model_lab", "satellite_constellations", "launch_services"]
+rd_levels = { scaling = 65, network = 55, reliability = 55 }
+projects = ["autonomous_agents"]
+stature_min = 19000
+
+[autonomous_space_ops.cost]
+budget = 175
+weeks = 78
+
+[autonomous_space_ops.unlocks]
+synergy_tags = ["autonomous_space"]
+
+[ai_accelerated_research]
+id = "ai_accelerated_research"
+name = "AI-Accelerated Research"
+description = """The research engine pointed at everything at once — models proposing experiments across chips, rockets, stations, and software. The whole company's R&D starts compounding on one curve."""
+tier = "cross_domain"
+
+[ai_accelerated_research.requires]
+fronts = ["frontier_model_lab", "ai_chips", "launch_services", "space_stations"]
+rd_levels = { scaling = 80, data_quality = 75 }
+projects = ["autonomous_research"]
+stature_min = 24000
+
+[ai_accelerated_research.cost]
+budget = 200
+weeks = 85
+
+[ai_accelerated_research.unlocks]
+synergy_tags = ["ai_research_engine"]

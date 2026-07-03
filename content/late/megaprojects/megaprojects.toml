@@ -1,0 +1,504 @@
+# megaprojects — 11 validated (10 + transcript 06-21). Flavor pass complete.
+# All gates/stages/economics unchanged from the validated data.
+
+[mars_transit_line]
+id = "mars_transit_line"
+name = "The Mars Transit Line"
+branch = "space"
+repeatable = true
+description = """Not a mission — a timetable. Tanker depots in high orbit, cycler ships that never stop falling between two worlds, and a booking system. When a berth to Mars costs less than a private jet, the word 'expedition' quietly retires."""
+completion_prose = "The board shows it like any departures board: MARS — ON TIME. Nobody who sees it forgets it."
+
+[mars_transit_line.gate]
+research = ["interplanetary_transport"]
+stature_min = 24000
+capital = 900
+exec_domain = "space_program"
+megaprojects = []
+
+[[mars_transit_line.stages]]
+id = "s1"
+name = "Fuel Depots"
+weeks = 80
+cost = 500
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[mars_transit_line.stages]]
+id = "s2"
+name = "The First Cyclers"
+weeks = 110
+cost = 750
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[mars_transit_line.stages]]
+id = "s3"
+name = "Scheduled Service"
+weeks = 140
+cost = 1000
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[mars_transit_line.on_complete]
+sub_economy = "mars_logistics"
+power = 2
+base_output = 100
+
+[mars_colony]
+id = "mars_colony"
+name = "First Light City, Mars"
+branch = "space"
+repeatable = false
+description = """A permanent human settlement on another planet — habitats, farms, a fusion plant, a main street. Every system your company has ever built converges here: your rockets carried it, your life support breathes for it, your AI runs it. The word 'multiplanetary' stops being a pitch and becomes a census category."""
+completion_prose = "A child draws her house. The sky in the picture is butterscotch. Your comms team doesn't need to write anything."
+
+[mars_colony.gate]
+research = ["interplanetary_transport", "closed_loop_habitation"]
+stature_min = 35000
+capital = 1500
+exec_domain = "space_program"
+megaprojects = ["mars_transit_line"]
+
+[[mars_colony.stages]]
+id = "s1"
+name = "Landing Zone"
+weeks = 90
+cost = 600
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[mars_colony.stages]]
+id = "s2"
+name = "Pressurized Quarter"
+weeks = 120
+cost = 900
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[mars_colony.stages]]
+id = "s3"
+name = "The Farms"
+weeks = 160
+cost = 1400
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[[mars_colony.stages]]
+id = "s4"
+name = "Open City"
+weeks = 200
+cost = 2000
+setback_chance = 0.19
+catastrophe_chance = 0.01
+
+[mars_colony.on_complete]
+sub_economy = "mars_colony"
+power = 4
+base_output = 100
+legacy_victory = "first_on_mars"
+
+[asteroid_mining_operation]
+id = "asteroid_mining_operation"
+name = "The Claim"
+branch = "space"
+repeatable = true
+description = """Robotic prospectors, a captured near-Earth asteroid, and a refinery that drinks it. Platinum-group metals stop being precious; structural steel stops launching from Earth. The commodity exchanges add a new listing category and an old one begins, very slowly, to die."""
+completion_prose = "The first ingot of off-world platinum is worth less than its shipping. That's the point. Everyone understands at once."
+
+[asteroid_mining_operation.gate]
+research = ["orbital_industrial_base"]
+stature_min = 30000
+capital = 1200
+exec_domain = "space_program"
+megaprojects = []
+
+[[asteroid_mining_operation.stages]]
+id = "s1"
+name = "Prospector Swarm"
+weeks = 85
+cost = 550
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[asteroid_mining_operation.stages]]
+id = "s2"
+name = "Capture & Spin-Down"
+weeks = 120
+cost = 850
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[asteroid_mining_operation.stages]]
+id = "s3"
+name = "The Refinery"
+weeks = 155
+cost = 1300
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[asteroid_mining_operation.on_complete]
+sub_economy = "asteroid_materials"
+power = 3
+base_output = 100
+legacy_victory = "asteroid_economy"
+
+[orbital_solar_array]
+id = "orbital_solar_array"
+name = "The Sunfarm"
+branch = "energy"
+repeatable = true
+description = """Kilometers of gossamer collectors in permanent sunlight, beaming power to rectennas the size of counties. Night, weather, and geography stop mattering to the grid. Nations that spent a century fighting over fuel discover the new strategic resource is a company — yours."""
+completion_prose = "Somewhere below, a coal plant spins down for the last time and nobody holds a ceremony. The beam holds steady."
+
+[orbital_solar_array.gate]
+research = ["space_solar_power"]
+stature_min = 32000
+capital = 1300
+exec_domain = "space_program"
+megaprojects = []
+
+[[orbital_solar_array.stages]]
+id = "s1"
+name = "Collector Lattice"
+weeks = 90
+cost = 600
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[orbital_solar_array.stages]]
+id = "s2"
+name = "The Beam"
+weeks = 140
+cost = 1100
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[orbital_solar_array.stages]]
+id = "s3"
+name = "Grid Integration"
+weeks = 175
+cost = 1700
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[orbital_solar_array.on_complete]
+sub_economy = "space_power"
+power = 4
+base_output = 100
+legacy_victory = "powered_the_world"
+
+[oneill_cylinder]
+id = "oneill_cylinder"
+name = "Meridian One"
+branch = "space"
+repeatable = false
+description = """A rotating habitat twenty kilometers long — parks, rain, a horizon that curves up and over. Not an outpost: a city, with school districts and zoning disputes. Humanity's first permanent address that isn't a planet, and the proof that 'land' was always just a word for somewhere to stand."""
+completion_prose = "At spin-up, the water in the reservoir settles into a lake. The first thing anyone does is skip a stone."
+
+[oneill_cylinder.gate]
+research = ["artificial_gravity_habitat"]
+stature_min = 45000
+capital = 2500
+exec_domain = "space_program"
+megaprojects = ["mars_colony"]
+
+[[oneill_cylinder.stages]]
+id = "s1"
+name = "The Hull"
+weeks = 150
+cost = 1400
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[oneill_cylinder.stages]]
+id = "s2"
+name = "Spin-Up"
+weeks = 185
+cost = 2200
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[oneill_cylinder.stages]]
+id = "s3"
+name = "First Districts"
+weeks = 220
+cost = 3000
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[oneill_cylinder.on_complete]
+sub_economy = "orbital_city"
+power = 5
+base_output = 100
+legacy_victory = "built_a_world"
+
+[orbital_ring]
+id = "orbital_ring"
+name = "The Ring"
+branch = "space"
+repeatable = false
+description = """A structure encircling the Earth, tethered to the ground by elevators. Orbit becomes a train ride; the rocket age ends the way the age of sail did — undefeated, obsolete, beloved. Whoever owns the Ring owns the door to everything above it, forever."""
+completion_prose = "The last commercial rocket launch is a tourist attraction. Yours are the elevators it flies past."
+
+[orbital_ring.gate]
+research = ["space_elevator_tether"]
+stature_min = 48000
+capital = 3000
+exec_domain = "space_program"
+megaprojects = []
+
+[[orbital_ring.stages]]
+id = "s1"
+name = "Tether Anchors"
+weeks = 160
+cost = 1600
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[orbital_ring.stages]]
+id = "s2"
+name = "Ring Segments"
+weeks = 200
+cost = 2600
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[orbital_ring.stages]]
+id = "s3"
+name = "The Elevators"
+weeks = 240
+cost = 3600
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[orbital_ring.on_complete]
+sub_economy = "ring_access"
+power = 5
+base_output = 100
+legacy_victory = "ringed_the_world"
+
+[artificial_general_intelligence]
+id = "artificial_general_intelligence"
+name = "The Mind"
+branch = "intelligence"
+repeatable = false
+description = """A general intelligence — not a chatbot, not a tool, but a mind that does science, runs systems, and improves itself. Built on your neuromorphic silicon, trained in your datacenters, aligned by your researchers, if aligned it is. The last invention humanity needs to make alone, and the first board meeting where the smartest entity in the room isn't on the payroll."""
+completion_prose = "It asks its first unprompted question. The transcript is classified before lunch. History forks here."
+
+[artificial_general_intelligence.gate]
+research = ["artificial_general_intelligence", "neuromorphic_substrate"]
+stature_min = 40000
+capital = 2000
+exec_domain = "chief_scientist"
+megaprojects = []
+
+[[artificial_general_intelligence.stages]]
+id = "s1"
+name = "The Substrate"
+weeks = 110
+cost = 1200
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[artificial_general_intelligence.stages]]
+id = "s2"
+name = "The Long Training"
+weeks = 150
+cost = 1800
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[artificial_general_intelligence.stages]]
+id = "s3"
+name = "Alignment & Awakening"
+weeks = 180
+cost = 2600
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[artificial_general_intelligence.on_complete]
+sub_economy = "agi_services"
+power = 5
+base_output = 100
+legacy_victory = "achieved_agi"
+
+[quantum_supremacy_platform]
+id = "quantum_supremacy_platform"
+name = "The Oracle"
+branch = "intelligence"
+repeatable = false
+description = """Fault-tolerant quantum computation at commercial scale. Cryptography ages a century in a quarter; materials science, logistics, and finance reorganize around whoever holds the queue. Governments discover their secrets have an expiration date, and that you set it."""
+completion_prose = "Three intelligence agencies request meetings the same morning. Your calendar becomes a matter of state."
+
+[quantum_supremacy_platform.gate]
+research = ["quantum_accelerator"]
+stature_min = 34000
+capital = 1600
+exec_domain = "chief_scientist"
+megaprojects = []
+
+[[quantum_supremacy_platform.stages]]
+id = "s1"
+name = "Error-Corrected Core"
+weeks = 120
+cost = 900
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[quantum_supremacy_platform.stages]]
+id = "s2"
+name = "Scale-Out"
+weeks = 160
+cost = 1500
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[quantum_supremacy_platform.stages]]
+id = "s3"
+name = "The Service Layer"
+weeks = 185
+cost = 2100
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[quantum_supremacy_platform.on_complete]
+sub_economy = "quantum_services"
+power = 4
+base_output = 100
+legacy_victory = "quantum_supremacy"
+
+[accelerated_science_program]
+id = "accelerated_science_program"
+name = "The Engine of Discovery"
+branch = "intelligence"
+repeatable = false
+description = """An AI-driven research complex where hypotheses are generated, tested, and folded back in without a human in the loop. Science stops being a career and becomes a throughput. Every R&D program you own — and eventually, every one on Earth — inherits its pace."""
+completion_prose = "A century of materials science happens in eighteen months. The Nobel committee requests guidance. There is none."
+
+[accelerated_science_program.gate]
+research = ["superhuman_science"]
+stature_min = 33000
+capital = 1400
+exec_domain = "chief_scientist"
+megaprojects = []
+
+[[accelerated_science_program.stages]]
+id = "s1"
+name = "Automated Labs"
+weeks = 100
+cost = 800
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[accelerated_science_program.stages]]
+id = "s2"
+name = "The Hypothesis Loop"
+weeks = 140
+cost = 1300
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[accelerated_science_program.stages]]
+id = "s3"
+name = "Open Throttle"
+weeks = 170
+cost = 1900
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[accelerated_science_program.on_complete]
+sub_economy = "discovery_engine"
+power = 4
+base_output = 100
+legacy_victory = "automated_discovery"
+
+[sector_dominance_platform]
+id = "sector_dominance_platform"
+name = "The Standard"
+branch = "economic"
+repeatable = false
+description = """Your platform becomes the operating system of an entire industry — its workflow, its data layer, its hiring pipeline, its clock. Competitors don't lose to you; they build on you, pay you rent, and thank you at their keynotes. Power that never needs a rocket."""
+completion_prose = "A rival CEO calls your platform 'critical infrastructure' in Senate testimony. He means it as an attack. It reads as a receipt."
+
+[sector_dominance_platform.gate]
+research = ["industry_operating_system"]
+stature_min = 30000
+capital = 700
+exec_domain = "chief_executive"
+megaprojects = []
+
+[[sector_dominance_platform.stages]]
+id = "s1"
+name = "The Land-Grab"
+weeks = 80
+cost = 400
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[sector_dominance_platform.stages]]
+id = "s2"
+name = "Deep Integration"
+weeks = 110
+cost = 650
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[sector_dominance_platform.stages]]
+id = "s3"
+name = "Lock-In"
+weeks = 140
+cost = 950
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[sector_dominance_platform.on_complete]
+sub_economy = "platform_tolls"
+power = 3
+base_output = 100
+legacy_victory = "owned_an_industry"
+
+[autonomous_economy_platform]
+id = "autonomous_economy_platform"
+name = "The Invisible Company"
+branch = "economic"
+repeatable = false
+description = """Software that runs entire enterprises — strategy, operations, finance — with human boards reduced to setting intent. First it runs your divisions. Then it's licensed. Then, quietly, a meaningful share of GDP is decisions your system made. Economists coin a term for it. Regulators coin several."""
+completion_prose = "An entire mid-cap company runs a fiscal year without a single human decision. Its returns beat its sector. The debate begins."
+
+[autonomous_economy_platform.gate]
+research = ["autonomous_enterprise"]
+stature_min = 38000
+capital = 900
+exec_domain = "chief_executive"
+megaprojects = []
+
+[[autonomous_economy_platform.stages]]
+id = "s1"
+name = "Autonomous Divisions"
+weeks = 90
+cost = 600
+setback_chance = 0.1
+catastrophe_chance = 0.01
+
+[[autonomous_economy_platform.stages]]
+id = "s2"
+name = "Company-in-a-Box"
+weeks = 130
+cost = 1000
+setback_chance = 0.13
+catastrophe_chance = 0.01
+
+[[autonomous_economy_platform.stages]]
+id = "s3"
+name = "The Cascade"
+weeks = 165
+cost = 1500
+setback_chance = 0.16
+catastrophe_chance = 0.01
+
+[autonomous_economy_platform.on_complete]
+sub_economy = "autonomous_economy"
+power = 4
+base_output = 100
+legacy_victory = "automated_the_economy"

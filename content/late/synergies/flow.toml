@@ -1,0 +1,207 @@
+[cheap_raw_materials]
+id = "cheap_raw_materials"
+name = "Cheap Raw Materials"
+activation = "flow"
+
+[cheap_raw_materials.source]
+fed_by_resources = ["raw_materials", "quantum_advantage"]
+
+[cheap_raw_materials.effect]
+build_cost_mult = { ai_chips = 0.85, launch_services = 0.9, space_stations = 0.9 }
+cap = 0.7
+
+[cheap_raw_materials.tuning]
+strength_curve = "diminishing"
+full_strength_at = 3000
+
+[off_world_resources]
+id = "off_world_resources"
+name = "Off World Resources"
+activation = "flow"
+
+[off_world_resources.source]
+fed_by_resources = ["off_world_materials", "raw_materials"]
+
+[off_world_resources.effect]
+build_cost_mult = { space_stations = 0.85, satellite_constellations = 0.9, space = 0.85 }
+cap = 0.7
+
+[off_world_resources.tuning]
+strength_curve = "diminishing"
+full_strength_at = 4000
+
+[cislunar_logistics]
+id = "cislunar_logistics"
+name = "Cislunar Logistics"
+activation = "flow"
+
+[cislunar_logistics.source]
+fed_by_resources = ["cislunar_capacity"]
+
+[cislunar_logistics.effect]
+opex_mult = { space_stations = 0.9, satellite_constellations = 0.9, space = 0.9 }
+cap = 0.8
+
+[cislunar_logistics.tuning]
+strength_curve = "diminishing"
+full_strength_at = 1500
+
+[mars_manufacturing]
+id = "mars_manufacturing"
+name = "Mars Manufacturing"
+activation = "flow"
+
+[mars_manufacturing.source]
+fed_by_resources = ["off_world_materials", "mars_research"]
+
+[mars_manufacturing.effect]
+build_cost_mult = { space_stations = 0.9, satellite_constellations = 0.92 }
+cap = 0.85
+
+[mars_manufacturing.tuning]
+strength_curve = "diminishing"
+full_strength_at = 30000
+
+[near_free_launch]
+id = "near_free_launch"
+name = "Near Free Launch"
+activation = "flow"
+
+[near_free_launch.source]
+fed_by_resources = ["launch_access"]
+
+[near_free_launch.effect]
+build_cost_mult = { launch_services = 0.6, satellite_constellations = 0.7, space_stations = 0.7, space = 0.75 }
+cap = 0.55
+
+[near_free_launch.tuning]
+strength_curve = "diminishing"
+full_strength_at = 20000
+
+[space_native_civilization]
+id = "space_native_civilization"
+name = "Space Native Civilization"
+activation = "flow"
+
+[space_native_civilization.source]
+fed_by_resources = ["off_world_materials", "orbital_research", "launch_access"]
+
+[space_native_civilization.effect]
+build_cost_mult = { space_stations = 0.8, satellite_constellations = 0.8, launch_services = 0.8 }
+cap = 0.7
+
+[space_native_civilization.tuning]
+strength_curve = "diminishing"
+full_strength_at = 200000
+
+[abundant_clean_energy]
+id = "abundant_clean_energy"
+name = "Abundant Clean Energy"
+activation = "flow"
+
+[abundant_clean_energy.source]
+fed_by_resources = ["clean_energy"]
+
+[abundant_clean_energy.effect]
+opex_mult = { all = 0.85 }
+cap = 0.7
+
+[abundant_clean_energy.tuning]
+strength_curve = "diminishing"
+full_strength_at = 8000
+
+[agi_accelerates_all_rd]
+id = "agi_accelerates_all_rd"
+name = "Agi Accelerates All Rd"
+activation = "flow"
+
+[agi_accelerates_all_rd.source]
+fed_by_resources = ["research_speed"]
+
+[agi_accelerates_all_rd.effect]
+rd_speed_mult = { all = 1.4 }
+cap = 1.6
+
+[agi_accelerates_all_rd.tuning]
+strength_curve = "diminishing"
+full_strength_at = 20000
+
+[all_rd_compounding]
+id = "all_rd_compounding"
+name = "All Rd Compounding"
+activation = "flow"
+
+[all_rd_compounding.source]
+fed_by_resources = ["research_speed"]
+
+[all_rd_compounding.effect]
+rd_speed_mult = { all = 1.3 }
+cap = 1.5
+
+[all_rd_compounding.tuning]
+strength_curve = "diminishing"
+full_strength_at = 12000
+
+[quantum_advantage_all_rd]
+id = "quantum_advantage_all_rd"
+name = "Quantum Advantage All Rd"
+activation = "flow"
+
+[quantum_advantage_all_rd.source]
+fed_by_resources = ["quantum_advantage"]
+
+[quantum_advantage_all_rd.effect]
+rd_speed_mult = { ai_chips = 1.3, satellite_constellations = 1.2, space_stations = 1.2 }
+cap = 1.4
+
+[quantum_advantage_all_rd.tuning]
+strength_curve = "diminishing"
+full_strength_at = 5000
+
+[agi_runs_divisions]
+id = "agi_runs_divisions"
+name = "Agi Runs Divisions"
+activation = "flow"
+
+[agi_runs_divisions.source]
+fed_by_resources = ["division_automation"]
+
+[agi_runs_divisions.effect]
+opex_mult = { all = 0.8 }
+cap = 0.65
+
+[agi_runs_divisions.tuning]
+strength_curve = "diminishing"
+full_strength_at = 8000
+
+[economic_gravity]
+id = "economic_gravity"
+name = "Economic Gravity"
+activation = "flow"
+
+[economic_gravity.source]
+fed_by_resources = ["economic_substrate", "market_lock_in"]
+
+[economic_gravity.effect]
+power_bonus = { all = 2 }
+cap = 0.8
+
+[economic_gravity.tuning]
+strength_curve = "diminishing"
+full_strength_at = 100000
+
+[industry_lock_in]
+id = "industry_lock_in"
+name = "Industry Lock In"
+activation = "flow"
+
+[industry_lock_in.source]
+fed_by_resources = ["market_lock_in"]
+
+[industry_lock_in.effect]
+retention_bonus = { all = 0.15 }
+cap = 0.6
+
+[industry_lock_in.tuning]
+strength_curve = "diminishing"
+full_strength_at = 30000

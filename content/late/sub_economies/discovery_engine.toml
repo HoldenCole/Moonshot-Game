@@ -1,0 +1,35 @@
+# discovery_engine — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[discovery_engine]
+id = "discovery_engine"
+name = "Discovery Engine"
+opened_by = "accelerated_science_program"
+branch = "intelligence"
+scale_label = "research capacity"
+description = "Automated science — a machine that finds the next breakthrough faster with each one it makes."
+icon = "node"
+
+[discovery_engine.scale]
+starting_scale = 80
+scale_cap = 20000
+growth_rate = 0.055
+exec_domain = "chief_scientist"
+
+[discovery_engine.produces]
+revenue_per_scale = 0.008
+[discovery_engine.produces.resources]
+research_speed = 0.012
+
+[discovery_engine.consumes]
+upkeep_per_scale = 0.004
+[discovery_engine.consumes.resources]
+compute = 0.006
+
+[discovery_engine.power]
+power_per_scale_tier = [[2000, 2], [10000, 3], [20000, 4]]
+
+[discovery_engine.events]
+pool = "discovery_engine_events"
+crisis_chance = 0.04
+
+[discovery_engine.feeds_synergies]
+research_speed = ["agi_accelerates_all_rd", "all_rd_compounding"]

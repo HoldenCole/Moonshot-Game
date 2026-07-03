@@ -1,0 +1,90 @@
+[city_population_milestone]
+id = "city_population_milestone"
+pool = "orbital_city_events"
+kind = "flavor"
+weight = 1.2
+cooldown_weeks = 9999
+headline = "The orbital city passes a hundred thousand residents"
+body = """A hundred thousand people now live in a world you built, under a sky you \
+raised. It is, by any measure, a city — the first one humanity has ever placed in \
+the sky."""
+[city_population_milestone.effects]
+power_delta = 1
+reputation_delta = 1
+
+[city_spin_anomaly]
+id = "city_spin_anomaly"
+pool = "orbital_city_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 70
+headline = "Rotation instability detected"
+body = """Engineers flag a wobble in the cylinder's spin — the system that makes its \
+gravity. A precautionary partial evacuation and recalibration would be costly but \
+prudent; pressing on risks a far worse outcome."""
+[[city_spin_anomaly.choices]]
+label = "Pause and recalibrate ($200M)"
+[city_spin_anomaly.choices.effects]
+revenue_delta = -200
+output_mult = 0.9
+[[city_spin_anomaly.choices]]
+label = "Monitor and continue"
+[city_spin_anomaly.choices.effects]
+output_mult = 1.0
+
+[city_culture_blooms]
+id = "city_culture_blooms"
+pool = "orbital_city_events"
+kind = "flavor"
+weight = 1.0
+cooldown_weeks = 60
+headline = "A native culture takes root in the city"
+body = """The city's residents — many born there — are developing their own art, \
+slang, and traditions. Something genuinely new in human history is growing inside \
+your structure."""
+[city_culture_blooms.effects]
+reputation_delta = 1
+
+[city_immigration_wave]
+id = "city_immigration_wave"
+pool = "orbital_city_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 75
+headline = "Waitlist for residency surges"
+body = """Demand to live in the orbital city far outstrips capacity. Accelerating \
+the buildout would grow the population — and the economy — faster."""
+choices = [
+  { label = "Accelerate the buildout — meet the demand", effects = { scale_mult = 1.06 } },
+  { label = "Hold the pace — auction the scarce berths", effects = { revenue_delta = 30, reputation_delta = -1 } },
+]
+
+[city_immigration_wave.effects]
+scale_mult = 1.06
+
+
+[city_film_production]
+id = "city_film_production"
+pool = "orbital_city_events"
+kind = "opportunity"
+weight = 1.0
+cooldown_weeks = 85
+headline = "A studio wants to shoot the first orbital feature film"
+body = "Six months, forty crew, one district dressed as the future it's already living in. The disruption to residents is real; so is what a billion people falling in love with your city does for the waiting list."
+choices = [
+  { label = "Roll cameras — sell the dream", effects = { revenue_delta = 35, reputation_delta = 1, output_mult = 0.98 } },
+  { label = "Decline — residents aren't a backdrop", effects = { reputation_delta = 1 } },
+]
+
+[city_first_strike]
+id = "city_first_strike"
+pool = "orbital_city_events"
+kind = "crisis"
+weight = 1.0
+cooldown_weeks = 75
+headline = "The dockworkers of Meridian One walk out"
+body = "The first labor action in orbit: cargo handlers demanding hazard parity with Earth-side crews. Every hour idle costs a fortune, every camera is watching how the company town handles its first strike — and there is no other workforce three hundred kilometers up."
+choices = [
+  { label = "Meet the demands — set the wage precedent", effects = { revenue_delta = -30, reputation_delta = 1 } },
+  { label = "Hold the line and wait them out", effects = { output_mult = 0.92, reputation_delta = -1 } },
+]

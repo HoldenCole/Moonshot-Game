@@ -1,0 +1,255 @@
+# research/launch_services — 09 tree, validated structure (transcript 06-21). Budget/weeks: doc values where authored, tier-formula anchors otherwise.
+[rapid_reuse]
+id = "rapid_reuse"
+sub_industry = "launch_services"
+name = "Rapid Reuse"
+description = """Land it, inspect it, fly it again in days — not months. The refurbishment line becomes a pit stop, and your cost per kilogram starts a dive your rivals can't follow."""
+tier = "applied"
+
+[rapid_reuse.requires]
+rd_levels = { reusability = 40, reliability = 40 }
+projects = []
+stature_min = 0
+
+[rapid_reuse.cost]
+budget = 25
+weeks = 32
+
+[rapid_reuse.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[engine_reuse]
+id = "engine_reuse"
+sub_industry = "launch_services"
+name = "Engine Reuse Program"
+description = """Engines that fly dozens of missions with inspection, not rebuild. The most expensive part of the rocket becomes the most amortized — the quiet arithmetic behind every cheap launch."""
+tier = "applied"
+
+[engine_reuse.requires]
+rd_levels = { propulsion = 45, reusability = 40 }
+projects = []
+stature_min = 0
+
+[engine_reuse.cost]
+budget = 25
+weeks = 32
+
+[engine_reuse.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[high_cadence_ops]
+id = "high_cadence_ops"
+sub_industry = "launch_services"
+name = "High-Cadence Operations"
+description = """Launch as an operations discipline: standing crews, rolling pads, a countdown that's routine instead of a holiday. The company that flies weekly learns faster than the one that flies quarterly."""
+tier = "applied"
+
+[high_cadence_ops.requires]
+rd_levels = { reliability = 45, reusability = 35 }
+projects = []
+stature_min = 0
+
+[high_cadence_ops.cost]
+budget = 25
+weeks = 32
+
+[high_cadence_ops.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[heavy_lift_program]
+id = "heavy_lift_program"
+sub_industry = "launch_services"
+name = "Heavy-Lift Program"
+description = """The big vehicle: a hundred tonnes to orbit in one throw. Stations, depots, and interplanetary stacks stop being paper studies the day it flies."""
+tier = "advanced"
+
+[heavy_lift_program.requires]
+rd_levels = { propulsion = 65, reusability = 60, reliability = 60 }
+projects = ["rapid_reuse", "engine_reuse"]
+stature_min = 11000
+
+[heavy_lift_program.cost]
+budget = 163
+weeks = 80
+
+[heavy_lift_program.unlocks]
+products = ["super_heavy_vehicle"]
+frontier_unlock = ["interplanetary_transport"]
+megaproject_unlock = []
+
+[in_space_refueling]
+id = "in_space_refueling"
+sub_industry = "launch_services"
+name = "In-Space Refueling"
+description = """Tankers topping off ships already in orbit. The rocket equation's tyranny ends here — with a full tank in space, everywhere in the system is suddenly in range."""
+tier = "advanced"
+
+[in_space_refueling.requires]
+rd_levels = { propulsion = 60, reliability = 65 }
+projects = ["high_cadence_ops", "rapid_reuse"]
+stature_min = 13000
+
+[in_space_refueling.cost]
+budget = 176
+weeks = 83
+
+[in_space_refueling.unlocks]
+products = []
+frontier_unlock = ["interplanetary_transport"]
+megaproject_unlock = []
+capability = { slot = 1 }
+
+[interplanetary_transport]
+id = "interplanetary_transport"
+sub_industry = "launch_services"
+name = "Interplanetary Transport"
+description = """Ships, depots, trajectories, and operations for routine flight between worlds. Not a mission architecture — a shipping lane. The research that turns Mars from a destination into a schedule."""
+tier = "frontier"
+
+[interplanetary_transport.requires]
+rd_levels = { propulsion = 95, reusability = 90, reliability = 90 }
+projects = ["heavy_lift_program", "in_space_refueling"]
+stature_min = 26000
+
+[interplanetary_transport.cost]
+budget = 705
+weeks = 147
+
+[interplanetary_transport.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["mars_transit_line"]
+power = 1
+
+[space_elevator_tether]
+id = "space_elevator_tether"
+sub_industry = "launch_services"
+name = "Space Elevator Tether"
+description = """A cable to the sky — materials science at the edge of the possible, anchoring the dream of orbit without rockets. The research program the Ring is built on."""
+tier = "frontier"
+
+[space_elevator_tether.requires]
+rd_levels = { propulsion = 90, reliability = 95 }
+projects = ["heavy_lift_program"]
+stature_min = 28000
+
+[space_elevator_tether.cost]
+budget = 730
+weeks = 150
+
+[space_elevator_tether.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = ["orbital_ring"]
+power = 1
+
+[methalox_engine]
+id = "methalox_engine"
+sub_industry = "launch_services"
+name = "Methalox Engine"
+description = """Methane and liquid oxygen — clean-burning, cheap, and manufacturable on Mars. The propellant choice that says, quietly, where you actually intend to go."""
+tier = "applied"
+
+[methalox_engine.requires]
+rd_levels = { propulsion = 40, reusability = 35 }
+projects = []
+stature_min = 0
+
+[methalox_engine.cost]
+budget = 25
+weeks = 32
+
+[methalox_engine.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[autonomous_landing]
+id = "autonomous_landing"
+sub_industry = "launch_services"
+name = "Autonomous Landing"
+description = """Boosters that fly themselves home through wind shear and engine-out cases. Every recovery is a rocket you didn't have to build twice."""
+tier = "applied"
+
+[autonomous_landing.requires]
+rd_levels = { reliability = 50, reusability = 45 }
+projects = ["rapid_reuse"]
+stature_min = 3000
+
+[autonomous_landing.cost]
+budget = 40
+weeks = 39
+
+[autonomous_landing.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[rideshare_platform]
+id = "rideshare_platform"
+sub_industry = "launch_services"
+name = "Rideshare Platform"
+description = """Sell the rocket by the kilogram — dozens of payloads, one manifest, standardized dispensers. The small-satellite economy's landlord."""
+tier = "applied"
+
+[rideshare_platform.requires]
+rd_levels = { reliability = 45, reusability = 40 }
+projects = ["high_cadence_ops"]
+stature_min = 2000
+
+[rideshare_platform.cost]
+budget = 35
+weeks = 37
+
+[rideshare_platform.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[nuclear_thermal]
+id = "nuclear_thermal"
+sub_industry = "launch_services"
+name = "Nuclear Thermal Propulsion"
+description = """Reactor-heated propellant — twice the efficiency of chemistry, transit times cut in months. Politically radioactive, physically superb."""
+tier = "advanced"
+
+[nuclear_thermal.requires]
+rd_levels = { propulsion = 70, reliability = 65 }
+projects = ["in_space_refueling"]
+stature_min = 15000
+
+[nuclear_thermal.cost]
+budget = 190
+weeks = 87
+
+[nuclear_thermal.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []
+
+[fairing_recovery]
+id = "fairing_recovery"
+sub_industry = "launch_services"
+name = "Fairing Recovery"
+description = """Catching the nose cone — millions of dollars of aerospace-grade composite that used to be ocean litter. Unsexy, and pure margin."""
+tier = "applied"
+
+[fairing_recovery.requires]
+rd_levels = { reusability = 42, reliability = 38 }
+projects = ["rapid_reuse"]
+stature_min = 1500
+
+[fairing_recovery.cost]
+budget = 32
+weeks = 35
+
+[fairing_recovery.unlocks]
+products = []
+frontier_unlock = []
+megaproject_unlock = []

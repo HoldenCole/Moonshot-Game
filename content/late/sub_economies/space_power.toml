@@ -1,0 +1,33 @@
+# space_power — generated from validated content (13). Revenue/upkeep rates: tuning anchors.
+[space_power]
+id = "space_power"
+name = "Space Power"
+opened_by = "orbital_solar_array"
+branch = "energy"
+scale_label = "grid capacity"
+description = "Orbital solar beaming baseload power to the ground — a utility nations depend on."
+icon = "node"
+
+[space_power.scale]
+starting_scale = 200
+scale_cap = 20000
+growth_rate = 0.04
+exec_domain = "space_program"
+
+[space_power.produces]
+revenue_per_scale = 0.008
+[space_power.produces.resources]
+clean_energy = 0.015
+
+[space_power.consumes]
+upkeep_per_scale = 0.002
+
+[space_power.power]
+power_per_scale_tier = [[2000, 2], [8000, 3], [20000, 4]]
+
+[space_power.events]
+pool = "space_power_events"
+crisis_chance = 0.04
+
+[space_power.feeds_synergies]
+clean_energy = ["abundant_clean_energy"]
