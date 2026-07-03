@@ -7,6 +7,7 @@ import type { Alert, LogEntry, RunwayBand } from "./log";
 import type { CompanyContent } from "./content";
 import type { ProductsRuntime } from "./products";
 import type { EventState, ResolvedEvent } from "./events";
+import type { LateState } from "@/engine/late/runtime";
 
 export const SCHEMA_VERSION = 1;
 
@@ -299,4 +300,8 @@ export interface GameState {
   runOutcome: RunOutcome | null;
   /** Unlocked achievement ids (persist across the run). */
   achievements: string[];
+  /** The late-game (v2) runtime — research, megaprojects, empire, contracts,
+   *  executives, rivals. Born once the run crosses the Scale-Up valuation
+   *  threshold; absent before that. */
+  late?: LateState;
 }

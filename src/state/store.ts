@@ -30,6 +30,16 @@ import {
 } from "@/engine/productsRuntime";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
+import {
+  bootLate, runLateTurn, lateSnapshot, lateTurnsDue, lateReportToLog, LATE_UNLOCK_VALUATION,
+  lateBeginMega as rtBeginMega, lateStartResearch as rtStartResearch, lateTakeContract as rtTakeContract,
+  lateRefreshMarket as rtRefreshMarket, lateSetPosture as rtSetPosture, lateHireExec as rtHireExec,
+  lateFireExec as rtFireExec, type LateAction, type LateState,
+} from "@/engine/late/runtime";
+import type { MegaprojectDef } from "@/engine/late/megaprojects";
+import type { ContractTemplate } from "@/engine/late/contracts";
+import type { Candidate } from "@/engine/late/executives";
+import type { Posture } from "@/engine/late/empire";
 import type { Autonomy, Exec, ExecArea } from "@/domain/state";
 import {
   acquisitionOffer,
@@ -91,6 +101,22 @@ interface GameStore {
   /** Set an area's autonomy. */
   setAutonomy: (area: ExecArea, autonomy: Autonomy) => void;
 
+  // Late-game (v2) player actions — no-ops until the slice is born.
+  /** Commit to a megaproject build. */
+  lateBeginMega: (def: MegaprojectDef) => void;
+  /** Start researching a node on the late tree. */
+  lateStartResearch: (id: string) => void;
+  /** Take a contract from the current market. */
+  lateTakeContract: (t: ContractTemplate) => void;
+  /** Refresh the contract market against current standing. */
+  lateRefreshMarket: () => void;
+  /** Set a sub-economy's posture (grow / harvest / hold). */
+  lateSetPosture: (subId: string, posture: Posture) => void;
+  /** Hire a late-game executive candidate. */
+  lateHireExec: (cand: Candidate) => void;
+  /** Fire the executive in a domain. */
+  lateFireExec: (domain: string) => void;
+
   /** Draw a debt facility from a bank (cash in now, principal due at maturity). */
   takeLoan: (bankId: string, amount: number, termWeeks: number) => void;
   /** Repay an outstanding loan's principal in full. */
@@ -148,10 +174,74 @@ interface GameStore {
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
 /** Record any newly-unlocked achievements and stage them for a toast. */
+/** Cap on the narrative log so a long late-game run (many turn beats) doesn't
+ *  grow it without bound; the rail only ever shows the recent tail. */
+const LOG_CAP = 400;
+
+/** Drive the late-game slice after a base advance: birth it when the run crosses
+ *  the Scale-Up threshold, then run any 4-week turns due to catch up to the
+ *  clock — reconciling net cash back to the company and folding turn beats into
+ *  the news feed. A no-op until the threshold is crossed. */
+function driveLate(game: GameState, content: ContentDB): GameState {
+  if (!game.late) {
+    if (game.company.financials.valuation < LATE_UNLOCK_VALUATION) return game;
+    const snap = lateSnapshot(game.company, content.productById);
+    const late = bootLate(content.late, content.lateExec, snap, game.meta.seed, game.clock.week);
+    const entry = {
+      id: `late-open-${game.clock.week}`, week: game.clock.week, kind: "milestone" as const, tone: "opportunity" as const,
+      headline: "Scale-Up: the frontier opens",
+      detail: "Research, megaprojects, executives, deep contracts, and the rival titans are now in play.",
+    };
+    return { ...game, late, log: [...game.log, entry].slice(-LOG_CAP) };
+  }
+
+  const toRun = lateTurnsDue(game.late, game.clock.week) - game.late.slice.week / 4;
+  if (toRun <= 0) return game;
+
+  let late = game.late;
+  let cash = game.company.financials.cash;
+  const entries = [];
+  for (let i = 0; i < toRun; i++) {
+    const snap = lateSnapshot({ ...game.company, financials: { ...game.company.financials, cash } }, content.productById);
+    const res = runLateTurn(late, content.late, content.lateExec, snap, game.meta.seed);
+    late = res.late;
+    cash += res.report.netCash;
+    entries.push(...lateReportToLog(res.report, game.clock.week));
+  }
+  return {
+    ...game,
+    company: { ...game.company, financials: { ...game.company.financials, cash } },
+    late,
+    log: [...game.log, ...entries].slice(-LOG_CAP),
+  };
+}
+
 function withAch(game: GameState): { game: GameState; achievementToast?: string[] } {
   const newly = newlyUnlocked(game);
   if (newly.length === 0) return { game };
   return { game: { ...game, achievements: [...game.achievements, ...newly] }, achievementToast: newly };
+}
+
+/** Fold a late-game player action back into the store: apply its cash change to
+ *  company cash and store the new slice. A no-op when there's no live slice or
+ *  the action didn't apply. */
+function applyLate(
+  s: { game: GameState | null; content: ContentDB },
+  fn: (late: LateState, content: ContentDB, game: GameState) => LateAction,
+): Partial<{ game: GameState }> {
+  if (!s.game?.late) return {};
+  const action = fn(s.game.late, s.content, s.game);
+  if (action.ok === false) return {};
+  return {
+    game: {
+      ...s.game,
+      company: {
+        ...s.game.company,
+        financials: { ...s.game.company.financials, cash: s.game.company.financials.cash + action.cashDelta },
+      },
+      late: action.late,
+    },
+  };
 }
 
 export const useGame = create<GameStore>((set, get) => ({
@@ -190,7 +280,7 @@ export const useGame = create<GameStore>((set, get) => ({
       // Difficulty bends the world's volatility before the tick reads it.
       const tuning = applyWorldDifficulty(s.content.tuning, s.game.difficulty);
       const r = engineAdvance(s.game, tuning, mode, env);
-      const a = withAch(r.state);
+      const a = withAch(driveLate(r.state, s.content));
       return {
         game: a.game,
         lastAdvance: { weeks: r.weeks, stopReason: r.stopReason, atWeek: r.state.clock.week },
@@ -275,6 +365,15 @@ export const useGame = create<GameStore>((set, get) => ({
       const a = withAch({ ...s.game, company: { ...s.game.company, delegation: { ...s.game.company.delegation, [area]: autonomy } } });
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
+
+  // ── Late-game (v2) actions ──────────────────────────────────────────────────
+  lateBeginMega: (def) => set((s) => applyLate(s, (late) => rtBeginMega(late, def))),
+  lateStartResearch: (id) => set((s) => applyLate(s, (late, c) => rtStartResearch(late, c.late, id))),
+  lateTakeContract: (t) => set((s) => applyLate(s, (late) => rtTakeContract(late, t))),
+  lateRefreshMarket: () => set((s) => applyLate(s, (late, c, g) => rtRefreshMarket(late, c.late, g.meta.seed))),
+  lateSetPosture: (subId, posture) => set((s) => applyLate(s, (late) => rtSetPosture(late, subId, posture))),
+  lateHireExec: (cand) => set((s) => applyLate(s, (late, c) => rtHireExec(late, c.lateExec, cand))),
+  lateFireExec: (domain) => set((s) => applyLate(s, (late, c) => rtFireExec(late, c.lateExec, domain))),
 
   takeLoan: (bankId, amount, termWeeks) =>
     set((s) => {

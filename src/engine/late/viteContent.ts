@@ -4,6 +4,13 @@
 // so the content ships in the bundle exactly like the base game's loader.
 // ============================================================================
 import { parse } from "smol-toml";
+import type { GameContent } from "./turn";
+import {
+  loadSubEconomies, loadSynergies, loadContracts, loadPowerEvents, loadSubEvents,
+  loadResearchNodes, loadMegaprojects, loadRivals, megaMetaFrom, loadEras,
+  loadCycleTuning, loadPressures, loadExecutives, type ExecContent,
+} from "./content_loader";
+import { pressureTriggerMap } from "./pacing";
 
 type Raw = Record<string, unknown>;
 const files = import.meta.glob("/content/late/**/*.toml", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
@@ -40,4 +47,36 @@ export function assembleLateContent(): Record<string, Raw> {
     pressures: one("pressures/pressures.toml"),
     ui: { loading_lines: one("ui/loading_lines.toml") },
   };
+}
+
+/** Assemble the typed late-game GameContent the turn engine consumes, from the
+ *  raw TOML shape (the same wiring the integration test performs). */
+export function buildLateContent(raw: Record<string, Raw> = assembleLateContent()): GameContent {
+  const contracts = loadContracts(raw.contracts as never);
+  const megaprojects = loadMegaprojects(raw.megaprojects as never);
+  const rivals = loadRivals(raw.rivals as never);
+  const pressures = loadPressures(raw.pressures as never);
+  return {
+    researchNodes: loadResearchNodes(raw.research as never),
+    megaprojects,
+    subEconomies: loadSubEconomies(raw.sub_economies as never),
+    synergies: loadSynergies(raw.synergies as never),
+    contractTemplates: contracts.templates,
+    customers: contracts.customers,
+    powerEvents: loadPowerEvents(raw.events_power as never),
+    subEvents: loadSubEvents(raw.events_sub as never),
+    worldEvents: loadSubEvents(raw.events_world as never),
+    rivalDefs: rivals.defs,
+    rivalTuning: rivals.tuning,
+    megaMeta: megaMetaFrom(megaprojects),
+    eras: loadEras(raw.eras as never),
+    cycleTuning: loadCycleTuning(raw.cycles as never),
+    pressures,
+    pressureTriggers: pressureTriggerMap(Object.values(pressures)),
+  };
+}
+
+/** The executive-system content (domains, traits, archetypes, names, tuning). */
+export function buildLateExecContent(raw: Record<string, Raw> = assembleLateContent()): ExecContent {
+  return loadExecutives(raw.executives as never);
 }

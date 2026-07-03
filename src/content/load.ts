@@ -22,6 +22,9 @@ import type { Tuning } from "@/domain/tuning";
 import { PLAYABLE_SUB_INDUSTRIES } from "@/domain/ids";
 import { generateInvestors } from "@/engine/investorgen";
 import { isCapacityType, isProductArchetype, isRDLine, validateProducts } from "./productsValidation";
+import { assembleLateContent, buildLateContent, buildLateExecContent } from "@/engine/late/viteContent";
+import type { GameContent } from "@/engine/late/turn";
+import type { ExecContent } from "@/engine/late/content_loader";
 
 /** The roster grows from the 7 hand-authored anchors to this many firms by
  *  procedurally generating the rest from the anchors as archetypes (a fixed seed
@@ -59,6 +62,12 @@ export interface ContentDB {
   rdLineById: Map<string, RDLine>;
   productById: Map<string, ProductArchetype>;
   capacityById: Map<string, CapacityType>;
+  /** The late-game (v2) systems content — research tree, megaprojects, empire,
+   *  contracts, rivals, eras. Consumed by the late turn engine once a run crosses
+   *  the Scale-Up threshold. */
+  late: GameContent;
+  /** The executive-system content (domains, traits, archetypes) for the late game. */
+  lateExec: ExecContent;
   /** Cross-reference issues found at load (unresolved ids). Empty when clean. */
   warnings: string[];
 }
@@ -353,6 +362,11 @@ export function loadContent(): ContentDB {
   const capacityTypes = loadKeyed<CapacityType>(Object.entries(capacityGlob), isCapacityType);
   const productTuningBySub = loadProductTuning(productsGlob);
 
+  // Late-game (v2) content — parsed once from content/late/**.toml.
+  const lateRaw = assembleLateContent();
+  const late = buildLateContent(lateRaw);
+  const lateExec = buildLateExecContent(lateRaw);
+
   const base = {
     companies,
     investors,
@@ -373,6 +387,8 @@ export function loadContent(): ContentDB {
     rdLineById: indexBy(rdLines),
     productById: indexBy(products),
     capacityById: indexBy(capacityTypes),
+    late,
+    lateExec,
   };
 
   // Only validate the depth system once any of its content is present, so an
