@@ -209,6 +209,21 @@
   flex-direction: column;
   gap: 6px;
 }
+/* Separates the base surfaces from the late-game "frontier" surfaces. */
+.navrail__divider {
+  width: 24px;
+  height: 1px;
+  margin: 8px auto;
+  background: var(--border);
+}
+/* The late-game design-pack tabs carry their own dark theme + padding, so their
+   scroll container adds none of its own. */
+.late-scroll {
+  padding: 0;
+}
+.late-scroll > * {
+  min-height: 100%;
+}
 .navrail__item {
   position: relative;
   width: 42px;

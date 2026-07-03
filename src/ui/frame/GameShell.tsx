@@ -11,6 +11,10 @@ import { WorldView } from "@/ui/views/WorldView";
 import { TeamView } from "@/ui/views/TeamView";
 import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
+import {
+  ResearchTabLive, MegaprojectsTabLive, EmpireTabLive, ExecutivesTabLive,
+  ContractsTabLive, StandingTabLive, BriefingTabLive,
+} from "@/ui/late/connectors";
 import { EventModal } from "@/ui/events/EventModal";
 import { ExitFlow } from "@/ui/exit/ExitFlow";
 import { AchievementToast } from "@/ui/achievements/AchievementToast";
@@ -70,6 +74,13 @@ export function GameShell() {
           {view === "world" && <WorldView />}
           {view === "team" && <TeamView />}
           {view === "about" && <AboutView />}
+          {view === "research" && <div className="workspace-scroll late-scroll"><ResearchTabLive /></div>}
+          {view === "megaprojects" && <div className="workspace-scroll late-scroll"><MegaprojectsTabLive /></div>}
+          {view === "empire" && <div className="workspace-scroll late-scroll"><EmpireTabLive /></div>}
+          {view === "executives" && <div className="workspace-scroll late-scroll"><ExecutivesTabLive /></div>}
+          {view === "contracts" && <div className="workspace-scroll late-scroll"><ContractsTabLive /></div>}
+          {view === "standing" && <div className="workspace-scroll late-scroll"><StandingTabLive /></div>}
+          {view === "briefing" && <div className="workspace-scroll late-scroll"><BriefingTabLive /></div>}
         </main>
         {showRail && <NarrativeRail />}
         {!railOpen && view !== "market" && view !== "world" && (
