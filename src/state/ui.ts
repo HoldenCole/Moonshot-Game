@@ -14,6 +14,10 @@ interface UiStore {
    *  anchors as the player moves between steps (the wizard hides per-step DOM). */
   newGameStep: string;
   setNewGameStep: (s: string) => void;
+  /** Set the moment a company is founded so the shell shows the founding
+   *  interstitial once, then cleared when the player enters the game. */
+  justFounded: boolean;
+  setJustFounded: (b: boolean) => void;
 }
 
 export const useUi = create<UiStore>((set) => ({
@@ -23,4 +27,6 @@ export const useUi = create<UiStore>((set) => ({
   setPaletteOpen: (paletteOpen) => set({ paletteOpen }),
   newGameStep: "welcome",
   setNewGameStep: (newGameStep) => set({ newGameStep }),
+  justFounded: false,
+  setJustFounded: (justFounded) => set({ justFounded }),
 }));

@@ -209,6 +209,182 @@
   flex-direction: column;
   gap: 6px;
 }
+/* ── Founding interstitial (the loading screen as a moment) ─────────────────── */
+.fi {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(178deg, #0d1119, #090b10);
+  color: #e7ecf4;
+}
+.fi__doc {
+  width: min(680px, 90vw);
+  text-align: center;
+  padding: 24px;
+}
+.fi__kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #69748a;
+  opacity: 0;
+  animation: fi-in 0.6s ease 0.1s forwards;
+}
+.fi__date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #4b566b;
+  margin-top: 6px;
+  opacity: 0;
+  animation: fi-in 0.6s ease 0.3s forwards;
+}
+.fi__company {
+  font-weight: 900;
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 20px 0 6px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fi-rise 0.7s ease 0.5s forwards;
+}
+.fi__founder {
+  font-size: 13.5px;
+  color: #97a2b4;
+  opacity: 0;
+  animation: fi-in 0.6s ease 0.8s forwards;
+}
+.fi__founder b {
+  color: #e7ecf4;
+  font-weight: 600;
+}
+.fi__facts {
+  display: flex;
+  justify-content: center;
+  gap: 34px;
+  margin: 30px 0 8px;
+  opacity: 0;
+  animation: fi-in 0.6s ease 1.05s forwards;
+}
+.fi-fact__v {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 17px;
+}
+.fi-fact__v--cash { color: #3ad29a; }
+.fi-fact__v--frontier { color: #6f9cff; }
+.fi-fact__v--era { color: #bd9dff; }
+.fi-fact__k {
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #4b566b;
+  margin-top: 4px;
+}
+.fi__scene {
+  max-width: 480px;
+  margin: 22px auto 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #97a2b4;
+  font-style: italic;
+  opacity: 0;
+  animation: fi-in 0.8s ease 1.35s forwards;
+}
+.fi__prog {
+  margin: 40px auto 0;
+  width: min(560px, 84vw);
+  opacity: 0;
+  animation: fi-in 0.5s ease 0.9s forwards;
+}
+.fi__prog svg {
+  width: 100%;
+  height: 74px;
+  overflow: visible;
+}
+.fi__ghost {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 1.6;
+  stroke-dasharray: 2 6;
+}
+.fi__fill {
+  fill: none;
+  stroke: url(#fi-grad);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.45s cubic-bezier(0.4, 0, 0.3, 1);
+  filter: drop-shadow(0 0 5px rgba(155, 140, 255, 0.3));
+}
+.fi__tick {
+  fill: #0b0e14;
+  stroke-width: 1.4;
+  opacity: 0.35;
+  transition: opacity 0.3s;
+}
+.fi__tick.lit { opacity: 1; }
+.fi__head {
+  fill: #fff;
+  filter: drop-shadow(0 0 6px rgba(232, 199, 106, 0.8));
+  opacity: 0;
+}
+.fi__label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #69748a;
+  letter-spacing: 0.14em;
+  margin-top: 12px;
+  min-height: 16px;
+}
+.fi__label b { color: #97a2b4; font-weight: 500; }
+@keyframes fi-in { to { opacity: 1; } }
+@keyframes fi-rise { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .fi__kicker, .fi__date, .fi__company, .fi__founder, .fi__facts, .fi__scene, .fi__prog {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .fi__fill { transition: none; }
+}
+
+/* The home reframe: the empire standing band atop the dashboard once Scale-Up
+   is reached. */
+.late-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  margin-bottom: 12px;
+}
+.late-band__era {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.late-band__kicker {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-family: var(--mono);
+}
+.late-band__eraName {
+  font-size: 18px;
+  font-weight: 700;
+}
+.late-band__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+  margin-left: auto;
+}
+
 /* Separates the base surfaces from the late-game "frontier" surfaces. */
 .navrail__divider {
   width: 24px;

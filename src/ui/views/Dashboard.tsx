@@ -18,6 +18,7 @@ import { FinancialsPanel } from "@/ui/operating/FinancialsPanel";
 import { PortfolioPanel } from "@/ui/operating/PortfolioPanel";
 import { ExitActions } from "@/ui/exit/ExitActions";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
+import { LateStandingBand } from "./LateStandingBand";
 import {
   DASH_PANELS,
   DASH_PANEL_IDS,
@@ -206,6 +207,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
 
   return (
     <div className="workspace-scroll">
+      <LateStandingBand />
       <ActiveDecisions onNavigate={onNavigate} />
       <ExitActions />
       <div className="dash-toolbar">

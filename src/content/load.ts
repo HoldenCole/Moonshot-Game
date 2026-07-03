@@ -68,6 +68,9 @@ export interface ContentDB {
   late: GameContent;
   /** The executive-system content (domains, traits, archetypes) for the late game. */
   lateExec: ExecContent;
+  /** In-world loading/founding lines: a per-sub-industry founding line and a
+   *  rotating generic pool (for the founding interstitial). */
+  lateLoading: { founding: Record<string, string>; generic: string[] };
   /** Cross-reference issues found at load (unresolved ids). Empty when clean. */
   warnings: string[];
 }
@@ -366,6 +369,8 @@ export function loadContent(): ContentDB {
   const lateRaw = assembleLateContent();
   const late = buildLateContent(lateRaw);
   const lateExec = buildLateExecContent(lateRaw);
+  const ll = (lateRaw.ui as { loading_lines?: { founding?: Record<string, string>; generic?: { lines?: string[] } } })?.loading_lines ?? {};
+  const lateLoading = { founding: ll.founding ?? {}, generic: ll.generic?.lines ?? [] };
 
   const base = {
     companies,
@@ -389,6 +394,7 @@ export function loadContent(): ContentDB {
     capacityById: indexBy(capacityTypes),
     late,
     lateExec,
+    lateLoading,
   };
 
   // Only validate the depth system once any of its content is present, so an

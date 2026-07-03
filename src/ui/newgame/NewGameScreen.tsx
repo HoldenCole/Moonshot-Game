@@ -115,6 +115,7 @@ export function NewGameScreen() {
   // coachmark anchors as the player moves between steps (anchors live on
   // different steps now).
   const setNewGameStep = useUi((s) => s.setNewGameStep);
+  const setJustFounded = useUi((s) => s.setJustFounded);
   useEffect(() => setNewGameStep(step), [step, setNewGameStep]);
 
   const preset = matchingPreset(axes);
@@ -152,6 +153,7 @@ export function NewGameScreen() {
   const found = () => {
     if (!industry || !sub) return;
     const custom = archetypeId === "custom";
+    setJustFounded(true); // show the founding interstitial before the shell
     newGame({
       founderName: founderName.trim() || "Alex Rivera",
       companyName: effectiveCompany.trim() || suggestedCompany,
