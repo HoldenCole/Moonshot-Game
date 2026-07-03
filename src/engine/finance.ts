@@ -29,10 +29,26 @@ export function revenueMultiple(hype: number): number {
   return clamp(4 + (hype / 100) * 9, 4, 14);
 }
 
-/** Operating (enterprise) value ($M): the revenue multiple applied to revenue. */
+/** Trailing P/E a *profitable* company earns — the earnings analogue of
+ *  revenueMultiple. Richer in hot sectors and for fast growers, leaner in cold
+ *  ones, so a profitable business is priced on its earnings power the way the
+ *  public market actually prices one (a believable ~12–30× P/E). */
+export function earningsMultiple(hype: number, growth = 0): number {
+  const base = 12 + (hype / 100) * 13; // 12–25 from sector heat
+  return clamp(base + clamp(growth, 0, 1) * 10, 12, 30); // up to +10 for fast growers
+}
+
+/** Operating (enterprise) value ($M): the greater of a revenue multiple on the
+ *  top line and an earnings multiple on net income. Early / loss-making companies
+ *  are carried on the revenue mark; once real profit arrives, the business is
+ *  worth its earnings power — which keeps the reported P/E realistic instead of
+ *  collapsing to the revenue multiple. */
 export function businessValue(c: PlayerCompany, world: WorldState): Money {
   const hype = world.hype[c.industry] ?? 55;
-  return c.financials.revenue * revenueMultiple(hype);
+  const revenueBased = c.financials.revenue * revenueMultiple(hype);
+  const income = netIncomeAnnual(c);
+  const earningsBased = income > 0 ? income * earningsMultiple(hype, revenueGrowth(c) ?? 0) : 0;
+  return Math.max(revenueBased, earningsBased);
 }
 
 /** Cash-adjusted equity value ($M): the operating business plus cash and treasury
