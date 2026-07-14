@@ -14,6 +14,8 @@ import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { CampusView } from "@/ui/campus/CampusView";
 import { OrreryHeroLive } from "@/ui/heroes/live";
+import { LedgerView } from "@/ui/views/LedgerView";
+import { AnnualReportModal } from "./AnnualReportModal";
 import { PauseMenu } from "./PauseMenu";
 import { CelebrationLayer } from "./CelebrationLayer";
 import { KeysOverlay } from "./KeysOverlay";
@@ -97,8 +99,8 @@ export function GameShell() {
         setKeysOpen(true);
         return;
       }
-      if (/^[1-8]$/.test(e.key) && !typing && !surfaceUp && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        const order: View[] = ["campus", "dashboard", "captable", "fundraising", "market", "world", "team", "about"];
+      if (/^[1-9]$/.test(e.key) && !typing && !surfaceUp && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const order: View[] = ["campus", "dashboard", "captable", "fundraising", "market", "world", "team", "ledger", "about"];
         const v = order[Number(e.key) - 1];
         if (v) {
           play("nav");
@@ -138,6 +140,7 @@ export function GameShell() {
             {view === "market" && <MarketView />}
             {view === "world" && <WorldView />}
             {view === "team" && <TeamView />}
+            {view === "ledger" && <LedgerView />}
             {view === "about" && <AboutView />}
             {view === "research" && <div className="workspace-scroll late-scroll"><ResearchTabLive /></div>}
             {view === "megaprojects" && <div className="workspace-scroll late-scroll"><MegaprojectsTabLive /></div>}
@@ -159,6 +162,7 @@ export function GameShell() {
       <OutcomeToast />
       <ExitFlow />
       <PauseMenu />
+      <AnnualReportModal />
       <CelebrationLayer />
       {keysOpen && <KeysOverlay onClose={() => setKeysOpen(false)} />}
       <AchievementToast />

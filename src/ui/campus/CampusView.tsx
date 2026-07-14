@@ -12,6 +12,7 @@ import { useUi } from "@/state/ui";
 import { play } from "@/audio/sfx";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
 import { NextMoveChip } from "@/ui/components/NextMoveChip";
+import { LadderCard } from "@/ui/components/LadderCard";
 import type { PlayableSubIndustry } from "@/domain/ids";
 import { PLAYABLE_SUB_INDUSTRIES } from "@/domain/ids";
 import { GROUND, Chip, Hot, Tree, Windows, rnd } from "./shared";
@@ -124,6 +125,7 @@ export function CampusView() {
     <div className="workspace-scroll campus-scroll">
       <ActiveDecisions onNavigate={setView} />
       <NextMoveChip />
+      <LadderCard />
       <section className="panel panel--flush campus-panel">
         <svg viewBox="0 0 1200 720" className="campus-svg">
           <defs>

@@ -1103,6 +1103,198 @@ button:not(:disabled):active {
   font-style: italic;
 }
 
+/* ── Round 4: the Ledger, the Annual Report, the Ladder ─────────────────────── */
+.ledger-hero {
+  padding-bottom: 8px;
+}
+.ledger-chart {
+  width: 100%;
+  display: block;
+  padding: 0 8px;
+}
+.ledger-chart__last {
+  font-size: 13px;
+  font-weight: 750;
+}
+.ledger-empty {
+  padding: 40px 16px;
+  text-align: center;
+  font-size: 13px;
+}
+.ledger-lines {
+  display: flex;
+  flex-direction: column;
+}
+.ledger-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  border-bottom: 0.5px solid var(--border-faint);
+}
+.ledger-line b {
+  font-weight: 700;
+}
+.ledger-line--total {
+  border-bottom: none;
+  border-top: 1px solid var(--border);
+  margin-top: 2px;
+  padding-top: 10px;
+  color: var(--text);
+  font-weight: 650;
+}
+.ledger-spend {
+  margin-top: 14px;
+}
+.ledger-spend__bar {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 8px 0;
+  background: var(--panel-2);
+}
+.ledger-spend__legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.ledger-spend__legend i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 5px;
+}
+.ledger-yoy__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 0.7fr;
+  gap: 8px 14px;
+  font-size: 13px;
+}
+.ledger-yoy__head {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.ledger-yoy__label {
+  color: var(--text-dim);
+}
+
+.annual {
+  width: min(480px, 92vw);
+  background: var(--panel);
+  border: 1px solid rgba(232, 199, 106, 0.4);
+  border-radius: 16px;
+  padding: 22px 26px;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.55), 0 0 40px rgba(232, 199, 106, 0.1);
+}
+.annual__kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #e8c76a;
+}
+.annual__title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 6px;
+  color: var(--text);
+}
+.annual__rows {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.annual__row {
+  display: grid;
+  grid-template-columns: 90px 90px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13.5px;
+}
+.annual__label {
+  color: var(--text-faint);
+  font-size: 12px;
+}
+.annual__delta {
+  font-size: 11.5px;
+  font-weight: 650;
+}
+.annual__facts {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.annual__highlights {
+  margin-top: 14px;
+  border-top: 0.5px solid var(--border-faint);
+  padding-top: 10px;
+}
+.annual__highlight {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  padding: 3px 0;
+}
+.annual__foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.ladder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: var(--r-lg, 12px);
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+.ladder__kicker {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  flex: none;
+}
+.ladder__steps {
+  display: flex;
+  gap: 6px 14px;
+  flex-wrap: wrap;
+}
+.ladder-step {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.ladder-step i {
+  font-style: normal;
+  margin-right: 3px;
+}
+.ladder-step.is-done {
+  color: var(--up);
+  opacity: 0.75;
+}
+.ladder-step.is-next {
+  color: var(--text);
+  font-weight: 650;
+}
+.ladder-step.is-next i {
+  color: var(--accent);
+}
+
 /* ── Round 3: the coach chip, outcome toast, deep-link flash, locked frontier ── */
 .nextmove {
   display: flex;

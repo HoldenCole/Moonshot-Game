@@ -13,6 +13,7 @@ import { snapshotWorld, stepWorld } from "./world";
 import { repricePublic } from "./exit";
 import { serviceDebt } from "./debt";
 import { bandWorsened, netBurnMonthly, netWorth, privateValuationMark, runwayBand, runwayMonths } from "./finance";
+import { snapshotRun, HISTORY_CAP } from "./history";
 import { difficultyProfile } from "./difficulty";
 import { evaluateEvents } from "./events";
 import { advanceProducts, productsOperatingRevenue, type SubContent } from "./productsRuntime";
@@ -206,6 +207,8 @@ export function tickWeek(state: GameState, tuning: Tuning, env?: EventEnv): Week
   const revLog = [...(fin.revenueLog ?? []), fin.revenue].slice(-52);
   const valLog = [...(fin.valuationLog ?? []), fin.valuation].slice(-52);
   next = { ...next, company: { ...next.company, financials: { ...fin, revenueLog: revLog, valuationLog: valLog } } };
+  // The run's full memory (Ledger charts, annual reports, the ladder).
+  next = { ...next, history: [...(next.history ?? []), snapshotRun(next)].slice(-HISTORY_CAP) };
 
   // 8 — Mark both the personal and company portfolios to the live market.
   if (env) next = markPortfolios(next, env.market, next.world, week);

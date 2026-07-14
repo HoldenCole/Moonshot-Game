@@ -5,7 +5,7 @@ const KEYS: { k: string; what: string }[] = [
   { k: "Space", what: "Advance one week" },
   { k: "Esc", what: "Pause menu" },
   { k: "⌘K", what: "Command palette" },
-  { k: "1–8", what: "Switch views (Campus … About)" },
+  { k: "1–9", what: "Switch views (Campus … About)" },
   { k: "?", what: "This legend" },
 ];
 

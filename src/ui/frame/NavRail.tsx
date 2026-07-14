@@ -11,6 +11,7 @@ const ITEMS: { view: View; icon: IconName; label: string }[] = [
   { view: "market", icon: "market", label: "Market" },
   { view: "world", icon: "world", label: "World" },
   { view: "team", icon: "team", label: "Team" },
+  { view: "ledger", icon: "sliders", label: "Ledger" },
   { view: "about", icon: "info", label: "About" },
 ];
 
@@ -32,7 +33,7 @@ export function NavRail({ view, onChange }: { view: View; onChange: (v: View) =>
       key={it.view}
       className={`navrail__item${view === it.view ? " is-active" : ""}`}
       onClick={() => { if (view !== it.view) play("nav"); onChange(it.view); }}
-      title={i != null && i < 8 ? `${it.label} (${i + 1})` : it.label}
+      title={i != null && i < 9 ? `${it.label} (${i + 1})` : it.label}
       aria-label={it.label}
       aria-current={view === it.view}
       data-guide={it.view === "fundraising" ? "action-raise-round" : undefined}

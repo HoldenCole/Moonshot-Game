@@ -8,6 +8,7 @@ import type { CompanyContent } from "./content";
 import type { ProductsRuntime } from "./products";
 import type { EventState, ResolvedEvent } from "./events";
 import type { LateState } from "@/engine/late/runtime";
+import type { RunSnapshot } from "@/engine/history";
 
 export const SCHEMA_VERSION = 1;
 
@@ -317,4 +318,6 @@ export interface GameState {
    *  executives, rivals. Born once the run crosses the Scale-Up valuation
    *  threshold; absent before that. */
   late?: LateState;
+  /** Weekly financial snapshots for the whole run (the Ledger's memory). */
+  history?: RunSnapshot[];
 }

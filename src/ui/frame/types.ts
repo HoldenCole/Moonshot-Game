@@ -6,6 +6,7 @@ export type View =
   | "market"
   | "world"
   | "team"
+  | "ledger"
   | "about"
   // Late-game (v2) surfaces — visible once the run crosses the Scale-Up threshold.
   | "research"

@@ -30,6 +30,7 @@ import {
 } from "@/engine/productsRuntime";
 import { makeRng } from "@/engine/rng";
 import { newlyUnlocked } from "@/engine/achievements";
+import { annualReport, type AnnualReport } from "@/engine/history";
 import {
   bootLate, runLateTurn, lateSnapshot, lateTurnsDue, lateReportToLog, LATE_UNLOCK_VALUATION,
   lateBeginMega as rtBeginMega, lateStartResearch as rtStartResearch, lateTakeContract as rtTakeContract,
@@ -88,6 +89,9 @@ interface GameStore {
   /** The consequence of the last resolved decision, toasted briefly. */
   outcomeToast: { label: string; result: string; cash: number; reputation: number; ethics: number } | null;
   clearOutcomeToast: () => void;
+  /** The year-end review, shown when an advance crosses a 52-week boundary. */
+  annualReport: AnnualReport | null;
+  clearAnnualReport: () => void;
 
   newGame: (choices: FoundingChoices) => void;
   /** Resume the saved run, if any. */
@@ -259,6 +263,8 @@ export const useGame = create<GameStore>((set, get) => ({
   achievementToast: null,
   outcomeToast: null,
   clearOutcomeToast: () => set({ outcomeToast: null }),
+  annualReport: null,
+  clearAnnualReport: () => set({ annualReport: null }),
 
   newGame: (choices) =>
     set((s) => {
@@ -286,11 +292,14 @@ export const useGame = create<GameStore>((set, get) => ({
       };
       // Difficulty bends the world's volatility before the tick reads it.
       const tuning = applyWorldDifficulty(s.content.tuning, s.game.difficulty);
+      const prevWeek = s.game.clock.week;
       const r = engineAdvance(s.game, tuning, mode, env);
       const a = withAch(driveLate(r.state, s.content));
+      const report = annualReport(a.game, prevWeek);
       return {
         game: a.game,
         lastAdvance: { weeks: r.weeks, stopReason: r.stopReason, atWeek: r.state.clock.week },
+        ...(report ? { annualReport: report } : {}),
         ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}),
       };
     }),
