@@ -6,7 +6,7 @@
 //   · seasons turn, weather follows the macro cycle, staff walk the grounds
 // Every structure is clickable and routes to its management surface.
 // ============================================================================
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
 import { play } from "@/audio/sfx";
@@ -14,8 +14,9 @@ import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
 import type { PlayableSubIndustry } from "@/domain/ids";
 import { PLAYABLE_SUB_INDUSTRIES } from "@/domain/ids";
 import { GROUND, Chip, Hot, Tree, Windows, rnd } from "./shared";
-import { Headquarters, hqForm } from "./hq";
+import { Headquarters, hqTier } from "./hq";
 import { IndustryDistrict, type DistrictData } from "./districts";
+import { ArchitectModal } from "./ArchitectModal";
 
 /** The year turns: sky palette + tree canopy per quarter of the 52-week year. */
 const SEASONS = [
@@ -63,6 +64,7 @@ export function CampusView() {
   useEffect(() => {
     if (launchingNow) play("launch");
   }, [launchingNow]);
+  const [architectOpen, setArchitectOpen] = useState(false);
   if (!game) return null;
 
   const c = game.company;
@@ -80,7 +82,8 @@ export function CampusView() {
   const launching = game.log.some((e) => e.week >= week - 1 && e.kind === "company" && e.headline.startsWith("Shipped"));
   const liveProducts = c.products?.products.filter((p) => p.state !== "declining").length ?? 0;
   const late = game.late;
-  const form = hqForm(c.stage, !!late, late?.slice.era);
+  const tier = hqTier(c.stage, !!late, late?.slice.era);
+  const architecture = c.architecture ?? { style: "monolith" as const, crown: "antenna" as const };
   const sub: PlayableSubIndustry = (PLAYABLE_SUB_INDUSTRIES as readonly string[]).includes(c.subIndustry)
     ? (c.subIndustry as PlayableSubIndustry)
     : "frontier_model_lab";
@@ -202,12 +205,21 @@ export function CampusView() {
                 const slot = SLOTS[i]!;
                 const h = towerHeight(co.financials.valuation);
                 const by = GROUND - h;
+                const [bx, bw] = slot;
+                // Each rival gets its own silhouette, so downtown reads as a
+                // real city: slab / setback / slant roof / antenna / twin.
+                const variant = hashId(co.id) % 5;
+                const bodyY = variant === 1 ? by + 18 : variant === 2 ? by + 14 : by;
                 return (
                   <g key={co.id}>
-                    <rect className="cmp-bldg" x={slot[0]} y={by} width={slot[1]} height={h} fill="#0f131d">
-                      <title>{co.name}</title>
-                    </rect>
-                    <Windows x={slot[0] + 8} y={by + 10} cols={Math.floor((slot[1] - 14) / 13)} rows={Math.floor((h - 18) / 22)} cw={7} ch={9} gapX={6} gapY={13} litPct={8} salt={hashId(co.id) % 97} />
+                    <title>{co.name}</title>
+                    <rect className="cmp-bldg" x={bx} y={bodyY} width={bw} height={GROUND - bodyY} fill="#0f131d" />
+                    {variant === 1 && <rect className="cmp-bldg" x={bx + bw * 0.2} y={by} width={bw * 0.6} height={20} fill="#0f131d" />}
+                    {variant === 2 && <path d={`M ${bx} ${by + 14} L ${bx + bw * 0.7} ${by} L ${bx + bw} ${by + 14} Z`} fill="#12172400" stroke="none" />}
+                    {variant === 2 && <path d={`M ${bx} ${by + 14} L ${bx + bw * 0.7} ${by} L ${bx + bw} ${by + 14} Z`} fill="#0f131d" />}
+                    {variant === 3 && <line x1={bx + bw / 2} y1={by - 16} x2={bx + bw / 2} y2={by} stroke="#1d2536" strokeWidth={2.5} />}
+                    {variant === 4 && <rect x={bx + bw * 0.44} y={by} width={bw * 0.12} height={h * 0.22} fill={season.sky[1]} />}
+                    <Windows x={bx + 8} y={bodyY + 10} cols={Math.floor((bw - 14) / 13)} rows={Math.floor((GROUND - bodyY - 18) / 22)} cw={7} ch={9} gapX={6} gapY={13} litPct={8} salt={hashId(co.id) % 97} />
                   </g>
                 );
               })}
@@ -256,8 +268,16 @@ export function CampusView() {
             </g>
           </Hot>
 
-          {/* ── Headquarters: the building your stage earned ── */}
-          <Headquarters name={c.name} color={c.color} headcount={headcount} form={form} onGo={() => setView("team")} />
+          {/* ── Headquarters: the building your stage earned, in your style ── */}
+          <Headquarters
+            name={c.name}
+            color={c.color}
+            headcount={headcount}
+            tier={tier}
+            architecture={architecture}
+            canopy={season.canopy}
+            onGo={() => setView("team")}
+          />
 
           {/* ── R&D lab wing (Products & R&D) ── */}
           <Hot label="R&D Lab — products and research" onGo={() => setView("dashboard")}>
@@ -355,7 +375,18 @@ export function CampusView() {
             click a structure to manage it
           </text>
         </svg>
+        <button
+          className="campus-architect"
+          onClick={() => {
+            play("open");
+            setArchitectOpen(true);
+          }}
+          title="Choose your HQ's architecture"
+        >
+          ✎ Architect
+        </button>
       </section>
+      {architectOpen && <ArchitectModal onClose={() => setArchitectOpen(false)} />}
     </div>
   );
 }

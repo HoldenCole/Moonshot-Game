@@ -106,6 +106,17 @@ export interface Exec {
   quality: number;
 }
 
+/** The player's chosen look for the headquarters (the campus scene reads it;
+ *  the Architect panel writes it). All optional — defaults apply when unset. */
+export interface CompanyArchitecture {
+  /** Architectural style the HQ builds in from the tower tier up. */
+  style: "monolith" | "deco" | "helix" | "brutal" | "terrace";
+  /** What crowns the roof. */
+  crown: "antenna" | "helipad" | "garden" | "billboard";
+  /** Accent/trim color (hex); defaults to the brand color when unset. */
+  trim?: string;
+}
+
 /** The player's company — the operating entity at the center of the board. */
 export interface PlayerCompany {
   name: string;
@@ -153,6 +164,8 @@ export interface PlayerCompany {
   /** Public-company earnings-management state (set at IPO). `lastResult`/`lastMove`
    *  record the most recent quarter's print and the stock's reaction to it. */
   earnings?: { gap: number; guidance: GuidanceStance; lastResult?: "beat" | "met" | "missed"; lastMove?: number };
+  /** The player's chosen HQ look (style/crown/trim); defaults when absent. */
+  architecture?: CompanyArchitecture;
 }
 
 /** The bar a public company sets itself for the next quarter. */

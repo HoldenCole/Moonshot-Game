@@ -40,7 +40,7 @@ import type { MegaprojectDef } from "@/engine/late/megaprojects";
 import type { ContractTemplate } from "@/engine/late/contracts";
 import type { Candidate } from "@/engine/late/executives";
 import type { Posture } from "@/engine/late/empire";
-import type { Autonomy, Exec, ExecArea } from "@/domain/state";
+import type { Autonomy, CompanyArchitecture, Exec, ExecArea } from "@/domain/state";
 import {
   acquisitionOffer,
   applyAcquisition,
@@ -100,6 +100,8 @@ interface GameStore {
   hireExecWithStock: (exec: Exec, cost: number) => void;
   /** Set an area's autonomy. */
   setAutonomy: (area: ExecArea, autonomy: Autonomy) => void;
+  /** Choose the HQ's look (the Architect panel). */
+  setArchitecture: (architecture: CompanyArchitecture) => void;
 
   // Late-game (v2) player actions — no-ops until the slice is born.
   /** Commit to a megaproject build. */
@@ -364,6 +366,12 @@ export const useGame = create<GameStore>((set, get) => ({
       if (!s.game) return s;
       const a = withAch({ ...s.game, company: { ...s.game.company, delegation: { ...s.game.company.delegation, [area]: autonomy } } });
       return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+    }),
+
+  setArchitecture: (architecture) =>
+    set((s) => {
+      if (!s.game) return s;
+      return { game: { ...s.game, company: { ...s.game.company, architecture } } };
     }),
 
   // ── Late-game (v2) actions ──────────────────────────────────────────────────
