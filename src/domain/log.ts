@@ -19,6 +19,8 @@ export interface LogEntry {
   tone: LogTone;
   headline: string;
   detail?: string;
+  /** Big beats (round closed, IPO) get the full-screen celebration. */
+  celebrate?: boolean;
 }
 
 /** Runway pressure bands. Alerts fire when the band *worsens*, never every

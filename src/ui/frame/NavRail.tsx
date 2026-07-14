@@ -49,10 +49,22 @@ export function NavRail({ view, onChange }: { view: View; onChange: (v: View) =>
       </div>
       <div className="navrail__items">
         {ITEMS.map(render)}
-        {lateActive && (
+        {lateActive ? (
           <>
             <div className="navrail__divider" role="separator" title="Frontier" />
             {LATE_ITEMS.map((it) => render(it))}
+          </>
+        ) : (
+          <>
+            <div className="navrail__divider" role="separator" title="The Frontier" />
+            <div
+              className="navrail__item navrail__item--locked"
+              title="The Frontier — research, megaprojects, executives, power. Unlocks at a $2B valuation."
+              aria-label="The Frontier (locked) — unlocks at a $2B valuation"
+            >
+              <span className="navrail__lock">🔒</span>
+              <span className="navrail__tip">The Frontier · unlocks at $2B</span>
+            </div>
           </>
         )}
       </div>

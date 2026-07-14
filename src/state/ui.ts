@@ -31,6 +31,10 @@ interface UiStore {
    *  interstitial once, then cleared when the player enters the game. */
   justFounded: boolean;
   setJustFounded: (b: boolean) => void;
+  /** A dashboard panel to scroll to + flash on next dashboard render (deep
+   *  links from the campus / the coach). Cleared after it's consumed. */
+  focusPanel: string | null;
+  setFocusPanel: (id: string | null) => void;
 }
 
 export const useUi = create<UiStore>((set) => ({
@@ -48,4 +52,6 @@ export const useUi = create<UiStore>((set) => ({
   setNewGameStep: (newGameStep) => set({ newGameStep }),
   justFounded: false,
   setJustFounded: (justFounded) => set({ justFounded }),
+  focusPanel: null,
+  setFocusPanel: (focusPanel) => set({ focusPanel }),
 }));

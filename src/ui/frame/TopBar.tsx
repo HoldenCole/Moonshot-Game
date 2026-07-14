@@ -29,9 +29,9 @@ function climateLabel(v: number): string {
   return "Frothy";
 }
 
-function Gauge({ label, value, tone }: { label: string; value: string; tone?: "up" | "down" | "warn" }) {
+function Gauge({ label, value, tone, hint }: { label: string; value: string; tone?: "up" | "down" | "warn"; hint?: string }) {
   return (
-    <div className="gauge">
+    <div className="gauge" title={hint}>
       <span className="gauge__label">{label}</span>
       <span className={`gauge__value num${tone ? " gauge__value--" + tone : ""}`}>{value}</span>
     </div>
@@ -139,14 +139,15 @@ export function TopBar() {
       </div>
 
       <div className="topbar__gauges" data-guide="top-bar-gauges">
-        <Gauge label="Macro" value={MACRO_LABEL[world.macroPhase] ?? world.macroPhase} />
-        <Gauge label="Rates" value={`${world.interestRate.toFixed(1)}%`} />
-        <Gauge label="VC Climate" value={climateLabel(world.vcClimate)} tone={world.vcClimate >= 65 ? "up" : undefined} />
-        <Gauge label="IPO Window" value={cap(world.ipoWindow)} tone={ipoTone} />
+        <Gauge label="Macro" value={MACRO_LABEL[world.macroPhase] ?? world.macroPhase} hint="The economic cycle. Expansion/Peak: money flows, rounds price rich. Contraction/Trough: everything gets harder — raise early." />
+        <Gauge label="Rates" value={`${world.interestRate.toFixed(1)}%`} hint="The price of money. High rates cool valuations and make debt expensive; falling rates loosen everything." />
+        <Gauge label="VC Climate" value={climateLabel(world.vcClimate)} tone={world.vcClimate >= 65 ? "up" : undefined} hint="How eager investors are right now. Hot/Frothy: rounds price rich and close fast. Cool/Frozen: expect tough terms — or no term sheet at all." />
+        <Gauge label="IPO Window" value={cap(world.ipoWindow)} tone={ipoTone} hint="Whether public markets are taking listings. Open: you can ring the bell. Closed: no exit this way until sentiment recovers." />
         <Gauge
           label={`${industryLabel(company.industry)} Hype`}
           value={showsExactGauges(game.difficulty) ? String(Math.round(hype)) : hypeBand(hype)}
           tone={hype >= 70 ? "warn" : undefined}
+          hint="Your sector's story heat. Hype inflates valuations and demand beyond fundamentals — ride it, but remember it mean-reverts."
         />
       </div>
 

@@ -19,6 +19,7 @@ export function TitleScreen() {
   const continueGame = useGame((s) => s.continueGame);
   const content = useGame((s) => s.content);
   const [splash, setSplash] = useState(true);
+  const [confirmNew, setConfirmNew] = useState(false);
 
   const save = saveSummary();
   const skyRef = useRef<HTMLDivElement>(null);
@@ -130,7 +131,9 @@ export function TitleScreen() {
             className="ts-row ts-row--primary"
             onClick={() => {
               play("click");
-              setScreen("newgame");
+              // Founding over a live run destroys it — make that a decision.
+              if (save) setConfirmNew(true);
+              else setScreen("newgame");
             }}
             data-guide="title-new-game"
           >
@@ -159,6 +162,39 @@ export function TitleScreen() {
           v{pkg.version} · <b>{stats.programs}</b> programs · <b>{stats.megaprojects}</b> megaprojects · <b>{stats.rivals}</b> rival titans
         </span>
       </div>
+
+      {confirmNew && save && (
+        <div className="overlay-backdrop" onClick={() => setConfirmNew(false)}>
+          <div className="pause__menu" role="alertdialog" aria-label="Replace your current run?" onClick={(e) => e.stopPropagation()}>
+            <div className="pause__kicker">This replaces your current run</div>
+            <div className="pause__title">{save.company}</div>
+            <div className="pause__meta num">
+              Week {save.week} · {formatMoney(save.netWorth)} net worth — gone for good if you found again.
+            </div>
+            <div className="pause__rows">
+              <button
+                className="ts-row ts-row--primary"
+                onClick={() => {
+                  play("click");
+                  continueGame();
+                  setScreen("loading");
+                }}
+              >
+                <span className="ts-row__tick" />Keep playing {save.company}
+              </button>
+              <button
+                className="ts-row ts-row--quiet"
+                onClick={() => {
+                  play("close");
+                  setScreen("newgame");
+                }}
+              >
+                <span className="ts-row__tick" />Found a new company anyway
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

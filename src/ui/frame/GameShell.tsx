@@ -24,6 +24,7 @@ import {
   ContractsTabLive, StandingTabLive, BriefingTabLive,
 } from "@/ui/late/connectors";
 import { EventModal } from "@/ui/events/EventModal";
+import { OutcomeToast } from "@/ui/events/OutcomeToast";
 import { ExitFlow } from "@/ui/exit/ExitFlow";
 import { AchievementToast } from "@/ui/achievements/AchievementToast";
 import { TutorialLayer } from "@/ui/tutorial/TutorialLayer";
@@ -155,6 +156,7 @@ export function GameShell() {
         )}
       </div>
       <EventModal />
+      <OutcomeToast />
       <ExitFlow />
       <PauseMenu />
       <CelebrationLayer />

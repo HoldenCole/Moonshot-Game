@@ -85,6 +85,9 @@ interface GameStore {
   carryOver: { reputation: number; personalCash: number } | null;
   /** Newly-unlocked achievement ids to toast (cleared by the UI). */
   achievementToast: string[] | null;
+  /** The consequence of the last resolved decision, toasted briefly. */
+  outcomeToast: { label: string; result: string; cash: number; reputation: number; ethics: number } | null;
+  clearOutcomeToast: () => void;
 
   newGame: (choices: FoundingChoices) => void;
   /** Resume the saved run, if any. */
@@ -254,6 +257,8 @@ export const useGame = create<GameStore>((set, get) => ({
   exitFlow: null,
   carryOver: null,
   achievementToast: null,
+  outcomeToast: null,
+  clearOutcomeToast: () => set({ outcomeToast: null }),
 
   newGame: (choices) =>
     set((s) => {
@@ -314,7 +319,8 @@ export const useGame = create<GameStore>((set, get) => ({
         detail: fx.result,
       };
       const a = withAch({ ...after, pendingEvent: null, log: [...after.log, entry] });
-      return { game: a.game, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
+      const outcomeToast = { label: choice.label, result: fx.result, cash: fx.cash, reputation: fx.reputation, ethics: fx.ethics };
+      return { game: a.game, outcomeToast, ...(a.achievementToast ? { achievementToast: a.achievementToast } : {}) };
     }),
 
   hireExec: (exec, cost) =>
@@ -709,6 +715,7 @@ function closeRound(
     tone: "up",
     headline: `Closed the ${round.name} with ${neg.agentName}`,
     detail: `${formatMoney(round.amountRaised)} raised at ${formatMoney(round.postMoney)} post-money.`,
+    celebrate: true, // closing a round is a moment, not a log line
   };
 
   let next: GameState = {

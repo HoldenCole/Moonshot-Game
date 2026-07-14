@@ -11,6 +11,7 @@ import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
 import { play } from "@/audio/sfx";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
+import { NextMoveChip } from "@/ui/components/NextMoveChip";
 import type { PlayableSubIndustry } from "@/domain/ids";
 import { PLAYABLE_SUB_INDUSTRIES } from "@/domain/ids";
 import { GROUND, Chip, Hot, Tree, Windows, rnd } from "./shared";
@@ -54,6 +55,7 @@ export function CampusView() {
   const game = useGame((s) => s.game);
   const content = useGame((s) => s.content);
   const setView = useUi((s) => s.setView);
+  const setFocusPanel = useUi((s) => s.setFocusPanel);
   // The pad roars when a ship goes up (space campuses only). Selected before the
   // early return so the hook order is stable.
   const launchingNow = useGame((s) => {
@@ -97,7 +99,10 @@ export function CampusView() {
     nextShip,
     launching,
     liveProducts,
-    onGo: () => setView("dashboard"),
+    onGo: () => {
+      setFocusPanel("products");
+      setView("dashboard");
+    },
   };
 
   // Downtown mirrors the market: the top rivals by live cap, heights to scale.
@@ -118,6 +123,7 @@ export function CampusView() {
   return (
     <div className="workspace-scroll campus-scroll">
       <ActiveDecisions onNavigate={setView} />
+      <NextMoveChip />
       <section className="panel panel--flush campus-panel">
         <svg viewBox="0 0 1200 720" className="campus-svg">
           <defs>
@@ -280,7 +286,7 @@ export function CampusView() {
           />
 
           {/* ── R&D lab wing (Products & R&D) ── */}
-          <Hot label="R&D Lab — products and research" onGo={() => setView("dashboard")}>
+          <Hot label="R&D Lab — products and research" onGo={() => { setFocusPanel("products"); setView("dashboard"); }}>
             <g>
               <rect x={LAB_X} y={GROUND - 66} width={126} height={66} fill="#141a2b" />
               <path d={`M ${LAB_X} ${GROUND - 66} L ${LAB_X + 44} ${GROUND - 96} L ${LAB_X + 126} ${GROUND - 96} L ${LAB_X + 126} ${GROUND - 66} Z`} fill="#1a2338" />

@@ -30,7 +30,7 @@ export function CelebrationLayer() {
     for (const e of log) {
       if (seen.current.has(e.id)) continue;
       seen.current.add(e.id);
-      if (e.kind === "milestone") {
+      if (e.kind === "milestone" || e.celebrate) {
         setBeat(e);
         play("milestone");
       }
@@ -64,7 +64,7 @@ export function CelebrationLayer() {
         </div>
       )}
       <div className="celebrate__card">
-        <div className="celebrate__kicker">Milestone</div>
+        <div className="celebrate__kicker">{beat.kind === "milestone" ? "Milestone" : "A big day"}</div>
         <div className="celebrate__headline">{beat.headline}</div>
         {beat.detail && <div className="celebrate__detail">{beat.detail}</div>}
       </div>

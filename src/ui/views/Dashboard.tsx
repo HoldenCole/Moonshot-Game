@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useGame } from "@/state/store";
 import { usePrefs } from "@/state/prefs";
+import { useUi } from "@/state/ui";
 import type { PlayerCompany } from "@/domain/state";
 import { STAGE_LABELS, subIndustryLabel } from "@/domain/ids";
 import { formatMoney } from "@/engine/format";
@@ -93,6 +94,7 @@ function DashItem({
   const over = overId === id && dragId != null && dragId !== id;
   return (
     <div
+      data-panel={id}
       className={`dash-item${dragging ? " is-dragging" : ""}${over ? " is-over" : ""}`}
       onDragOver={(e) => {
         if (dragId == null) return;
@@ -204,6 +206,21 @@ export function Dashboard({ onNavigate }: { onNavigate: (v: View) => void }) {
   // Reorder operations run on the visible list, then write back onto the full
   // order so hidden panels keep their slots.
   const commitVisible = (nextVisible: string[]) => setOrder(applyVisibleOrder(order, hidden, nextVisible));
+
+  // Deep links (campus buildings, the coach) land scrolled to their panel,
+  // which flashes once so the eye knows where it was sent.
+  const focusPanel = useUi((s) => s.focusPanel);
+  const setFocusPanel = useUi((s) => s.setFocusPanel);
+  useEffect(() => {
+    if (!focusPanel) return;
+    const el = document.querySelector(`[data-panel="${focusPanel}"]`);
+    if (el) {
+      el.scrollIntoView({ block: "start", behavior: "smooth" });
+      el.classList.add("panel-flash");
+      setTimeout(() => el.classList.remove("panel-flash"), 2100);
+    }
+    setFocusPanel(null);
+  }, [focusPanel, setFocusPanel]);
 
   return (
     <div className="workspace-scroll">

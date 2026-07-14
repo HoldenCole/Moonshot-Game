@@ -37,7 +37,7 @@ export function OrreryHero({ holders, ringNames, founderPct, color }: { holders:
         <div className="exchange__lamps">
           <span className="floor-lamp floor-lamp--gold">FOUNDERS {(founderPct * 100).toFixed(1)}%</span>
           <span className="floor-lamp">{nonFounder.length} OUTSIDE HOLDERS</span>
-          <span className="floor-lamp">{ringNames.length} ROUNDS</span>
+          <span className="floor-lamp">{ringNames.length} {ringNames.length === 1 ? "ROUND" : "ROUNDS"}</span>
         </div>
       </div>
       <svg viewBox="0 0 920 235" className="orrery__svg" aria-hidden>
