@@ -430,6 +430,292 @@ button:not(:disabled):active {
   to { transform: rotate(2.5deg); }
 }
 
+/* ── Hero scenes: every screen is a place ───────────────────────────────────── */
+.hero-panel {
+  position: relative;
+  /* .workspace-scroll is a flex column — never let the scene get crushed when
+     the working surface below overflows. */
+  flex-shrink: 0;
+  border-radius: var(--r-lg, 12px);
+  border: 1px solid var(--border);
+  background: #0a0e18;
+  color-scheme: dark;
+  overflow: hidden;
+}
+.hero-kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #69748a;
+}
+.floor-lamp {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #c7d1e2;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 4px 10px;
+  background: rgba(9, 12, 20, 0.7);
+}
+.floor-lamp--open { color: #3ad29a; border-color: rgba(58, 210, 154, 0.5); }
+.floor-lamp--cracking { color: #f0b54e; border-color: rgba(240, 181, 78, 0.5); }
+.floor-lamp--closed { color: #f4716f; border-color: rgba(244, 113, 111, 0.5); }
+.floor-lamp--gold { color: #e8c76a; border-color: rgba(232, 199, 106, 0.5); }
+
+/* The Exchange */
+.exchange {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 0;
+}
+.exchange__chart {
+  padding: 14px 16px 0;
+  min-width: 0;
+}
+.exchange__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.exchange__big {
+  font-size: 30px;
+  font-weight: 750;
+  color: #f2f5fa;
+  margin-top: 4px;
+}
+.exchange__delta {
+  font-size: 13px;
+  margin-left: 10px;
+  font-weight: 650;
+}
+.exchange__delta.up { color: #3ad29a; }
+.exchange__delta.down { color: #f4716f; }
+.exchange__lamps {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.exchange__svg {
+  width: 100%;
+  height: 116px;
+  display: block;
+}
+.exchange__line {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: xch-draw 1.4s ease forwards;
+}
+@keyframes xch-draw {
+  to { stroke-dashoffset: 0; }
+}
+.exchange__dot {
+  animation: cmp-beacon 2s ease-in-out infinite;
+}
+.exchange__wall {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 14px 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  align-content: center;
+}
+.mover {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.015);
+}
+.mover__name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #c7d1e2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mover__delta {
+  font-size: 12px;
+  font-weight: 700;
+}
+.mover--up .mover__delta { color: #3ad29a; }
+.mover--down .mover__delta { color: #f4716f; }
+.mover--up { box-shadow: inset 2px 0 0 rgba(58, 210, 154, 0.6); }
+.mover--down { box-shadow: inset 2px 0 0 rgba(244, 113, 111, 0.6); }
+
+/* Capital Row: the banking hall */
+.bankhall__svg {
+  width: 100%;
+  height: 200px;
+  display: block;
+}
+.bank-lamp {
+  animation: bank-lamp 5s ease-in-out infinite;
+}
+@keyframes bank-lamp {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.45; }
+}
+.bank-vault {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bank-vault 26s linear infinite;
+}
+@keyframes bank-vault {
+  to { transform: rotate(360deg); }
+}
+.bankhall__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 14px 16px;
+  pointer-events: none;
+}
+.bankhall__lamps {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.termsheet {
+  width: 200px;
+  background: rgba(12, 15, 24, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 12px 14px;
+  position: relative;
+}
+.termsheet__kicker {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #69748a;
+  margin-bottom: 8px;
+}
+.termsheet__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #97a2b4;
+  padding: 4px 0;
+}
+.termsheet__row b {
+  color: #e7ecf4;
+}
+.termsheet__stamp {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: rgba(58, 210, 154, 0.55);
+  border: 1.5px solid rgba(58, 210, 154, 0.45);
+  border-radius: 3px;
+  padding: 2px 6px;
+  transform: rotate(-7deg);
+}
+
+/* The Constellation */
+.constellation__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 4px;
+}
+.constellation__legend {
+  display: flex;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: #97a2b4;
+}
+.constellation__legend i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.constellation__svg {
+  width: 100%;
+  height: 215px;
+  display: block;
+}
+.constellation__band {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  fill: #3d4a63;
+}
+.constellation__live {
+  animation: cmp-beacon 1.8s ease-in-out infinite;
+}
+.constellation__done {
+  filter: drop-shadow(0 0 4px rgba(58, 210, 154, 0.7));
+}
+
+/* The Works */
+.megaworks__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 4px;
+}
+.megaworks__meta {
+  display: flex;
+  gap: 6px;
+}
+.megaworks__svg {
+  width: 100%;
+  height: 205px;
+  display: block;
+}
+.mega-bay__name {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  fill: #97a2b4;
+}
+.mega-bay__stage {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.mega-bay__ghost {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  fill: #3d4a63;
+}
+
+:root[data-reduce-motion="on"] .exchange__line,
+:root[data-reduce-motion="on"] .exchange__dot,
+:root[data-reduce-motion="on"] .bank-lamp,
+:root[data-reduce-motion="on"] .bank-vault,
+:root[data-reduce-motion="on"] .constellation__live {
+  animation: none !important;
+  stroke-dashoffset: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .exchange__line, .exchange__dot, .bank-lamp, .bank-vault, .constellation__live {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+}
+
 /* The Architect: choose what your company builds. */
 .campus-architect {
   position: absolute;

@@ -14,6 +14,8 @@ import { HomeTab } from "./HomeTab";
 import type { ExecProfile } from "@/engine/late/advisory";
 import type { GameSlice } from "@/engine/late/turn";
 import type { ExecState } from "@/engine/late/executives";
+import { ResearchHero, type ConstellationNode } from "@/ui/heroes/ResearchHero";
+import { MegaHero, type MegaWork } from "@/ui/heroes/MegaHero";
 
 /** A small deterministic RNG for advisory noise — stable within a turn, varies
  *  across turns, so recommendations don't reshuffle every render. */
@@ -56,7 +58,19 @@ export function ResearchTabLive() {
   const content = useGame((s) => s.content.late);
   const onStart = useGame((s) => s.lateStartResearch);
   if (!late) return null;
-  return <ResearchTab state={late.slice.research} nodes={content.researchNodes} ctoName="Head of Research" onStart={onStart} />;
+  const constellation: ConstellationNode[] = Object.values(content.researchNodes).map((n) => ({
+    id: n.id,
+    name: n.name,
+    kind: n.kind,
+    prereqs: n.prereqs,
+    state: late.slice.research.nodes[n.id]?.state ?? "locked",
+  }));
+  return (
+    <>
+      <ResearchHero nodes={constellation} />
+      <ResearchTab state={late.slice.research} nodes={content.researchNodes} ctoName="Head of Research" onStart={onStart} />
+    </>
+  );
 }
 
 export function MegaprojectsTabLive() {
@@ -66,15 +80,36 @@ export function MegaprojectsTabLive() {
   if (!late) return null;
   const seats = Object.values(late.execs.seats);
   const execName = seats[0]?.name ?? "Chief Engineer";
+  const megas = late.slice.megas;
+  const works: MegaWork[] = megas.active.map((a) => {
+    const def = content.megaprojects[a.def_id];
+    const stages = def?.stages ?? [];
+    const total = stages.reduce((s, st) => s + st.weeks, 0) || 1;
+    const doneWeeks = stages.slice(0, a.stage_idx).reduce((s, st) => s + st.weeks, 0) + a.stage_progress_weeks;
+    return {
+      id: a.def_id,
+      name: def?.name ?? a.def_id,
+      branch: def?.branch ?? "space",
+      progress: Math.min(1, doneWeeks / total),
+      stageName: stages[a.stage_idx]?.name ?? "underway",
+      copy: a.copy_n,
+    };
+  });
+  const done = Object.entries(megas.builds)
+    .filter(([, n]) => n > 0)
+    .map(([id, n]) => ({ name: content.megaprojects[id]?.name ?? id, count: n }));
   return (
-    <MegaprojectsTab
-      state={late.slice.megas}
-      defs={content.megaprojects}
-      gateCtx={gateCtx(late.slice)}
-      sagaLog={{}}
-      execName={execName}
-      onBegin={onBegin}
-    />
+    <>
+      <MegaHero works={works} done={done} slots={{ used: megas.active.length, total: megas.slots_total }} />
+      <MegaprojectsTab
+        state={megas}
+        defs={content.megaprojects}
+        gateCtx={gateCtx(late.slice)}
+        sagaLog={{}}
+        execName={execName}
+        onBegin={onBegin}
+      />
+    </>
   );
 }
 

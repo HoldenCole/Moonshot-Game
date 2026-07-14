@@ -10,6 +10,7 @@ import { revenueGrowth, valuationMark } from "@/engine/finance";
 import { totalShares } from "@/engine/captable";
 import { buildGraph } from "@/engine/companyGraph";
 import { Segmented, Tag } from "@/ui/components/controls";
+import { ExchangeHeroLive } from "@/ui/heroes/live";
 import { useMarketTape } from "./useMarketTape";
 import { CompanyDetail } from "./CompanyDetail";
 
@@ -109,6 +110,7 @@ export function MarketView() {
 
   return (
     <div className="workspace-scroll market-view">
+      <ExchangeHeroLive />
       <div className="market-head" data-coach="market">
         <div>
           <h3 className="panel__title">

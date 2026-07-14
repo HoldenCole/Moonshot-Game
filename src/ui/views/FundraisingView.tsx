@@ -4,6 +4,7 @@ import { formatMoney } from "@/engine/format";
 import { Panel, PanelHeader } from "@/ui/components/Panel";
 import { Tag } from "@/ui/components/controls";
 import { NegotiationPanel } from "@/ui/fundraising/NegotiationPanel";
+import { BankHeroLive } from "@/ui/heroes/live";
 import { RelationshipsPanel } from "@/ui/fundraising/RelationshipsPanel";
 import { DebtPanel } from "@/ui/fundraising/DebtPanel";
 
@@ -12,6 +13,7 @@ export function FundraisingView() {
 
   return (
     <div className="workspace-scroll">
+      <BankHeroLive />
       <NegotiationPanel />
       <DebtPanel />
       <RelationshipsPanel />
