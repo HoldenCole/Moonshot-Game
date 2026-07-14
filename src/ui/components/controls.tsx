@@ -113,6 +113,7 @@ export function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
+        style={{ ["--pct" as string]: `${max > min ? ((value - min) / (max - min)) * 100 : 0}%` }}
       />
       {hint != null && <div className="slider__hint">{hint}</div>}
     </label>
