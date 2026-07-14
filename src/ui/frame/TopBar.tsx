@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
 import { WealthPopover } from "./WealthPopover";
@@ -43,6 +43,31 @@ export function TopBar() {
   const tuning = useGame((s) => s.content.tuning);
   const advance = useGame((s) => s.advance);
   const openPalette = useUi((s) => s.setPaletteOpen);
+
+  // Advancing time floats a "+N wk" off the clock; the autosave debounce
+  // flashes a quiet "saved" tick. Both are chrome, not state.
+  const week = game?.clock.week ?? 0;
+  const prevWeek = useRef(week);
+  const [float, setFloat] = useState<{ key: number; delta: number } | null>(null);
+  const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    const from = prevWeek.current;
+    prevWeek.current = week;
+    if (week > from) {
+      setFloat({ key: week, delta: week - from });
+      const t = setTimeout(() => setFloat(null), 1300);
+      return () => clearTimeout(t);
+    }
+  }, [week]);
+  useEffect(() => {
+    const onSaved = () => {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1500);
+    };
+    window.addEventListener("moonshot:saved", onSaved);
+    return () => window.removeEventListener("moonshot:saved", onSaved);
+  }, []);
+
   if (!game) return null;
 
   const { world, company, clock } = game;
@@ -100,10 +125,16 @@ export function TopBar() {
         >
           <Icon name="chevron-right" size={15} /> Next decision
         </button>
-        <div className="time-clock num" title="Weeks since founding">
+        <div className="time-clock num" title="Weeks since founding" key={clock.week}>
           <Icon name="clock" size={14} />
           W{clock.week}
+          {float && (
+            <span className="wk-float" key={float.key}>
+              +{float.delta}wk
+            </span>
+          )}
         </div>
+        {saved && <span className="saved-chip">✓ saved</span>}
         <span className={`time-hint${pendingDecision || balloonAlert ? " time-hint--alert" : ""}`}>{hint}</span>
       </div>
 

@@ -27,12 +27,12 @@ const LATE_ITEMS: { view: View; icon: IconName; label: string }[] = [
 
 export function NavRail({ view, onChange }: { view: View; onChange: (v: View) => void }) {
   const lateActive = useGame((s) => !!s.game?.late);
-  const render = (it: { view: View; icon: IconName; label: string }) => (
+  const render = (it: { view: View; icon: IconName; label: string }, i?: number) => (
     <button
       key={it.view}
       className={`navrail__item${view === it.view ? " is-active" : ""}`}
       onClick={() => { if (view !== it.view) play("nav"); onChange(it.view); }}
-      title={it.label}
+      title={i != null && i < 8 ? `${it.label} (${i + 1})` : it.label}
       aria-label={it.label}
       aria-current={view === it.view}
       data-guide={it.view === "fundraising" ? "action-raise-round" : undefined}
@@ -52,7 +52,7 @@ export function NavRail({ view, onChange }: { view: View; onChange: (v: View) =>
         {lateActive && (
           <>
             <div className="navrail__divider" role="separator" title="Frontier" />
-            {LATE_ITEMS.map(render)}
+            {LATE_ITEMS.map((it) => render(it))}
           </>
         )}
       </div>

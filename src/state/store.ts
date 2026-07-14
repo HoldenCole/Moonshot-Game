@@ -611,7 +611,11 @@ useGame.subscribe((state, prev) => {
   if (state.game && state.game !== prev.game) {
     clearTimeout(saveTimer);
     const game = state.game;
-    saveTimer = setTimeout(() => saveGame(game), 700);
+    saveTimer = setTimeout(() => {
+      saveGame(game);
+      // Let the chrome flash a quiet "saved" confirmation.
+      if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("moonshot:saved"));
+    }, 700);
   }
 });
 

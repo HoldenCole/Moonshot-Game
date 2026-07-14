@@ -6,8 +6,9 @@ import { create } from "zustand";
 import type { View } from "@/ui/frame/types";
 
 /** Which top-level surface the app is showing — the game boots to a title
- *  screen like a game, not into a form. */
-export type Screen = "title" | "newgame" | "game";
+ *  screen like a game, not into a form. "loading" plays the in-world load
+ *  interstitial between Continue and the shell. */
+export type Screen = "title" | "newgame" | "loading" | "game";
 
 interface UiStore {
   screen: Screen;

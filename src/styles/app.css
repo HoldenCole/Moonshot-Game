@@ -337,6 +337,201 @@ button:not(:disabled):active {
   transform: scale(0.985);
 }
 
+/* ── Game-feel layer: weather, staff, celebrations, shake, keys, chrome ─────── */
+
+/* Campus weather */
+.cmp-flake {
+  fill: #dfe8f6;
+  opacity: 0.75;
+  animation-name: cmp-snow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes cmp-snow {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(14px, 380px); }
+  100% { transform: translate(-6px, 760px); }
+}
+.cmp-drop {
+  stroke: #7f9cc9;
+  stroke-width: 1.2;
+  opacity: 0.3;
+  animation-name: cmp-rain;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes cmp-rain {
+  to { transform: translateY(780px); }
+}
+
+/* Staff strolling the campus front. */
+.cmp-person {
+  animation-name: cmp-stroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes cmp-stroll {
+  from { transform: translateX(128px); }
+  to { transform: translateX(516px); }
+}
+
+/* Celebration: a starburst + banner for milestone beats. */
+.celebrate {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.celebrate__burst {
+  position: absolute;
+}
+.celebrate__p {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  animation: celebrate-p var(--t) cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes celebrate-p {
+  0% { transform: rotate(var(--a)) translateX(0) scale(1); opacity: 1; }
+  100% { transform: rotate(var(--a)) translateX(var(--d)) scale(0.4); opacity: 0; }
+}
+.celebrate__card {
+  text-align: center;
+  padding: 22px 40px;
+  border-radius: 16px;
+  background: rgba(10, 13, 20, 0.88);
+  border: 1px solid rgba(232, 199, 106, 0.4);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.55), 0 0 40px rgba(232, 199, 106, 0.12);
+  animation: celebrate-card 3.4s ease forwards;
+}
+@keyframes celebrate-card {
+  0% { opacity: 0; transform: translateY(14px) scale(0.94); }
+  8%, 82% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+.celebrate__kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #e8c76a;
+}
+.celebrate__headline {
+  font-size: 24px;
+  font-weight: 800;
+  color: #f2f5fa;
+  margin-top: 8px;
+}
+.celebrate__detail {
+  font-size: 13px;
+  color: #97a2b4;
+  margin-top: 6px;
+}
+
+/* A crisis rattles the room. */
+:root[data-shake="on"] .shell {
+  animation: shell-shake 0.5s ease;
+}
+@keyframes shell-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-7px, 2px); }
+  40% { transform: translate(6px, -3px); }
+  60% { transform: translate(-4px, 2px); }
+  80% { transform: translate(3px, -1px); }
+}
+
+/* Keyboard legend */
+.keys-sheet {
+  width: min(360px, 92vw);
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+}
+.keys-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 0.5px solid var(--border-faint);
+}
+.keys-row:last-child {
+  border-bottom: none;
+}
+.keys-kbd {
+  min-width: 52px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--panel-2);
+  color: var(--text);
+}
+.keys-what {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* TopBar chrome: the week float + the autosave tick. */
+.time-clock {
+  position: relative;
+  animation: clock-pop 0.3s ease;
+}
+@keyframes clock-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.wk-float {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--up);
+  pointer-events: none;
+  animation: wk-float 1.25s ease forwards;
+}
+@keyframes wk-float {
+  0% { opacity: 0; transform: translate(-50%, 0); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -20px); }
+}
+.saved-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--up);
+  animation: saved-chip 1.5s ease forwards;
+}
+@keyframes saved-chip {
+  0% { opacity: 0; }
+  15%, 75% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+:root[data-reduce-motion="on"] .cmp-flake,
+:root[data-reduce-motion="on"] .cmp-drop,
+:root[data-reduce-motion="on"] .cmp-person,
+:root[data-reduce-motion="on"] .time-clock,
+:root[data-reduce-motion="on"] .wk-float {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmp-flake, .cmp-drop, .cmp-person, .time-clock, .wk-float {
+    animation: none !important;
+  }
+}
+
 /* ── Title screen: the front door ───────────────────────────────────────────── */
 
 /* The title is always night — pin the dark palette even under the light theme. */

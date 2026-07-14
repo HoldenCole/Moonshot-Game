@@ -15,6 +15,10 @@ interface Prefs {
   soundOn: boolean;
   /** Master volume for UI sound (0–1). */
   volume: number;
+  /** Master switch for the generative ambient music. */
+  musicOn: boolean;
+  /** Music volume (0–1). */
+  musicVolume: number;
   /** Master switch for the contextual onboarding hints. */
   tutorialEnabled: boolean;
   /** Hint ids the player has already dismissed (fire-once). */
@@ -33,6 +37,8 @@ interface Prefs {
   setReduceMotion: (b: boolean) => void;
   setSoundOn: (b: boolean) => void;
   setVolume: (v: number) => void;
+  setMusicOn: (b: boolean) => void;
+  setMusicVolume: (v: number) => void;
   markHintSeen: (id: string) => void;
   setTutorialEnabled: (b: boolean) => void;
   /** Re-arm every hint + replay the guided tour — "replay the tutorial". */
@@ -59,6 +65,8 @@ interface Stored {
   reduceMotion: boolean;
   soundOn: boolean;
   volume: number;
+  musicOn: boolean;
+  musicVolume: number;
   tutorialEnabled: boolean;
   seenHints: string[];
   railOpen: boolean;
@@ -75,7 +83,7 @@ function osReduceMotion(): boolean {
 function load(): Stored {
   // Default to the OS reduced-motion preference (UI_LANGUAGE §2), so the JS
   // motion layer (market tape, count tweens) honors it like the CSS does.
-  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion(), soundOn: true, volume: 0.5, tutorialEnabled: true, seenHints: [], railOpen: true, guidedStep: 0, guidedDone: false, dashboardOrder: [], dashboardHidden: [] };
+  const fallback: Stored = { theme: "dark", reduceMotion: osReduceMotion(), soundOn: true, volume: 0.5, musicOn: true, musicVolume: 0.35, tutorialEnabled: true, seenHints: [], railOpen: true, guidedStep: 0, guidedDone: false, dashboardOrder: [], dashboardHidden: [] };
   if (typeof localStorage === "undefined") return fallback;
   try {
     const parsed = JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<Stored>;
@@ -108,7 +116,7 @@ apply(initial); // set the default (dark) before first paint
 export const usePrefs = create<Prefs>((set, get) => {
   const snapshot = (): Stored => {
     const s = get();
-    return { theme: s.theme, reduceMotion: s.reduceMotion, soundOn: s.soundOn, volume: s.volume, tutorialEnabled: s.tutorialEnabled, seenHints: s.seenHints, railOpen: s.railOpen, guidedStep: s.guidedStep, guidedDone: s.guidedDone, dashboardOrder: s.dashboardOrder, dashboardHidden: s.dashboardHidden };
+    return { theme: s.theme, reduceMotion: s.reduceMotion, soundOn: s.soundOn, volume: s.volume, musicOn: s.musicOn, musicVolume: s.musicVolume, tutorialEnabled: s.tutorialEnabled, seenHints: s.seenHints, railOpen: s.railOpen, guidedStep: s.guidedStep, guidedDone: s.guidedDone, dashboardOrder: s.dashboardOrder, dashboardHidden: s.dashboardHidden };
   };
   const commit = (patch: Partial<Stored>) => {
     persist({ ...snapshot(), ...patch });
@@ -119,6 +127,8 @@ export const usePrefs = create<Prefs>((set, get) => {
     reduceMotion: initial.reduceMotion,
     soundOn: initial.soundOn,
     volume: initial.volume,
+    musicOn: initial.musicOn,
+    musicVolume: initial.musicVolume,
     tutorialEnabled: initial.tutorialEnabled,
     seenHints: initial.seenHints,
     railOpen: initial.railOpen,
@@ -130,6 +140,8 @@ export const usePrefs = create<Prefs>((set, get) => {
     setReduceMotion: (reduceMotion) => commit({ reduceMotion }),
     setSoundOn: (soundOn) => commit({ soundOn }),
     setVolume: (volume) => commit({ volume: Math.min(1, Math.max(0, volume)) }),
+    setMusicOn: (musicOn) => commit({ musicOn }),
+    setMusicVolume: (musicVolume) => commit({ musicVolume: Math.min(1, Math.max(0, musicVolume)) }),
     markHintSeen: (id) => {
       if (get().seenHints.includes(id)) return;
       commit({ seenHints: [...get().seenHints, id] });

@@ -10,6 +10,7 @@ import { useUi } from "@/state/ui";
 import { saveSummary } from "@/state/persist";
 import { formatMoney } from "@/engine/format";
 import { play } from "@/audio/sfx";
+import { startAmbient } from "@/audio/ambient";
 import pkg from "../../../package.json";
 
 export function TitleScreen() {
@@ -24,6 +25,7 @@ export function TitleScreen() {
 
   // The boot beat: a breath of black with the studio line, then the title.
   useEffect(() => {
+    startAmbient("bright");
     const t = setTimeout(() => setSplash(false), 1350);
     return () => clearTimeout(t);
   }, []);
@@ -111,7 +113,7 @@ export function TitleScreen() {
               onClick={() => {
                 play("click");
                 continueGame();
-                setScreen("game");
+                setScreen("loading");
               }}
             >
               <div>

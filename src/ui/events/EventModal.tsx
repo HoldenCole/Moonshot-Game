@@ -34,10 +34,20 @@ function EventDialog({ event }: { event: ResolvedEvent }) {
   const resolveEvent = useGame((s) => s.resolveEvent);
   const game = useGame((s) => s.game);
   const ref = useRef<HTMLDivElement>(null);
-  // A decision landing on the desk gets a small stinger.
+  // A decision landing on the desk gets a small stinger — and a crisis
+  // physically rattles the room (skipped under reduced motion).
   useEffect(() => {
     play("event");
-  }, [event.id]);
+    if (event.tone !== "crisis") return;
+    const root = document.documentElement;
+    if (root.dataset.reduceMotion === "on") return;
+    root.dataset.shake = "on";
+    const t = setTimeout(() => delete root.dataset.shake, 520);
+    return () => {
+      clearTimeout(t);
+      delete root.dataset.shake;
+    };
+  }, [event.id, event.tone]);
   // A decision is a hard stop — trap focus, but no Escape-to-dismiss (you must
   // choose). The choices are the focusable targets.
   useModalA11y(ref, { closeOnEsc: false });

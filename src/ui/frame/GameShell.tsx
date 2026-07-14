@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { View } from "./types";
 import { TopBar } from "./TopBar";
 import { Ticker } from "./Ticker";
 import { NavRail } from "./NavRail";
@@ -13,7 +14,10 @@ import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { CampusView } from "@/ui/campus/CampusView";
 import { PauseMenu } from "./PauseMenu";
+import { CelebrationLayer } from "./CelebrationLayer";
+import { KeysOverlay } from "./KeysOverlay";
 import { play } from "@/audio/sfx";
+import { setAmbientMood, startAmbient } from "@/audio/ambient";
 import {
   ResearchTabLive, MegaprojectsTabLive, EmpireTabLive, ExecutivesTabLive,
   ContractsTabLive, StandingTabLive, BriefingTabLive,
@@ -49,7 +53,17 @@ export function GameShell() {
   const hasGuided = useGame((s) => (s.content.tutorial?.steps.length ?? 0) > 0);
   const guidedActive = usePrefs((s) => s.tutorialEnabled && !s.guidedDone) && hasGuided;
 
-  // Game keys: ⌘K palette, Esc pause, Space advances a week.
+  const [keysOpen, setKeysOpen] = useState(false);
+
+  // The ambient pad tracks the macro cycle: contraction turns the music dark.
+  const macroPhase = useGame((s) => s.game?.world.macroPhase);
+  useEffect(() => {
+    startAmbient();
+    setAmbientMood(macroPhase === "contraction" || macroPhase === "trough" ? "dark" : "bright");
+  }, [macroPhase]);
+
+  // Game keys: ⌘K palette, Esc pause, Space advances a week, 1–8 switch views,
+  // ? shows the legend.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -58,7 +72,14 @@ export function GameShell() {
         return;
       }
       const ui = useUi.getState();
+      const el = document.activeElement as HTMLElement | null;
+      const typing = el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
       if (e.key === "Escape") {
+        if (keysOpen) {
+          e.preventDefault();
+          setKeysOpen(false);
+          return;
+        }
         // The palette and settings own their own Esc; otherwise toggle pause.
         if (ui.paletteOpen || ui.settingsOpen) return;
         e.preventDefault();
@@ -66,14 +87,28 @@ export function GameShell() {
         ui.setPauseOpen(!ui.pauseOpen);
         return;
       }
+      const surfaceUp = ui.pauseOpen || ui.settingsOpen || ui.paletteOpen || keysOpen;
+      if (e.key === "?" && !typing && !surfaceUp) {
+        e.preventDefault();
+        play("open");
+        setKeysOpen(true);
+        return;
+      }
+      if (/^[1-8]$/.test(e.key) && !typing && !surfaceUp && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const order: View[] = ["campus", "dashboard", "captable", "fundraising", "market", "world", "team", "about"];
+        const v = order[Number(e.key) - 1];
+        if (v) {
+          play("nav");
+          useUi.getState().setView(v);
+        }
+        return;
+      }
       if (e.key === " " || e.code === "Space") {
         // Space = advance a week, but never while typing, focused on a control,
         // or while any surface (pause, settings, palette, event, exit) is up.
-        const el = document.activeElement as HTMLElement | null;
-        const typing = el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.tagName === "BUTTON" || el.isContentEditable);
         const g = useGame.getState();
-        const blocked = ui.pauseOpen || ui.settingsOpen || ui.paletteOpen || !g.game || g.game.pendingEvent != null || g.game.runOutcome != null || g.exitFlow != null;
-        if (typing || blocked) return;
+        const blocked = surfaceUp || !g.game || g.game.pendingEvent != null || g.game.runOutcome != null || g.exitFlow != null;
+        if (typing || (el && el.tagName === "BUTTON") || blocked) return;
         e.preventDefault();
         play("advance");
         g.advance({ type: "weeks", weeks: 1 });
@@ -81,7 +116,7 @@ export function GameShell() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [setPaletteOpen]);
+  }, [setPaletteOpen, keysOpen]);
 
   const showRail = railOpen && view !== "market" && view !== "world";
 
@@ -120,6 +155,8 @@ export function GameShell() {
       <EventModal />
       <ExitFlow />
       <PauseMenu />
+      <CelebrationLayer />
+      {keysOpen && <KeysOverlay onClose={() => setKeysOpen(false)} />}
       <AchievementToast />
       {!guidedActive && <TutorialLayer view={view} />}
       <CommandPalette />

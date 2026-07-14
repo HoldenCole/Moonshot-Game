@@ -17,6 +17,10 @@ export function SettingsModal() {
   const setSoundOn = usePrefs((s) => s.setSoundOn);
   const volume = usePrefs((s) => s.volume);
   const setVolume = usePrefs((s) => s.setVolume);
+  const musicOn = usePrefs((s) => s.musicOn);
+  const setMusicOn = usePrefs((s) => s.setMusicOn);
+  const musicVolume = usePrefs((s) => s.musicVolume);
+  const setMusicVolume = usePrefs((s) => s.setMusicVolume);
   const resetHints = usePrefs((s) => s.resetHints);
 
   useEffect(() => {
@@ -84,6 +88,25 @@ export function SettingsModal() {
         {soundOn && (
           <div className="settings-row settings-row--wide">
             <Slider label="Volume" value={Math.round(volume * 100)} min={0} max={100} step={5} onChange={(v) => setVolume(v / 100)} format={(v) => `${v}%`} />
+          </div>
+        )}
+
+        <div className="settings-row">
+          <div className="settings-row__label">Music</div>
+          <Segmented
+            size="sm"
+            value={musicOn ? "on" : "off"}
+            onChange={(v) => { setMusicOn(v === "on"); play("click"); }}
+            options={[
+              { value: "on", label: "On" },
+              { value: "off", label: "Muted" },
+            ]}
+          />
+        </div>
+
+        {musicOn && (
+          <div className="settings-row settings-row--wide">
+            <Slider label="Music volume" value={Math.round(musicVolume * 100)} min={0} max={100} step={5} onChange={(v) => setMusicVolume(v / 100)} format={(v) => `${v}%`} />
           </div>
         )}
 

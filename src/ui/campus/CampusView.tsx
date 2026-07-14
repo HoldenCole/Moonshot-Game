@@ -22,6 +22,35 @@ function rnd(i: number, salt = 0): number {
 
 const GROUND = 630;
 
+/** The year turns: sky palette + tree canopy per quarter of the 52-week year. */
+const SEASONS = [
+  { name: "spring", sky: ["#070a12", "#0d1322", "#182036"], canopy: "#2f6b4f" },
+  { name: "summer", sky: ["#080a10", "#111528", "#232945"], canopy: "#3a8757" },
+  { name: "autumn", sky: ["#0a0910", "#151020", "#2b1e33"], canopy: "#b06a35" },
+  { name: "winter", sky: ["#06080f", "#0e1626", "#1e2c46"], canopy: null },
+] as const;
+
+/** A campus tree that turns with the seasons (bare + snow-capped in winter). */
+function Tree({ x, canopy, winter }: { x: number; canopy: string | null; winter: boolean }) {
+  return (
+    <g>
+      <rect x={x - 1.5} y={GROUND - 16} width={3} height={16} fill="#241d2c" />
+      {canopy ? (
+        <>
+          <circle cx={x} cy={GROUND - 22} r={10} fill={canopy} opacity={0.9} />
+          <circle cx={x - 6} cy={GROUND - 17} r={6.5} fill={canopy} opacity={0.75} />
+        </>
+      ) : (
+        <>
+          <line x1={x} y1={GROUND - 16} x2={x - 6} y2={GROUND - 26} stroke="#241d2c" strokeWidth={2} />
+          <line x1={x} y1={GROUND - 18} x2={x + 6} y2={GROUND - 27} stroke="#241d2c" strokeWidth={2} />
+          {winter && <ellipse cx={x} cy={GROUND - 27} rx={7} ry={2.2} fill="#cdd8ec" opacity={0.65} />}
+        </>
+      )}
+    </g>
+  );
+}
+
 /** A small HUD chip (label + optional value) floating above a structure. */
 function Chip({ x, y, label, value, accent }: { x: number; y: number; label: string; value?: string; accent?: string }) {
   const text = value ? `${label} · ${value}` : label;
@@ -118,9 +147,13 @@ export function CampusView() {
   const liveProducts = c.products?.products.filter((p) => p.state !== "declining").length ?? 0;
   const late = game.late;
 
-  // Sky mood follows the macro cycle.
+  // Sky mood follows the macro cycle; the palette follows the season.
   const cloudOpacity = { expansion: 0.35, peak: 0.3, recovery: 0.45, contraction: 0.6, trough: 0.7 }[phase] ?? 0.4;
   const starDim = phase === "contraction" || phase === "trough" ? 0.55 : 1;
+  const season = SEASONS[Math.floor(((week % 52) / 52) * 4) % 4]!;
+  const winter = season.name === "winter";
+  const raining = !winter && (phase === "contraction" || phase === "trough");
+  const staff = Math.max(1, Math.min(6, Math.ceil(headcount / 4)));
 
   const towerX = 170;
   const towerW = 170;
@@ -134,9 +167,9 @@ export function CampusView() {
         <svg viewBox="0 0 1200 720" className="campus-svg">
           <defs>
             <linearGradient id="cmp-sky" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#070a12" />
-              <stop offset="68%" stopColor="#0d1322" />
-              <stop offset="100%" stopColor="#182036" />
+              <stop offset="0%" stopColor={season.sky[0]} />
+              <stop offset="68%" stopColor={season.sky[1]} />
+              <stop offset="100%" stopColor={season.sky[2]} />
             </linearGradient>
             <linearGradient id="cmp-aurora" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#46d6c8" stopOpacity="0" />
@@ -240,7 +273,8 @@ export function CampusView() {
           <rect x={0} y={GROUND - 170} width={1200} height={170} fill="url(#cmp-fog)" />
 
           {/* ── Ground + road ── */}
-          <rect x={0} y={GROUND} width={1200} height={90} fill="#0c1018" />
+          <rect x={0} y={GROUND} width={1200} height={90} fill={winter ? "#0e1322" : "#0c1018"} />
+          {winter && <rect x={0} y={GROUND} width={1200} height={2.5} fill="#33415f" opacity={0.55} />}
           <rect x={0} y={GROUND + 22} width={1200} height={26} fill="#10151f" />
           {Array.from({ length: 24 }, (_, i) => (
             <rect key={i} x={i * 52} y={GROUND + 34} width={22} height={2} rx={1} fill="#232c40" />
@@ -325,6 +359,25 @@ export function CampusView() {
               />
             </g>
           </Hot>
+
+          {/* ── Campus grounds: trees turn with the year; staff come and go ── */}
+          <Tree x={150} canopy={season.canopy} winter={winter} />
+          <Tree x={512} canopy={season.canopy} winter={winter} />
+          <Tree x={540} canopy={season.canopy} winter={winter} />
+          <Tree x={706} canopy={season.canopy} winter={winter} />
+          {Array.from({ length: staff }, (_, i) => (
+            <g
+              key={i}
+              className="cmp-person"
+              style={{
+                animationDuration: `${(15 + rnd(i, 90) * 10).toFixed(1)}s`,
+                animationDelay: `${(-rnd(i, 91) * 24).toFixed(1)}s`,
+              }}
+            >
+              <rect x={-2} y={GROUND - 9} width={4} height={7} rx={2} fill="#93a5c8" />
+              <circle cx={0} cy={GROUND - 11.5} r={2} fill="#cfd9ec" />
+            </g>
+          ))}
 
           {/* ── Capitol (late game: standing & power) ── */}
           {late && (
@@ -442,6 +495,37 @@ export function CampusView() {
                 />
               </g>
             </Hot>
+          )}
+
+          {/* ── Weather: snow through the winter quarter; rain in a downturn ── */}
+          {winter && (
+            <g pointerEvents="none">
+              {Array.from({ length: 44 }, (_, i) => (
+                <circle
+                  key={i}
+                  className="cmp-flake"
+                  cx={rnd(i, 70) * 1200}
+                  cy={-8}
+                  r={0.9 + rnd(i, 71) * 1.1}
+                  style={{ animationDuration: `${(7 + rnd(i, 72) * 5).toFixed(1)}s`, animationDelay: `${(-rnd(i, 73) * 12).toFixed(1)}s` }}
+                />
+              ))}
+            </g>
+          )}
+          {raining && (
+            <g pointerEvents="none" transform="rotate(8 600 360)">
+              {Array.from({ length: 36 }, (_, i) => (
+                <line
+                  key={i}
+                  className="cmp-drop"
+                  x1={rnd(i, 80) * 1280 - 40}
+                  y1={-18}
+                  x2={rnd(i, 80) * 1280 - 40}
+                  y2={-6}
+                  style={{ animationDuration: `${(0.9 + rnd(i, 81) * 0.6).toFixed(2)}s`, animationDelay: `${(-rnd(i, 82) * 2).toFixed(2)}s` }}
+                />
+              ))}
+            </g>
           )}
 
           {/* hint */}

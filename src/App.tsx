@@ -6,6 +6,7 @@ import { TitleScreen } from "@/ui/title/TitleScreen";
 import { NewGameScreen } from "@/ui/newgame/NewGameScreen";
 import { BetweenCompanies } from "@/ui/exit/BetweenCompanies";
 import { FoundingMoment } from "@/ui/late/FoundingMoment";
+import { LoadingMoment } from "@/ui/late/LoadingMoment";
 import { SettingsModal } from "@/ui/settings/SettingsModal";
 import { GuidedTutorial } from "@/ui/tutorial/GuidedTutorial";
 
@@ -21,6 +22,11 @@ export function App() {
     if (game && !justFounded && screen === "newgame") setScreen("game");
   }, [game, justFounded, screen, setScreen]);
 
+  // The window carries the run: "Helion Labs · W34 — Moonshot Inc".
+  useEffect(() => {
+    document.title = game && screen === "game" ? `${game.company.name} · W${game.clock.week} — Moonshot Inc` : "Moonshot Inc";
+  }, [game, screen]);
+
   const body =
     game && justFounded ? (
       <FoundingMoment />
@@ -28,6 +34,8 @@ export function App() {
       <TitleScreen />
     ) : screen === "newgame" ? (
       <NewGameScreen />
+    ) : game && screen === "loading" ? (
+      <LoadingMoment />
     ) : game?.runOutcome ? (
       <BetweenCompanies />
     ) : game ? (
