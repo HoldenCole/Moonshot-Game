@@ -3,6 +3,7 @@ import { useGame } from "@/state/store";
 import type { View } from "./types";
 
 const ITEMS: { view: View; icon: IconName; label: string }[] = [
+  { view: "campus", icon: "rocket", label: "Campus" },
   { view: "dashboard", icon: "dashboard", label: "Dashboard" },
   { view: "captable", icon: "captable", label: "Cap Table" },
   { view: "fundraising", icon: "fundraising", label: "Fundraising" },

@@ -1,4 +1,5 @@
 export type View =
+  | "campus"
   | "dashboard"
   | "captable"
   | "fundraising"

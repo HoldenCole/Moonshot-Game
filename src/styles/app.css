@@ -211,6 +211,266 @@
   flex-direction: column;
   gap: 6px;
 }
+/* ── Campus: the game world as a place ──────────────────────────────────────── */
+
+.campus-panel {
+  flex: 1;
+  min-height: 420px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  /* Matches the top of the scene's sky, so any headroom reads as more night. */
+  background: #070a12;
+}
+.campus-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: inherit;
+}
+
+/* Clickable structures glow on hover / focus. */
+.cmp-hot {
+  cursor: pointer;
+  outline: none;
+  transition: filter 0.16s ease;
+}
+.cmp-hot:hover,
+.cmp-hot:focus-visible {
+  filter: brightness(1.22) drop-shadow(0 0 12px rgba(111, 156, 255, 0.28));
+}
+.cmp-hot:hover .cmp-chip__bg,
+.cmp-hot:focus-visible .cmp-chip__bg {
+  stroke: rgba(111, 156, 255, 0.65);
+}
+
+/* HUD chips */
+.cmp-chip__bg {
+  fill: rgba(9, 12, 20, 0.78);
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1;
+  transition: stroke 0.16s ease;
+}
+.cmp-chip__text {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  fill: #c7d1e2;
+}
+
+/* Signs + hint */
+.cmp-sign {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+.cmp-sign--company {
+  font-size: 13px;
+  letter-spacing: 0.3em;
+}
+.cmp-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  fill: #3d4a63;
+}
+
+/* Windows */
+.cmp-win {
+  fill: #1a2131;
+}
+.cmp-win--lit {
+  fill: #ffd98a;
+  opacity: 0.85;
+  animation: cmp-win-flicker 9s ease-in-out infinite;
+}
+@keyframes cmp-win-flicker {
+  0%, 92%, 100% { opacity: 0.85; }
+  95% { opacity: 0.45; }
+}
+
+/* Stars twinkle */
+.cmp-star {
+  fill: #cdd8ec;
+  opacity: 0.7;
+  animation: cmp-twinkle 5s ease-in-out infinite;
+}
+@keyframes cmp-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.85; }
+}
+
+/* Beacons (antenna / dome lights) */
+.cmp-beacon {
+  fill: #f4716f;
+  animation: cmp-beacon 2.4s ease-in-out infinite;
+}
+.cmp-beacon--gold {
+  fill: #e8c76a;
+}
+@keyframes cmp-beacon {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+/* Clouds drift across the sky. */
+.cmp-cloud--a {
+  animation: cmp-drift-a 90s linear infinite;
+}
+.cmp-cloud--b {
+  animation: cmp-drift-b 130s linear infinite;
+}
+@keyframes cmp-drift-a {
+  from { transform: translateX(-320px); }
+  to { transform: translateX(1300px); }
+}
+@keyframes cmp-drift-b {
+  from { transform: translateX(1300px); }
+  to { transform: translateX(-460px); }
+}
+
+/* Cars on the campus road. */
+.cmp-car--a {
+  animation: cmp-car-a 15s linear infinite;
+}
+.cmp-car--b {
+  animation: cmp-car-b 21s linear infinite;
+}
+@keyframes cmp-car-a {
+  from { transform: translateX(-60px); }
+  to { transform: translateX(1260px); }
+}
+@keyframes cmp-car-b {
+  from { transform: translateX(1260px); }
+  to { transform: translateX(-60px); }
+}
+
+/* Data-center life: rack LEDs + roof fans. */
+.cmp-led {
+  fill: #3ad29a;
+  animation: cmp-led 2.4s steps(2, start) infinite;
+}
+@keyframes cmp-led {
+  0%, 100% { fill: #3ad29a; opacity: 0.9; }
+  40% { fill: #46d6c8; opacity: 0.35; }
+  70% { fill: #f0b54e; opacity: 0.8; }
+}
+.cmp-fan {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cmp-spin 3.6s linear infinite;
+}
+@keyframes cmp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Lab glow breathes. */
+.cmp-lab-glow {
+  animation: cmp-lab 6s ease-in-out infinite;
+}
+@keyframes cmp-lab {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.26; }
+}
+
+/* Ticker pulse on the exchange tower. */
+.cmp-ticker {
+  animation: cmp-ticker 3.2s ease-in-out infinite;
+}
+@keyframes cmp-ticker {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+/* The launch: rocket climbs out of frame. */
+.cmp-rocket.is-launching {
+  animation: cmp-launch 4.2s cubic-bezier(0.55, 0, 0.85, 0.4) forwards;
+}
+@keyframes cmp-launch {
+  0% { transform: translateY(0); }
+  18% { transform: translateY(-6px); }
+  100% { transform: translateY(-860px); }
+}
+
+/* Upper-sky life: aurora drift, a rare shooting star, a satellite pass. */
+.cmp-aurora {
+  animation: cmp-aurora 26s ease-in-out infinite alternate;
+}
+.cmp-aurora--b {
+  animation-duration: 34s;
+  animation-delay: -12s;
+}
+@keyframes cmp-aurora {
+  from { transform: translateX(-30px); }
+  to { transform: translateX(30px); }
+}
+.cmp-shooting {
+  opacity: 0;
+  animation: cmp-shooting 13s linear infinite;
+}
+@keyframes cmp-shooting {
+  0%, 88% { opacity: 0; transform: translate(1150px, 40px); }
+  89% { opacity: 0.9; }
+  94% { opacity: 0; transform: translate(880px, 150px); }
+  100% { opacity: 0; transform: translate(880px, 150px); }
+}
+.cmp-sat {
+  animation: cmp-sat 74s linear infinite;
+}
+@keyframes cmp-sat {
+  from { transform: translate(-30px, 210px); }
+  to { transform: translate(1240px, 96px); }
+}
+.cmp-flame path {
+  animation: cmp-flame 0.14s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: top center;
+}
+@keyframes cmp-flame {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(1.35); }
+}
+.cmp-smoke circle {
+  animation: cmp-smoke 4s ease-out forwards;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes cmp-smoke {
+  from { transform: scale(0.6); opacity: 0.55; }
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+/* Reduced motion: freeze ambient life, keep the scene. */
+:root[data-reduce-motion="on"] .cmp-star,
+:root[data-reduce-motion="on"] .cmp-cloud--a,
+:root[data-reduce-motion="on"] .cmp-cloud--b,
+:root[data-reduce-motion="on"] .cmp-car--a,
+:root[data-reduce-motion="on"] .cmp-car--b,
+:root[data-reduce-motion="on"] .cmp-led,
+:root[data-reduce-motion="on"] .cmp-fan,
+:root[data-reduce-motion="on"] .cmp-win--lit,
+:root[data-reduce-motion="on"] .cmp-beacon,
+:root[data-reduce-motion="on"] .cmp-aurora,
+:root[data-reduce-motion="on"] .cmp-shooting,
+:root[data-reduce-motion="on"] .cmp-sat {
+  animation: none !important;
+}
+:root[data-reduce-motion="on"] .cmp-sat,
+:root[data-reduce-motion="on"] .cmp-shooting {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmp-star, .cmp-cloud--a, .cmp-cloud--b, .cmp-car--a, .cmp-car--b,
+  .cmp-led, .cmp-fan, .cmp-win--lit, .cmp-beacon, .cmp-aurora, .cmp-shooting, .cmp-sat {
+    animation: none !important;
+  }
+  .cmp-sat, .cmp-shooting {
+    opacity: 0;
+  }
+}
+
 /* ── Founding interstitial (the loading screen as a moment) ─────────────────── */
 .fi {
   position: fixed;

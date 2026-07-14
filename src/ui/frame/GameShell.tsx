@@ -11,6 +11,7 @@ import { WorldView } from "@/ui/views/WorldView";
 import { TeamView } from "@/ui/views/TeamView";
 import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
+import { CampusView } from "@/ui/campus/CampusView";
 import {
   ResearchTabLive, MegaprojectsTabLive, EmpireTabLive, ExecutivesTabLive,
   ContractsTabLive, StandingTabLive, BriefingTabLive,
@@ -67,6 +68,7 @@ export function GameShell() {
       <div className="shell__body">
         <NavRail view={view} onChange={setView} />
         <main className="workspace" data-guide="center-workspace">
+          {view === "campus" && <CampusView />}
           {view === "dashboard" && <Dashboard onNavigate={setView} />}
           {view === "captable" && <CapTableView />}
           {view === "fundraising" && <FundraisingView />}

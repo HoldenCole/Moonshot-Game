@@ -21,7 +21,7 @@ interface UiStore {
 }
 
 export const useUi = create<UiStore>((set) => ({
-  view: "dashboard",
+  view: "campus",
   setView: (view) => set({ view }),
   paletteOpen: false,
   setPaletteOpen: (paletteOpen) => set({ paletteOpen }),
