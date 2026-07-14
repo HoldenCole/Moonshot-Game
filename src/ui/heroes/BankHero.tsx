@@ -39,20 +39,53 @@ export function BankHero({ climate, rate, window: win, stage, valuation, roundSi
             <circle cx={x} cy={64} r={16} fill={lamp} opacity={lampOpacity} className="bank-lamp" style={{ animationDelay: `${i * 1.1}s` }} />
           </g>
         ))}
-        {/* the vault */}
-        <circle cx={450} cy={126} r={44} fill="#141a2b" stroke="#2c3752" strokeWidth={3} />
-        <circle cx={450} cy={126} r={33} fill="#101624" stroke="#232c44" strokeWidth={2} />
-        <g className="bank-vault">
+        {/* arched windows — the weather outside is the climate */}
+        {[318, 582].map((wx) => (
+          <g key={wx}>
+            <path d={`M ${wx - 22} 130 L ${wx - 22} 78 A 22 22 0 0 1 ${wx + 22} 78 L ${wx + 22} 130 Z`} fill={climate < 30 ? "#0a0f1c" : "#101a30"} stroke="#232c44" strokeWidth={1.5} />
+            {climate < 30 &&
+              [0, 1, 2, 3].map((i) => (
+                <line key={i} className="hall-rain" x1={wx - 14 + i * 9} y1={74} x2={wx - 17 + i * 9} y2={86} stroke="#5f7cad" strokeWidth={1.2} opacity={0.5} style={{ animationDelay: `${i * 0.35}s` }} />
+              ))}
+            {climate >= 62 && <circle cx={wx + 8} cy={92} r={7} fill="#e8c76a" opacity={0.35} />}
+          </g>
+        ))}
+
+        {/* the vault — it swings open with the IPO window */}
+        {win === "open" && <circle cx={450} cy={126} r={50} fill="none" stroke="#3ad29a" strokeWidth={1.5} opacity={0.5} className="bank-vault-open" />}
+        <circle cx={450} cy={126} r={44} fill="#141a2b" stroke={win === "open" ? "#2f5a4c" : "#2c3752"} strokeWidth={3} />
+        <circle cx={450} cy={126} r={33} fill={win === "open" ? "#0f1d1c" : "#101624"} stroke="#232c44" strokeWidth={2} />
+        {win === "open" && <circle cx={450} cy={126} r={26} fill="#3ad29a" opacity={0.08} />}
+        <g className={win === "open" ? "bank-vault bank-vault--fast" : "bank-vault"}>
           <circle cx={450} cy={126} r={12} fill="none" stroke="#3a4a6e" strokeWidth={3} />
           {[0, 60, 120, 180, 240, 300].map((a) => (
             <line key={a} x1={450} y1={126} x2={450 + 20 * Math.cos((a * Math.PI) / 180)} y2={126 + 20 * Math.sin((a * Math.PI) / 180)} stroke="#3a4a6e" strokeWidth={2.6} />
           ))}
         </g>
-        {/* teller desks */}
+
+        {/* teller desks + the deal-flow queue (longer when the money runs hot) */}
         <rect x={180} y={148} width={110} height={28} fill="#161c2e" />
         <rect x={610} y={148} width={110} height={28} fill="#161c2e" />
         <rect x={186} y={142} width={26} height={6} fill="#ffd98a" opacity={0.3} />
         <rect x={688} y={142} width={26} height={6} fill="#ffd98a" opacity={0.3} />
+        {Array.from({ length: Math.min(5, Math.max(0, Math.round(climate / 18))) }, (_, i) => (
+          <g key={`qa${i}`} opacity={0.9 - i * 0.13}>
+            <circle cx={306 + i * 17} cy={156} r={3} fill="#cfd9ec" />
+            <rect x={303 + i * 17} y={160} width={6} height={11} rx={3} fill="#8fa2c4" />
+          </g>
+        ))}
+        {Array.from({ length: Math.min(4, Math.max(0, Math.round(climate / 24))) }, (_, i) => (
+          <g key={`qb${i}`} opacity={0.9 - i * 0.16}>
+            <circle cx={736 + i * 17} cy={156} r={3} fill="#cfd9ec" />
+            <rect x={733 + i * 17} y={160} width={6} height={11} rx={3} fill="#8fa2c4" />
+          </g>
+        ))}
+
+        {/* gilded air when the market froths */}
+        {climate >= 72 &&
+          Array.from({ length: 7 }, (_, i) => (
+            <circle key={i} className="bank-mote" cx={140 + i * 106} cy={170} r={1.6} fill="#e8c76a" style={{ animationDelay: `${i * 1.3}s` }} />
+          ))}
       </svg>
 
       <div className="bankhall__overlay">

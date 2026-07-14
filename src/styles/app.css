@@ -716,6 +716,245 @@ button:not(:disabled):active {
   }
 }
 
+/* ── Hero scenes, second wave: observatory, floor, orrery, suite, deals, power ─ */
+.obs-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  fill: #69748a;
+}
+.obs-phase {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  fill: #e7ecf4;
+}
+.obs-strength {
+  font-size: 15px;
+  font-weight: 700;
+}
+.observatory__head, .megaworks__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 4px;
+}
+.observatory__svg, .officefloor__svg, .orrery__svg, .csuite__svg, .dealroom__svg, .powermap__svg {
+  width: 100%;
+  display: block;
+}
+.obs-band {
+  animation: obs-band 26s ease-in-out infinite alternate;
+}
+@keyframes obs-band {
+  from { transform: translateX(-7px); }
+  to { transform: translateX(7px); }
+}
+.obs-sat {
+  animation: obs-sat 24s linear infinite;
+  transform-origin: 132px 122px;
+}
+@keyframes obs-sat {
+  from { transform: rotate(0deg) translate(96px, 0) rotate(0deg); }
+  to { transform: rotate(360deg) translate(96px, 0) rotate(-360deg); }
+}
+.obs-needle {
+  transition: x2 0.8s ease, y2 0.8s ease;
+}
+.obs-fill {
+  transition: width 0.8s ease;
+}
+
+.office-initials {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  fill: #e7ecf4;
+}
+.office-name {
+  font-size: 11px;
+  font-weight: 650;
+  fill: #c7d1e2;
+}
+.office-vacant {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  fill: #3d4a63;
+}
+.office-monitor {
+  animation: office-monitor 7s ease-in-out infinite;
+}
+@keyframes office-monitor {
+  0%, 88%, 100% { opacity: 0.85; }
+  92% { opacity: 0.4; }
+}
+
+.orr-ringlabel {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  fill: #3d4a63;
+}
+.orr-name {
+  font-size: 11px;
+  font-weight: 650;
+  fill: #c7d1e2;
+}
+.orr-core {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  fill: #0a0e18;
+}
+.orr-glow {
+  animation: orr-glow 5s ease-in-out infinite;
+}
+@keyframes orr-glow {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.2; }
+}
+.orr-body {
+  transition: r 0.6s ease;
+}
+
+.suite-unhappy {
+  animation: suite-unhappy 2.2s ease-in-out infinite;
+}
+@keyframes suite-unhappy {
+  0%, 100% { stroke-opacity: 1; }
+  50% { stroke-opacity: 0.35; }
+}
+
+.deal-heat {
+  animation: deal-heat 3.2s ease-in-out infinite;
+}
+@keyframes deal-heat {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.6; }
+}
+.deal-clearance {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  fill: #d9c8ff;
+}
+
+.power-rung {
+  animation: power-rung 2.6s ease-in-out infinite;
+}
+@keyframes power-rung {
+  0%, 100% { fill-opacity: 1; }
+  50% { fill-opacity: 0.55; }
+}
+.race-you {
+  font-size: 11px;
+  font-weight: 800;
+  fill: #f2f5fa;
+}
+.race-bar-you {
+  filter: drop-shadow(0 0 6px rgba(111, 156, 255, 0.45));
+}
+.race-surge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  fill: #f0b54e;
+  animation: cmp-beacon 1.6s ease-in-out infinite;
+}
+.plaque-name {
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.plaque-mark {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.work-spark {
+  animation: work-spark 1.8s ease-in-out infinite;
+}
+@keyframes work-spark {
+  0%, 74%, 100% { opacity: 0; }
+  78% { opacity: 1; transform: translate(0, 0); }
+  95% { opacity: 0; transform: translate(4px, -7px); }
+}
+.work-glow {
+  animation: work-glow 4.5s ease-in-out infinite;
+}
+@keyframes work-glow {
+  0%, 100% { opacity: 0.16; }
+  50% { opacity: 0.26; }
+}
+
+.xch-axis {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  fill: #3d4a63;
+}
+.hall-rain {
+  animation: hall-rain 1.1s linear infinite;
+}
+@keyframes hall-rain {
+  from { transform: translateY(0); opacity: 0.5; }
+  to { transform: translateY(46px); opacity: 0; }
+}
+.bank-vault--fast {
+  animation-duration: 9s;
+}
+.bank-vault-open {
+  animation: bank-vault-open 3s ease-in-out infinite;
+}
+@keyframes bank-vault-open {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.15; }
+}
+.bank-mote {
+  animation: bank-mote 9s linear infinite;
+}
+@keyframes bank-mote {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 0.8; }
+  100% { transform: translateY(-130px); opacity: 0; }
+}
+.constellation__running {
+  font-size: 10.5px;
+  font-weight: 650;
+  fill: #9db8ff;
+}
+.constellation__far {
+  animation: cmp-twinkle 9s ease-in-out infinite;
+}
+
+:root[data-reduce-motion="on"] .obs-band,
+:root[data-reduce-motion="on"] .obs-sat,
+:root[data-reduce-motion="on"] .office-monitor,
+:root[data-reduce-motion="on"] .orr-glow,
+:root[data-reduce-motion="on"] .suite-unhappy,
+:root[data-reduce-motion="on"] .deal-heat,
+:root[data-reduce-motion="on"] .power-rung,
+:root[data-reduce-motion="on"] .race-surge,
+:root[data-reduce-motion="on"] .work-spark,
+:root[data-reduce-motion="on"] .work-glow,
+:root[data-reduce-motion="on"] .hall-rain,
+:root[data-reduce-motion="on"] .bank-vault-open,
+:root[data-reduce-motion="on"] .bank-mote,
+:root[data-reduce-motion="on"] .constellation__far {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .obs-band, .obs-sat, .office-monitor, .orr-glow, .suite-unhappy, .deal-heat,
+  .power-rung, .race-surge, .work-spark, .work-glow, .hall-rain, .bank-vault-open,
+  .bank-mote, .constellation__far {
+    animation: none !important;
+  }
+}
+
 /* The Architect: choose what your company builds. */
 .campus-architect {
   position: absolute;

@@ -16,6 +16,10 @@ import type { GameSlice } from "@/engine/late/turn";
 import type { ExecState } from "@/engine/late/executives";
 import { ResearchHero, type ConstellationNode } from "@/ui/heroes/ResearchHero";
 import { MegaHero, type MegaWork } from "@/ui/heroes/MegaHero";
+import { CSuiteHero, type SuiteSeat } from "@/ui/heroes/CSuiteHero";
+import { DealRoomHero, type DealFolder } from "@/ui/heroes/DealRoomHero";
+import { PowerMapHero, type LegacyPlaque, type RaceRow } from "@/ui/heroes/PowerMapHero";
+import { govShare, mixIdentity, TUNING as CONTRACT_TUNING } from "@/engine/late/contracts";
 
 /** A small deterministic RNG for advisory noise — stable within a turn, varies
  *  across turns, so recommendations don't reshuffle every render. */
@@ -64,6 +68,7 @@ export function ResearchTabLive() {
     kind: n.kind,
     prereqs: n.prereqs,
     state: late.slice.research.nodes[n.id]?.state ?? "locked",
+    ...(n.gates_megaproject ? { gatesMega: true } : {}),
   }));
   return (
     <>
@@ -93,6 +98,8 @@ export function MegaprojectsTabLive() {
       progress: Math.min(1, doneWeeks / total),
       stageName: stages[a.stage_idx]?.name ?? "underway",
       copy: a.copy_n,
+      stagesTotal: stages.length,
+      stageIdx: a.stage_idx,
     };
   });
   const done = Object.entries(megas.builds)
@@ -135,16 +142,27 @@ export function ExecutivesTabLive() {
   const onHire = useGame((s) => s.lateHireExec);
   const onFire = useGame((s) => s.lateFireExec);
   if (!late) return null;
+  const seats: SuiteSeat[] = Object.values(execContent.domains).map((d) => {
+    const e = late.execs.seats[d.id];
+    return { domain: d.id, label: d.name, name: e?.name, competence: e?.competence, morale: e?.morale };
+  });
   return (
-    <ExecutivesTab
-      state={late.execs}
-      domains={execContent.domains}
-      traits={execContent.traits}
-      quality={late.slice.execQualityByDomain}
-      stature={late.slice.stature}
-      onHire={onHire}
-      onFire={onFire}
-    />
+    <>
+      <CSuiteHero
+        seats={seats}
+        marketCount={late.execs.market.length}
+        refreshWeeks={execContent.tuning.market_refresh_weeks - late.execs.weeks_since_refresh}
+      />
+      <ExecutivesTab
+        state={late.execs}
+        domains={execContent.domains}
+        traits={execContent.traits}
+        quality={late.slice.execQualityByDomain}
+        stature={late.slice.stature}
+        onHire={onHire}
+        onFire={onFire}
+      />
+    </>
   );
 }
 
@@ -153,23 +171,88 @@ export function ContractsTabLive() {
   const content = useGame((s) => s.content.late);
   const onTake = useGame((s) => s.lateTakeContract);
   if (!late) return null;
+  const cs = late.slice.contracts;
+  const share = govShare(cs, content.contractTemplates, content.customers);
+  const deals: DealFolder[] = cs.active.map((a, i) => {
+    const t = content.contractTemplates[a.template_id];
+    return {
+      id: `${a.template_id}-${i}`,
+      name: t?.name ?? a.template_id,
+      weeksLeft: a.weeks_left,
+      termWeeks: t?.payment.term_weeks ?? a.weeks_left,
+      gov: (t && content.customers[t.customer]?.channel === "government") ?? false,
+      perYear: t?.payment.recurring_per_year ?? 0,
+    };
+  });
   return (
-    <ContractsTab
-      state={late.slice.contracts}
-      templates={content.contractTemplates}
-      customers={content.customers}
-      cfo={cfoProfile(late.execs)}
-      rng={uiRng(late.slice.week)}
-      onTake={onTake}
-    />
+    <>
+      <DealRoomHero
+        share={share}
+        identity={mixIdentity(share)}
+        entanglement={cs.entanglement}
+        deals={deals}
+        marketCount={cs.market.length}
+        refreshWeeks={CONTRACT_TUNING.refresh_weeks - cs.weeks_since_refresh}
+        clearances={cs.clearances}
+      />
+      <ContractsTab
+        state={cs}
+        templates={content.contractTemplates}
+        customers={content.customers}
+        cfo={cfoProfile(late.execs)}
+        rng={uiRng(late.slice.week)}
+        onTake={onTake}
+      />
+    </>
   );
 }
+
+const RIVAL_COLORS = ["#f4716f", "#e8c76a", "#bd9dff", "#46d6c8", "#f0b54e", "#9fb0cc"];
 
 export function StandingTabLive() {
   const late = useGame((s) => s.game?.late);
   const content = useGame((s) => s.content.late);
-  if (!late) return null;
-  return <StandingTab s={late.slice} c={content} />;
+  const company = useGame((s) => s.game?.company);
+  if (!late || !company) return null;
+  const s = late.slice;
+  const race: RaceRow[] = [
+    { id: "__you__", name: company.name, stature: s.stature, phase: "done", surging: false, you: true, color: company.color },
+    ...s.rivals.map((r, i) => ({
+      id: r.def_id,
+      name: content.rivalDefs[r.def_id]?.name ?? r.def_id,
+      stature: r.stature,
+      phase: r.phase,
+      surging: r.surge_until > s.week,
+      color: RIVAL_COLORS[i % RIVAL_COLORS.length]!,
+    })),
+  ];
+  // The loader hoists legacy ids into megaMeta (not on_complete) — read there.
+  const legacies: LegacyPlaque[] = Object.values(content.megaMeta)
+    .filter((m) => m.legacy)
+    .map((m) => {
+      const id = m.legacy!;
+      const claimed = s.claimedLegacies[id];
+      return {
+        id,
+        name: m.name,
+        by: claimed === "player" ? ("you" as const) : claimed ? ("rival" as const) : null,
+        ...(claimed && claimed !== "player" ? { byName: content.rivalDefs[claimed]?.name ?? claimed } : {}),
+      };
+    });
+  const eraName = content.eras.find((e) => e.id === s.era)?.name ?? s.era;
+  return (
+    <>
+      <PowerMapHero
+        power={s.powerAxis.power}
+        reputation={s.powerAxis.reputation}
+        regulation={s.powerAxis.regulationLevel}
+        era={eraName}
+        race={race}
+        legacies={legacies}
+      />
+      <StandingTab s={s} c={content} />
+    </>
+  );
 }
 
 export function BriefingTabLive() {

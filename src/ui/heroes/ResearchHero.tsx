@@ -10,6 +10,8 @@ export interface ConstellationNode {
   kind: "applied" | "advanced" | "frontier" | "cross_domain";
   prereqs: string[];
   state: "locked" | "available" | "in_progress" | "complete";
+  /** This node opens a megaproject's gate — it gets a diamond setting. */
+  gatesMega?: boolean;
 }
 
 const W = 920;
@@ -83,19 +85,37 @@ export function ResearchHero({ nodes }: { nodes: ConstellationNode[] }) {
           const r = n.kind === "frontier" ? 4 : n.kind === "cross_domain" ? 3.4 : 2.8;
           return (
             <g key={n.id}>
-              <title>{`${n.name} — ${n.state.replace("_", " ")}`}</title>
+              <title>{`${n.name} — ${n.state.replace("_", " ")}${n.gatesMega ? " · gates a megaproject" : ""}`}</title>
               {n.state === "complete" && <circle cx={x} cy={y} r={r + 4} fill="#3ad29a" opacity={0.16} />}
+              {/* a diamond setting for the stars that open megaproject gates */}
+              {n.gatesMega && (
+                <rect x={x - r - 3.4} y={y - r - 3.4} width={(r + 3.4) * 2} height={(r + 3.4) * 2} fill="none" stroke="#bd9dff" strokeWidth={1} opacity={n.state === "complete" ? 0.9 : 0.45} transform={`rotate(45 ${x} ${y})`} />
+              )}
               <circle
                 cx={x}
                 cy={y}
                 r={r}
                 fill={STATE_FILL[n.state]}
                 opacity={n.state === "locked" ? 0.55 : 1}
-                className={n.state === "in_progress" ? "constellation__live" : n.state === "complete" ? "constellation__done" : undefined}
+                className={n.state === "in_progress" ? "constellation__live" : n.state === "complete" ? "constellation__done" : "constellation__far"}
+                style={n.state === "locked" || n.state === "available" ? { animationDelay: `${(hashN(n.id) % 60) / 10}s` } : undefined}
               />
             </g>
           );
         })}
+        {/* the programs running right now, named beside their stars */}
+        {nodes
+          .filter((n) => n.state === "in_progress")
+          .slice(0, 3)
+          .map((n) => {
+            const [x, y] = pos(n);
+            const flip = x > W - 150;
+            return (
+              <text key={n.id} x={flip ? x - 9 : x + 9} y={y + 3.5} textAnchor={flip ? "end" : "start"} className="constellation__running">
+                {n.name}
+              </text>
+            );
+          })}
       </svg>
     </section>
   );

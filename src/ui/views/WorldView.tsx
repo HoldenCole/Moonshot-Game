@@ -1,5 +1,6 @@
 import { type ReactNode, useMemo } from "react";
 import { useGame } from "@/state/store";
+import { ObservatoryHeroLive } from "@/ui/heroes/live";
 import type { WorldSnapshot } from "@/domain/state";
 import { climateLabel, MACRO_LABEL, sentimentLabel, valuationMultiplier } from "@/engine/world";
 import { fundamentalValue } from "@/engine/pricing";
@@ -44,6 +45,7 @@ export function WorldView() {
 
   return (
     <div className="workspace-scroll">
+      <ObservatoryHeroLive />
       <div className="panel">
         <div className="panel__head">
           <div className="panel__titles">

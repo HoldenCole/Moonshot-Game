@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/state/store";
+import { OfficeFloorHeroLive } from "@/ui/heroes/live";
 import type { Autonomy, ExecArea } from "@/domain/state";
 import { AREAS, AREA_LABEL, generateCandidates } from "@/engine/delegation";
 import { makeRng } from "@/engine/rng";
@@ -21,6 +22,7 @@ export function TeamView() {
 
   return (
     <div className="workspace-scroll">
+      <OfficeFloorHeroLive />
       <Panel className="team">
         <PanelHeader
           title="Your Executives"

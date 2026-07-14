@@ -8,6 +8,9 @@ export interface MegaWork {
   progress: number; // 0..1
   stageName: string;
   copy: number;
+  /** Stage rail: how many stages, and which one is live. */
+  stagesTotal?: number;
+  stageIdx?: number;
 }
 
 const W = 920;
@@ -56,15 +59,20 @@ function Silhouette({ branch, cx, ghost }: { branch: MegaWork["branch"]; cx: num
 function Bay({ work, cx }: { work: MegaWork; cx: number }) {
   const color = BRANCH_COLOR[work.branch];
   const fillH = Math.max(4, 116 * work.progress);
+  const stages = work.stagesTotal ?? 0;
   return (
     <g>
       {/* the light rising inside the silhouette */}
       <clipPath id={`mega-clip-${work.id}-${work.copy}`}>
         <rect x={cx - 70} y={GY - fillH} width={140} height={fillH} />
       </clipPath>
-      <g clipPath={`url(#mega-clip-${work.id}-${work.copy})`} opacity={0.5}>
-        <rect x={cx - 70} y={GY - 120} width={140} height={120} fill={color} opacity={0.22} />
+      <g clipPath={`url(#mega-clip-${work.id}-${work.copy})`}>
+        <rect x={cx - 70} y={GY - 120} width={140} height={120} fill={color} opacity={0.16} className="work-glow" />
       </g>
+      {/* welding sparks at the build line */}
+      {[0, 1].map((i) => (
+        <circle key={i} className="work-spark" cx={cx - 26 + i * 50} cy={GY - fillH} r={1.6} fill="#ffd98a" style={{ animationDelay: `${i * 0.9 + 0.2}s` }} />
+      ))}
       <Silhouette branch={work.branch} cx={cx} />
       {/* scaffolding */}
       {[0, 1, 2].map((i) => (
@@ -84,6 +92,20 @@ function Bay({ work, cx }: { work: MegaWork; cx: number }) {
       <text x={cx} y={GY + 30} textAnchor="middle" className="mega-bay__stage" fill={color}>
         {work.stageName} · {Math.round(work.progress * 100)}%
       </text>
+      {/* stage rail */}
+      {stages > 1 &&
+        Array.from({ length: stages }, (_, i) => (
+          <circle
+            key={i}
+            cx={cx - ((stages - 1) * 14) / 2 + i * 14}
+            cy={GY + 42}
+            r={3}
+            fill={i < (work.stageIdx ?? 0) ? color : "transparent"}
+            stroke={i === (work.stageIdx ?? 0) ? color : "#31405f"}
+            strokeWidth={1.4}
+            className={i === (work.stageIdx ?? 0) ? "exchange__dot" : undefined}
+          />
+        ))}
     </g>
   );
 }
@@ -105,6 +127,9 @@ export function MegaHero({ works, done, slots }: { works: MegaWork[]; done: { na
         </div>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="megaworks__svg" aria-hidden>
+        {Array.from({ length: 34 }, (_, i) => (
+          <circle key={i} cx={(i * 271) % W} cy={12 + ((i * 97) % 150)} r={0.7 + (i % 3) * 0.3} fill="#cdd8ec" opacity={0.35} className="cmp-star" style={{ animationDelay: `${(i % 6) * 1.1}s` }} />
+        ))}
         <line x1={0} y1={GY} x2={W} y2={GY} stroke="#232c44" strokeWidth={1.5} />
         {works.slice(0, 3).map((w, i) => (
           <Bay key={`${w.id}-${w.copy}`} work={w} cx={bays[i]!} />

@@ -2,8 +2,13 @@
 // components so SSR tests never touch the Vite-glob content loader).
 import { useGame } from "@/state/store";
 import { suggestedTerms } from "@/state/newgame";
+import { AREAS, AREA_LABEL } from "@/engine/delegation";
+import { founderOwnership, ownership } from "@/engine/captable";
 import { ExchangeHero, tickNoise, type ExchangePoint } from "./ExchangeHero";
 import { BankHero } from "./BankHero";
+import { ObservatoryHero } from "./ObservatoryHero";
+import { OfficeFloorHero, type OfficeSeat } from "./OfficeFloorHero";
+import { OrreryHero, type OrreryHolder } from "./OrreryHero";
 
 export function ExchangeHeroLive() {
   const game = useGame((s) => s.game);
@@ -36,6 +41,73 @@ export function BankHeroLive() {
       stage={game.company.stage}
       valuation={Math.max(base.valuation, game.company.financials.valuation)}
       roundSize={base.roundSize}
+    />
+  );
+}
+
+export function ObservatoryHeroLive() {
+  const game = useGame((s) => s.game);
+  if (!game) return null;
+  const w = game.world;
+  const hype = Object.entries(w.hype)
+    .map(([id, v]) => ({ label: id === "ai" ? "AI" : id.toUpperCase(), value: v ?? 50 }))
+    .sort((a, b) => b.value - a.value);
+  return (
+    <ObservatoryHero
+      phase={w.macroPhase}
+      position={w.macroPosition}
+      strength={w.macroStrength}
+      rate={w.interestRate}
+      rateTarget={w.rateTarget}
+      sentiment={w.marketSentiment}
+      climate={w.vcClimate}
+      window={w.ipoWindow}
+      hype={hype}
+      economyScale={w.economyScale ?? 1}
+    />
+  );
+}
+
+export function OfficeFloorHeroLive() {
+  const game = useGame((s) => s.game);
+  if (!game) return null;
+  const c = game.company;
+  const seats: OfficeSeat[] = AREAS.map((a) => {
+    const exec = c.executives[a];
+    return { area: a, label: AREA_LABEL[a], name: exec?.name, quality: exec?.quality, autonomy: c.delegation[a] };
+  });
+  return <OfficeFloorHero founderName={game.founder.name} color={c.color} headcount={c.financials.headcount} seats={seats} />;
+}
+
+export function OrreryHeroLive() {
+  const game = useGame((s) => s.game);
+  if (!game) return null;
+  const capTable = game.company.capTable;
+  const ringIndex = new Map(capTable.rounds.map((r, i) => [r.id, i]));
+  const firstRingOf = (holderId: string) => {
+    let ring = capTable.rounds.length - 1;
+    for (const lot of capTable.lots) {
+      if (lot.holderId === holderId) {
+        ring = Math.min(ring, ringIndex.get(lot.roundId) ?? capTable.rounds.length - 1);
+      }
+    }
+    return ring;
+  };
+  const holders: OrreryHolder[] = ownership(capTable)
+    .filter((r) => r.holderType !== "self")
+    .map((r) => ({
+      id: r.holderId,
+      name: r.holderName,
+      type: r.holderType as OrreryHolder["type"],
+      ownership: r.ownership,
+      ring: firstRingOf(r.holderId),
+    }));
+  return (
+    <OrreryHero
+      holders={holders}
+      ringNames={capTable.rounds.map((r) => r.name)}
+      founderPct={founderOwnership(capTable)}
+      color={game.company.color}
     />
   );
 }

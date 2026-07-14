@@ -13,6 +13,7 @@ import { TeamView } from "@/ui/views/TeamView";
 import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { CampusView } from "@/ui/campus/CampusView";
+import { OrreryHeroLive } from "@/ui/heroes/live";
 import { PauseMenu } from "./PauseMenu";
 import { CelebrationLayer } from "./CelebrationLayer";
 import { KeysOverlay } from "./KeysOverlay";
@@ -35,6 +36,7 @@ function CapTableView() {
   if (!game) return null;
   return (
     <div className="workspace-scroll">
+      <OrreryHeroLive />
       <CapTablePanel capTable={game.company.capTable} />
     </div>
   );
