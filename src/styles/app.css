@@ -364,6 +364,72 @@ button:not(:disabled):active {
   to { transform: translateY(780px); }
 }
 
+/* Downtown towers ease to their new heights as market caps move. */
+.cmp-bldg {
+  transition: y 0.9s ease, height 0.9s ease;
+}
+
+/* District life: hot training LEDs, billboard bars, cleanroom pulse, dishes,
+   birds, the station, a capsule climb, the crane. */
+.cmp-led--hot {
+  animation-duration: 0.9s;
+}
+.cmp-bar {
+  animation: cmp-bar 3.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: bottom center;
+}
+@keyframes cmp-bar {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.72); }
+}
+.cmp-cleanroom {
+  animation: cmp-cleanroom 4.5s ease-in-out infinite;
+}
+@keyframes cmp-cleanroom {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.28; }
+}
+.cmp-dish {
+  animation: cmp-dish 14s ease-in-out infinite alternate;
+}
+@keyframes cmp-dish {
+  from { transform: rotate(-8deg); }
+  to { transform: rotate(10deg); }
+}
+.cmp-bird {
+  animation-name: cmp-bird;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes cmp-bird {
+  from { transform: translate(-40px, var(--alt, 160px)); }
+  to { transform: translate(1240px, calc(var(--alt, 160px) - 40px)); }
+}
+.cmp-station {
+  animation: cmp-station 36s ease-in-out infinite alternate;
+}
+@keyframes cmp-station {
+  from { transform: translate(790px, 150px); }
+  to { transform: translate(1010px, 128px); }
+}
+.cmp-capsule {
+  animation: cmp-capsule 5s ease-in forwards;
+}
+@keyframes cmp-capsule {
+  0% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(60px, -480px); opacity: 0; }
+}
+.cmp-crane__hook {
+  animation: cmp-hook 7s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: top center;
+}
+@keyframes cmp-hook {
+  from { transform: rotate(-2.5deg); }
+  to { transform: rotate(2.5deg); }
+}
+
 /* Staff strolling the campus front. */
 .cmp-person {
   animation-name: cmp-stroll;
@@ -523,12 +589,35 @@ button:not(:disabled):active {
 :root[data-reduce-motion="on"] .cmp-drop,
 :root[data-reduce-motion="on"] .cmp-person,
 :root[data-reduce-motion="on"] .time-clock,
-:root[data-reduce-motion="on"] .wk-float {
+:root[data-reduce-motion="on"] .wk-float,
+:root[data-reduce-motion="on"] .cmp-bar,
+:root[data-reduce-motion="on"] .cmp-cleanroom,
+:root[data-reduce-motion="on"] .cmp-dish,
+:root[data-reduce-motion="on"] .cmp-bird,
+:root[data-reduce-motion="on"] .cmp-station,
+:root[data-reduce-motion="on"] .cmp-capsule,
+:root[data-reduce-motion="on"] .cmp-crane__hook,
+:root[data-reduce-motion="on"] .cmp-bldg {
   animation: none !important;
+  transition: none !important;
+}
+:root[data-reduce-motion="on"] .cmp-bird {
+  transform: translate(600px, var(--alt, 160px));
+}
+:root[data-reduce-motion="on"] .cmp-station {
+  transform: translate(900px, 140px);
 }
 @media (prefers-reduced-motion: reduce) {
-  .cmp-flake, .cmp-drop, .cmp-person, .time-clock, .wk-float {
+  .cmp-flake, .cmp-drop, .cmp-person, .time-clock, .wk-float, .cmp-bar, .cmp-cleanroom,
+  .cmp-dish, .cmp-bird, .cmp-station, .cmp-capsule, .cmp-crane__hook, .cmp-bldg {
     animation: none !important;
+    transition: none !important;
+  }
+  .cmp-bird {
+    transform: translate(600px, var(--alt, 160px));
+  }
+  .cmp-station {
+    transform: translate(900px, 140px);
   }
 }
 

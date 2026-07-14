@@ -1,26 +1,21 @@
 // ============================================================================
-// CampusView — the game world as a place. A hand-drawn SVG dusk scene of your
-// company's campus: the office tower grows with headcount, the data center
-// racks up with compute, a rocket sits on the pad while a bet builds (and
-// launches when it ships), the market is the skyline, the world is the sky.
+// CampusView — the game world as a place, and a MIRROR of the run:
+//   · the HQ grows with your stage (garage → loft → tower → campus → spire)
+//   · the industrial district IS your business (fab, pad, dishes, station…)
+//   · downtown's towers rise and fall with the rivals' live market caps
+//   · seasons turn, weather follows the macro cycle, staff walk the grounds
 // Every structure is clickable and routes to its management surface.
 // ============================================================================
-import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
 import { play } from "@/audio/sfx";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
-
-// Deterministic pseudo-random (stable scene between renders/screenshots).
-function rnd(i: number, salt = 0): number {
-  let h = (i * 2654435761) ^ (salt * 40503);
-  h = Math.imul(h ^ (h >>> 15), 2246822519);
-  h = Math.imul(h ^ (h >>> 13), 3266489917);
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
-}
-
-const GROUND = 630;
+import type { PlayableSubIndustry } from "@/domain/ids";
+import { PLAYABLE_SUB_INDUSTRIES } from "@/domain/ids";
+import { GROUND, Chip, Hot, Tree, Windows, rnd } from "./shared";
+import { Headquarters, hqForm } from "./hq";
+import { IndustryDistrict, type DistrictData } from "./districts";
 
 /** The year turns: sky palette + tree canopy per quarter of the 52-week year. */
 const SEASONS = [
@@ -30,92 +25,33 @@ const SEASONS = [
   { name: "winter", sky: ["#06080f", "#0e1626", "#1e2c46"], canopy: null },
 ] as const;
 
-/** A campus tree that turns with the seasons (bare + snow-capped in winter). */
-function Tree({ x, canopy, winter }: { x: number; canopy: string | null; winter: boolean }) {
-  return (
-    <g>
-      <rect x={x - 1.5} y={GROUND - 16} width={3} height={16} fill="#241d2c" />
-      {canopy ? (
-        <>
-          <circle cx={x} cy={GROUND - 22} r={10} fill={canopy} opacity={0.9} />
-          <circle cx={x - 6} cy={GROUND - 17} r={6.5} fill={canopy} opacity={0.75} />
-        </>
-      ) : (
-        <>
-          <line x1={x} y1={GROUND - 16} x2={x - 6} y2={GROUND - 26} stroke="#241d2c" strokeWidth={2} />
-          <line x1={x} y1={GROUND - 18} x2={x + 6} y2={GROUND - 27} stroke="#241d2c" strokeWidth={2} />
-          {winter && <ellipse cx={x} cy={GROUND - 27} rx={7} ry={2.2} fill="#cdd8ec" opacity={0.65} />}
-        </>
-      )}
-    </g>
-  );
+/** Downtown slots for the rival towers (x, width). The exchange sits apart. */
+const SLOTS: [number, number][] = [
+  [0, 74], [82, 66], [156, 58], [222, 70], [300, 62],
+  [456, 60], [524, 72], [604, 64], [676, 70], [754, 58],
+  [820, 74], [902, 62], [972, 70], [1050, 60], [1118, 80],
+];
+
+/** Market cap ($M) → silhouette height. Log scale: $100M ≈ 80, $2T ≈ 330. */
+function towerHeight(valuation: number): number {
+  const t = Math.min(1, Math.max(0, (Math.log10(Math.max(100, valuation)) - 2) / 4.4));
+  return Math.round(80 + t * 250);
 }
 
-/** A small HUD chip (label + optional value) floating above a structure. */
-function Chip({ x, y, label, value, accent }: { x: number; y: number; label: string; value?: string; accent?: string }) {
-  const text = value ? `${label} · ${value}` : label;
-  const w = 14 + text.length * 6.4;
-  return (
-    <g className="cmp-chip" transform={`translate(${x - w / 2}, ${y})`}>
-      <rect width={w} height={20} rx={10} className="cmp-chip__bg" />
-      {accent && <circle cx={11} cy={10} r={2.6} fill={accent} />}
-      <text x={accent ? 19 : w / 2} y={13.5} textAnchor={accent ? "start" : "middle"} className="cmp-chip__text">
-        {text}
-      </text>
-    </g>
-  );
-}
-
-/** A clickable structure group: hover glow + keyboard access + navigation. */
-function Hot({ label, onGo, children }: { label: string; onGo: () => void; children: ReactNode }) {
-  return (
-    <g
-      className="cmp-hot"
-      role="button"
-      tabIndex={0}
-      aria-label={label}
-      onClick={() => {
-        play("nav");
-        onGo();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          play("nav");
-          onGo();
-        }
-      }}
-    >
-      {children}
-    </g>
-  );
-}
-
-/** Window grid for a building face; lit fraction scales with activity. */
-function Windows({ x, y, cols, rows, cw, ch, gapX, gapY, litPct, salt }: { x: number; y: number; cols: number; rows: number; cw: number; ch: number; gapX: number; gapY: number; litPct: number; salt: number }) {
-  const cells = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const lit = rnd(r * 31 + c * 7 + 3, salt) * 100 < litPct;
-      cells.push(
-        <rect
-          key={`${r}-${c}`}
-          x={x + c * (cw + gapX)}
-          y={y + r * (ch + gapY)}
-          width={cw}
-          height={ch}
-          rx={1.5}
-          className={lit ? "cmp-win cmp-win--lit" : "cmp-win"}
-          style={lit ? { animationDelay: `${(rnd(r * 13 + c, salt + 5) * 7).toFixed(1)}s` } : undefined}
-        />,
-      );
-    }
+function hashId(id: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
   }
-  return <>{cells}</>;
+  return h >>> 0;
 }
+
+const LAB_X = 430;
 
 export function CampusView() {
   const game = useGame((s) => s.game);
+  const content = useGame((s) => s.content);
   const setView = useUi((s) => s.setView);
   // The pad roars when a ship goes up (space campuses only). Selected before the
   // early return so the hook order is stable.
@@ -137,15 +73,36 @@ export function CampusView() {
 
   // ── Live state the scene is drawn from ──
   const headcount = c.financials.headcount;
-  const floors = Math.min(9, 3 + Math.ceil(headcount / 8));
-  const litPct = Math.min(85, 25 + headcount * 3);
-  const clusters = Object.values(c.products?.capacity.owned ?? {}).reduce((s, n) => s + n, 0);
+  const owned = c.products?.capacity.owned ?? {};
   const capBuilding = (c.products?.capacity.builds_in_progress.length ?? 0) > 0;
   const bets = c.products?.bets ?? [];
   const nextShip = bets.reduce((m, b) => Math.min(m, b.weeks_left), Infinity);
   const launching = game.log.some((e) => e.week >= week - 1 && e.kind === "company" && e.headline.startsWith("Shipped"));
   const liveProducts = c.products?.products.filter((p) => p.state !== "declining").length ?? 0;
   const late = game.late;
+  const form = hqForm(c.stage, !!late, late?.slice.era);
+  const sub: PlayableSubIndustry = (PLAYABLE_SUB_INDUSTRIES as readonly string[]).includes(c.subIndustry)
+    ? (c.subIndustry as PlayableSubIndustry)
+    : "frontier_model_lab";
+
+  const district: DistrictData = {
+    color: c.color,
+    hype,
+    owned,
+    building: capBuilding,
+    bets: bets.length,
+    nextShip,
+    launching,
+    liveProducts,
+    onGo: () => setView("dashboard"),
+  };
+
+  // Downtown mirrors the market: the top rivals by live cap, heights to scale.
+  const rivals = [...content.companies, ...game.market.companies]
+    .slice()
+    .sort((a, b) => b.financials.valuation - a.financials.valuation)
+    .slice(0, SLOTS.length)
+    .sort((a, b) => hashId(a.id) - hashId(b.id));
 
   // Sky mood follows the macro cycle; the palette follows the season.
   const cloudOpacity = { expansion: 0.35, peak: 0.3, recovery: 0.45, contraction: 0.6, trough: 0.7 }[phase] ?? 0.4;
@@ -154,11 +111,6 @@ export function CampusView() {
   const winter = season.name === "winter";
   const raining = !winter && (phase === "contraction" || phase === "trough");
   const staff = Math.max(1, Math.min(6, Math.ceil(headcount / 4)));
-
-  const towerX = 170;
-  const towerW = 170;
-  const towerH = floors * 34;
-  const towerY = GROUND - towerH;
 
   return (
     <div className="workspace-scroll campus-scroll">
@@ -193,7 +145,6 @@ export function CampusView() {
 
           {/* ── Sky ── */}
           <rect width="1200" height="720" fill="url(#cmp-sky)" />
-          {/* a faint aurora ribbon, drifting */}
           <path d="M -40 150 C 260 96, 560 190, 840 128 S 1180 92, 1260 130" fill="none" stroke="url(#cmp-aurora)" strokeWidth={38} opacity={0.09} className="cmp-aurora" />
           <path d="M -40 190 C 300 140, 600 226, 900 160 S 1200 130, 1260 168" fill="none" stroke="url(#cmp-aurora)" strokeWidth={20} opacity={0.07} className="cmp-aurora cmp-aurora--b" />
           <g opacity={starDim}>
@@ -208,11 +159,9 @@ export function CampusView() {
               />
             ))}
           </g>
-          {/* a shooting star, every once in a while */}
           <g className="cmp-shooting">
             <line x1={0} y1={0} x2={34} y2={12} stroke="#cdd8ec" strokeWidth={1.6} strokeLinecap="round" />
           </g>
-          {/* a tiny satellite on a slow pass */}
           <g className="cmp-sat">
             <rect x={-4} y={-3} width={8} height={6} rx={1} fill="#9fb0cc" />
             <rect x={-16} y={-1.5} width={9} height={3} fill="#46d6c8" opacity={0.75} />
@@ -223,11 +172,10 @@ export function CampusView() {
           {/* The world, readable in the sky — the moon routes to the World view. */}
           <Hot label="The World — macro forces" onGo={() => setView("world")}>
             <circle cx={1076} cy={82} r={26} fill="#dfe6f3" opacity={0.92} />
-            <circle cx={1066} cy={74} r={22} fill="#0d1322" />
+            <circle cx={1066} cy={74} r={22} fill={season.sky[0]} />
             <Chip x={1076} y={118} label="THE WORLD" />
           </Hot>
 
-          {/* Drifting clouds (macro mood sets their weight). */}
           <g className="cmp-cloud cmp-cloud--a" opacity={cloudOpacity}>
             <ellipse cx={220} cy={104} rx={95} ry={17} fill="#1b2233" />
             <ellipse cx={286} cy={92} rx={60} ry={13} fill="#1b2233" />
@@ -247,19 +195,22 @@ export function CampusView() {
             </g>
           )}
 
-          {/* ── The Market: downtown skyline (clickable, receded) ── */}
+          {/* ── The Market: downtown, heights tracking the rivals' live caps ── */}
           <Hot label="The Market — every rival, priced live" onGo={() => setView("market")}>
             <g opacity={0.82}>
-              {[
-                [0, 386, 74], [82, 344, 66], [156, 408, 58], [222, 368, 70], [300, 422, 62],
-                [456, 392, 60], [524, 356, 72], [604, 416, 64], [676, 374, 70],
-                [754, 404, 58], [820, 340, 74], [902, 396, 62], [972, 362, 70], [1050, 408, 60], [1118, 382, 80],
-              ].map(([bx, by, bw], i) => (
-                <g key={i}>
-                  <rect x={bx} y={by} width={bw} height={GROUND - (by as number)} fill="#0f131d" />
-                  <Windows x={(bx as number) + 8} y={(by as number) + 10} cols={Math.floor(((bw as number) - 14) / 13)} rows={Math.floor((GROUND - (by as number) - 18) / 22)} cw={7} ch={9} gapX={6} gapY={13} litPct={8} salt={i + 40} />
-                </g>
-              ))}
+              {rivals.map((co, i) => {
+                const slot = SLOTS[i]!;
+                const h = towerHeight(co.financials.valuation);
+                const by = GROUND - h;
+                return (
+                  <g key={co.id}>
+                    <rect className="cmp-bldg" x={slot[0]} y={by} width={slot[1]} height={h} fill="#0f131d">
+                      <title>{co.name}</title>
+                    </rect>
+                    <Windows x={slot[0] + 8} y={by + 10} cols={Math.floor((slot[1] - 14) / 13)} rows={Math.floor((h - 18) / 22)} cw={7} ch={9} gapX={6} gapY={13} litPct={8} salt={hashId(co.id) % 97} />
+                  </g>
+                );
+              })}
               {/* The exchange tower — a ticker pulse at its crown. */}
               <rect x={370} y={326} width={78} height={GROUND - 326} fill="#111726" />
               <Windows x={378} y={338} cols={4} rows={Math.floor((GROUND - 326 - 18) / 22)} cw={7} ch={9} gapX={6} gapY={13} litPct={10} salt={72} />
@@ -305,53 +256,23 @@ export function CampusView() {
             </g>
           </Hot>
 
-          {/* ── HQ office tower (Team) ── */}
-          <Hot label="Headquarters — your team" onGo={() => setView("team")}>
-            <g>
-              {/* campus ground glow */}
-              <ellipse cx={towerX + towerW / 2} cy={GROUND} rx={150} ry={16} fill={c.color} opacity={0.07} />
-              {/* antenna + aviation light */}
-              <line x1={towerX + towerW / 2} y1={towerY - 26} x2={towerX + towerW / 2} y2={towerY} stroke="#2a3550" strokeWidth={3} />
-              <circle cx={towerX + towerW / 2} cy={towerY - 28} r={3} className="cmp-beacon" />
-              {/* company sign */}
-              <text
-                x={towerX + towerW / 2}
-                y={towerY - 40}
-                textAnchor="middle"
-                className="cmp-sign cmp-sign--company"
-                fill={c.color}
-                style={{ filter: `drop-shadow(0 0 8px ${c.color})` }}
-              >
-                {c.name.toUpperCase()}
-              </text>
-              {/* body */}
-              <rect x={towerX} y={towerY} width={towerW} height={towerH} fill="#1a2136" />
-              <rect x={towerX} y={towerY} width={towerW} height={5} fill="#2a3552" />
-              <rect x={towerX + 6} y={towerY + 5} width={towerW - 12} height={towerH - 5} fill="url(#cmp-glass)" opacity={0.4} />
-              <Windows x={towerX + 14} y={towerY + 13} cols={5} rows={floors} cw={24} ch={14} gapX={4.5} gapY={20} litPct={litPct} salt={9} />
-              {/* entrance */}
-              <rect x={towerX + towerW / 2 - 20} y={GROUND - 26} width={40} height={26} fill="#0b0f18" />
-              <rect x={towerX + towerW / 2 - 17} y={GROUND - 23} width={34} height={23} fill="#ffd98a" opacity={0.18} />
-              <rect x={towerX + towerW / 2 - 26} y={GROUND - 30} width={52} height={5} rx={2} fill="#232c44" />
-              <Chip x={towerX + towerW / 2} y={towerY - 76} label="HEADQUARTERS" value={`${headcount} aboard`} accent={c.color} />
-            </g>
-          </Hot>
+          {/* ── Headquarters: the building your stage earned ── */}
+          <Headquarters name={c.name} color={c.color} headcount={headcount} form={form} onGo={() => setView("team")} />
 
           {/* ── R&D lab wing (Products & R&D) ── */}
           <Hot label="R&D Lab — products and research" onGo={() => setView("dashboard")}>
             <g>
-              <rect x={towerX + towerW + 18} y={GROUND - 66} width={126} height={66} fill="#141a2b" />
-              <path d={`M ${towerX + towerW + 18} ${GROUND - 66} L ${towerX + towerW + 62} ${GROUND - 96} L ${towerX + towerW + 144} ${GROUND - 96} L ${towerX + towerW + 144} ${GROUND - 66} Z`} fill="#1a2338" />
-              <path d={`M ${towerX + towerW + 26} ${GROUND - 70} L ${towerX + towerW + 64} ${GROUND - 92} L ${towerX + towerW + 138} ${GROUND - 92} L ${towerX + towerW + 138} ${GROUND - 70} Z`} fill="#46d6c8" opacity={0.16} className="cmp-lab-glow" />
-              <Windows x={towerX + towerW + 28} y={GROUND - 54} cols={5} rows={2} cw={16} ch={11} gapX={6} gapY={9} litPct={60} salt={21} />
-              {/* roof dish, tilted at the sky */}
-              <g transform={`translate(${towerX + towerW + 126}, ${GROUND - 96})`}>
+              <rect x={LAB_X} y={GROUND - 66} width={126} height={66} fill="#141a2b" />
+              <path d={`M ${LAB_X} ${GROUND - 66} L ${LAB_X + 44} ${GROUND - 96} L ${LAB_X + 126} ${GROUND - 96} L ${LAB_X + 126} ${GROUND - 66} Z`} fill="#1a2338" />
+              <path d={`M ${LAB_X + 8} ${GROUND - 70} L ${LAB_X + 46} ${GROUND - 92} L ${LAB_X + 120} ${GROUND - 92} L ${LAB_X + 120} ${GROUND - 70} Z`} fill="#46d6c8" opacity={0.16} className="cmp-lab-glow" />
+              <Windows x={LAB_X + 10} y={GROUND - 54} cols={5} rows={2} cw={16} ch={11} gapX={6} gapY={9} litPct={60} salt={21} />
+              <g transform={`translate(${LAB_X + 108}, ${GROUND - 96})`}>
                 <line x1={0} y1={0} x2={0} y2={8} stroke="#2e3a58" strokeWidth={2.5} />
                 <ellipse cx={0} cy={-3} rx={10} ry={4.5} fill="#26314b" transform="rotate(-32)" />
                 <circle cx={-4} cy={-7} r={1.4} fill="#46d6c8" opacity={0.9} />
               </g>
               <Chip
-                x={towerX + towerW + 82}
+                x={LAB_X + 64}
                 y={GROUND - 132}
                 label="R&D LAB"
                 value={liveProducts > 0 ? `${liveProducts} live` : bets.length > 0 ? "building" : "idle"}
@@ -361,9 +282,9 @@ export function CampusView() {
           </Hot>
 
           {/* ── Campus grounds: trees turn with the year; staff come and go ── */}
-          <Tree x={150} canopy={season.canopy} winter={winter} />
-          <Tree x={512} canopy={season.canopy} winter={winter} />
-          <Tree x={540} canopy={season.canopy} winter={winter} />
+          <Tree x={120} canopy={season.canopy} winter={winter} />
+          <Tree x={575} canopy={season.canopy} winter={winter} />
+          <Tree x={602} canopy={season.canopy} winter={winter} />
           <Tree x={706} canopy={season.canopy} winter={winter} />
           {Array.from({ length: staff }, (_, i) => (
             <g
@@ -384,7 +305,7 @@ export function CampusView() {
             <Hot label="The Capitol — power, rivals, legacies" onGo={() => setView("standing")}>
               <g>
                 <rect x={560} y={GROUND - 74} width={118} height={74} fill="#151b2a" />
-                <path d="M 560 396 L 619 380 L 678 396 Z" fill="#1c2436" />
+                <path d="M 560 556 L 619 540 L 678 556 Z" fill="#1c2436" />
                 <circle cx={619} cy={GROUND - 96} r={17} fill="#1c2436" />
                 <circle cx={619} cy={GROUND - 112} r={2.8} fill="#e8c76a" className="cmp-beacon cmp-beacon--gold" />
                 {[0, 1, 2, 3, 4].map((i) => (
@@ -395,107 +316,8 @@ export function CampusView() {
             </Hot>
           )}
 
-          {/* ── Industry district ── */}
-          {industry === "ai" ? (
-            <Hot label="Data center — compute capacity" onGo={() => setView("dashboard")}>
-              <g style={hype >= 70 ? { filter: "drop-shadow(0 0 18px rgba(111,156,255,0.35))" } : undefined}>
-                <ellipse cx={870} cy={GROUND} rx={170} ry={15} fill="#6f9cff" opacity={0.05} />
-                <rect x={720} y={GROUND - 112} width={300} height={112} fill="#131a2a" />
-                <rect x={720} y={GROUND - 112} width={300} height={6} fill="#1e2842" />
-                {/* roof cooling fans */}
-                {[0, 1, 2].map((i) => (
-                  <g key={i} transform={`translate(${776 + i * 96}, ${GROUND - 124})`}>
-                    <rect x={-16} y={0} width={32} height={12} rx={2} fill="#1a2338" />
-                    <g className="cmp-fan" style={{ animationDelay: `${i * 0.6}s` }}>
-                      <circle r={8} cy={0} fill="none" stroke="#2e3a58" strokeWidth={2} />
-                      <line x1={-7} y1={0} x2={7} y2={0} stroke="#2e3a58" strokeWidth={2} />
-                      <line x1={0} y1={-7} x2={0} y2={7} stroke="#2e3a58" strokeWidth={2} />
-                    </g>
-                  </g>
-                ))}
-                {/* glass hall: 13 rack bays — lit bays are the clusters you own */}
-                <rect x={734} y={GROUND - 92} width={272} height={58} rx={3} fill="#0d1322" stroke="#22304e" strokeWidth={1} />
-                {Array.from({ length: 13 }, (_, i) => {
-                  const active = i < Math.min(13, clusters);
-                  return (
-                    <g key={i} transform={`translate(${742 + i * 20}, ${GROUND - 86})`}>
-                      <rect width={15} height={46} rx={2} fill={active ? "#1a2740" : "#121a2b"} />
-                      {active
-                        ? [0, 1, 2].map((j) => (
-                            <circle key={j} cx={7.5} cy={9 + j * 14} r={1.8} className="cmp-led" style={{ animationDelay: `${(rnd(i * 3 + j, 60) * 2.4).toFixed(2)}s` }} />
-                          ))
-                        : [0, 1, 2].map((j) => <circle key={j} cx={7.5} cy={9 + j * 14} r={1.8} fill="#1c2537" />)}
-                    </g>
-                  );
-                })}
-                <text x={870} y={GROUND - 18} textAnchor="middle" className="cmp-sign" fill="#6f9cff">
-                  COMPUTE
-                </text>
-                <Chip x={870} y={GROUND - 160} label="DATA CENTER" value={`${clusters} clusters${capBuilding ? " +bld" : ""}`} accent="#6f9cff" />
-              </g>
-            </Hot>
-          ) : (
-            <Hot label="Launch complex — builds and launches" onGo={() => setView("dashboard")}>
-              <g>
-                {/* apron ground glow */}
-                <ellipse cx={912} cy={GROUND} rx={190} ry={16} fill="#6f9cff" opacity={0.06} />
-                <rect x={730} y={GROUND - 4} width={360} height={4} fill="#1c2438" />
-                {/* hangar */}
-                <path d={`M 742 ${GROUND} L 742 ${GROUND - 54} Q 802 ${GROUND - 92} 862 ${GROUND - 54} L 862 ${GROUND} Z`} fill="#171f33" />
-                <rect x={782} y={GROUND - 40} width={40} height={40} fill="#0e1420" />
-                <rect x={784} y={GROUND - 38} width={36} height={36} fill="#22304c" opacity={0.7} />
-                {/* pad */}
-                <rect x={892} y={GROUND - 8} width={190} height={8} fill="#1e2740" />
-                <rect x={906} y={GROUND - 12} width={162} height={4} fill="#2a3550" />
-                {/* gantry tower */}
-                <rect x={1032} y={GROUND - 196} width={20} height={188} fill="#233050" />
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <line key={i} x1={1032} y1={GROUND - 186 + i * 30} x2={1052} y2={GROUND - 166 + i * 30} stroke="#31405f" strokeWidth={2} />
-                ))}
-                <circle cx={1042} cy={GROUND - 200} r={3} className="cmp-beacon" />
-                {(bets.length > 0 || launching) && (
-                  <g className={launching ? "cmp-rocket is-launching" : "cmp-rocket"}>
-                    {/* service arm (retracts on launch) */}
-                    {!launching && <rect x={1006} y={GROUND - 150} width={26} height={5} fill="#2a3550" />}
-                    {/* rocket */}
-                    <g transform="translate(966, 0)">
-                      <path d={`M 0 ${GROUND - 148} Q 17 ${GROUND - 186} 34 ${GROUND - 148} L 34 ${GROUND - 34} L 0 ${GROUND - 34} Z`} fill="#dfe6f3" />
-                      <path d={`M 0 ${GROUND - 148} Q 17 ${GROUND - 186} 34 ${GROUND - 148} L 34 ${GROUND - 140} L 0 ${GROUND - 140} Z`} fill={c.color} />
-                      <circle cx={17} cy={GROUND - 122} r={5.5} fill="#0d1322" stroke="#9fb0cc" strokeWidth={1.5} />
-                      <path d={`M 0 ${GROUND - 64} L -13 ${GROUND - 34} L 0 ${GROUND - 44} Z`} fill="#b9c5da" />
-                      <path d={`M 34 ${GROUND - 64} L 47 ${GROUND - 34} L 34 ${GROUND - 44} Z`} fill="#b9c5da" />
-                      <path d={`M 8 ${GROUND - 34} L 26 ${GROUND - 34} L 22 ${GROUND - 26} L 12 ${GROUND - 26} Z`} fill="#7c8aa5" />
-                      {/* exhaust when launching */}
-                      {launching && (
-                        <g className="cmp-flame">
-                          <path d={`M 10 ${GROUND - 26} Q 17 ${GROUND + 16} 24 ${GROUND - 26} Z`} fill="#f0b54e" />
-                          <path d={`M 13 ${GROUND - 26} Q 17 ${GROUND + 2} 21 ${GROUND - 26} Z`} fill="#fff1c4" />
-                        </g>
-                      )}
-                    </g>
-                  </g>
-                )}
-                {launching && (
-                  <g className="cmp-smoke">
-                    <circle cx={952} cy={GROUND - 12} r={13} fill="#2a3550" opacity={0.5} />
-                    <circle cx={996} cy={GROUND - 8} r={17} fill="#232c44" opacity={0.5} />
-                    <circle cx={1022} cy={GROUND - 14} r={11} fill="#2a3550" opacity={0.45} />
-                  </g>
-                )}
-                {launching && <rect x={906} y={GROUND - 40} width={162} height={30} fill="url(#cmp-pad-glow)" />}
-                <text x={802} y={GROUND - 100} textAnchor="middle" className="cmp-sign" fill="#6f9cff">
-                  LAUNCH OPS
-                </text>
-                <Chip
-                  x={984}
-                  y={GROUND - 232}
-                  label={launching ? "LIFTOFF" : bets.length > 0 ? "ON THE PAD" : "PAD READY"}
-                  value={launching ? undefined : bets.length > 0 && Number.isFinite(nextShip) ? `T−${nextShip}w` : undefined}
-                  accent={launching ? "#f0b54e" : "#6f9cff"}
-                />
-              </g>
-            </Hot>
-          )}
+          {/* ── The industrial district: your business, drawn as itself ── */}
+          <IndustryDistrict sub={sub} d={district} />
 
           {/* ── Weather: snow through the winter quarter; rain in a downturn ── */}
           {winter && (
