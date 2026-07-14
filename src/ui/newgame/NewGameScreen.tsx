@@ -116,6 +116,7 @@ export function NewGameScreen() {
   // different steps now).
   const setNewGameStep = useUi((s) => s.setNewGameStep);
   const setJustFounded = useUi((s) => s.setJustFounded);
+  const setScreen = useUi((s) => s.setScreen);
   useEffect(() => setNewGameStep(step), [step, setNewGameStep]);
 
   const preset = matchingPreset(axes);
@@ -185,6 +186,9 @@ export function NewGameScreen() {
       <div className="ng__frame">
         <header className="ng__top">
           <div className="ng__brand">
+            <button className="ng-back" onClick={() => setScreen("title")} title="Back to title" aria-label="Back to title">
+              ‹
+            </button>
             <Icon name="rocket" size={20} /> <span>Moonshot Inc</span>
           </div>
           {step !== "welcome" && (

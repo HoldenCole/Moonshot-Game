@@ -1,5 +1,6 @@
 import { Icon, type IconName } from "@/ui/components/Icon";
 import { useGame } from "@/state/store";
+import { play } from "@/audio/sfx";
 import type { View } from "./types";
 
 const ITEMS: { view: View; icon: IconName; label: string }[] = [
@@ -30,7 +31,7 @@ export function NavRail({ view, onChange }: { view: View; onChange: (v: View) =>
     <button
       key={it.view}
       className={`navrail__item${view === it.view ? " is-active" : ""}`}
-      onClick={() => onChange(it.view)}
+      onClick={() => { if (view !== it.view) play("nav"); onChange(it.view); }}
       title={it.label}
       aria-label={it.label}
       aria-current={view === it.view}

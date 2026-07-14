@@ -5,7 +5,19 @@
 import { create } from "zustand";
 import type { View } from "@/ui/frame/types";
 
+/** Which top-level surface the app is showing — the game boots to a title
+ *  screen like a game, not into a form. */
+export type Screen = "title" | "newgame" | "game";
+
 interface UiStore {
+  screen: Screen;
+  setScreen: (s: Screen) => void;
+  /** The Esc pause menu (in-game only). */
+  pauseOpen: boolean;
+  setPauseOpen: (b: boolean) => void;
+  /** The settings sheet (reachable from the title and the pause menu). */
+  settingsOpen: boolean;
+  setSettingsOpen: (b: boolean) => void;
   view: View;
   setView: (v: View) => void;
   paletteOpen: boolean;
@@ -21,6 +33,12 @@ interface UiStore {
 }
 
 export const useUi = create<UiStore>((set) => ({
+  screen: "title",
+  setScreen: (screen) => set({ screen }),
+  pauseOpen: false,
+  setPauseOpen: (pauseOpen) => set({ pauseOpen }),
+  settingsOpen: false,
+  setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
   view: "campus",
   setView: (view) => set({ view }),
   paletteOpen: false,

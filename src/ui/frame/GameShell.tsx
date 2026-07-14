@@ -12,6 +12,8 @@ import { TeamView } from "@/ui/views/TeamView";
 import { AboutView } from "@/ui/views/AboutView";
 import { CapTablePanel } from "@/ui/captable/CapTablePanel";
 import { CampusView } from "@/ui/campus/CampusView";
+import { PauseMenu } from "./PauseMenu";
+import { play } from "@/audio/sfx";
 import {
   ResearchTabLive, MegaprojectsTabLive, EmpireTabLive, ExecutivesTabLive,
   ContractsTabLive, StandingTabLive, BriefingTabLive,
@@ -47,12 +49,34 @@ export function GameShell() {
   const hasGuided = useGame((s) => (s.content.tutorial?.steps.length ?? 0) > 0);
   const guidedActive = usePrefs((s) => s.tutorialEnabled && !s.guidedDone) && hasGuided;
 
-  // ⌘K / Ctrl-K opens the command palette from anywhere.
+  // Game keys: ⌘K palette, Esc pause, Space advances a week.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setPaletteOpen(true);
+        return;
+      }
+      const ui = useUi.getState();
+      if (e.key === "Escape") {
+        // The palette and settings own their own Esc; otherwise toggle pause.
+        if (ui.paletteOpen || ui.settingsOpen) return;
+        e.preventDefault();
+        play(ui.pauseOpen ? "close" : "open");
+        ui.setPauseOpen(!ui.pauseOpen);
+        return;
+      }
+      if (e.key === " " || e.code === "Space") {
+        // Space = advance a week, but never while typing, focused on a control,
+        // or while any surface (pause, settings, palette, event, exit) is up.
+        const el = document.activeElement as HTMLElement | null;
+        const typing = el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.tagName === "BUTTON" || el.isContentEditable);
+        const g = useGame.getState();
+        const blocked = ui.pauseOpen || ui.settingsOpen || ui.paletteOpen || !g.game || g.game.pendingEvent != null || g.game.runOutcome != null || g.exitFlow != null;
+        if (typing || blocked) return;
+        e.preventDefault();
+        play("advance");
+        g.advance({ type: "weeks", weeks: 1 });
       }
     }
     window.addEventListener("keydown", onKey);
@@ -68,21 +92,23 @@ export function GameShell() {
       <div className="shell__body">
         <NavRail view={view} onChange={setView} />
         <main className="workspace" data-guide="center-workspace">
-          {view === "campus" && <CampusView />}
-          {view === "dashboard" && <Dashboard onNavigate={setView} />}
-          {view === "captable" && <CapTableView />}
-          {view === "fundraising" && <FundraisingView />}
-          {view === "market" && <MarketView />}
-          {view === "world" && <WorldView />}
-          {view === "team" && <TeamView />}
-          {view === "about" && <AboutView />}
-          {view === "research" && <div className="workspace-scroll late-scroll"><ResearchTabLive /></div>}
-          {view === "megaprojects" && <div className="workspace-scroll late-scroll"><MegaprojectsTabLive /></div>}
-          {view === "empire" && <div className="workspace-scroll late-scroll"><EmpireTabLive /></div>}
-          {view === "executives" && <div className="workspace-scroll late-scroll"><ExecutivesTabLive /></div>}
-          {view === "contracts" && <div className="workspace-scroll late-scroll"><ContractsTabLive /></div>}
-          {view === "standing" && <div className="workspace-scroll late-scroll"><StandingTabLive /></div>}
-          {view === "briefing" && <div className="workspace-scroll late-scroll"><BriefingTabLive /></div>}
+          <div className="view-fade" key={view}>
+            {view === "campus" && <CampusView />}
+            {view === "dashboard" && <Dashboard onNavigate={setView} />}
+            {view === "captable" && <CapTableView />}
+            {view === "fundraising" && <FundraisingView />}
+            {view === "market" && <MarketView />}
+            {view === "world" && <WorldView />}
+            {view === "team" && <TeamView />}
+            {view === "about" && <AboutView />}
+            {view === "research" && <div className="workspace-scroll late-scroll"><ResearchTabLive /></div>}
+            {view === "megaprojects" && <div className="workspace-scroll late-scroll"><MegaprojectsTabLive /></div>}
+            {view === "empire" && <div className="workspace-scroll late-scroll"><EmpireTabLive /></div>}
+            {view === "executives" && <div className="workspace-scroll late-scroll"><ExecutivesTabLive /></div>}
+            {view === "contracts" && <div className="workspace-scroll late-scroll"><ContractsTabLive /></div>}
+            {view === "standing" && <div className="workspace-scroll late-scroll"><StandingTabLive /></div>}
+            {view === "briefing" && <div className="workspace-scroll late-scroll"><BriefingTabLive /></div>}
+          </div>
         </main>
         {showRail && <NarrativeRail />}
         {!railOpen && view !== "market" && view !== "world" && (
@@ -93,6 +119,7 @@ export function GameShell() {
       </div>
       <EventModal />
       <ExitFlow />
+      <PauseMenu />
       <AchievementToast />
       {!guidedActive && <TutorialLayer view={view} />}
       <CommandPalette />

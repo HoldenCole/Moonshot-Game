@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useGame } from "@/state/store";
 import { achievementById } from "@/engine/achievements";
+import { play } from "@/audio/sfx";
 
 /** A transient toast when achievements unlock — informative on-change motion. */
 export function AchievementToast() {
@@ -9,6 +10,7 @@ export function AchievementToast() {
 
   useEffect(() => {
     if (!toast) return;
+    play("milestone");
     const t = setTimeout(clear, 4500);
     return () => clearTimeout(t);
   }, [toast, clear]);

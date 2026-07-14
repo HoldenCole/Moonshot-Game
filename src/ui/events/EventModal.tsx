@@ -1,6 +1,7 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useGame } from "@/state/store";
 import { useModalA11y } from "@/ui/components/useModalA11y";
+import { play } from "@/audio/sfx";
 import { eventArea, recommendation } from "@/engine/delegation";
 import { earningsReport, type EarningsReport } from "@/engine/earnings";
 import { formatMoney } from "@/engine/format";
@@ -33,6 +34,10 @@ function EventDialog({ event }: { event: ResolvedEvent }) {
   const resolveEvent = useGame((s) => s.resolveEvent);
   const game = useGame((s) => s.game);
   const ref = useRef<HTMLDivElement>(null);
+  // A decision landing on the desk gets a small stinger.
+  useEffect(() => {
+    play("event");
+  }, [event.id]);
   // A decision is a hard stop — trap focus, but no Escape-to-dismiss (you must
   // choose). The choices are the focusable targets.
   useModalA11y(ref, { closeOnEsc: false });

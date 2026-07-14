@@ -6,8 +6,10 @@
 // Every structure is clickable and routes to its management surface.
 // ============================================================================
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
+import { play } from "@/audio/sfx";
 import { ActiveDecisions } from "@/ui/decisions/ActiveDecisions";
 
 // Deterministic pseudo-random (stable scene between renders/screenshots).
@@ -43,10 +45,14 @@ function Hot({ label, onGo, children }: { label: string; onGo: () => void; child
       role="button"
       tabIndex={0}
       aria-label={label}
-      onClick={onGo}
+      onClick={() => {
+        play("nav");
+        onGo();
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
+          play("nav");
           onGo();
         }
       }}
@@ -82,6 +88,16 @@ function Windows({ x, y, cols, rows, cw, ch, gapX, gapY, litPct, salt }: { x: nu
 export function CampusView() {
   const game = useGame((s) => s.game);
   const setView = useUi((s) => s.setView);
+  // The pad roars when a ship goes up (space campuses only). Selected before the
+  // early return so the hook order is stable.
+  const launchingNow = useGame((s) => {
+    const g = s.game;
+    if (!g || g.company.industry !== "space") return false;
+    return g.log.some((e) => e.week >= g.clock.week - 1 && e.kind === "company" && e.headline.startsWith("Shipped"));
+  });
+  useEffect(() => {
+    if (launchingNow) play("launch");
+  }, [launchingNow]);
   if (!game) return null;
 
   const c = game.company;

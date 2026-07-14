@@ -10,6 +10,7 @@ import { industryLabel } from "@/domain/ids";
 import { showsExactGauges, showsRunwayForecast } from "@/engine/difficulty";
 import { Icon } from "@/ui/components/Icon";
 import { FlashNum } from "@/ui/components/FlashNum";
+import { play } from "@/audio/sfx";
 import { usePrefs } from "@/state/prefs";
 
 const MACRO_LABEL: Record<string, string> = {
@@ -84,16 +85,16 @@ export function TopBar() {
       </div>
 
       <div className="topbar__time" data-coach="advance">
-        <button className="time-btn" data-guide="advance-week-button" onClick={() => advance({ type: "weeks", weeks: 1 })}>
+        <button className="time-btn" data-guide="advance-week-button" onClick={() => { play("advance"); advance({ type: "weeks", weeks: 1 }); }}>
           <Icon name="chevron-right" size={15} /> Week
         </button>
-        <button className="time-btn" onClick={() => advance({ type: "weeks", weeks: Math.round(WEEKS_PER_MONTH) })}>
+        <button className="time-btn" onClick={() => { play("advance"); advance({ type: "weeks", weeks: Math.round(WEEKS_PER_MONTH) }); }}>
           <Icon name="chevron-right" size={15} /> Month
         </button>
         <button
           className={`time-btn time-btn--primary${pendingDecision ? " is-blocked" : ""}`}
           data-guide="advance-event-button"
-          onClick={() => advance({ type: "nextDecision" })}
+          onClick={() => { play("advance"); advance({ type: "nextDecision" }); }}
           disabled={pendingDecision}
           title={pendingDecision ? "Resolve the open decision first" : "Skip quiet weeks to the next decision"}
         >
@@ -158,8 +159,17 @@ function Settings() {
   const setReduceMotion = usePrefs((s) => s.setReduceMotion);
   const setTutorialEnabled = usePrefs((s) => s.setTutorialEnabled);
   const resetHints = usePrefs((s) => s.resetHints);
+  const setPauseOpen = useUi((s) => s.setPauseOpen);
   return (
     <div className="topbar__settings">
+      <button
+        className="iconbtn"
+        onClick={() => { play("open"); setPauseOpen(true); }}
+        title="Menu (Esc)"
+        aria-label="Open game menu"
+      >
+        <Icon name="grip" size={16} />
+      </button>
       <button
         className="iconbtn"
         onClick={toggleTheme}

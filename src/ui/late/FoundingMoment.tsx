@@ -1,10 +1,12 @@
 // Binds the founding interstitial to the freshly-created game: builds the
 // articles-of-incorporation facts and clears the "just founded" moment when the
 // trajectory finishes, handing the player into the shell.
+import { useEffect } from "react";
 import { useGame } from "@/state/store";
 import { useUi } from "@/state/ui";
 import { subIndustryLabel } from "@/domain/ids";
 import { formatMoney } from "@/engine/format";
+import { play } from "@/audio/sfx";
 import { FoundingInterstitial, type FoundingFacts, type LoadStage } from "./FoundingInterstitial";
 
 const STAGES: LoadStage[] = [
@@ -18,6 +20,10 @@ export function FoundingMoment() {
   const game = useGame((s) => s.game);
   const loading = useGame((s) => s.content.lateLoading);
   const setJustFounded = useUi((s) => s.setJustFounded);
+  const setScreen = useUi((s) => s.setScreen);
+  useEffect(() => {
+    play("found");
+  }, []);
   if (!game) return null;
   const c = game.company;
   const facts: FoundingFacts = {
@@ -29,5 +35,15 @@ export function FoundingMoment() {
     eraName: "The Garage Years",
     foundingLine: loading.founding[c.subIndustry] ?? loading.generic[0] ?? "The frontier begins with a single decision.",
   };
-  return <FoundingInterstitial mode="founding" facts={facts} stages={STAGES} onDone={() => setJustFounded(false)} />;
+  return (
+    <FoundingInterstitial
+      mode="founding"
+      facts={facts}
+      stages={STAGES}
+      onDone={() => {
+        setJustFounded(false);
+        setScreen("game");
+      }}
+    />
+  );
 }
